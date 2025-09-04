@@ -1,4 +1,4 @@
-/* Reset and base styles */
+/* CSS Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -7,144 +7,765 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    line-height: 1.6;
+    line-height: 1.7;
     color: #333;
-    background-color: #fff;
-    max-width: 800px;
+    background: #ffffff;
+    font-size: 16px;
+    min-height: 100vh;
+}
+
+/* Container */
+.container {
+    max-width: 650px;
     margin: 0 auto;
-    padding: 2rem;
-}
-
-/* Typography */
-h1, h2, h3 {
-    font-weight: 400;
-    margin-bottom: 1rem;
-}
-
-h1 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-}
-
-h2 {
-    font-size: 1.8rem;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 0.5rem;
-    margin-top: 3rem;
-}
-
-h3 {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-}
-
-p {
-    margin-bottom: 1rem;
-    color: #666;
+    padding: 0 20px;
 }
 
 /* Navigation */
-nav ul {
+.navbar {
+    background: #ffffff;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #333;
+}
+
+.nav-menu {
+    display: flex;
     list-style: none;
-    display: flex;
     gap: 2rem;
-    margin-bottom: 3rem;
 }
 
-nav a {
+.nav-link {
     text-decoration: none;
     color: #666;
-    font-size: 0.9rem;
-    text-transform: lowercase;
-    transition: color 0.2s ease;
+    font-weight: 500;
+    transition: color 0.3s ease;
 }
 
-nav a:hover {
-    color: #333;
+.nav-link:hover,
+.nav-link.active {
+    color: #007bff;
 }
 
-/* Content sections */
-.content-section {
-    margin-bottom: 4rem;
-}
-
-.content-grid {
-    display: grid;
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.content-item {
-    padding: 1.5rem;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    transition: border-color 0.2s ease;
-}
-
-.content-item:hover {
-    border-color: #ccc;
-}
-
-.content-item h3 a {
-    text-decoration: none;
-    color: #333;
-}
-
-.content-item h3 a:hover {
-    text-decoration: underline;
-}
-
-/* Social links */
-.social-links {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.social-links a {
-    text-decoration: none;
+.contact-icon {
     color: #666;
-    font-family: monospace;
-    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
 }
 
-.social-links a:hover {
-    color: #333;
-    text-decoration: underline;
+.contact-icon:hover {
+    color: #007bff;
 }
 
-/* Responsive design */
-@media (max-width: 600px) {
-    body {
-        padding: 1rem;
-    }
-    
-    nav ul {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .content-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    h1 {
-        font-size: 2rem;
-    }
-    
-    h2 {
-        font-size: 1.5rem;
-    }
+/* Main Content */
+.main-content {
+    margin-top: 80px;
+    min-height: calc(100vh - 160px);
 }
 
-/* Site title styling */
-.site-title {
-    font-weight: 300;
-    letter-spacing: -0.02em;
+/* Hero Section */
+.hero {
+    padding: 4rem 0;
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
     margin-bottom: 1rem;
 }
 
-/* Smooth scrolling */
-html {
-    scroll-behavior: smooth;
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.hero-description {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+    line-height: 1.7;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #007bff;
+    border: 2px solid #007bff;
+}
+
+.btn-secondary:hover {
+    background: #007bff;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.hero .btn-secondary {
+    color: white;
+    border-color: white;
+}
+
+.hero .btn-secondary:hover {
+    background: white;
+    color: #667eea;
+}
+
+/* Page Headers */
+.page-header {
+    padding: 3rem 0;
+    text-align: center;
+    background: #f8f9fa;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.page-header p {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* About Preview Section */
+.about-preview {
+    padding: 4rem 0;
+}
+
+.about-preview h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #333;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.about-card {
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.about-card:hover {
+    transform: translateY(-5px);
+}
+
+.about-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.about-card p {
+    color: #666;
+    line-height: 1.7;
+}
+
+/* Portfolio Styles */
+.portfolio-section {
+    padding: 3rem 0;
+}
+
+.portfolio-full {
+    padding: 2rem 0;
+}
+
+.portfolio-category {
+    margin-bottom: 4rem;
+}
+
+.portfolio-category h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #333;
+    border-bottom: 3px solid #007bff;
+    display: inline-block;
+    padding-bottom: 0.5rem;
+}
+
+.portfolio-grid {
+    display: grid;
+    gap: 2rem;
+}
+
+.portfolio-item {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.portfolio-item:hover {
+    transform: translateY(-5px);
+}
+
+.portfolio-content {
+    padding: 2rem;
+}
+
+.portfolio-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.portfolio-role {
+    color: #007bff;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.portfolio-content p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+}
+
+.portfolio-links {
+    margin-bottom: 1.5rem;
+}
+
+.portfolio-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.portfolio-link:hover {
+    text-decoration: underline;
+}
+
+.portfolio-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag {
+    background: #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Blog Styles */
+.blog-section {
+    padding: 3rem 0;
+}
+
+.blog-grid {
+    display: grid;
+    gap: 2rem;
+}
+
+.blog-post {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.blog-post:hover {
+    transform: translateY(-5px);
+}
+
+.blog-post-content {
+    padding: 2rem;
+}
+
+.blog-post-title {
+    color: #333;
+    text-decoration: none;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    display: block;
+    font-weight: 600;
+}
+
+.blog-post-title:hover {
+    color: #007bff;
+}
+
+.blog-post-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+    flex-wrap: wrap;
+}
+
+.blog-excerpt {
+    color: #666;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+
+.blog-read-more {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.blog-read-more:hover {
+    text-decoration: underline;
+}
+
+.blog-placeholder {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    border: 2px dashed #dee2e6;
+}
+
+.blog-placeholder h3 {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.blog-placeholder p {
+    color: #999;
+}
+
+/* Blog Post Full */
+.blog-post-full {
+    padding: 3rem 0;
+}
+
+.post-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.post-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    color: #666;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+}
+
+.post-content {
+    max-width: 800px;
+    margin: 0 auto;
+    color: #333;
+    line-height: 1.8;
+}
+
+.post-content h2 {
+    font-size: 1.8rem;
+    margin: 2rem 0 1rem 0;
+    color: #333;
+}
+
+.post-content p {
+    margin-bottom: 1.5rem;
+}
+
+.post-content ul {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.post-content li {
+    margin-bottom: 0.5rem;
+}
+
+.post-content a {
+    color: #007bff;
+}
+
+.post-content a:hover {
+    text-decoration: underline;
+}
+
+.post-footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Contact Styles */
+.contact-section {
+    padding: 3rem 0;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+.contact-info h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.contact-info > p {
+    color: #666;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+}
+
+.contact-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contact-method {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.contact-method h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.contact-method p {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.contact-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.contact-link:hover {
+    text-decoration: underline;
+}
+
+.contact-form-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Footer */
+.footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 4rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-menu {
+        gap: 1rem;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .post-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 20px;
+    }
+    
+    .nav-right {
+        gap: 1rem;
+    }
+    
+    .nav-menu {
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .main-content {
+        margin-top: 120px;
+    }
+    
+    .hero {
+        padding: 2rem 0;
+    }
+    
+    .container {
+        padding: 0 15px;
+    }
+}
+
+/* Minimal Design Styles */
+.simple-header {
+    padding: 2rem 0 1rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+}
+
+.email-link {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.email-link:hover {
+    color: #007bff;
+}
+
+.main-minimal {
+    padding: 3rem 0;
+}
+
+.about-minimal {
+    margin-bottom: 3rem;
+}
+
+.about-minimal p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #444;
+    margin: 0;
+}
+
+.writing-minimal {
+}
+
+.writing-minimal h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.writing-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.writing-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.writing-list li:last-child {
+    border-bottom: none;
+}
+
+.writing-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    flex-grow: 1;
+    margin-right: 1rem;
+}
+
+.writing-link:hover {
+    color: #007bff;
+}
+
+.writing-date {
+    color: #888;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+/* Mobile adjustments for minimal design */
+@media (max-width: 768px) {
+    .simple-header {
+        padding: 1.5rem 0 1rem 0;
+    }
+    
+    .site-name {
+        font-size: 1.3rem;
+    }
+    
+    .main-minimal {
+        padding: 2rem 0;
+    }
+    
+    .about-minimal {
+        margin-bottom: 2rem;
+    }
+    
+    .writing-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .writing-link {
+        margin-right: 0;
+    }
 }
