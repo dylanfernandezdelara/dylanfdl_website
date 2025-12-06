@@ -33,7 +33,7 @@ export default function ThemeToggle() {
           minWidth: '44px',
           minHeight: '44px',
           background: 'transparent',
-          border: '1px solid var(--bg2)',
+          border: 'none',
           cursor: 'pointer'
         }}
         aria-label="Toggle theme"
@@ -53,26 +53,23 @@ export default function ThemeToggle() {
         color: 'var(--fg2)',
         fontSize: '1.25rem',
         background: 'transparent',
-        border: '1px solid var(--bg2)',
-        borderRadius: '2px',
+        border: 'none',
         cursor: 'pointer',
         touchAction: 'manipulation',
         WebkitTapHighlightColor: 'rgba(95, 135, 175, 0.2)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        transition: 'border-color 0.2s ease, color 0.2s ease',
+        transition: 'color 0.2s ease',
         padding: '0.25rem'
       }}
       onMouseEnter={(e) => {
         if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-          e.currentTarget.style.borderColor = 'var(--blue)'
           e.currentTarget.style.color = 'var(--blue)'
         }
       }}
       onMouseLeave={(e) => {
         if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-          e.currentTarget.style.borderColor = 'var(--bg2)'
           e.currentTarget.style.color = 'var(--fg2)'
         }
       }}

@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import ThemeToggle from '@/components/ThemeToggle'
 
 export const metadata: Metadata = {
   title: 'Dylan Fernandez de Lara',
@@ -36,9 +35,6 @@ export default function RootLayout({
       <body>
         <main>{children}</main>
         <div className="vim-status-bar">
-          <div className="vim-status-left">
-            <ThemeToggle />
-          </div>
           <span className="vim-status-right">dfdl</span>
         </div>
       </body>
