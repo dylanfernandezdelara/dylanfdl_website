@@ -68,6 +68,20 @@ export default function About() {
             {`I am a violinist, and perform regularly in New York. This season I will be playing three concerts with the National Youth 
             Orchestra of the USA Alumni Chamber Orchestra.`}
           </p>
+
+          <h2 style={{
+            fontSize: '1.125rem',
+            fontWeight: '700',
+            marginTop: '3rem',
+            marginBottom: '1.5rem',
+            color: 'var(--fg1)'
+          }}>
+            My Time at Yale
+          </h2>
+
+          <p style={{ marginBottom: '1.5rem', color: 'var(--fg1)' }}>
+            {`[Add your content about your time at Yale here]`}
+          </p>
         </div>
       </div>
     </>
