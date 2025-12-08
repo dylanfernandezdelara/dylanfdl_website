@@ -35,6 +35,7 @@ export default function About() {
             <ThemeToggle />
             <Link href="/about" style={{ color: 'var(--aqua)', fontWeight: '700' }}>About</Link>
             <Link href="/writing" style={{ color: 'var(--fg3)', fontWeight: '700' }}>Writing</Link>
+            <Link href="/projects" style={{ color: 'var(--fg3)', fontWeight: '700' }}>Projects</Link>
           </nav>
         </div>
       </div>

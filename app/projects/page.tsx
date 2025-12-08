@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import ThemeToggle from '@/components/ThemeToggle'
 
-export default function Home() {
+export default function Projects() {
   return (
     <>
       <div className="container" style={{
@@ -35,7 +35,7 @@ export default function Home() {
             <ThemeToggle />
             <Link href="/about" style={{ color: 'var(--fg3)', fontWeight: '700' }}>About</Link>
             <Link href="/writing" style={{ color: 'var(--fg3)', fontWeight: '700' }}>Writing</Link>
-            <Link href="/projects" style={{ color: 'var(--fg3)', fontWeight: '700' }}>Projects</Link>
+            <Link href="/projects" style={{ color: 'var(--aqua)', fontWeight: '700' }}>Projects</Link>
           </nav>
         </div>
       </div>
@@ -44,16 +44,15 @@ export default function Home() {
         paddingTop: '3rem',
         paddingBottom: '4rem'
       }}>
-        <p style={{
+        <div style={{
           fontSize: '1rem',
-          lineHeight: '1.6',
-          marginBottom: '1.5rem',
-          color: 'var(--fg1)'
+          lineHeight: '1.6'
         }}>
-          [A brief introduction or statement about yourself. This should feel personal and direct, not like a tagline.]
-        </p>
+          <p style={{ marginBottom: '1.5rem', color: 'var(--fg1)' }}>
+            {`Projects coming soon.`}
+          </p>
+        </div>
       </div>
     </>
   )
 }
-
