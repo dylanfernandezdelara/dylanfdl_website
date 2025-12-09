@@ -83,6 +83,33 @@ export default function About() {
           <p style={{ marginBottom: '1.5rem', color: 'var(--fg1)' }}>
             {`[Add your content about your time at Yale here]`}
           </p>
+
+          <h2 style={{
+            fontSize: '1.125rem',
+            fontWeight: '700',
+            marginTop: '3rem',
+            marginBottom: '1.5rem',
+            color: 'var(--fg1)'
+          }}>
+            Recently Read Books
+          </h2>
+
+          <ul style={{
+            marginBottom: '1.5rem',
+            paddingLeft: '2rem',
+            color: 'var(--fg1)',
+            listStyleType: 'disc'
+          }}>
+            <li style={{ marginBottom: '0.75rem' }}>
+              <em style={{ color: 'var(--fg2)' }}>The Design of Everyday Things</em> by Don Norman
+            </li>
+            <li style={{ marginBottom: '0.75rem' }}>
+              <em style={{ color: 'var(--fg2)' }}>Thinking, Fast and Slow</em> by Daniel Kahneman
+            </li>
+            <li style={{ marginBottom: '0.75rem' }}>
+              <em style={{ color: 'var(--fg2)' }}>The Pragmatic Programmer</em> by Andy Hunt and Dave Thomas
+            </li>
+          </ul>
         </div>
       </div>
     </>
