@@ -33,10 +33,12 @@ export default function About() {
             gap: '2rem',
             color: 'var(--fg3)'
           }}>
-            <ThemeToggle />
             <Link href="/about" style={{ color: 'var(--aqua)', fontWeight: '400' }}>About</Link>
             <Link href="/writing" style={{ color: 'var(--fg3)', fontWeight: '400' }}>Writing</Link>
-            <Link href="/projects" style={{ color: 'var(--fg3)', fontWeight: '400' }}>Projects</Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <Link href="/projects" style={{ color: 'var(--fg3)', fontWeight: '400' }}>Projects</Link>
+              <ThemeToggle />
+            </div>
           </nav>
         </div>
       </div>
@@ -105,18 +107,107 @@ export default function About() {
           </p>
 
           <h2 style={{
-            fontSize: '1.125rem',
-            fontWeight: '600',
+            fontSize: '1.75rem',
+            fontWeight: '500',
             marginTop: '3rem',
-            marginBottom: '1.5rem',
-            color: 'var(--fg1)'
+            marginBottom: '1rem',
+            color: 'var(--fg0)'
           }}>
-            fun artifacts
+            Fun artifacts
           </h2>
 
-          <p style={{ marginBottom: '1.5rem', color: 'var(--fg1)' }}>
-            {`[Add your content about your time at Yale here]`}
-          </p>
+          <ul style={{
+            marginBottom: '1.5rem',
+            paddingLeft: '1.5rem',
+            color: 'var(--gray)',
+            listStyleType: 'disc'
+          }}>
+            <li style={{ marginBottom: '0.25rem' }}>
+              <a
+                href="https://youtu.be/WlSkFFIchMw?si=JXtKrlzzQC1ZexXi"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.125rem',
+                  color: 'var(--fg1)',
+                  textDecoration: 'underline'
+                }}
+              >
+                {`Yale Symphony Orchestra Halloween Show (me acting ?!)`}
+                <ArrowUpRight size={10} style={{ flexShrink: 0 }} />
+              </a>
+            </li>
+            <li style={{ marginBottom: '0.25rem' }}>
+              <a
+                href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.125rem',
+                  color: 'var(--fg1)',
+                  textDecoration: 'underline'
+                }}
+              >
+                {`NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"`}
+                <ArrowUpRight size={10} style={{ flexShrink: 0 }} />
+              </a>
+            </li>
+          </ul>
+
+          <hr style={{
+            border: 'none',
+            borderTop: '1px solid var(--bg3)',
+            marginTop: '3rem',
+            marginBottom: '1.5rem'
+          }} />
+
+          <div style={{
+            fontSize: '1rem',
+            color: 'var(--fg2)'
+          }}>
+            <h2 style={{
+              fontSize: '1.75rem',
+              fontWeight: '500',
+              marginTop: 0,
+              marginBottom: '0.5rem',
+              color: 'var(--fg1)'
+            }}>
+             Let's chat
+            </h2>
+            <div>
+              <a 
+                href="#" 
+                style={{ 
+                  color: 'var(--fg1)', 
+                  textDecoration: 'underline',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.125rem'
+                }}
+              >
+                Email
+                <ArrowUpRight size={10} style={{ flexShrink: 0 }} />
+              </a>
+              {`, `}
+              <a 
+                href="#" 
+                style={{ 
+                  color: 'var(--fg1)', 
+                  textDecoration: 'underline',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.125rem'
+                }}
+              >
+                Threads
+                <ArrowUpRight size={10} style={{ flexShrink: 0 }} />
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </>

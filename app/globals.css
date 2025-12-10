@@ -701,14 +701,14 @@ pre {
 
 /* Rainbow animation for letters */
 @keyframes rainbow {
-  0% { color: #ff0000; }   /* Red */
-  14.28% { color: #ff7f00; } /* Orange */
-  28.56% { color: #ffff00; } /* Yellow */
-  42.84% { color: #00ff00; } /* Green */
-  57.12% { color: #0000ff; } /* Blue */
-  71.4% { color: #4b0082; }  /* Indigo */
-  85.68% { color: #9400d3; } /* Violet */
-  100% { color: #ff0000; }   /* Back to Red */
+  0% { color: #FF6B7A; }   /* Darker Pastel Red */
+  14.28% { color: #FFB366; } /* Darker Pastel Orange */
+  28.56% { color: #FFD966; } /* Darker Pastel Yellow */
+  42.84% { color: #66FF88; } /* Darker Pastel Green */
+  57.12% { color: #66B3FF; } /* Darker Pastel Blue */
+  71.4% { color: #B366FF; }  /* Darker Pastel Indigo */
+  85.68% { color: #FF66B3; } /* Darker Pastel Violet */
+  100% { color: #FF6B7A; }   /* Back to Darker Pastel Red */
 }
 
 .rainbow-letter {

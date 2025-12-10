@@ -32,10 +32,12 @@ export default function Home() {
             gap: '2rem',
             color: 'var(--fg3)'
           }}>
-            <ThemeToggle />
             <Link href="/about" style={{ color: 'var(--fg3)', fontWeight: '400' }}>About</Link>
             <Link href="/writing" style={{ color: 'var(--fg3)', fontWeight: '400' }}>Writing</Link>
-            <Link href="/projects" style={{ color: 'var(--fg3)', fontWeight: '400' }}>Projects</Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <Link href="/projects" style={{ color: 'var(--fg3)', fontWeight: '400' }}>Projects</Link>
+              <ThemeToggle />
+            </div>
           </nav>
         </div>
       </div>

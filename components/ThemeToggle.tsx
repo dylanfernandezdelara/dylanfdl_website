@@ -60,7 +60,7 @@ export default function ThemeToggle() {
         minWidth: '44px',
         minHeight: '44px',
         color: 'var(--fg2)',
-        fontSize: '1.25rem',
+        fontSize: '1rem',
         background: 'transparent',
         border: 'none',
         cursor: 'pointer',
