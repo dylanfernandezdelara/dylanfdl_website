@@ -4,17 +4,24 @@ import { useEffect, useState } from 'react'
 import { Around } from '@theme-toggles/react'
 import '@theme-toggles/react/css/Around.css'
 
+// Initialize theme synchronously on client side
+function getInitialTheme(): 'light' | 'dark' {
+  if (typeof window === 'undefined') return 'light'
+  const docTheme = document.documentElement.getAttribute('data-theme')
+  const savedTheme = localStorage.getItem('theme')
+  return (docTheme || savedTheme || 'light') as 'light' | 'dark'
+}
+
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // Ensure document element has the correct theme on mount
+    const currentTheme = getInitialTheme()
+    document.documentElement.setAttribute('data-theme', currentTheme)
+    setTheme(currentTheme)
     setMounted(true)
-    // Check localStorage or default to light
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
-    const initialTheme = savedTheme || 'light'
-    setTheme(initialTheme)
-    document.documentElement.setAttribute('data-theme', initialTheme)
   }, [])
 
   const handleToggle = (toggled: boolean) => {

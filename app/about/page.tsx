@@ -27,7 +27,7 @@ export default function About() {
             </Link>
           </h1>
           <nav style={{
-            fontSize: '1rem',
+            fontSize: '0.875rem',
             display: 'flex',
             alignItems: 'center',
             gap: '2rem',

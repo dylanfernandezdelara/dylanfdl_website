@@ -19,7 +19,7 @@ export default function Writing() {
           flexWrap: 'wrap'
         }}>
           <h1 style={{
-            fontSize: '1.25rem',
+            fontSize: '1rem',
             fontWeight: '700',
             margin: 0,
             color: 'var(--yellow)'
