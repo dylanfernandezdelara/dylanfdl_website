@@ -60,7 +60,7 @@ export default function About() {
             About me
           </h1>
           <p style={{ marginBottom: '1.5rem', color: 'var(--fg1)' }}>
-            {`Hi, I am Dylan.`}
+            {`I'm Dylan.`}
           </p>
 
           <p style={{ marginBottom: '1.5rem', color: 'var(--fg1)' }}>
@@ -124,7 +124,7 @@ export default function About() {
           }}>
             <li style={{ marginBottom: '0.25rem' }}>
               <a
-                href="https://youtu.be/WlSkFFIchMw?si=JXtKrlzzQC1ZexXi"
+                href="https://youtu.be/WlSkFFIchMw?si=A3N296fd7kTbMch1"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
