@@ -23,8 +23,8 @@ export default function NotFound() {
           gap: '2rem',
           color: 'var(--fg3)'
         }}>
-          <Link href="/about" style={{ color: 'var(--fg3)', fontWeight: '700' }}>About</Link>
-          <Link href="/writing" style={{ color: 'var(--aqua)', fontWeight: '700' }}>Writing</Link>
+          <Link href="/about" style={{ color: 'var(--fg3)', fontWeight: '400' }}>About</Link>
+          <Link href="/writing" style={{ color: 'var(--aqua)', fontWeight: '400' }}>Writing</Link>
         </nav>
       </div>
 

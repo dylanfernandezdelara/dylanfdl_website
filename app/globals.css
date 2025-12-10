@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* iOS Safe Area Support */
 @supports (padding: max(0px)) {
@@ -99,12 +99,12 @@
 /* Seoul256 light mode */
 [data-theme="light"] {
   /* Seoul256 light palette */
-  --bg0-hard: #f0f0f0;
-  --bg0: #f8f8f8;
-  --bg1: #e8e8e8;
-  --bg2: #d8d8d8;
-  --bg3: #c8c8c8;
-  --bg4: #b8b8b8;
+  --bg0-hard: #faf8f0;
+  --bg0: #fffef8;
+  --bg1: #faf8f0;
+  --bg2: #f5f2e8;
+  --bg3: #f0ede0;
+  --bg4: #ebe8d8;
   
   --fg0: #2a2a2a;
   --fg1: #3a3a3a;
@@ -131,25 +131,25 @@
 }
 
 html {
-  font-size: 16px;
+  font-size: 18px;
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: unset;
 }
 
 @media (max-width: 768px) {
   html {
-    font-size: 15px;
+    font-size: 17px;
   }
 }
 
 @media (max-width: 480px) {
   html {
-    font-size: 14px;
+    font-size: 16px;
   }
 }
 
 body {
-  font-family: 'Fira Code', 'Fira Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
   color: var(--text-color);
   background-color: var(--bg-color);
   line-height: 1.5;
@@ -162,7 +162,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 500;
-  font-feature-settings: 'liga' 1, 'calt' 1;
   word-wrap: break-word;
   overflow-x: hidden;
   -webkit-text-size-adjust: 100%; /* Prevent iOS text size adjustment */
@@ -179,8 +178,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   color: var(--fg0);
-  font-family: 'Fira Code', 'Fira Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
-  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
 a {
@@ -220,7 +218,7 @@ a:hover {
 }
 
 .container {
-  max-width: 80ch;
+  max-width: 65ch;
   margin: 0 auto;
   padding: 0 2rem;
 }
@@ -238,7 +236,7 @@ a:hover {
 }
 
 .content-wrapper {
-  max-width: 80ch;
+  max-width: 65ch;
   margin: 0 auto;
   padding-left: 2rem;
   padding-right: 2rem;
@@ -274,7 +272,7 @@ nav {
 @media (max-width: 480px) {
   nav {
     gap: 1rem;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
   }
 }
 
@@ -287,17 +285,16 @@ nav {
   background-color: var(--bg1);
   border-top: 1px solid var(--bg2);
   padding: 0.5rem 1rem;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--fg3);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
-  font-family: 'Fira Code', 'Fira Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
   z-index: 1000;
   box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.2);
-  font-feature-settings: 'liga' 1, 'calt' 1;
   /* Ensure status bar stays above content on mobile */
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
@@ -306,7 +303,7 @@ nav {
 @media (max-width: 768px) {
   .vim-status-bar {
     padding: 0.5rem 0.75rem;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     gap: 0.25rem;
   }
 }
@@ -314,11 +311,11 @@ nav {
 @media (max-width: 480px) {
   .vim-status-bar {
     padding: 0.5rem 0.5rem;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
   }
   
   .vim-status-right {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
   }
 }
 
@@ -333,8 +330,7 @@ nav {
 
 .vim-status-right {
   color: var(--gray);
-  font-family: 'Fira Code', 'Fira Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
-  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
   white-space: nowrap;
 }
 
@@ -473,13 +469,12 @@ article blockquote {
 }
 
 article code {
-  font-family: 'Fira Code', 'Fira Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
+  font-family: ui-monospace, SFMono-Regular, 'Cascadia Code', 'IBM Plex Mono', 'Roboto Mono', 'DejaVu Sans Mono', 'Liberation Mono', Menlo, Monaco, 'Consolas', 'Source Code Pro', monospace;
   font-size: 0.9em;
   background-color: var(--bg1);
   color: var(--purple);
   padding: 0.2em 0.4em;
   border: 1px solid var(--bg2);
-  font-feature-settings: 'liga' 1, 'calt' 1;
 }
 
 article pre {
@@ -649,15 +644,41 @@ pre {
 }
 
 /* Override theme-toggles default colors */
+.theme-toggle {
+  display: flex !important;
+  visibility: visible !important;
+}
+
 .theme-toggle svg {
   fill: var(--fg2);
   stroke: var(--fg2);
+  display: block;
+  visibility: visible;
 }
 
 .theme-toggle:hover svg {
   fill: var(--blue);
   stroke: var(--blue);
 }
+
+/* Simple rotation animation for dots around sun in light mode */
+@keyframes rotate-dots {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Rotate dots around the sun when hovering in light mode */
+@media (hover: hover) and (pointer: fine) {
+  .theme-toggle-light:hover svg .theme-toggle__around > g {
+    animation: rotate-dots 4s linear infinite;
+    transform-origin: center center;
+  }
+}
+
 
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
@@ -675,6 +696,30 @@ pre {
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+}
+
+/* Rainbow animation for letters */
+@keyframes rainbow {
+  0% { color: #ff0000; }   /* Red */
+  14.28% { color: #ff7f00; } /* Orange */
+  28.56% { color: #ffff00; } /* Yellow */
+  42.84% { color: #00ff00; } /* Green */
+  57.12% { color: #0000ff; } /* Blue */
+  71.4% { color: #4b0082; }  /* Indigo */
+  85.68% { color: #9400d3; } /* Violet */
+  100% { color: #ff0000; }   /* Back to Red */
+}
+
+.rainbow-letter {
+  display: inline-block;
+  animation: rainbow 3s linear infinite;
+}
+
+/* Reduced motion support for rainbow animation */
+@media (prefers-reduced-motion: reduce) {
+  .rainbow-letter {
+    animation: none;
   }
 }
 

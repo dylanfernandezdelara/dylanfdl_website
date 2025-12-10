@@ -41,12 +41,14 @@ export default function ThemeToggle() {
     )
   }
 
+  const isLightMode = theme === 'light'
+
   return (
     <Around
       toggled={theme === 'dark'}
       onToggle={handleToggle}
       duration={300}
-      className="theme-toggle"
+      className={`theme-toggle ${isLightMode ? 'theme-toggle-light' : ''}`}
       style={{
         minWidth: '44px',
         minHeight: '44px',

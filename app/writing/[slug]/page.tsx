@@ -59,9 +59,9 @@ export default async function PostPage({
             color: 'var(--fg3)'
           }}>
             <ThemeToggle />
-            <Link href="/about" style={{ color: 'var(--fg3)', fontWeight: '700' }}>About</Link>
-            <Link href="/writing" style={{ color: 'var(--fg3)', fontWeight: '700' }}>Writing</Link>
-            <Link href="/projects" style={{ color: 'var(--fg3)', fontWeight: '700' }}>Projects</Link>
+            <Link href="/about" style={{ color: 'var(--fg3)', fontWeight: '400' }}>About</Link>
+            <Link href="/writing" style={{ color: 'var(--fg3)', fontWeight: '400' }}>Writing</Link>
+            <Link href="/projects" style={{ color: 'var(--fg3)', fontWeight: '400' }}>Projects</Link>
           </nav>
         </div>
       </div>
