@@ -1,6 +1,11 @@
 import Link from 'next/link'
 import { getPostsByYear } from '@/lib/posts'
 import ThemeToggle from '@/components/ThemeToggle'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Writing',
+}
 
 export default function Writing() {
   const postsByYear = getPostsByYear()

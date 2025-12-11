@@ -4,6 +4,25 @@ import { getPostBySlug, getPostSlugs } from '@/lib/posts'
 import ThemeToggle from '@/components/ThemeToggle'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
+import type { Metadata } from 'next'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string }
+}): Promise<Metadata> {
+  const post = getPostBySlug(params.slug)
+  
+  if (!post) {
+    return {
+      title: 'Post not found',
+    }
+  }
+  
+  return {
+    title: post.title,
+  }
+}
 
 export async function generateStaticParams() {
   const slugs = getPostSlugs()

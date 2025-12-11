@@ -1,6 +1,11 @@
 import Link from 'next/link'
 import ThemeToggle from '@/components/ThemeToggle'
 import { ArrowUpRight } from 'lucide-react'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'About me',
+}
 
 export default function About() {
   return (

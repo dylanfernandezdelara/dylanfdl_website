@@ -2,7 +2,10 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Dylan Fernandez de Lara',
+  title: {
+    template: '%s — Dylan Fernandez de Lara',
+    default: 'Dylan Fernandez de Lara',
+  },
   description: 'Personal website',
 }
 

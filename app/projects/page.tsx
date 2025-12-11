@@ -1,5 +1,10 @@
 import Link from 'next/link'
 import ThemeToggle from '@/components/ThemeToggle'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Projects',
+}
 
 export default function Projects() {
   return (
