@@ -62,7 +62,7 @@ export default async function PostPage({
         }}>
           <h1 style={{
             fontSize: '1.25rem',
-            fontWeight: '700',
+            fontWeight: '500',
             margin: 0,
             color: 'var(--yellow)'
           }}>

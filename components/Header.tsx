@@ -16,7 +16,7 @@ export default function Header() {
       }}>
         <h1 style={{
           fontSize: '1rem',
-          fontWeight: '700',
+          fontWeight: '500',
           margin: 0,
           color: 'var(--yellow)'
         }}>

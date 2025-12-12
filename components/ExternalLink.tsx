@@ -3,9 +3,11 @@ import { ArrowUpRight } from 'lucide-react'
 interface ExternalLinkProps {
   href: string
   children: React.ReactNode
+  noUnderline?: boolean
+  thinGreyUnderline?: boolean
 }
 
-export default function ExternalLink({ href, children }: ExternalLinkProps) {
+export default function ExternalLink({ href, children, noUnderline = false, thinGreyUnderline = false }: ExternalLinkProps) {
   return (
     <a 
       href={href} 
@@ -13,7 +15,9 @@ export default function ExternalLink({ href, children }: ExternalLinkProps) {
       rel="noopener noreferrer"
       style={{ 
         color: 'var(--fg1)',
-        textDecoration: 'underline',
+        textDecoration: noUnderline ? 'none' : thinGreyUnderline ? 'underline' : 'underline',
+        textDecorationColor: thinGreyUnderline ? 'color-mix(in oklab, var(--gray), transparent 50%)' : undefined,
+        textDecorationThickness: thinGreyUnderline ? '1px' : undefined,
         display: 'inline-flex',
         alignItems: 'center',
         gap: '0.125rem'

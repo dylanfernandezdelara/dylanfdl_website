@@ -3,7 +3,7 @@ interface RainbowTextProps {
   delayMultiplier?: number
 }
 
-export default function RainbowText({ text, delayMultiplier = 0.15 }: RainbowTextProps) {
+export default function RainbowText({ text, delayMultiplier = 0.2 }: RainbowTextProps) {
   return (
     <>
       {text.split('').map((letter, index) => (

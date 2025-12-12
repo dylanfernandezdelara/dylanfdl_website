@@ -9,7 +9,7 @@ export default function NotFound() {
       }}>
         <h1 style={{
           fontSize: '1.25rem',
-          fontWeight: '700',
+          fontWeight: '500',
           marginBottom: '0.75rem',
           color: 'var(--yellow)'
         }}>

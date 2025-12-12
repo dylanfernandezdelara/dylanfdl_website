@@ -83,12 +83,12 @@ export default function About() {
 
           <ul style={LIST_STYLES}>
             <li style={LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/WlSkFFIchMw?si=A3N296fd7kTbMch1">
+              <ExternalLink href="https://youtu.be/WlSkFFIchMw?si=A3N296fd7kTbMch1" thinGreyUnderline>
                 Yale Symphony Orchestra Halloween Show (me acting ?!)
               </ExternalLink>
             </li>
             <li style={LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH">
+              <ExternalLink href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH" thinGreyUnderline>
                 NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"
               </ExternalLink>
             </li>
