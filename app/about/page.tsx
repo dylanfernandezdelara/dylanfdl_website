@@ -42,14 +42,6 @@ const CONTACT_SECTION_STYLES = {
   color: 'var(--fg2)'
 }
 
-const CONTACT_HEADING_STYLES = {
-  fontSize: '1.75rem',
-  fontWeight: '500',
-  marginTop: 0,
-  marginBottom: '0.5rem',
-  color: 'var(--fg1)'
-}
-
 export default function About() {
   return (
     <>
@@ -104,15 +96,12 @@ export default function About() {
 
           <hr style={HR_STYLES} />
 
-          <div style={CONTACT_SECTION_STYLES}>
-            <h2 style={CONTACT_HEADING_STYLES}>
-              Let's chat
-            </h2>
-            <div>
-              <ExternalLink href="#">Email</ExternalLink>
-              {', '}
-              <ExternalLink href="#">Threads</ExternalLink>
-            </div>
+          <div className="contactMeta" style={CONTACT_SECTION_STYLES}>
+            <span className="contactMeta__label">Let&apos;s chat</span>
+            <span className="contactMeta__dot" aria-hidden="true">·</span>
+            <a className="contactMeta__link" href="#">Email</a>
+            <span className="contactMeta__dot" aria-hidden="true">·</span>
+            <a className="contactMeta__link" href="#">Threads</a>
           </div>
         </div>
       </div>

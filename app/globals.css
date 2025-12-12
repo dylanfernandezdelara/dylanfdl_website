@@ -96,6 +96,41 @@
   --link-hover: var(--aqua);
 }
 
+/* Inline “meta” link row (About → Let's chat · Email · Threads) */
+.contactMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.contactMeta__label {
+  color: var(--fg2);
+}
+
+.contactMeta__dot {
+  color: color-mix(in oklab, var(--fg2), transparent 35%);
+  user-select: none;
+}
+
+.contactMeta__link {
+  color: var(--fg2);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+
+.contactMeta__link:hover {
+  color: var(--fg1);
+  border-bottom-color: color-mix(in oklab, var(--fg2), transparent 35%);
+}
+
+.contactMeta__link:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 3px;
+  border-bottom-color: transparent;
+}
+
 /* Seoul256 light mode */
 [data-theme="light"] {
   /* Seoul256 light palette */
