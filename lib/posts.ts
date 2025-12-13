@@ -12,6 +12,16 @@ export interface Post {
   content: string
 }
 
+export function formatPostDate(date: string, locale: string = 'en-US'): string {
+  const d = new Date(date)
+  if (Number.isNaN(d.getTime())) return date
+  return d.toLocaleDateString(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
+
 export function getPostSlugs(): string[] {
   if (!fs.existsSync(postsDirectory)) {
     return []
@@ -37,7 +47,7 @@ export function getPostBySlug(slug: string): Post | null {
       excerpt: data.excerpt || '',
       content,
     }
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -47,13 +57,7 @@ export function getAllPosts(): Post[] {
   const posts = slugs
     .map((slug) => getPostBySlug(slug))
     .filter((post): post is Post => post !== null)
-    .sort((a, b) => {
-      if (a.date < b.date) {
-        return 1
-      } else {
-        return -1
-      }
-    })
+    .sort((a, b) => b.date.localeCompare(a.date))
 
   return posts
 }
@@ -63,7 +67,7 @@ export function getPostsByYear(): Record<string, Post[]> {
   const postsByYear: Record<string, Post[]> = {}
 
   posts.forEach((post) => {
-    const year = post.date.substring(0, 4)
+    const year = post.date.slice(0, 4) || 'Unknown'
     if (!postsByYear[year]) {
       postsByYear[year] = []
     }
