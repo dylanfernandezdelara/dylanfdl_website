@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { getPostBySlug, getPostSlugs } from '@/lib/posts'
-import ThemeToggle from '@/components/ThemeToggle'
+import Header from '@/components/Header'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import type { Metadata } from 'next'
+import type { CSSProperties } from 'react'
 
 export async function generateMetadata({
   params,
@@ -31,6 +31,31 @@ export async function generateStaticParams() {
   }))
 }
 
+const CONTENT_WRAPPER_STYLE: CSSProperties = {
+  paddingTop: '3rem',
+  paddingBottom: '4rem',
+}
+
+const ARTICLE_TITLE_STYLE: CSSProperties = {
+  fontSize: '1.5rem',
+  fontWeight: '700',
+  marginBottom: '1rem',
+  lineHeight: '1.4',
+  color: 'var(--yellow)',
+}
+
+const ARTICLE_DATE_STYLE: CSSProperties = {
+  fontSize: '0.8125rem',
+  color: 'var(--gray)',
+  marginBottom: '2rem',
+}
+
+const ARTICLE_CONTENT_STYLE: CSSProperties = {
+  fontSize: '1rem',
+  lineHeight: '1.6',
+  color: 'var(--fg1)',
+}
+
 export default async function PostPage({
   params,
 }: {
@@ -49,77 +74,24 @@ export default async function PostPage({
 
   return (
     <>
-      <div className="container" style={{
-        paddingTop: '2rem',
-        paddingBottom: '1.5rem'
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '2rem',
-          flexWrap: 'wrap'
-        }}>
-          <h1 style={{
-            fontSize: '1.25rem',
-            fontWeight: '500',
-            margin: 0,
-            color: 'var(--yellow)'
-          }}>
-            <Link href="/about" style={{ color: 'var(--yellow)' }}>
-              Dylan Fernandez de Lara
-            </Link>
-          </h1>
-          <nav style={{
-            fontSize: '0.875rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '2rem',
-            color: 'var(--fg3)'
-          }}>
-            <Link href="/about" style={{ color: 'var(--fg3)', fontWeight: '400' }}>About</Link>
-            <Link href="/writing" style={{ color: 'var(--fg3)', fontWeight: '400' }}>Writing</Link>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <Link href="/projects" style={{ color: 'var(--fg3)', fontWeight: '400' }}>Projects</Link>
-              <ThemeToggle />
-            </div>
-          </nav>
-        </div>
-      </div>
+      <Header active="writing" nameFontSize="1.25rem" />
 
-      <div className="content-wrapper" style={{
-        paddingTop: '3rem',
-        paddingBottom: '4rem'
-      }}>
+      <div className="content-wrapper" style={CONTENT_WRAPPER_STYLE}>
         <article>
-          <h1 style={{
-            fontSize: '1.5rem',
-            fontWeight: '700',
-            marginBottom: '1rem',
-            lineHeight: '1.4',
-            color: 'var(--yellow)'
-          }}>
+          <h1 style={ARTICLE_TITLE_STYLE}>
             {post.title}
           </h1>
 
-          <p style={{
-            fontSize: '0.8125rem',
-            color: 'var(--gray)',
-            marginBottom: '2rem'
-          }}>
+          <p style={ARTICLE_DATE_STYLE}>
             {new Date(post.date).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
-              day: 'numeric'
+              day: 'numeric',
             })}
           </p>
 
           <div 
-            style={{
-              fontSize: '1rem',
-              lineHeight: '1.6',
-              color: 'var(--fg1)'
-            }}
+            style={ARTICLE_CONTENT_STYLE}
             dangerouslySetInnerHTML={{ __html: contentHtml }}
           />
         </article>
