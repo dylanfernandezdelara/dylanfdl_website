@@ -756,11 +756,11 @@ pre {
   45% { color: #FFBE5C; }  /* Orange-Yellow blend */
   50% { color: #FFC653; }  /* Orange-Yellow blend */
   55% { color: #FFCE5F; }  /* Orange-Yellow-Yellow blend */
-  60% { color: #FFD966; }  /* Yellow */
-  65% { color: #FFDD66; }  /* Yellow-YellowGold blend */
-  70% { color: #FFE066; }  /* Yellow-Gold blend */
-  75% { color: #FFE333; }  /* Yellow-Gold blend 2 */
-  80% { color: #FFD700; }  /* Gold */
+  60% { color: #CC9900; }  /* Darker Yellow */
+  65% { color: #B8860B; }  /* Dark Goldenrod */
+  70% { color: #A67C00; }  /* Darker Gold */
+  75% { color: #996600; }  /* Dark Gold */
+  80% { color: #B8860B; }  /* Dark Goldenrod */
   85% { color: #FFD199; }  /* Gold-Orange blend */
   90% { color: #FFC653; }  /* Gold-Orange blend */
   95% { color: #FFB366; }  /* Gold-Orange-Red blend */
