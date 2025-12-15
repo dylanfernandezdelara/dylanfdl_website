@@ -771,3 +771,152 @@ pre {
   }
 }
 
+/* About page responsive spacing */
+.about-paragraph {
+  margin-bottom: 1.5rem;
+  color: var(--fg1);
+}
+
+@media (max-width: 768px) {
+  .about-paragraph {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-paragraph {
+    margin-bottom: 0.75rem;
+  }
+}
+
+.about-list {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+  color: var(--gray);
+  list-style-type: disc;
+}
+
+@media (max-width: 768px) {
+  .about-list {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-list {
+    margin-bottom: 0.75rem;
+  }
+}
+
+.about-hr {
+  border: none;
+  border-top: 1px solid var(--bg3);
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .about-hr {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-hr {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.about-content-wrapper {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+@media (max-width: 768px) {
+  .about-content-wrapper {
+    padding-top: 0.75rem;
+    padding-bottom: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-content-wrapper {
+    padding-top: 0.5rem;
+    padding-bottom: 2rem;
+  }
+}
+
+/* Reduce Header padding on mobile for about page */
+.about-header-wrapper .container {
+  padding-top: 2rem;
+  padding-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .about-header-wrapper .container {
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-header-wrapper .container {
+    padding-top: 0.75rem;
+    padding-bottom: 0.25rem;
+  }
+}
+
+/* Reduce gap between name and navigation on mobile */
+.header-row {
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .header-row {
+    gap: 0.25rem;
+    row-gap: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-row {
+    gap: 0.125rem;
+    row-gap: 0.125rem;
+  }
+}
+
+/* Reduce PageHeader margin on mobile */
+.about-page-header h1 {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .about-page-header h1 {
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-page-header h1 {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.about-section-heading {
+  margin-top: 3rem !important;
+}
+
+@media (max-width: 768px) {
+  .about-section-heading {
+    margin-top: 2rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-section-heading {
+    margin-top: 1.5rem !important;
+  }
+}
+

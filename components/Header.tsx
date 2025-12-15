@@ -29,7 +29,6 @@ const ROW_STYLE: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: '2rem',
   flexWrap: 'wrap',
 }
 
@@ -65,7 +64,7 @@ export default function Header({
         paddingBottom,
       }}
     >
-      <div style={ROW_STYLE}>
+      <div className="header-row" style={ROW_STYLE}>
         <h1
           style={{
             fontSize: nameFontSize,
