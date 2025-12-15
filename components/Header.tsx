@@ -29,6 +29,7 @@ const ROW_STYLE: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+  gap: '2rem',
   flexWrap: 'wrap',
 }
 

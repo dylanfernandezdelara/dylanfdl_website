@@ -25,7 +25,7 @@ const LIST_STYLES = {
 }
 
 const LIST_ITEM_STYLES = {
-  marginBottom: '0.25rem'
+  marginBlock: '0'
 }
 
 const CONTACT_SECTION_STYLES = {
@@ -71,7 +71,7 @@ export default function About() {
             service and scaling server infrastructure to support an increasing number of devices.
           </p>
 
-          <SectionHeading marginTop="0" className="about-section-heading">Fun artifacts</SectionHeading>
+          <SectionHeading marginTop="0" className="about-section-heading fun-artifacts-heading">Fun artifacts</SectionHeading>
 
           <ul className="about-list" style={LIST_STYLES}>
             <li style={LIST_ITEM_STYLES}>
@@ -82,6 +82,11 @@ export default function About() {
             <li style={LIST_ITEM_STYLES}>
               <ExternalLink href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH" thinGreyUnderline>
                 NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"
+              </ExternalLink>
+            </li>
+            <li style={LIST_ITEM_STYLES}>
+              <ExternalLink href="https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK" thinGreyUnderline>
+                Yale Dance Lab and Yale Symphony Orchestra perform Stravinsky's Le Sacre du Printemps
               </ExternalLink>
             </li>
           </ul>
