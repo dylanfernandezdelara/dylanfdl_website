@@ -1,11 +1,7 @@
 ---
-title: "Hello 2025"
-date: "2025-01-05"
-excerpt: "A quick hello to kick off 2025 and test the writing section."
+title: "[TBD] Title in Progress"
+date: "2025-12-15"
+excerpt: "[TBD]"
 ---
 
-This is a sample essay for 2025. Replace it with your own writing.
-
-- It lives in `content/writing/`
-- It uses frontmatter for `title`, `date`, and `excerpt`
-- The writing lists update automatically when you add more files
+This is an essay that I would like to write on how I've relearned how to learn in my years since Yale, and how, I've restored the ways I used to learn as a child.
