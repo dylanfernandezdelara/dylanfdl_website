@@ -71,6 +71,11 @@ export default function About() {
                 Yale Dance Lab and Yale Symphony Orchestra perform Stravinsky's Le Sacre du Printemps
               </ExternalLink>
             </li>
+            <li style={LIST_ITEM_STYLES}>
+              <ExternalLink href="/dylan_fdl_final_report.pdf" thinGreyUnderline>
+                Yale College Senior Thesis
+              </ExternalLink>
+            </li>
           </ul>
 
           <hr className="about-hr" />
