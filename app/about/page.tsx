@@ -43,7 +43,7 @@ export default function About() {
           </p>
 
           <p className="about-paragraph" style={PARAGRAPH_STYLES}>
-            I am a Yale graduate, and I'm an engineer on the{' '}
+            I am a Yale graduate and an engineer on the{' '}
             <ExternalLink href="https://www.meta.com/ai-glasses/meta-ray-ban-display/">
               Wearables
             </ExternalLink>
