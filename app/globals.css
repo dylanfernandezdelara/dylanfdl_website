@@ -782,25 +782,25 @@ pre {
 /* Warm color animation for letters - lava lamp effect */
 @keyframes rainbow {
   0% { color: #FF6B7A; }   /* Red */
-  5% { color: #FF7268; }   /* Red-RedOrange blend */
-  10% { color: #FF7A5C; }  /* Red-Orange blend */
-  15% { color: #FF8350; }  /* Red-Orange blend 2 */
-  20% { color: #FF8C42; }  /* Red-Orange */
-  25% { color: #FF9536; }   /* Red-Orange-Orange blend */
-  30% { color: #FF9F3A; }  /* Orange blend */
-  35% { color: #FFA850; }  /* Orange blend 2 */
-  40% { color: #FFB366; }  /* Orange */
-  45% { color: #FFBE5C; }  /* Orange-Yellow blend */
-  50% { color: #FFC653; }  /* Orange-Yellow blend */
-  55% { color: #FFCE5F; }  /* Orange-Yellow-Yellow blend */
-  60% { color: #CC9900; }  /* Darker Yellow */
-  65% { color: #B8860B; }  /* Dark Goldenrod */
-  70% { color: #A67C00; }  /* Darker Gold */
-  75% { color: #996600; }  /* Dark Gold */
-  80% { color: #B8860B; }  /* Dark Goldenrod */
-  85% { color: #FFD199; }  /* Gold-Orange blend */
-  90% { color: #FFC653; }  /* Gold-Orange blend */
-  95% { color: #FFB366; }  /* Gold-Orange-Red blend */
+  5% { color: #FF6347; }   /* Tomato Red */
+  10% { color: #FF4500; }  /* Orange Red */
+  15% { color: #FF6347; }  /* Tomato Red */
+  20% { color: #FF7F50; }  /* Coral */
+  25% { color: #FF8C42; }  /* Orange */
+  30% { color: #FF8C00; }  /* Dark Orange */
+  35% { color: #FFA500; }  /* Orange */
+  40% { color: #FF8C00; }  /* Dark Orange */
+  45% { color: #FFC125; }  /* Golden Yellow */
+  50% { color: #FFD700; }  /* Gold */
+  55% { color: #FFA500; }  /* Orange */
+  60% { color: #FFC125; }  /* Golden Yellow */
+  65% { color: #FFD700; }  /* Gold */
+  70% { color: #FFC125; }  /* Golden Yellow */
+  75% { color: #FFA500; }  /* Orange */
+  80% { color: #FF8C00; }  /* Dark Orange */
+  85% { color: #FF7F50; }  /* Coral */
+  90% { color: #FF6347; }  /* Tomato Red */
+  95% { color: #FF4500; }  /* Orange Red */
   100% { color: #FF6B7A; } /* Back to Red */
 }
 

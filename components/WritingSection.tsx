@@ -36,7 +36,7 @@ export default function WritingSection() {
 
   if (years.length === 0) {
     return (
-      <div>
+      <div style={{ marginTop: '3rem' }}>
         <SectionHeading
           marginTop="0"
           className="about-section-heading fun-artifacts-heading"
@@ -52,7 +52,7 @@ export default function WritingSection() {
   }
 
   return (
-    <div>
+    <div style={{ marginTop: '3rem' }}>
       {years.map((year, index) => (
         <div key={year} style={{ marginTop: index === 0 ? '0' : '2rem' }}>
           <SectionHeading
