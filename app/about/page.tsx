@@ -62,18 +62,13 @@ export default function About() {
               </ExternalLink>
             </li>
             <li style={LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH" thinGreyUnderline>
-                NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"
-              </ExternalLink>
-            </li>
-            <li style={LIST_ITEM_STYLES}>
               <ExternalLink href="https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK" thinGreyUnderline>
                 Yale Dance Lab and Yale Symphony Orchestra perform Stravinsky's Le Sacre du Printemps
               </ExternalLink>
             </li>
             <li style={LIST_ITEM_STYLES}>
-              <ExternalLink href="/dylan_fdl_final_report.pdf" thinGreyUnderline>
-                Yale College Senior Thesis
+              <ExternalLink href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH" thinGreyUnderline>
+                NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"
               </ExternalLink>
             </li>
           </ul>
