@@ -1,8 +1,7 @@
-import Header from '@/components/Header'
 import type { CSSProperties } from 'react'
 
 const CONTENT_WRAPPER_STYLE: CSSProperties = {
-  paddingTop: '2rem',
+  paddingTop: '3rem',
   paddingBottom: '4rem',
 }
 
@@ -16,8 +15,6 @@ const INTRO_TEXT_STYLE: CSSProperties = {
 export default function Home() {
   return (
     <>
-      <Header />
-
       <div className="content-wrapper" style={CONTENT_WRAPPER_STYLE}>
         <p style={INTRO_TEXT_STYLE}>
           [A brief introduction or statement about yourself. This should feel personal and direct, not like a tagline.]

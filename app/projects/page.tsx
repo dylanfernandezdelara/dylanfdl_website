@@ -1,4 +1,3 @@
-import Header from '@/components/Header'
 import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
 
@@ -24,8 +23,6 @@ const PARAGRAPH_STYLE: CSSProperties = {
 export default function Projects() {
   return (
     <>
-      <Header active="projects" />
-
       <div className="content-wrapper" style={CONTENT_WRAPPER_STYLE}>
         <div style={CONTENT_STYLE}>
           <p style={PARAGRAPH_STYLE}>

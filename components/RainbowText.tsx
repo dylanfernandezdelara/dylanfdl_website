@@ -92,7 +92,7 @@ function getInitialColor(delay: number): string {
 
 export default function RainbowText({ text, delayMultiplier = 0.2 }: RainbowTextProps) {
   return (
-    <>
+    <span style={{ display: 'inline-block' }}>
       {text.split('').map((letter, index) => {
         const delay = index * delayMultiplier
         const initialColor = getInitialColor(delay)
@@ -110,6 +110,6 @@ export default function RainbowText({ text, delayMultiplier = 0.2 }: RainbowText
           </span>
         )
       })}
-    </>
+    </span>
   )
 }

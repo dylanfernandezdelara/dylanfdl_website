@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Header from '@/components/Header'
 import type { CSSProperties } from 'react'
 
 const CONTENT_WRAPPER_STYLE: CSSProperties = {
@@ -28,8 +27,6 @@ const BACK_LINK_STYLE: CSSProperties = {
 export default function NotFound() {
   return (
     <>
-      <Header active={null} nameFontSize="1.25rem" />
-
       <div className="content-wrapper" style={CONTENT_WRAPPER_STYLE}>
         <h1 style={ERROR_TITLE_STYLE}>
           404

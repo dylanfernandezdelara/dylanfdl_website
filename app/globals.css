@@ -34,25 +34,25 @@
   
   @media (max-width: 768px) {
     .container {
-      padding-left: max(1rem, env(safe-area-inset-left));
-      padding-right: max(1rem, env(safe-area-inset-right));
+      padding-left: max(1.5rem, env(safe-area-inset-left));
+      padding-right: max(1.5rem, env(safe-area-inset-right));
     }
     
     .content-wrapper {
-      padding-left: max(1rem, env(safe-area-inset-left));
-      padding-right: max(1rem, env(safe-area-inset-right));
+      padding-left: max(1.5rem, env(safe-area-inset-left));
+      padding-right: max(1.5rem, env(safe-area-inset-right));
     }
   }
   
   @media (max-width: 480px) {
     .container {
-      padding-left: max(0.75rem, env(safe-area-inset-left));
-      padding-right: max(0.75rem, env(safe-area-inset-right));
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
     }
     
     .content-wrapper {
-      padding-left: max(0.75rem, env(safe-area-inset-left));
-      padding-right: max(0.75rem, env(safe-area-inset-right));
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
     }
   }
 }
@@ -227,6 +227,18 @@ a {
   transition: color 0.2s ease;
 }
 
+/* Override for inline text links to prevent vertical spacing issues */
+p a,
+.about-paragraph a,
+.contactMeta__link,
+article a,
+li a {
+  display: inline;
+  min-height: auto;
+  vertical-align: baseline;
+  line-height: inherit;
+}
+
 a.external-link {
   color: var(--fg1);
 }
@@ -268,13 +280,13 @@ a:hover {
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 1rem;
+    padding: 0 1.5rem;
   }
 }
 
 @media (max-width: 480px) {
   .container {
-    padding: 0 0.75rem;
+    padding: 0 1.25rem;
   }
 }
 
@@ -287,15 +299,17 @@ a:hover {
 
 @media (max-width: 768px) {
   .content-wrapper {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 3rem !important;
   }
 }
 
 @media (max-width: 480px) {
   .content-wrapper {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 3.5rem !important;
   }
 }
 
@@ -855,69 +869,15 @@ pre {
 
 @media (max-width: 768px) {
   .about-content-wrapper {
-    padding-top: 0.75rem;
+    padding-top: 3rem !important;
     padding-bottom: 2.5rem;
   }
 }
 
 @media (max-width: 480px) {
   .about-content-wrapper {
-    padding-top: 0.5rem;
+    padding-top: 3.5rem !important;
     padding-bottom: 2rem;
-  }
-}
-
-/* Reduce Header padding on mobile for about page */
-.about-header-wrapper .container {
-  padding-top: 2rem;
-  padding-bottom: 0.5rem;
-}
-
-@media (max-width: 768px) {
-  .about-header-wrapper .container {
-    padding-top: 1rem;
-    padding-bottom: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .about-header-wrapper .container {
-    padding-top: 0.75rem;
-    padding-bottom: 0.25rem;
-  }
-}
-
-/* Reduce gap between name and navigation on mobile */
-.header-row {
-  gap: 2rem;
-}
-
-@media (max-width: 768px) {
-  .header-row {
-    gap: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-row {
-    gap: 0.25rem;
-  }
-}
-
-/* Reduce PageHeader margin on mobile */
-.about-page-header h1 {
-  margin-bottom: 1rem;
-}
-
-@media (max-width: 768px) {
-  .about-page-header h1 {
-    margin-bottom: 0.75rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .about-page-header h1 {
-    margin-bottom: 0.5rem;
   }
 }
 

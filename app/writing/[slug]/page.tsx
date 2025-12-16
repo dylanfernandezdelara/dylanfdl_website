@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
 import { getPostBySlug, getPostSlugs } from '@/lib/posts'
-import Header from '@/components/Header'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import type { Metadata } from 'next'
@@ -74,8 +73,6 @@ export default async function PostPage({
 
   return (
     <>
-      <Header active="writing" nameFontSize="1.25rem" />
-
       <div className="content-wrapper" style={CONTENT_WRAPPER_STYLE}>
         <article>
           <h1 style={ARTICLE_TITLE_STYLE}>

@@ -1,7 +1,5 @@
-import Header from '@/components/Header'
 import ExternalLink from '@/components/ExternalLink'
 import RainbowText from '@/components/RainbowText'
-import PageHeader from '@/components/PageHeader'
 import SectionHeading from '@/components/SectionHeading'
 import type { Metadata } from 'next'
 
@@ -36,39 +34,23 @@ const CONTACT_SECTION_STYLES = {
 export default function About() {
   return (
     <>
-      <div className="about-header-wrapper">
-        <Header />
-      </div>
-
       <div className="content-wrapper about-content-wrapper">
         <div style={CONTENT_STYLES}>
-          <div className="about-page-header">
-            <PageHeader title="About me" />
-          </div>
-
           <p className="about-paragraph" style={PARAGRAPH_STYLES}>
-            I'm Dylan.
+            I'm Dylan. I am an{' '}
+            <RainbowText text="optimist." />
           </p>
 
           <p className="about-paragraph" style={PARAGRAPH_STYLES}>
-            I am an{' '}
-            <RainbowText text="optimist" />
-            {' '}and believe that technology can be used for good.
-          </p>
-
-          <p className="about-paragraph" style={PARAGRAPH_STYLES}>
-            I am a Yale graduate and based in New York.
-            <br />
-            I am an engineer on the{' '}
+            I am a Yale graduate, and I'm an engineer on the{' '}
             <ExternalLink href="https://www.meta.com/ai-glasses/meta-ray-ban-display/">
               Wearables
             </ExternalLink>
-            {' '}Core OS team at Meta Reality Labs.
+            {' '}Core OS team at Meta in New York.
           </p>
 
           <p className="about-paragraph" style={PARAGRAPH_STYLES}>
-            My recent work involves training ML models to reduce crashes in our lab, building out an Android crash reporting 
-            service and scaling server infrastructure to support an increasing number of devices.
+            I've been using ML to improve device stability across our lab and scaling infrastructure to support a growing number of devices.
           </p>
 
           <SectionHeading marginTop="0" className="about-section-heading fun-artifacts-heading">Fun artifacts</SectionHeading>

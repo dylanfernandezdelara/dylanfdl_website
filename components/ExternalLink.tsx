@@ -27,13 +27,13 @@ export default function ExternalLink({
         textDecoration: noUnderline ? 'none' : thinGreyUnderline ? 'underline' : 'underline',
         textDecorationColor: thinGreyUnderline ? 'color-mix(in oklab, var(--gray), transparent 50%)' : undefined,
         textDecorationThickness: thinGreyUnderline ? '1px' : undefined,
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '0.125rem'
+        display: 'inline',
+        verticalAlign: 'baseline',
+        lineHeight: 'inherit'
       }}
     >
       {children}
-      <ArrowUpRight size={10} style={{ flexShrink: 0 }} />
+      <ArrowUpRight size={8} style={{ verticalAlign: 'baseline', display: 'inline-block', marginLeft: '0.125rem', marginBottom: '-0.125rem' }} />
     </a>
   )
 }

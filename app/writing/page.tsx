@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { getPostsByYear } from '@/lib/posts'
-import Header from '@/components/Header'
 import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
 
@@ -77,8 +76,6 @@ export default function Writing() {
 
   return (
     <>
-      <Header active="writing" />
-
       <div className="content-wrapper" style={CONTENT_WRAPPER_STYLE}>
         <div style={POSTS_CONTAINER_STYLE}>
           {Object.keys(postsByYear)

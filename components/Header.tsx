@@ -59,7 +59,7 @@ export default function Header({
 }: HeaderProps) {
   return (
     <div
-      className="container"
+      className="container header-container"
       style={{
         paddingTop: '2rem',
         paddingBottom,
