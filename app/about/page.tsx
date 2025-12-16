@@ -53,7 +53,7 @@ export default function About() {
             I've been using ML to improve device stability across our lab and scaling infrastructure to support a growing number of devices.
           </p>
 
-          <SectionHeading marginTop="0" className="about-section-heading fun-artifacts-heading">Fun artifacts</SectionHeading>
+          <SectionHeading marginTop="0" className="about-section-heading fun-artifacts-heading" style={{ color: 'var(--fg2)' }}>Fun artifacts</SectionHeading>
 
           <ul className="about-list" style={LIST_STYLES}>
             <li style={LIST_ITEM_STYLES}>
