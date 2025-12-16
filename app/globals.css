@@ -573,6 +573,29 @@ article a {
   transition: color 0.2s ease;
 }
 
+.essay-back-link {
+  color: var(--fg2);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color 120ms ease, text-decoration-color 120ms ease;
+}
+
+.essay-back-link:hover {
+  color: var(--fg1);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--fg2), transparent 40%);
+}
+
+.essay-back-link:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  text-decoration: none;
+}
+
 /* Only show hover on devices that support it */
 @media (hover: hover) and (pointer: fine) {
   article a:hover {

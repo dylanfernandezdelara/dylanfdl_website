@@ -34,8 +34,8 @@ export default function NotFound() {
         <p style={ERROR_MESSAGE_STYLE}>
           Page not found.
         </p>
-        <Link href="/" style={BACK_LINK_STYLE}>
-          ← Back to Home
+        <Link href="/about" style={BACK_LINK_STYLE}>
+          ← Back to About
         </Link>
       </div>
     </>

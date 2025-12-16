@@ -1,6 +1,7 @@
 import ExternalLink from '@/components/ExternalLink'
 import RainbowText from '@/components/RainbowText'
 import SectionHeading from '@/components/SectionHeading'
+import WritingSection from '@/components/WritingSection'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -52,6 +53,8 @@ export default function About() {
           <p className="about-paragraph" style={PARAGRAPH_STYLES}>
             I've been using ML to improve device stability across our lab and scaling infrastructure to support a growing number of devices.
           </p>
+
+          <WritingSection />
 
           <SectionHeading marginTop="0" className="about-section-heading fun-artifacts-heading" style={{ color: 'var(--fg2)' }}>Fun artifacts</SectionHeading>
 

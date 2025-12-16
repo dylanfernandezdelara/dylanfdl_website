@@ -22,6 +22,17 @@ export function formatPostDate(date: string, locale: string = 'en-US'): string {
   })
 }
 
+export function formatPostDateShort(date: string, locale: string = 'en-US'): string {
+  const d = new Date(date)
+  if (Number.isNaN(d.getTime())) return date
+  return d
+    .toLocaleDateString(locale, {
+      month: 'short',
+      day: 'numeric',
+    })
+    .replace(',', '')
+}
+
 export function getPostSlugs(): string[] {
   if (!fs.existsSync(postsDirectory)) {
     return []
