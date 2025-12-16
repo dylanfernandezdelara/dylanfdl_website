@@ -22,11 +22,11 @@ export default function NotFound() {
         }}>
           The post you're looking for doesn't exist.
         </p>
-        <Link href="/writing" style={{
+        <Link href="/about" style={{
           fontSize: '0.875rem',
           color: 'var(--blue)'
         }}>
-          ← Back to Writing
+          ← Back to About
         </Link>
       </div>
     </>

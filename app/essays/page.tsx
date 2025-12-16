@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Writing',
+  title: 'Essays',
 }
 
 const CONTENT_WRAPPER_STYLE: CSSProperties = {
@@ -71,7 +71,7 @@ const CODE_STYLE: CSSProperties = {
   border: '1px solid var(--bg2)',
 }
 
-export default function Writing() {
+export default function Essays() {
   const postsByYear = getPostsByYear()
 
   return (
@@ -88,7 +88,7 @@ export default function Writing() {
                 <div style={POSTS_LIST_STYLE}>
                   {postsByYear[year].map((post) => (
                     <div key={post.slug}>
-                      <Link href={`/writing/${post.slug}`} style={POST_LINK_STYLE}>
+                      <Link href={`/essays/${post.slug}`} style={POST_LINK_STYLE}>
                         <h3 style={POST_TITLE_STYLE}>
                           {post.title}
                         </h3>
@@ -114,7 +114,7 @@ export default function Writing() {
 
         {Object.keys(postsByYear).length === 0 && (
           <p style={EMPTY_STATE_STYLE}>
-            No posts yet. Create markdown files in <code style={CODE_STYLE}>content/writing/</code> to add your writing.
+            No essays yet. Create markdown files in <code style={CODE_STYLE}>content/essays/</code> to add your essays.
           </p>
         )}
       </div>

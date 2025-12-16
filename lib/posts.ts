@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
-const postsDirectory = path.join(process.cwd(), 'content/writing')
+const postsDirectory = path.join(process.cwd(), 'content/essays')
 
 export interface Post {
   slug: string

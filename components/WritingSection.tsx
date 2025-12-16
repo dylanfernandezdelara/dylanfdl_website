@@ -42,10 +42,10 @@ export default function WritingSection() {
           className="about-section-heading fun-artifacts-heading"
           style={{ color: 'var(--fg2)' }}
         >
-          Writing
+          Essays
         </SectionHeading>
         <p style={{ color: 'var(--fg1)', marginTop: '0.5rem' }}>
-          No essays yet. Add markdown files to <code>content/writing/</code> and they will appear here.
+          No essays yet. Add markdown files to <code>content/essays/</code> and they will appear here.
         </p>
       </div>
     )
@@ -67,7 +67,7 @@ export default function WritingSection() {
             {postsByYear[year].map((post) => (
               <li key={post.slug} style={ITEM_STYLE}>
                 <span style={DATE_STYLE}>{formatPostDateShort(post.date)}</span>
-                <Link href={`/writing/${post.slug}`} style={TITLE_STYLE}>
+                <Link href={`/essays/${post.slug}`} style={TITLE_STYLE}>
                   {post.title}
                 </Link>
               </li>
