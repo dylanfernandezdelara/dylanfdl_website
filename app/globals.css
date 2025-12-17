@@ -397,6 +397,13 @@ main {
   flex: 1;
 }
 
+/* Desktop: add top padding */
+@media (min-width: 769px) {
+  main {
+    padding-top: 2rem;
+  }
+}
+
 @media (max-width: 768px) {
   main {
     padding-bottom: 3.5rem;
