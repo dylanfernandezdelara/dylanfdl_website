@@ -4,7 +4,7 @@ import './globals.css'
 export const metadata: Metadata = {
   title: {
     template: '%s — Dylan Fernandez de Lara',
-    default: 'Dylan Fernandez de Lara',
+    default: 'dfdl',
   },
   description: 'Personal website',
 }
