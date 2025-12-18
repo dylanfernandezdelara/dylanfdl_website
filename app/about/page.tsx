@@ -56,7 +56,12 @@ export default function About() {
 
           <WritingSection />
 
-          <SectionHeading marginTop="0" className="about-section-heading fun-artifacts-heading" style={{ color: 'var(--fg2)' }}>Fun artifacts</SectionHeading>
+          <SectionHeading
+            className="about-section-heading fun-artifacts-heading fun-artifacts-section-heading"
+            style={{ color: 'var(--fg2)' }}
+          >
+            Fun artifacts
+          </SectionHeading>
 
           <ul className="about-list" style={LIST_STYLES}>
             <li style={LIST_ITEM_STYLES}>
