@@ -295,6 +295,7 @@ a:hover {
   margin: 0 auto;
   padding-left: 2rem;
   padding-right: 2rem;
+  padding-top: 4rem;
 }
 
 @media (max-width: 768px) {
@@ -893,7 +894,7 @@ pre {
 }
 
 .about-content-wrapper {
-  padding-top: 2rem;
+  padding-top: 4rem;
   padding-bottom: 4rem;
 }
 
