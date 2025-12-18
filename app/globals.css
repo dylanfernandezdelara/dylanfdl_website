@@ -166,7 +166,7 @@
 }
 
 html {
-  font-size: 17px;
+  font-size: 16px;
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: unset;
 }
@@ -179,7 +179,7 @@ html {
 
 @media (max-width: 480px) {
   html {
-    font-size: 15px;
+    font-size: 16px;
   }
 }
 
@@ -847,7 +847,6 @@ pre {
   padding-left: 1.5rem;
   color: var(--gray);
   list-style-type: disc;
-  font-size: 0.875rem;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;

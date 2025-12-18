@@ -20,7 +20,8 @@ const PARAGRAPH_STYLES = {
 const LIST_STYLES = {
   paddingLeft: '1.5rem',
   color: 'var(--gray)',
-  listStyleType: 'disc' as const
+  listStyleType: 'disc' as const,
+  fontSize: '1rem'
 }
 
 const LIST_ITEM_STYLES = {
