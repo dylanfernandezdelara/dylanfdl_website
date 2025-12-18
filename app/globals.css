@@ -844,7 +844,7 @@ pre {
 
 .about-list {
   margin: 0 0 1.5rem;
-  padding-left: 1.5rem;
+  padding-left: 0;
   color: var(--gray);
   list-style-type: disc;
   display: flex;

@@ -25,7 +25,18 @@ const LIST_STYLES = {
 }
 
 const LIST_ITEM_STYLES = {
-  marginBlock: '0'
+  marginBlock: '0.125rem'
+}
+
+const ARTIFACTS_LIST_STYLES = {
+  paddingLeft: '1.5rem',
+  color: 'var(--gray)',
+  listStyleType: 'circle' as const,
+  fontSize: '0.9rem'
+}
+
+const ARTIFACTS_LIST_ITEM_STYLES = {
+  marginBlock: '0.3rem'
 }
 
 const CONTACT_SECTION_STYLES = {
@@ -61,21 +72,21 @@ export default function About() {
             className="about-section-heading fun-artifacts-heading fun-artifacts-section-heading"
             style={{ color: 'var(--fg2)' }}
           >
-            Fun artifacts
+            Artifacts
           </SectionHeading>
 
-          <ul className="about-list" style={LIST_STYLES}>
-            <li style={LIST_ITEM_STYLES}>
+          <ul className="about-list" style={ARTIFACTS_LIST_STYLES}>
+            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
               <ExternalLink href="https://youtu.be/WlSkFFIchMw?si=A3N296fd7kTbMch1" thinGreyUnderline>
                 Yale Symphony Orchestra Halloween Show (me acting ?!)
               </ExternalLink>
             </li>
-            <li style={LIST_ITEM_STYLES}>
+            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
               <ExternalLink href="https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK" thinGreyUnderline>
                 Yale Dance Lab and Yale Symphony Orchestra perform Stravinsky's Le Sacre du Printemps
               </ExternalLink>
             </li>
-            <li style={LIST_ITEM_STYLES}>
+            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
               <ExternalLink href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH" thinGreyUnderline>
                 NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"
               </ExternalLink>
