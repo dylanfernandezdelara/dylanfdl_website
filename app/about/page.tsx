@@ -40,7 +40,7 @@ const ARTIFACTS_LIST_ITEM_STYLES = {
 }
 
 const CONTACT_SECTION_STYLES = {
-  fontSize: '1rem',
+  fontSize: '0.875rem',
   color: 'var(--fg2)'
 }
 
