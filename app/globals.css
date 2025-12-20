@@ -64,39 +64,39 @@
 }
 
 :root {
-  /* Seoul256 dark palette (default) */
-  --bg0-hard: #303030;
-  --bg0: #3a3a3a;
-  --bg1: #4e4e4e;
-  --bg2: #606060;
-  --bg3: #707070;
-  --bg4: #808080;
+  /* Seoul256 light palette */
+  --bg0-hard: #faf8f0;
+  --bg0: #fffef8;
+  --bg1: #faf8f0;
+  --bg2: #f5f2e8;
+  --bg3: #f0ede0;
+  --bg4: #ebe8d8;
   
-  --fg0: #e0e0e0;
-  --fg1: #d0d0d0;
-  --fg2: #b0b0b0;
-  --fg3: #909090;
-  --fg4: #808080;
+  --fg0: #2a2a2a;
+  --fg1: #3a3a3a;
+  --fg2: #4a4a4a;
+  --fg3: #5a5a5a;
+  --fg4: #6a6a6a;
   
-  --red: #d75f5f;
-  --green: #87af5f;
-  --yellow: #d7af5f;
-  --blue: #5f87af;
-  --purple: #af87af;
-  --aqua: #5fafaf;
-  --orange: #d7875f;
-  --gray: #808080;
+  --red: #af5f5f;
+  --green: #5f875f;
+  --yellow: #af875f;
+  --blue: #5f5faf;
+  --purple: #875f87;
+  --aqua: #5f8787;
+  --orange: #af875f;
+  --gray: #6a6a6a;
   
   /* Semantic colors */
   --text-color: var(--fg1);
   --bg-color: var(--bg0);
-  --border-color: var(--bg1);
+  --border-color: var(--bg2);
   --hover-color: var(--yellow);
   --link-color: var(--blue);
   --link-hover: var(--aqua);
 }
 
-/* Inline “meta” link row (About → Let's chat · Email · Threads) */
+/* Inline "meta" link row (About → Let's chat · Email · Threads) */
 .contactMeta {
   display: flex;
   flex-wrap: wrap;
@@ -129,40 +129,6 @@
   outline: 2px solid var(--link-color);
   outline-offset: 3px;
   border-bottom-color: transparent;
-}
-
-/* Seoul256 light mode */
-[data-theme="light"] {
-  /* Seoul256 light palette */
-  --bg0-hard: #faf8f0;
-  --bg0: #fffef8;
-  --bg1: #faf8f0;
-  --bg2: #f5f2e8;
-  --bg3: #f0ede0;
-  --bg4: #ebe8d8;
-  
-  --fg0: #2a2a2a;
-  --fg1: #3a3a3a;
-  --fg2: #4a4a4a;
-  --fg3: #5a5a5a;
-  --fg4: #6a6a6a;
-  
-  --red: #af5f5f;
-  --green: #5f875f;
-  --yellow: #af875f;
-  --blue: #5f5faf;
-  --purple: #875f87;
-  --aqua: #5f8787;
-  --orange: #af875f;
-  --gray: #6a6a6a;
-  
-  /* Semantic colors for light mode */
-  --text-color: var(--fg1);
-  --bg-color: var(--bg0);
-  --border-color: var(--bg2);
-  --hover-color: var(--yellow);
-  --link-color: var(--blue);
-  --link-hover: var(--aqua);
 }
 
 html {
@@ -377,7 +343,7 @@ nav {
   }
 }
 
-[data-theme="light"] .vim-status-bar {
+.vim-status-bar {
   box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -662,16 +628,6 @@ article em {
   color: var(--fg0);
 }
 
-[data-theme="light"] ::selection {
-  background-color: var(--bg2);
-  color: var(--fg0);
-}
-
-[data-theme="light"] ::-moz-selection {
-  background-color: var(--bg2);
-  color: var(--fg0);
-}
-
 /* Scrollbar styling for terminal feel */
 ::-webkit-scrollbar {
   width: 12px;
@@ -715,58 +671,6 @@ code {
 pre {
   font-variant-ligatures: none;
 }
-
-/* Theme toggle customization */
-.theme-toggle {
-  --tt-toggle-color: var(--fg2);
-  --tt-toggle-color-hover: var(--blue);
-  --tt-toggle-color-active: var(--aqua);
-}
-
-.theme-toggle:hover {
-  --tt-toggle-color: var(--blue);
-}
-
-.theme-toggle:active {
-  --tt-toggle-color: var(--aqua);
-}
-
-/* Override theme-toggles default colors */
-.theme-toggle {
-  display: flex !important;
-  visibility: visible !important;
-}
-
-.theme-toggle svg {
-  fill: var(--fg2);
-  stroke: var(--fg2);
-  display: block;
-  visibility: visible;
-}
-
-.theme-toggle:hover svg {
-  fill: var(--blue);
-  stroke: var(--blue);
-}
-
-/* Simple rotation animation for dots around sun in light mode */
-@keyframes rotate-dots {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Rotate dots around the sun when hovering in light mode */
-@media (hover: hover) and (pointer: fine) {
-  .theme-toggle-light:hover svg .theme-toggle__around > g {
-    animation: rotate-dots 4s linear infinite;
-    transform-origin: center center;
-  }
-}
-
 
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
