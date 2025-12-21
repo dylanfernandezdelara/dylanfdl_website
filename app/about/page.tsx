@@ -81,17 +81,17 @@ export default function About() {
 
           <ul className="about-list" style={ARTIFACTS_LIST_STYLES}>
             <li style={ARTIFACTS_LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/WlSkFFIchMw?si=A3N296fd7kTbMch1" thinGreyUnderline>
+              <ExternalLink href="https://youtu.be/WlSkFFIchMw?si=A3N296fd7kTbMch1" thinGreyUnderline allowWrap>
                 Yale Symphony Orchestra Halloween Show
               </ExternalLink>
             </li>
             <li style={ARTIFACTS_LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK" thinGreyUnderline>
+              <ExternalLink href="https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK" thinGreyUnderline allowWrap>
                 Yale Dance Lab and Yale Symphony Orchestra perform Stravinsky's Le Sacre du Printemps
               </ExternalLink>
             </li>
             <li style={ARTIFACTS_LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH" thinGreyUnderline>
+              <ExternalLink href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH" thinGreyUnderline allowWrap>
                 NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"
               </ExternalLink>
             </li>
@@ -100,8 +100,6 @@ export default function About() {
           <hr className="about-hr" />
 
           <div className="contactMeta" style={CONTACT_SECTION_STYLES}>
-            <span className="contactMeta__label">Let&apos;s chat</span>
-            <span className="contactMeta__dot" aria-hidden="true">·</span>
             <a className="contactMeta__link" href="#">Email</a>
             <span className="contactMeta__dot" aria-hidden="true">·</span>
             <a className="contactMeta__link" href="#">Threads</a>

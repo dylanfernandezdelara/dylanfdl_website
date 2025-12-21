@@ -213,6 +213,13 @@ a.external-link {
   color: var(--fg3);
 }
 
+@media (max-width: 768px) {
+  .about-list li {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+}
+
 a:hover {
   color: var(--link-hover);
 }

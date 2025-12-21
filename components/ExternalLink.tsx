@@ -6,6 +6,7 @@ interface ExternalLinkProps {
   noUnderline?: boolean
   thinGreyUnderline?: boolean
   className?: string
+  allowWrap?: boolean
 }
 
 export default function ExternalLink({
@@ -13,7 +14,8 @@ export default function ExternalLink({
   children,
   noUnderline = false,
   thinGreyUnderline = false,
-  className
+  className,
+  allowWrap = false
 }: ExternalLinkProps) {
   const classes = ['external-link', className].filter(Boolean).join(' ')
 
@@ -30,7 +32,7 @@ export default function ExternalLink({
         display: 'inline',
         verticalAlign: 'baseline',
         lineHeight: 'inherit',
-        whiteSpace: 'nowrap'
+        whiteSpace: allowWrap ? 'normal' : 'nowrap'
       }}
     >
       {children}
