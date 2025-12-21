@@ -1,1 +1,1 @@
-add the local changes to staging, create a commit, and push to main
+add the local changes to staging, create a commit, ensure the development branch exists, switch to it (or create it if it doesn't exist), and push to development. Never push to main unless explicitly requested.

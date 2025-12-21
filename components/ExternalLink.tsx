@@ -29,7 +29,8 @@ export default function ExternalLink({
         textDecorationThickness: thinGreyUnderline ? '1px' : undefined,
         display: 'inline',
         verticalAlign: 'baseline',
-        lineHeight: 'inherit'
+        lineHeight: 'inherit',
+        whiteSpace: 'nowrap'
       }}
     >
       {children}
