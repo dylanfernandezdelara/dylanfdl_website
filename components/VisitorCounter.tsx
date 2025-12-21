@@ -23,9 +23,12 @@ export default function VisitorCounter() {
   useEffect(() => {
     async function fetchCount() {
       try {
-        const response = await fetch('/api/visitor-count')
+        const response = await fetch('/api/visitor-count', { cache: 'no-store' })
+        if (!response.ok) {
+          throw new Error(`Failed to fetch visitor count (${response.status})`)
+        }
         const data = await response.json()
-        setCount(data.count)
+        setCount(typeof data?.count === 'number' ? data.count : 0)
         // Trigger fade-in after a small delay
         setTimeout(() => setIsVisible(true), 100)
       } catch (error) {

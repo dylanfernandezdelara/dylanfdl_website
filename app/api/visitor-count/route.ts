@@ -1,100 +1,129 @@
-import { put, head } from '@vercel/blob'
+import { BlobNotFoundError, head, put, type HeadBlobResult } from '@vercel/blob'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+
+export const dynamic = 'force-dynamic'
 
 const SESSION_COOKIE_NAME = 'visitor_session'
 const SESSION_DURATION_MINS = 30
 
-function getCounterFileName(): string {
-  // Use dev counter for local development, prod counter for production/preview
-  const isDev = process.env.NODE_ENV === 'development'
-  return isDev ? 'visitor-counter-dev.json' : 'visitor-counter-prod.json'
+function getCounterBucket(): 'dev' | 'preview' | 'prod' {
+  // Preserve existing blob naming (dev/prod) while optionally separating preview.
+  if (process.env.NODE_ENV === 'development') return 'dev'
+  if (process.env.VERCEL_ENV === 'preview') return 'preview'
+  return 'prod'
+}
+
+function hasBlobConfigured(): boolean {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN)
+}
+
+function getBlobCounterPathname(): string {
+  return `visitor-counter-${getCounterBucket()}.json`
+}
+
+async function readCountFromBlob(blob: HeadBlobResult): Promise<number> {
+  // `downloadUrl` tends to be the most reliable for fetching raw contents.
+  const urls = [blob.downloadUrl, blob.url].filter(Boolean)
+
+  let lastError: unknown
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { cache: 'no-store' })
+      if (!response.ok) {
+        throw new Error(`Failed to fetch blob contents (${response.status} ${response.statusText})`)
+      }
+
+      const raw = await response.text()
+      const data = JSON.parse(raw) as { count?: unknown }
+      const count = Number(data?.count)
+      return Number.isFinite(count) && count >= 0 ? count : 0
+    } catch (error) {
+      lastError = error
+    }
+  }
+
+  throw lastError ?? new Error('Failed to read blob contents')
 }
 
 async function getCount(): Promise<number> {
-  const fileName = getCounterFileName()
-  
-  try {
-    const blob = await head(fileName)
-    if (blob) {
-      const response = await fetch(blob.url)
-      const data = await response.json()
-      return data.count || 0
-    }
-  } catch (error) {
-    // Blob doesn't exist yet, or other error - start at 0
-    console.log('getCount error (expected if blob does not exist yet):', error)
+  if (!hasBlobConfigured()) {
+    throw new Error('Blob storage not configured (missing BLOB_READ_WRITE_TOKEN)')
   }
-  
-  return 0
+
+  const pathname = getBlobCounterPathname()
+  try {
+    const blob = await head(pathname)
+    return await readCountFromBlob(blob)
+  } catch (error) {
+    if (error instanceof BlobNotFoundError) return 0
+    throw error
+  }
 }
 
 async function incrementCount(): Promise<number> {
+  if (!hasBlobConfigured()) {
+    throw new Error('Blob storage not configured (missing BLOB_READ_WRITE_TOKEN)')
+  }
+
   const currentCount = await getCount()
   const newCount = currentCount + 1
-  const fileName = getCounterFileName()
-  
-  console.log(`Incrementing counter: ${currentCount} -> ${newCount}, file: ${fileName}`)
-  
-  try {
-    const blob = await put(fileName, JSON.stringify({ count: newCount }), {
-      access: 'public',
-      addRandomSuffix: false,
-      allowOverwrite: true,
-    })
-    console.log('Blob created/updated:', blob.url)
-  } catch (error) {
-    console.error('Failed to write blob:', error)
-    throw error
-  }
-  
+  const pathname = getBlobCounterPathname()
+
+  await put(pathname, JSON.stringify({ count: newCount }), {
+    access: 'public',
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: 'application/json',
+    cacheControlMaxAge: 60, // seconds (minimum is 60)
+  })
+
   return newCount
 }
 
 export async function GET() {
   try {
-    // Check if Blob token is configured
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
-      console.error('BLOB_READ_WRITE_TOKEN is not set')
+    if (!hasBlobConfigured()) {
       return NextResponse.json(
-        { error: 'Blob storage not configured', count: 0, isNewSession: false },
-        { status: 500 }
+        { error: 'Storage not configured', count: 0, isNewSession: false },
+        { status: 500, headers: { 'Cache-Control': 'no-store' } }
       )
     }
 
-    const cookieStore = await cookies()
+    const cookieStore = cookies()
     const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)
-    
-    let count: number
-    let isNewSession = false
-    
+
     if (!sessionCookie) {
-      // New session - increment the counter
-      count = await incrementCount()
-      isNewSession = true
-      
-      // Set session cookie
-      const response = NextResponse.json({ count, isNewSession })
+      // New session (30-minute de-dupe) -> increment the lifetime counter.
+      const count = await incrementCount()
+
+      const response = NextResponse.json(
+        { count, isNewSession: true },
+        { headers: { 'Cache-Control': 'no-store' } }
+      )
+
       response.cookies.set(SESSION_COOKIE_NAME, Date.now().toString(), {
-        httpOnly: false,
+        httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: SESSION_DURATION_MINS * 60, // 30 minutes in seconds
+        maxAge: SESSION_DURATION_MINS * 60,
         path: '/',
       })
-      
+
       return response
     }
-    
-    // Existing session - just return the count
-    count = await getCount()
-    
-    return NextResponse.json({ count, isNewSession })
+
+    // Existing session -> just read the current lifetime count.
+    const count = await getCount()
+    return NextResponse.json(
+      { count, isNewSession: false },
+      { headers: { 'Cache-Control': 'no-store' } }
+    )
   } catch (error) {
     console.error('Visitor count API error:', error)
     return NextResponse.json(
       { error: 'Internal server error', count: 0, isNewSession: false },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     )
   }
 }
