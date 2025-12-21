@@ -82,7 +82,7 @@ export default function About() {
           <ul className="about-list" style={ARTIFACTS_LIST_STYLES}>
             <li style={ARTIFACTS_LIST_ITEM_STYLES}>
               <ExternalLink href="https://youtu.be/WlSkFFIchMw?si=A3N296fd7kTbMch1" thinGreyUnderline>
-                Yale Symphony Orchestra Halloween Show (me acting ?!)
+                Yale Symphony Orchestra Halloween Show
               </ExternalLink>
             </li>
             <li style={ARTIFACTS_LIST_ITEM_STYLES}>
