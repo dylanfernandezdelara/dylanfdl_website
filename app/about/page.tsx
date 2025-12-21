@@ -1,6 +1,7 @@
 import ExternalLink from '@/components/ExternalLink'
 import RainbowText from '@/components/RainbowText'
 import SectionHeading from '@/components/SectionHeading'
+import VisitorCounter from '@/components/VisitorCounter'
 import WritingSection from '@/components/WritingSection'
 import type { Metadata } from 'next'
 
@@ -101,6 +102,8 @@ export default function About() {
             <a className="contactMeta__link" href="#">Email</a>
             <span className="contactMeta__dot" aria-hidden="true">·</span>
             <a className="contactMeta__link" href="#">Threads</a>
+            <span className="contactMeta__dot" aria-hidden="true">·</span>
+            <VisitorCounter />
           </div>
         </div>
       </div>
