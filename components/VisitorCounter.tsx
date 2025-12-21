@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react'
 
-// Visitor counter component
-
 const COUNTER_STYLES: React.CSSProperties = {
   opacity: 0,
   transition: 'opacity 0.6s ease-in-out',

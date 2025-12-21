@@ -64,7 +64,10 @@ export default function About() {
           </p>
 
           <p className="about-paragraph" style={PARAGRAPH_STYLES}>
-            I've been using ML to improve device stability across our lab and scaling infrastructure to support a growing number of devices.
+            I've been using ML to improve stability across our hardware fleet and scaling infrastructure to support a growing number of{' '}
+            <ExternalLink href="https://www.meta.com/ai-glasses/">
+              devices.
+            </ExternalLink>
           </p>
 
           <WritingSection />
