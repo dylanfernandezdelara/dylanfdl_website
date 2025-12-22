@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getPostBySlug, getPostSlugs } from '@/lib/posts'
+import { getPostBySlug, getPostSlugs, formatPostDate } from '@/lib/posts'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import type { Metadata } from 'next'
@@ -122,11 +122,7 @@ export default async function PostPage({
             </h1>
 
             <p style={ARTICLE_DATE_STYLE}>
-              {new Date(post.date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+              {formatPostDate(post.date)}
             </p>
           </header>
 

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getPostsByYear } from '@/lib/posts'
+import { getPostsByYear, formatPostDate } from '@/lib/posts'
 import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
 
@@ -94,11 +94,7 @@ export default function Essays() {
                         </h3>
                       </Link>
                       <p style={POST_DATE_STYLE}>
-                        {new Date(post.date).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
+                        {formatPostDate(post.date)}
                       </p>
                       {post.excerpt && (
                         <p style={POST_EXCERPT_STYLE}>
