@@ -20,7 +20,7 @@ const ITEM_STYLE: CSSProperties = {
 
 const DATE_STYLE: CSSProperties = {
   color: 'var(--gray)',
-  fontSize: '0.9rem',
+  fontSize: '1rem',
 }
 
 const TITLE_STYLE: CSSProperties = {
