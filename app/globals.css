@@ -51,8 +51,8 @@
     }
     
     .content-wrapper {
-    padding-left: max(1rem, env(safe-area-inset-left));
-    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-left: max(1.25rem, env(safe-area-inset-left));
+    padding-right: max(1.25rem, env(safe-area-inset-right));
     }
   }
 }
@@ -281,8 +281,8 @@ a:hover {
 
 @media (max-width: 480px) {
   .content-wrapper {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     padding-top: 3.5rem;
   }
 }
