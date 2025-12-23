@@ -16,12 +16,19 @@ export interface Post {
  * Formats a date string into a full date format (e.g., "January 15, 2025").
  * If the date is invalid, returns the original string unchanged.
  *
- * @param date - Date string to format
+ * @param date - Date string to format (expected format: YYYY-MM-DD)
  * @param locale - Locale for date formatting (default: 'en-US')
  * @returns Formatted date string or original string if invalid
  */
 export function formatPostDate(date: string, locale: string = 'en-US'): string {
-  const dateObject = new Date(date)
+  // Parse date string as local date to avoid timezone issues
+  // Date strings in YYYY-MM-DD format are parsed as UTC, which can cause off-by-one errors
+  const parts = date.split('-').map(Number)
+  if (parts.length !== 3 || parts.some(isNaN)) {
+    return date
+  }
+  
+  const dateObject = new Date(parts[0], parts[1] - 1, parts[2]) // month is 0-indexed
   if (Number.isNaN(dateObject.getTime())) {
     return date
   }
@@ -38,12 +45,19 @@ export function formatPostDate(date: string, locale: string = 'en-US'): string {
  * Removes the comma that toLocaleDateString adds between month and day.
  * If the date is invalid, returns the original string unchanged.
  *
- * @param date - Date string to format
+ * @param date - Date string to format (expected format: YYYY-MM-DD)
  * @param locale - Locale for date formatting (default: 'en-US')
  * @returns Formatted short date string or original string if invalid
  */
 export function formatPostDateShort(date: string, locale: string = 'en-US'): string {
-  const dateObject = new Date(date)
+  // Parse date string as local date to avoid timezone issues
+  // Date strings in YYYY-MM-DD format are parsed as UTC, which can cause off-by-one errors
+  const parts = date.split('-').map(Number)
+  if (parts.length !== 3 || parts.some(isNaN)) {
+    return date
+  }
+  
+  const dateObject = new Date(parts[0], parts[1] - 1, parts[2]) // month is 0-indexed
   if (Number.isNaN(dateObject.getTime())) {
     return date
   }

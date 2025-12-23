@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getPostBySlug, getPostSlugs } from '@/lib/posts'
+import { getPostBySlug, getPostSlugs, formatPostDate } from '@/lib/posts'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import type { Metadata } from 'next'
@@ -38,7 +38,7 @@ const CONTENT_WRAPPER_STYLE: CSSProperties = {
 
 const ARTICLE_LAYOUT_STYLE: CSSProperties = {
   display: 'grid',
-  gap: '1.75rem',
+  gap: '0',
 }
 
 const ARTICLE_HEADER_STYLE: CSSProperties = {
@@ -46,6 +46,8 @@ const ARTICLE_HEADER_STYLE: CSSProperties = {
   flexDirection: 'column',
   gap: '0.5rem',
   maxWidth: '60ch',
+  marginTop: '1.5rem',
+  marginBottom: '0',
 }
 
 const ARTICLE_TITLE_STYLE: CSSProperties = {
@@ -62,10 +64,20 @@ const ARTICLE_DATE_STYLE: CSSProperties = {
   color: 'var(--fg2)',
 }
 
+const ARTICLE_EXCERPT_STYLE: CSSProperties = {
+  fontSize: '1.0625rem',
+  fontStyle: 'italic',
+  color: 'var(--fg2)',
+  marginTop: '0.75rem',
+  lineHeight: '1.6',
+}
+
 const ARTICLE_DIVIDER_STYLE: CSSProperties = {
   height: '1px',
   width: '100%',
   backgroundColor: 'var(--bg2)',
+  marginTop: '0',
+  marginBottom: '1rem',
 }
 
 const ARTICLE_CONTENT_STYLE: CSSProperties = {
@@ -74,6 +86,7 @@ const ARTICLE_CONTENT_STYLE: CSSProperties = {
   color: 'var(--fg1)',
   display: 'grid',
   gap: '1.25rem',
+  marginTop: '0',
 }
 
 const BACK_LINK_STYLE: CSSProperties = {
@@ -102,6 +115,10 @@ export default async function PostPage({
     .process(post.content)
   const contentHtml = processedContent.toString()
 
+  // Count words in the content (split on whitespace, filter empty strings)
+  const wordCount = post.content.split(/\s+/).filter(word => word.length > 0).length
+  const showExcerpt = post.excerpt && wordCount > 500
+
   return (
     <>
       <div className="content-wrapper" style={CONTENT_WRAPPER_STYLE}>
@@ -122,12 +139,14 @@ export default async function PostPage({
             </h1>
 
             <p style={ARTICLE_DATE_STYLE}>
-              {new Date(post.date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+              {formatPostDate(post.date)}
             </p>
+
+            {showExcerpt && (
+              <p style={ARTICLE_EXCERPT_STYLE}>
+                {post.excerpt}
+              </p>
+            )}
           </header>
 
           <div style={ARTICLE_DIVIDER_STYLE} aria-hidden="true" />
