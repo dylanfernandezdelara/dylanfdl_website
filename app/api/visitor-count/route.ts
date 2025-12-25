@@ -7,6 +7,22 @@ export const dynamic = 'force-dynamic'
 const SESSION_COOKIE_NAME = 'visitor_session'
 const SESSION_DURATION_MINS = 30
 
+const COUNT_CACHE_TTL_MS = 15_000
+let cachedCount: { value: number; cachedAt: number } | null = null
+
+function setCachedCount(value: number) {
+  cachedCount = { value, cachedAt: Date.now() }
+}
+
+async function getCountCached(): Promise<number> {
+  if (cachedCount && Date.now() - cachedCount.cachedAt < COUNT_CACHE_TTL_MS) {
+    return cachedCount.value
+  }
+  const value = await getCount()
+  setCachedCount(value)
+  return value
+}
+
 function getCounterBucket(): 'dev' | 'preview' | 'prod' {
   // Preserve existing blob naming (dev/prod) while optionally separating preview.
   if (process.env.NODE_ENV === 'development') return 'dev'
@@ -78,6 +94,8 @@ async function incrementCount(): Promise<number> {
     cacheControlMaxAge: 60, // seconds (minimum is 60)
   })
 
+  setCachedCount(newCount)
+
   return newCount
 }
 
@@ -114,7 +132,7 @@ export async function GET() {
     }
 
     // Existing session -> just read the current lifetime count.
-    const count = await getCount()
+    const count = await getCountCached()
     return NextResponse.json(
       { count, isNewSession: false },
       { headers: { 'Cache-Control': 'no-store' } }
