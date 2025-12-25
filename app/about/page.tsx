@@ -100,7 +100,7 @@ export default function About() {
           <hr className="about-hr" />
 
           <div className="contactMeta" style={CONTACT_SECTION_STYLES}>
-            <a className="contactMeta__link" href="#">Email</a>
+            <a className="contactMeta__link" href="mailto:dylan.fernandezdelara@aya.yale.edu">Email</a>
             <span className="contactMeta__dot" aria-hidden="true">·</span>
             <a className="contactMeta__link" href="#">Threads</a>
             <span className="contactMeta__dot" aria-hidden="true">·</span>
