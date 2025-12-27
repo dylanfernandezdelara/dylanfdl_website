@@ -1,83 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* iOS Safe Area Support */
-@supports (padding: max(0px)) {
-  .vim-status-bar {
-    padding-left: max(1rem, env(safe-area-inset-left));
-    padding-right: max(1rem, env(safe-area-inset-right));
-    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
-  }
-  
-  @media (max-width: 768px) {
-    .vim-status-bar {
-      padding-left: max(0.75rem, env(safe-area-inset-left));
-      padding-right: max(0.75rem, env(safe-area-inset-right));
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .vim-status-bar {
-      padding-left: max(0.5rem, env(safe-area-inset-left));
-      padding-right: max(0.5rem, env(safe-area-inset-right));
-    }
-  }
-  
-  .container {
-    padding-left: max(2rem, env(safe-area-inset-left));
-    padding-right: max(2rem, env(safe-area-inset-right));
-  }
-  
-  .content-wrapper {
-    padding-left: max(2rem, env(safe-area-inset-left));
-    padding-right: max(2rem, env(safe-area-inset-right));
-  }
-  
-  @media (max-width: 768px) {
-    .container {
-      padding-left: max(1.5rem, env(safe-area-inset-left));
-      padding-right: max(1.5rem, env(safe-area-inset-right));
-    }
-    
-    .content-wrapper {
-      padding-left: max(1.5rem, env(safe-area-inset-left));
-      padding-right: max(1.5rem, env(safe-area-inset-right));
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .container {
-    padding-left: max(1rem, env(safe-area-inset-left));
-    padding-right: max(1rem, env(safe-area-inset-right));
-    }
-    
-    .content-wrapper {
-    padding-left: max(1.25rem, env(safe-area-inset-left));
-    padding-right: max(1.25rem, env(safe-area-inset-right));
-    }
-  }
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ==========================================================================
+   CSS Custom Properties
+   ========================================================================== */
 
 :root {
-  /* Seoul256 light palette */
+  /* Seoul256 light palette - Backgrounds */
   --bg0-hard: #faf8f0;
   --bg0: #fffef8;
   --bg1: #faf8f0;
   --bg2: #f5f2e8;
   --bg3: #f0ede0;
   --bg4: #ebe8d8;
-  
+
+  /* Seoul256 light palette - Foregrounds */
   --fg0: #2a2a2a;
   --fg1: #3a3a3a;
   --fg2: #4a4a4a;
   --fg3: #5a5a5a;
   --fg4: #6a6a6a;
-  
+
+  /* Seoul256 light palette - Colors */
   --red: #af5f5f;
   --green: #5f875f;
   --yellow: #af875f;
@@ -86,7 +29,7 @@
   --aqua: #5f8787;
   --orange: #af875f;
   --gray: #6a6a6a;
-  
+
   /* Semantic colors */
   --text-color: var(--fg1);
   --bg-color: var(--bg0);
@@ -96,40 +39,19 @@
   --link-hover: var(--aqua);
 }
 
-/* Inline "meta" link row (About → Let's chat · Email · Threads) */
-.contactMeta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5rem;
+/* ==========================================================================
+   CSS Reset
+   ========================================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.contactMeta__label {
-  color: var(--fg2);
-}
-
-.contactMeta__dot {
-  color: color-mix(in oklab, var(--fg2), transparent 35%);
-  user-select: none;
-}
-
-.contactMeta__link {
-  color: var(--fg2);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: color 120ms ease, border-color 120ms ease;
-}
-
-.contactMeta__link:hover {
-  color: var(--fg1);
-  border-bottom-color: color-mix(in oklab, var(--fg2), transparent 35%);
-}
-
-.contactMeta__link:focus-visible {
-  outline: 2px solid var(--link-color);
-  outline-offset: 3px;
-  border-bottom-color: transparent;
-}
+/* ==========================================================================
+   Base Elements
+   ========================================================================== */
 
 html {
   font-size: 16px;
@@ -151,6 +73,7 @@ html {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-weight: 500;
   color: var(--text-color);
   background-color: var(--bg-color);
   line-height: 1.5;
@@ -162,7 +85,6 @@ body {
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-weight: 500;
   word-wrap: break-word;
   overflow-x: hidden;
   -webkit-text-size-adjust: 100%; /* Prevent iOS text size adjustment */
@@ -176,11 +98,24 @@ body {
   }
 }
 
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
 h1, h2, h3, h4, h5, h6 {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
   font-weight: 700;
   color: var(--fg0);
-  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
 }
+
+code,
+pre {
+  font-variant-ligatures: none;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
 
 a {
   color: var(--link-color);
@@ -191,6 +126,16 @@ a {
   -webkit-tap-highlight-color: rgba(95, 135, 175, 0.2); /* Custom tap highlight */
   touch-action: manipulation;
   transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+@media (max-width: 768px) {
+  a {
+    min-height: 40px;
+  }
 }
 
 /* Override for inline text links to prevent vertical spacing issues */
@@ -220,10 +165,6 @@ a.external-link {
   }
 }
 
-a:hover {
-  color: var(--link-hover);
-}
-
 /* Only show hover on devices that support it */
 @media (hover: hover) and (pointer: fine) {
   a:hover {
@@ -239,11 +180,9 @@ a:hover {
   }
 }
 
-@media (max-width: 768px) {
-  a {
-    min-height: 40px;
-  }
-}
+/* ==========================================================================
+   Layout - Container & Content Wrapper
+   ========================================================================== */
 
 .container {
   max-width: 65ch;
@@ -287,7 +226,37 @@ a:hover {
   }
 }
 
-/* Navigation responsive styles */
+/* ==========================================================================
+   Layout - Main Content Area
+   ========================================================================== */
+
+main {
+  padding-bottom: 3rem;
+  flex: 1;
+}
+
+@media (min-width: 769px) {
+  main {
+    padding-top: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  main {
+    padding-bottom: 3.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  main {
+    padding-bottom: 4rem;
+  }
+}
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
 nav {
   display: flex;
   gap: 2rem;
@@ -307,15 +276,20 @@ nav {
   }
 }
 
-/* Vim-like status bar */
+/* ==========================================================================
+   Vim-like Status Bar
+   ========================================================================== */
+
 .vim-status-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 1000;
   background-color: var(--bg1);
   border-top: 1px solid var(--bg2);
   padding: 0.5rem 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
   font-size: 0.8125rem;
   color: var(--fg3);
   display: flex;
@@ -323,10 +297,7 @@ nav {
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
-  z-index: 1000;
-  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.2);
-  /* Ensure status bar stays above content on mobile */
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
@@ -344,14 +315,10 @@ nav {
     padding: 0.5rem 0.5rem;
     font-size: 0.7rem;
   }
-  
+
   .vim-status-right {
     font-size: 0.7rem;
   }
-}
-
-.vim-status-bar {
-  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .vim-status-left {
@@ -360,37 +327,82 @@ nav {
 }
 
 .vim-status-right {
-  color: var(--gray);
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
+  color: var(--gray);
   white-space: nowrap;
 }
 
-/* Main content area with padding for status bar */
-main {
-  padding-bottom: 3rem;
-  flex: 1;
+/* ==========================================================================
+   Contact Meta (Inline link row)
+   ========================================================================== */
+
+.contactMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
 }
 
-/* Desktop: add top padding */
-@media (min-width: 769px) {
-  main {
-    padding-top: 2rem;
-  }
+.contactMeta__label {
+  color: var(--fg2);
 }
 
-@media (max-width: 768px) {
-  main {
-    padding-bottom: 3.5rem;
-  }
+.contactMeta__dot {
+  color: color-mix(in oklab, var(--fg2), transparent 35%);
+  user-select: none;
 }
 
-@media (max-width: 480px) {
-  main {
-    padding-bottom: 4rem;
-  }
+.contactMeta__link {
+  color: var(--fg2);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 120ms ease, border-color 120ms ease;
 }
 
-/* Markdown content styling */
+.contactMeta__link:hover {
+  color: var(--fg1);
+  border-bottom-color: color-mix(in oklab, var(--fg2), transparent 35%);
+}
+
+.contactMeta__link:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 3px;
+  border-bottom-color: transparent;
+}
+
+/* ==========================================================================
+   Essay Back Link
+   ========================================================================== */
+
+.essay-back-link {
+  color: var(--fg2);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color 120ms ease, text-decoration-color 120ms ease;
+}
+
+.essay-back-link:hover {
+  color: var(--fg1);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--fg2), transparent 40%);
+}
+
+.essay-back-link:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   Article / Markdown Content
+   ========================================================================== */
+
+/* --- Headings --- */
+
 article h1,
 article h2,
 article h3,
@@ -455,10 +467,24 @@ article h3 {
   }
 }
 
+/* --- Paragraphs & Text --- */
+
 article p {
   margin-bottom: 1.5rem;
   color: var(--fg1);
 }
+
+article strong {
+  font-weight: 700;
+  color: var(--fg0);
+}
+
+article em {
+  font-style: italic;
+  color: var(--fg2);
+}
+
+/* --- Lists --- */
 
 article ul,
 article ol {
@@ -485,6 +511,8 @@ article li {
   color: var(--fg1);
 }
 
+/* --- Blockquotes --- */
+
 article blockquote {
   border-left: 2px solid var(--bg2);
   padding-left: 1.5rem;
@@ -505,6 +533,8 @@ article blockquote {
     padding-left: 0.75rem;
   }
 }
+
+/* --- Code --- */
 
 article code {
   font-family: ui-monospace, SFMono-Regular, 'Cascadia Code', 'IBM Plex Mono', 'Roboto Mono', 'DejaVu Sans Mono', 'Liberation Mono', Menlo, Monaco, 'Consolas', 'Source Code Pro', monospace;
@@ -545,6 +575,8 @@ article pre code {
   color: var(--fg1);
 }
 
+/* --- Links --- */
+
 article a {
   color: var(--blue);
   text-decoration: underline;
@@ -554,37 +586,12 @@ article a {
   transition: color 0.2s ease;
 }
 
-.essay-back-link {
-  color: var(--fg2);
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  transition: color 120ms ease, text-decoration-color 120ms ease;
-}
-
-.essay-back-link:hover {
-  color: var(--fg1);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in oklab, var(--fg2), transparent 40%);
-}
-
-.essay-back-link:focus-visible {
-  outline: 2px solid var(--blue);
-  outline-offset: 3px;
-  text-decoration: none;
-}
-
-/* Only show hover on devices that support it */
 @media (hover: hover) and (pointer: fine) {
   article a:hover {
     color: var(--aqua);
   }
 }
 
-/* Touch devices - use active state instead */
 @media (hover: none) and (pointer: coarse) {
   article a:active {
     color: var(--aqua);
@@ -592,11 +599,15 @@ article a {
   }
 }
 
+/* --- Horizontal Rules --- */
+
 article hr {
   border: none;
   border-top: 1px solid var(--bg2);
   margin: 2rem 0;
 }
+
+/* --- Images --- */
 
 article img {
   max-width: 100%;
@@ -604,7 +615,6 @@ article img {
   margin: 1.5rem 0;
   border: 1px solid var(--bg2);
   display: block;
-  /* Prevent layout shift - images should have width/height attributes in HTML */
   object-fit: contain;
 }
 
@@ -614,128 +624,29 @@ article img {
   }
 }
 
-article strong {
-  color: var(--fg0);
-  font-weight: 700;
+/* ==========================================================================
+   About Page
+   ========================================================================== */
+
+.about-content-wrapper {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 }
 
-article em {
-  color: var(--fg2);
-  font-style: italic;
-}
-
-/* Selection colors */
-::selection {
-  background-color: var(--bg2);
-  color: var(--fg0);
-}
-
-::-moz-selection {
-  background-color: var(--bg2);
-  color: var(--fg0);
-}
-
-/* Scrollbar styling for terminal feel */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg0);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--bg2);
-  border: 2px solid var(--bg0);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--bg3);
-}
-
-/* Focus styles - better for keyboard navigation */
-:focus {
-  outline: 1px solid var(--blue);
-  outline-offset: 2px;
-}
-
-/* Focus visible - only show outline when keyboard navigating */
-:focus:not(:focus-visible) {
-  outline: none;
-}
-
-:focus-visible {
-  outline: 2px solid var(--blue);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* Additional terminal-like styling */
-code {
-  font-variant-ligatures: none;
-}
-
-pre {
-  font-variant-ligatures: none;
-}
-
-/* Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+@media (max-width: 768px) {
+  .about-content-wrapper {
+    padding-top: 3rem;
+    padding-bottom: 2.5rem;
   }
 }
 
-/* Smooth scrolling for users who prefer it */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
+@media (max-width: 480px) {
+  .about-content-wrapper {
+    padding-top: 3.5rem;
+    padding-bottom: 2rem;
   }
 }
 
-/* Warm color animation for letters - lava lamp effect */
-@keyframes rainbow {
-  0% { color: #FF6B7A; }   /* Red */
-  5% { color: #FF6347; }   /* Tomato Red */
-  10% { color: #FF4500; }  /* Orange Red */
-  15% { color: #FF6347; }  /* Tomato Red */
-  20% { color: #FF7F50; }  /* Coral */
-  25% { color: #FF8C42; }  /* Orange */
-  30% { color: #FF8C00; }  /* Dark Orange */
-  35% { color: #FFA500; }  /* Orange */
-  40% { color: #FF8C00; }  /* Dark Orange */
-  45% { color: #FFC125; }  /* Golden Yellow */
-  50% { color: #FFD700; }  /* Gold */
-  55% { color: #FFA500; }  /* Orange */
-  60% { color: #FFC125; }  /* Golden Yellow */
-  65% { color: #FFD700; }  /* Gold */
-  70% { color: #FFC125; }  /* Golden Yellow */
-  75% { color: #FFA500; }  /* Orange */
-  80% { color: #FF8C00; }  /* Dark Orange */
-  85% { color: #FF7F50; }  /* Coral */
-  90% { color: #FF6347; }  /* Tomato Red */
-  95% { color: #FF4500; }  /* Orange Red */
-  100% { color: #FF6B7A; } /* Back to Red */
-}
-
-.rainbow-letter {
-  display: inline-block;
-  animation: rainbow 15s ease-in-out infinite;
-}
-
-/* Reduced motion support for rainbow animation */
-@media (prefers-reduced-motion: reduce) {
-  .rainbow-letter {
-    animation: none;
-  }
-}
-
-/* About page responsive spacing */
 .about-paragraph {
   margin-bottom: 1.5rem;
   color: var(--fg1);
@@ -803,25 +714,6 @@ pre {
   }
 }
 
-.about-content-wrapper {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
-}
-
-@media (max-width: 768px) {
-  .about-content-wrapper {
-    padding-top: 3rem;
-    padding-bottom: 2.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .about-content-wrapper {
-    padding-top: 3.5rem;
-    padding-bottom: 2rem;
-  }
-}
-
 .about-section-heading {
   --section-heading-margin-top: 3rem;
 }
@@ -854,7 +746,6 @@ pre {
   }
 }
 
-/* Extra separation before the "Fun artifacts" block specifically */
 .fun-artifacts-section-heading {
   --section-heading-margin-top: 3rem;
   --section-heading-margin-bottom: 0.5rem;
@@ -874,3 +765,170 @@ pre {
   }
 }
 
+/* ==========================================================================
+   UI Utilities - Selection
+   ========================================================================== */
+
+::selection {
+  background-color: var(--bg2);
+  color: var(--fg0);
+}
+
+::-moz-selection {
+  background-color: var(--bg2);
+  color: var(--fg0);
+}
+
+/* ==========================================================================
+   UI Utilities - Scrollbar
+   ========================================================================== */
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg0);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg2);
+  border: 2px solid var(--bg0);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bg3);
+}
+
+/* ==========================================================================
+   UI Utilities - Focus States
+   ========================================================================== */
+
+:focus {
+  outline: 1px solid var(--blue);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ==========================================================================
+   Animations - Rainbow Text
+   ========================================================================== */
+
+@keyframes rainbow {
+  0% { color: #FF6B7A; }   /* Red */
+  5% { color: #FF6347; }   /* Tomato Red */
+  10% { color: #FF4500; }  /* Orange Red */
+  15% { color: #FF6347; }  /* Tomato Red */
+  20% { color: #FF7F50; }  /* Coral */
+  25% { color: #FF8C42; }  /* Orange */
+  30% { color: #FF8C00; }  /* Dark Orange */
+  35% { color: #FFA500; }  /* Orange */
+  40% { color: #FF8C00; }  /* Dark Orange */
+  45% { color: #FFC125; }  /* Golden Yellow */
+  50% { color: #FFD700; }  /* Gold */
+  55% { color: #FFA500; }  /* Orange */
+  60% { color: #FFC125; }  /* Golden Yellow */
+  65% { color: #FFD700; }  /* Gold */
+  70% { color: #FFC125; }  /* Golden Yellow */
+  75% { color: #FFA500; }  /* Orange */
+  80% { color: #FF8C00; }  /* Dark Orange */
+  85% { color: #FF7F50; }  /* Coral */
+  90% { color: #FF6347; }  /* Tomato Red */
+  95% { color: #FF4500; }  /* Orange Red */
+  100% { color: #FF6B7A; } /* Back to Red */
+}
+
+.rainbow-letter {
+  display: inline-block;
+  animation: rainbow 15s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Accessibility - Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .rainbow-letter {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ==========================================================================
+   iOS Safe Area Support (Progressive Enhancement)
+   ========================================================================== */
+
+@supports (padding: max(0px)) {
+  .vim-status-bar {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+
+  .container {
+    padding-left: max(2rem, env(safe-area-inset-left));
+    padding-right: max(2rem, env(safe-area-inset-right));
+  }
+
+  .content-wrapper {
+    padding-left: max(2rem, env(safe-area-inset-left));
+    padding-right: max(2rem, env(safe-area-inset-right));
+  }
+
+  @media (max-width: 768px) {
+    .vim-status-bar {
+      padding-left: max(0.75rem, env(safe-area-inset-left));
+      padding-right: max(0.75rem, env(safe-area-inset-right));
+    }
+
+    .container {
+      padding-left: max(1.5rem, env(safe-area-inset-left));
+      padding-right: max(1.5rem, env(safe-area-inset-right));
+    }
+
+    .content-wrapper {
+      padding-left: max(1.5rem, env(safe-area-inset-left));
+      padding-right: max(1.5rem, env(safe-area-inset-right));
+    }
+  }
+
+  @media (max-width: 480px) {
+    .vim-status-bar {
+      padding-left: max(0.5rem, env(safe-area-inset-left));
+      padding-right: max(0.5rem, env(safe-area-inset-right));
+    }
+
+    .container {
+      padding-left: max(1rem, env(safe-area-inset-left));
+      padding-right: max(1rem, env(safe-area-inset-right));
+    }
+
+    .content-wrapper {
+      padding-left: max(1.25rem, env(safe-area-inset-left));
+      padding-right: max(1.25rem, env(safe-area-inset-right));
+    }
+  }
+}
