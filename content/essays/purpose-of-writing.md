@@ -10,4 +10,4 @@ I have decided to start writing with three goals in mind:
 2. Writing is not algorithmic, and I struggle with choosing both the content and scope of what to write about. I would like to organize these ideas so that writing becomes an enjoyable, honest reflection of myself and nurtures my soul.
 3. I frequently vlog my life, and I want to add another dimension to this through writing, so that I can clarify my own ideas and beliefs, and document the things I build and find interesting.
 
-\— DFDL
+— DFDL
