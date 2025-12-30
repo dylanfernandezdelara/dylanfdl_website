@@ -79,7 +79,7 @@ const ARTICLE_EXCERPT_STYLE: CSSProperties = {
 }
 
 const ARTICLE_CONTENT_STYLE: CSSProperties = {
-  fontSize: '0.9375rem',
+  fontSize: '1.02rem',
   lineHeight: '1.7',
   color: 'var(--fg1)',
   display: 'grid',
