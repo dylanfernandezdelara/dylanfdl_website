@@ -36,7 +36,10 @@ export default function ExternalLink({
       }}
     >
       {children}
-      <ArrowUpRight size={8} style={{ verticalAlign: 'baseline', display: 'inline-block', marginLeft: '0.125rem', marginBottom: '-0.125rem' }} />
+      <span style={{ whiteSpace: 'nowrap' }}>
+        {'\u00A0'}
+        <ArrowUpRight size={8} style={{ verticalAlign: 'baseline', display: 'inline-block', marginLeft: '0.125rem', marginBottom: '-0.125rem' }} />
+      </span>
     </a>
   )
 }
