@@ -64,6 +64,12 @@ const ARTICLE_DATE_STYLE: CSSProperties = {
   color: 'var(--fg2)',
 }
 
+const ARTICLE_AUTHOR_NAME_STYLE: CSSProperties = {
+  marginLeft: '0.4rem',
+  fontStyle: 'normal',
+  fontWeight: 500,
+}
+
 const ARTICLE_EXCERPT_STYLE: CSSProperties = {
   fontSize: '1.0625rem',
   fontStyle: 'italic',
@@ -140,6 +146,7 @@ export default async function PostPage({
 
             <p style={ARTICLE_DATE_STYLE}>
               {formatPostDate(post.date)}
+              <span style={ARTICLE_AUTHOR_NAME_STYLE}>— Dylan Fernandez de Lara</span>
             </p>
 
             {showExcerpt && (
