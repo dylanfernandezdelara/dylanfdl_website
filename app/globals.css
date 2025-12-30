@@ -486,23 +486,35 @@ article em {
 
 /* --- Lists --- */
 
-article ul,
+article ul {
+  margin-bottom: 1.5rem;
+  padding-left: 0;
+  list-style-position: inside;
+}
+
 article ol {
   margin-bottom: 1.5rem;
-  padding-left: 2rem;
+  padding-left: 0;
+  list-style-position: inside;
 }
 
 @media (max-width: 768px) {
-  article ul,
+  article ul {
+    padding-left: 0;
+  }
+
   article ol {
-    padding-left: 1.5rem;
+    padding-left: 0;
   }
 }
 
 @media (max-width: 480px) {
-  article ul,
+  article ul {
+    padding-left: 0;
+  }
+
   article ol {
-    padding-left: 1.25rem;
+    padding-left: 0;
   }
 }
 
