@@ -78,14 +78,6 @@ const ARTICLE_EXCERPT_STYLE: CSSProperties = {
   lineHeight: '1.6',
 }
 
-const ARTICLE_DIVIDER_STYLE: CSSProperties = {
-  height: '1px',
-  width: '100%',
-  backgroundColor: 'var(--bg2)',
-  marginTop: '0',
-  marginBottom: '1rem',
-}
-
 const ARTICLE_CONTENT_STYLE: CSSProperties = {
   fontSize: '1.02rem',
   lineHeight: '1.7',
@@ -155,8 +147,6 @@ export default async function PostPage({
               </p>
             )}
           </header>
-
-          <div style={ARTICLE_DIVIDER_STYLE} aria-hidden="true" />
 
           <div
             style={ARTICLE_CONTENT_STYLE}
