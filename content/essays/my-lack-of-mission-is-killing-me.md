@@ -1,6 +1,6 @@
 ---
 title: "My Lack of Mission is Killing Me"
-date: "2025-12-30"
+date: "2026-01-03"
 excerpt: ""
 ---
 
