@@ -91,8 +91,23 @@ export default function About() {
               </ExternalLink>
             </li>
             <li style={ARTIFACTS_LIST_ITEM_STYLES}>
+              <ExternalLink href="https://youtu.be/7DqunJ6kFoU?si=am_9A10YKeiwEUR7&t=6" thinGreyUnderline allowWrap>
+                Yale Symphony Orchestra Rimsky-Korsakov Scheherazade
+              </ExternalLink>
+            </li>
+            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
               <ExternalLink href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH" thinGreyUnderline allowWrap>
                 NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"
+              </ExternalLink>
+            </li>
+            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
+              <ExternalLink href="https://youtu.be/VrcXomyo1yI?si=yQnD_OzlZ8pKsPWH" thinGreyUnderline allowWrap>
+                NYO-USA 2019 BBC Proms
+              </ExternalLink>
+            </li>
+            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
+              <ExternalLink href="https://youtu.be/rpyJp9MEnAE?si=yqsxIOrXO_ptMv8j&t=23" thinGreyUnderline allowWrap>
+                NYO-USA 2019 Young Euro Classic Prokofiev Symphony No. 5
               </ExternalLink>
             </li>
           </ul>
