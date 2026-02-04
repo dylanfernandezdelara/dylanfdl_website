@@ -1,13 +1,6 @@
 import type { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
-
-const normalizeEmail = (email?: string | null) => email?.trim().toLowerCase() ?? ''
-
-const getAllowedEmails = () =>
-  (process.env.ALLOWED_GOOGLE_EMAILS ?? '')
-    .split(',')
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean)
+import { isEmailAllowed, normalizeEmail } from '@/lib/auth-allowlist'
 
 const requireEnv = (name: string) => {
   const value = process.env[name]
@@ -30,12 +23,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ profile }) {
-      const allowedEmails = getAllowedEmails()
-      const email = normalizeEmail(profile?.email)
-      if (!email || allowedEmails.length === 0) {
-        return false
-      }
-      return allowedEmails.includes(email)
+      return isEmailAllowed(profile?.email)
     },
     async jwt({ token, profile }) {
       const email = normalizeEmail(profile?.email)
