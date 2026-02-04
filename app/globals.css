@@ -372,6 +372,53 @@ nav {
 }
 
 /* ==========================================================================
+   Auth Buttons
+   ========================================================================== */
+
+.google-signin-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px;
+  min-width: 120px;
+  max-width: 400px;
+  width: 100%;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: #3c4043;
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.25px;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
+    0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.google-signin-button:hover {
+  box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3),
+    0 4px 8px 3px rgba(60, 64, 67, 0.15);
+}
+
+.google-signin-button:active {
+  background-color: #f7f8f8;
+}
+
+.google-signin-button__icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+}
+
+.google-signin-button__text {
+  line-height: 1;
+}
+
+/* ==========================================================================
    Essay Back Link
    ========================================================================== */
 
