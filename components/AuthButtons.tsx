@@ -46,7 +46,7 @@ type SignInButtonProps = {
 }
 
 export function SignInButton({
-  callbackUrl = '/private',
+  callbackUrl = '/private/interactive',
   label = 'Sign in with Google',
 }: SignInButtonProps) {
   return (

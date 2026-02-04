@@ -21,12 +21,12 @@ export default async function LoginPage() {
   const session = await getServerSession(authOptions)
 
   if (session) {
-    redirect('/private')
+    redirect('/private/interactive')
   }
 
   return (
     <div style={WRAPPER_STYLES}>
-      <SignInButton callbackUrl="/private" />
+      <SignInButton callbackUrl="/private/interactive" />
     </div>
   )
 }
