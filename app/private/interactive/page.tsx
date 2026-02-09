@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
-import { SignOutButton } from '@/components/AuthButtons'
 import { authOptions } from '@/lib/auth'
 import TownScene from './TownScene'
-import styles from './page.module.css'
 
 export const metadata: Metadata = {
   title: 'Private Town',
@@ -18,12 +16,15 @@ export default async function TownPrivatePage() {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.headerAction}>
-          <SignOutButton />
-        </div>
-      </div>
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#ffffff',
+      }}
+    >
       <TownScene />
     </div>
   )

@@ -1,180 +1,145 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import Link from 'next/link'
-import styles from './TownScene.module.css'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import SpriteAnimator from '@/components/SpriteAnimator'
 
-const CHARACTER_SIZE = 32
-const SPEED = 220
+// Static sprite paths
+const SPRITE_SOUTH = '/private-town/sprites/walk/character1-south.png'
+const SPRITE_NORTH = '/private-town/sprites/walk/character1-north.png'
 
-const KEY_VECTORS: Record<string, { x: number; y: number }> = {
-  ArrowUp: { x: 0, y: -1 },
-  ArrowDown: { x: 0, y: 1 },
-  ArrowLeft: { x: -1, y: 0 },
-  ArrowRight: { x: 1, y: 0 },
-  w: { x: 0, y: -1 },
-  a: { x: -1, y: 0 },
-  s: { x: 0, y: 1 },
-  d: { x: 1, y: 0 },
+// Sprite native dimensions (character1.png is 256×256)
+const SPRITE_W = 256
+const SPRITE_H = 256
+
+type Direction = 'south' | 'north' | 'east' | 'west'
+
+/** Map a direction to the sprite src and whether to flip horizontally. */
+function directionToSprite(dir: Direction): { src: string; flip: boolean } {
+  switch (dir) {
+    case 'south':
+      return { src: SPRITE_SOUTH, flip: false }
+    case 'north':
+      return { src: SPRITE_NORTH, flip: false }
+    case 'east':
+      return { src: SPRITE_SOUTH, flip: true }
+    case 'west':
+      return { src: SPRITE_SOUTH, flip: false }
+  }
 }
 
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, value))
+/** Map held keys to a direction. */
+function keysToDirection(keys: Set<string>): Direction | null {
+  const up = keys.has('ArrowUp') || keys.has('w') || keys.has('W')
+  const down = keys.has('ArrowDown') || keys.has('s') || keys.has('S')
+  const left = keys.has('ArrowLeft') || keys.has('a') || keys.has('A')
+  const right = keys.has('ArrowRight') || keys.has('d') || keys.has('D')
 
-type Position = {
-  x: number
-  y: number
+  // Cardinal directions take priority
+  if (up && !down && !left && !right) return 'north'
+  if (down && !up && !left && !right) return 'south'
+  if (left && !right && !up && !down) return 'west'
+  if (right && !left && !up && !down) return 'east'
+
+  // Diagonals: pick the horizontal direction
+  if (up && left) return 'west'
+  if (up && right) return 'east'
+  if (down && left) return 'west'
+  if (down && right) return 'east'
+
+  // Fallback for any remaining combos
+  if (up) return 'north'
+  if (down) return 'south'
+  if (left) return 'west'
+  if (right) return 'east'
+
+  return null
 }
 
 export default function TownScene() {
-  const stageRef = useRef<HTMLDivElement | null>(null)
-  const pressedKeys = useRef<Set<string>>(new Set())
-  const positionRef = useRef<Position>({ x: 0, y: 0 })
-  const [position, setPosition] = useState<Position>(positionRef.current)
-  const [stageSize, setStageSize] = useState({ width: 0, height: 0 })
-  const [backVisible, setBackVisible] = useState(false)
-  const hasInitialized = useRef(false)
+  const [direction, setDirection] = useState<Direction>('south')
+  const [walking, setWalking] = useState(false)
 
-  const setPositionState = (next: Position) => {
-    positionRef.current = next
-    setPosition(next)
-  }
+  const keysRef = useRef<Set<string>>(new Set())
 
-  useEffect(() => {
-    const stage = stageRef.current
-    if (!stage) return
-
-    const updateSize = () => {
-      const rect = stage.getBoundingClientRect()
-      setStageSize({ width: rect.width, height: rect.height })
+  const updateMovement = useCallback(() => {
+    const dir = keysToDirection(keysRef.current)
+    if (dir) {
+      setDirection(dir)
+      setWalking(true)
+    } else {
+      setWalking(false)
     }
-
-    updateSize()
-    const observer = new ResizeObserver(updateSize)
-    observer.observe(stage)
-    return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
-    if (!stageSize.width || !stageSize.height) return
+    const MOVEMENT_KEYS = new Set([
+      'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+      'w', 'a', 's', 'd', 'W', 'A', 'S', 'D',
+    ])
 
-    const maxX = Math.max(0, stageSize.width - CHARACTER_SIZE)
-    const maxY = Math.max(0, stageSize.height - CHARACTER_SIZE)
-
-    if (!hasInitialized.current) {
-      hasInitialized.current = true
-      setPositionState({
-        x: clamp(stageSize.width / 2 - CHARACTER_SIZE / 2, 0, maxX),
-        y: clamp(stageSize.height / 2 - CHARACTER_SIZE / 2, 0, maxY),
-      })
-      return
-    }
-
-    const current = positionRef.current
-    const clamped = {
-      x: clamp(current.x, 0, maxX),
-      y: clamp(current.y, 0, maxY),
-    }
-    if (clamped.x !== current.x || clamped.y !== current.y) {
-      setPositionState(clamped)
-    }
-  }, [stageSize.width, stageSize.height])
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setBackVisible((prev) => !prev)
-        return
-      }
-
-      const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
-      if (key in KEY_VECTORS) {
-        pressedKeys.current.add(key)
-        event.preventDefault()
+    function onKeyDown(e: KeyboardEvent) {
+      if (MOVEMENT_KEYS.has(e.key)) {
+        e.preventDefault()
+        keysRef.current.add(e.key)
+        updateMovement()
       }
     }
 
-    const handleKeyUp = (event: KeyboardEvent) => {
-      const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
-      if (key in KEY_VECTORS) {
-        pressedKeys.current.delete(key)
-        event.preventDefault()
-      }
+    function onKeyUp(e: KeyboardEvent) {
+      keysRef.current.delete(e.key)
+      updateMovement()
     }
 
-    const handleBlur = () => {
-      pressedKeys.current.clear()
+    function onBlur() {
+      keysRef.current.clear()
+      updateMovement()
     }
 
-    window.addEventListener('keydown', handleKeyDown)
-    window.addEventListener('keyup', handleKeyUp)
-    window.addEventListener('blur', handleBlur)
+    window.addEventListener('keydown', onKeyDown)
+    window.addEventListener('keyup', onKeyUp)
+    window.addEventListener('blur', onBlur)
     return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-      window.removeEventListener('keyup', handleKeyUp)
-      window.removeEventListener('blur', handleBlur)
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('keyup', onKeyUp)
+      window.removeEventListener('blur', onBlur)
     }
-  }, [])
+  }, [updateMovement])
 
-  useEffect(() => {
-    let frameId = 0
-    let lastTime = performance.now()
-
-    const tick = (now: number) => {
-      const delta = (now - lastTime) / 1000
-      lastTime = now
-
-      if (stageSize.width && stageSize.height) {
-        const maxX = Math.max(0, stageSize.width - CHARACTER_SIZE)
-        const maxY = Math.max(0, stageSize.height - CHARACTER_SIZE)
-
-        let dirX = 0
-        let dirY = 0
-        pressedKeys.current.forEach((key) => {
-          const vector = KEY_VECTORS[key]
-          if (vector) {
-            dirX += vector.x
-            dirY += vector.y
-          }
-        })
-
-        if (dirX !== 0 || dirY !== 0) {
-          const length = Math.hypot(dirX, dirY) || 1
-          const speed = SPEED * delta
-          const current = positionRef.current
-          const next = {
-            x: clamp(current.x + (dirX / length) * speed, 0, maxX),
-            y: clamp(current.y + (dirY / length) * speed, 0, maxY),
-          }
-
-          if (next.x !== current.x || next.y !== current.y) {
-            setPositionState(next)
-          }
-        }
-      }
-
-      frameId = requestAnimationFrame(tick)
-    }
-
-    frameId = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(frameId)
-  }, [stageSize.height, stageSize.width])
+  const { src, flip } = directionToSprite(direction)
 
   return (
-    <div className={styles.scene} ref={stageRef} aria-label="Town scene">
-      <div className={styles.background} aria-hidden="true" />
-      <div className={styles.overlay}>
-        {backVisible ? (
-          <Link href="/" className={styles.backButton}>
-            Back to home
-          </Link>
-        ) : null}
-      </div>
-      <div
-        className={styles.character}
-        style={{ transform: `translate3d(${position.x}px, ${position.y}px, 0)` }}
-        aria-hidden="true"
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: '100%',
+        gap: 24,
+        userSelect: 'none',
+      }}
+    >
+      <SpriteAnimator
+        src={src}
+        width={SPRITE_W}
+        height={SPRITE_H}
+        flip={flip}
+        playing={walking}
+        scale={1}
       />
+
+      <p
+        style={{
+          fontFamily: 'monospace',
+          fontSize: 14,
+          color: '#666',
+          textAlign: 'center',
+          margin: 0,
+        }}
+      >
+        Use <strong>WASD</strong> or <strong>Arrow keys</strong> to walk
+      </p>
     </div>
   )
 }

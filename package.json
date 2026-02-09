@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "generate-sprites": "node scripts/generate-walk-sprites.mjs"
   },
   "dependencies": {
     "@vercel/blob": "^2.0.0",
@@ -24,6 +25,7 @@
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
+    "sharp": "^0.34.5",
     "typescript": "^5.0.0",
     "vitest": "^4.0.18"
   }
