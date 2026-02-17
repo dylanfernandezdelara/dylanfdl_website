@@ -7,15 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest run",
-    "generate-sprites": "node scripts/generate-walk-sprites.mjs"
+    "test": "vitest run"
   },
   "dependencies": {
     "@vercel/blob": "^2.0.0",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.556.0",
     "next": "^14.0.0",
-    "next-auth": "^4.24.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "remark": "^15.0.1",
@@ -25,7 +23,6 @@
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "sharp": "^0.34.5",
     "typescript": "^5.0.0",
     "vitest": "^4.0.18"
   }
