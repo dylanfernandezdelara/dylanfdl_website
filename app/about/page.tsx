@@ -60,7 +60,7 @@ export default function About() {
             <ExternalLink href="https://www.meta.com/ai-glasses/meta-ray-ban-display/">
               Wearables
             </ExternalLink>
-            {' '}Core OS team at Meta in New York.
+            {' '}Core OS team at Meta.
           </p>
 
           <p className="about-paragraph" style={PARAGRAPH_STYLES}>
