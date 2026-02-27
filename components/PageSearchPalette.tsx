@@ -104,6 +104,15 @@ export default function PageSearchPalette() {
               ref={inputRef}
               value={query}
               onValueChange={setQuery}
+              name="page-search"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="none"
+              spellCheck={false}
+              inputMode="search"
+              enterKeyHint="search"
+              data-1p-ignore="true"
+              data-lpignore="true"
               className="page-search-input h-12 py-0 text-[0.95rem] text-fg0 placeholder:text-fg3 focus:!outline-none focus-visible:!outline-none focus:!ring-0 focus-visible:!ring-0"
             />
           </div>
