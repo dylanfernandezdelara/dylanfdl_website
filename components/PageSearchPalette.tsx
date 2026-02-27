@@ -1,41 +1,22 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
-type SearchTarget = {
-  id: string
-  text: string
-  textLower: string
-  element: HTMLElement
-}
-
-type SearchResult = {
-  id: string
-  element: HTMLElement
-  text: string
-  snippet: string
-  matchIndex: number
-}
-
-const SEARCHABLE_SELECTOR = 'main p, main li, main h1, main h2, main h3, main h4, main h5, main h6, main a, main blockquote'
-
-const normalizeText = (value: string) => value.replace(/\s+/g, ' ').trim()
-
-function createSnippet(text: string, index: number, queryLength: number) {
-  const windowSize = 90
-  const start = Math.max(0, index - 30)
-  const end = Math.min(text.length, index + queryLength + windowSize)
-  const prefix = start > 0 ? '…' : ''
-  const suffix = end < text.length ? '…' : ''
-
-  return `${prefix}${text.slice(start, end)}${suffix}`
-}
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import {
+  SEARCHABLE_SELECTOR,
+  computeSearchResults,
+  dedupeStructuralTargets,
+  normalizeText,
+  type SearchResult,
+  type SearchTarget,
+} from '@/lib/page-search'
 
 export default function PageSearchPalette() {
   const [isOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const [targets, setTargets] = useState<SearchTarget[]>([])
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [targets, setTargets] = useState<SearchTarget<HTMLElement>[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -56,6 +37,7 @@ export default function PageSearchPalette() {
 
   useEffect(() => {
     if (!isOpen) {
+      setQuery('')
       return
     }
 
@@ -63,60 +45,31 @@ export default function PageSearchPalette() {
       .filter((element) => !element.closest('[data-search-overlay="true"]'))
       .map((element, index) => {
         const text = normalizeText(element.textContent || '')
+
         return {
           id: `search-target-${index}`,
           text,
           textLower: text.toLowerCase(),
           element,
+          order: index,
         }
       })
       .filter((target) => target.text.length > 0)
 
-    setTargets(nextTargets)
-    setSelectedIndex(0)
+    const structurallyDeduped = dedupeStructuralTargets(nextTargets, (possibleAncestor, possibleDescendant) => {
+      return possibleAncestor.contains(possibleDescendant)
+    })
+
+    setTargets(structurallyDeduped)
 
     requestAnimationFrame(() => inputRef.current?.focus())
   }, [isOpen])
 
-  const results = useMemo<SearchResult[]>(() => {
-    const nextQuery = normalizeText(query).toLowerCase()
-
-    if (!nextQuery) {
-      return []
-    }
-
-    return targets
-      .map((target) => {
-        const matchIndex = target.textLower.indexOf(nextQuery)
-
-        if (matchIndex === -1) {
-          return null
-        }
-
-        return {
-          id: target.id,
-          element: target.element,
-          text: target.text,
-          snippet: createSnippet(target.text, matchIndex, nextQuery.length),
-          matchIndex,
-        }
-      })
-      .filter((target): target is SearchResult => target !== null)
-      .sort((a, b) => a.matchIndex - b.matchIndex)
-      .slice(0, 24)
+  const results = useMemo<SearchResult<HTMLElement>[]>(() => {
+    return computeSearchResults(query, targets, 24)
   }, [query, targets])
 
-  useEffect(() => {
-    setSelectedIndex((prev) => {
-      if (results.length === 0) {
-        return 0
-      }
-
-      return Math.min(prev, results.length - 1)
-    })
-  }, [results])
-
-  const goToResult = (result: SearchResult) => {
+  const goToResult = (result: SearchResult<HTMLElement>) => {
     setIsOpen(false)
 
     requestAnimationFrame(() => {
@@ -132,73 +85,51 @@ export default function PageSearchPalette() {
     })
   }
 
-  const onResultsKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
-    if (results.length === 0) {
-      return
-    }
-
-    if (event.key === 'ArrowDown') {
-      event.preventDefault()
-      setSelectedIndex((prev) => (prev + 1) % results.length)
-    }
-
-    if (event.key === 'ArrowUp') {
-      event.preventDefault()
-      setSelectedIndex((prev) => (prev - 1 + results.length) % results.length)
-    }
-
-    if (event.key === 'Enter') {
-      event.preventDefault()
-      goToResult(results[selectedIndex])
-    }
-  }
-
   return (
-    <>
-      {isOpen && (
-        <div
-          className="page-search-overlay"
-          data-search-overlay="true"
-          onClick={() => setIsOpen(false)}
-        >
-          <div
-            className="page-search-panel"
-            onClick={(event) => event.stopPropagation()}
-            onKeyDown={onResultsKeyDown}
-          >
-            <input
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent
+        data-search-overlay="true"
+        onOpenAutoFocus={(event) => {
+          event.preventDefault()
+          requestAnimationFrame(() => inputRef.current?.focus())
+        }}
+        className="top-24 w-[min(40rem,calc(100%-2rem))] translate-y-0 gap-0 overflow-hidden rounded-2xl border border-[color:color-mix(in_oklab,white,transparent_35%)] bg-[color:color-mix(in_oklab,var(--bg0),white_22%)] p-0 shadow-[0_16px_40px_rgba(42,42,42,0.22)] backdrop-blur-[24px] saturate-[130%] max-md:top-20 [&>button]:hidden"
+      >
+        <Command shouldFilter={false} className="bg-transparent">
+          <div className="border-b border-[color:color-mix(in_oklab,var(--bg3),transparent_20%)] px-4">
+            <CommandInput
               ref={inputRef}
-              className="page-search-input"
-              type="text"
-              placeholder="Search this page..."
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onValueChange={setQuery}
+              placeholder="Search this page..."
+              className="h-12 py-0 text-[0.95rem] text-fg0 placeholder:text-fg3"
             />
-
-            <div className="page-search-results" role="listbox" aria-label="Search results">
-              {query.length === 0 ? (
-                <p className="page-search-placeholder">
-                  Type to search. Use ↑ ↓ then Enter to jump.
-                </p>
-              ) : results.length === 0 ? (
-                <p className="page-search-placeholder">No matches found.</p>
-              ) : (
-                results.map((result, index) => (
-                  <button
-                    key={result.id}
-                    type="button"
-                    className={`page-search-result ${index === selectedIndex ? 'is-selected' : ''}`}
-                    onMouseEnter={() => setSelectedIndex(index)}
-                    onClick={() => goToResult(result)}
-                  >
-                    {result.snippet}
-                  </button>
-                ))
-              )}
-            </div>
           </div>
-        </div>
-      )}
-    </>
+
+          <CommandList className="max-h-[min(22rem,60vh)] overflow-y-auto p-1">
+            {query.length === 0 ? (
+              <p className="px-3 py-3 text-[0.85rem] text-fg3">
+                Type to search. Use ↑ ↓ then Enter to jump.
+              </p>
+            ) : results.length === 0 ? (
+              <CommandEmpty className="px-3 py-3 text-left text-[0.85rem] text-fg3">
+                No matches found.
+              </CommandEmpty>
+            ) : (
+              results.map((result) => (
+                <CommandItem
+                  key={result.id}
+                  value={result.id}
+                  onSelect={() => goToResult(result)}
+                  className="cursor-pointer rounded-[0.55rem] px-[0.7rem] py-[0.65rem] text-left text-[0.87rem] leading-[1.45] text-fg1 aria-selected:bg-[color:color-mix(in_oklab,var(--bg3),white_35%)] aria-selected:text-fg1"
+                >
+                  {result.snippet}
+                </CommandItem>
+              ))
+            )}
+          </CommandList>
+        </Command>
+      </DialogContent>
+    </Dialog>
   )
 }
