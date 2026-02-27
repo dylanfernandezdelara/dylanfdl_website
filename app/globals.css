@@ -945,3 +945,130 @@ article img {
     }
   }
 }
+
+/* ==========================================================================
+   Page Search Palette (CMD/Ctrl + K)
+   ========================================================================== */
+
+.page-search-trigger {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 900;
+  border: 1px solid color-mix(in oklab, white, transparent 45%);
+  background: color-mix(in oklab, var(--bg0), transparent 20%);
+  color: var(--fg2);
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  box-shadow: 0 8px 20px rgba(42, 42, 42, 0.12);
+}
+
+.page-search-trigger kbd {
+  border: 1px solid var(--bg3);
+  border-radius: 0.4rem;
+  padding: 0.12rem 0.35rem;
+  color: var(--fg3);
+  background: color-mix(in oklab, var(--bg0), white 25%);
+  font-size: 0.72rem;
+}
+
+.page-search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(30, 30, 30, 0.12);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 6rem 1rem 1rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.page-search-panel {
+  width: min(40rem, 100%);
+  border: 1px solid color-mix(in oklab, white, transparent 35%);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--bg0), white 22%);
+  backdrop-filter: blur(24px) saturate(130%);
+  -webkit-backdrop-filter: blur(24px) saturate(130%);
+  box-shadow: 0 16px 40px rgba(42, 42, 42, 0.22);
+}
+
+.page-search-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid color-mix(in oklab, var(--bg3), transparent 20%);
+  background: transparent;
+  padding: 0.95rem 1rem;
+  color: var(--fg0);
+  font-size: 0.95rem;
+}
+
+.page-search-input:focus {
+  outline: none;
+}
+
+.page-search-results {
+  max-height: min(22rem, 60vh);
+  overflow-y: auto;
+  padding: 0.4rem;
+}
+
+.page-search-result {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--fg1);
+  border-radius: 0.55rem;
+  padding: 0.65rem 0.7rem;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.87rem;
+  line-height: 1.45;
+}
+
+.page-search-result.is-selected,
+.page-search-result:hover {
+  background: color-mix(in oklab, var(--bg3), white 35%);
+}
+
+.page-search-placeholder {
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--fg3);
+}
+
+.page-search-hit {
+  animation: page-search-pulse 1.2s ease;
+}
+
+@keyframes page-search-pulse {
+  0% {
+    background-color: color-mix(in oklab, var(--yellow), transparent 65%);
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-search-overlay {
+    padding-top: 5rem;
+  }
+
+  .page-search-trigger {
+    right: 1rem;
+    bottom: 1rem;
+  }
+}

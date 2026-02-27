@@ -3,6 +3,7 @@ import RainbowText from '@/components/RainbowText'
 import SectionHeading from '@/components/SectionHeading'
 import VisitorCounter from '@/components/VisitorCounter'
 import WritingSection from '@/components/WritingSection'
+import PageSearchPalette from '@/components/PageSearchPalette'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -132,6 +133,7 @@ export default function About() {
           </div>
         </div>
       </div>
+      <PageSearchPalette />
     </>
   )
 }
