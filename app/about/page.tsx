@@ -45,8 +45,8 @@ export default function About() {
           Artifacts
         </SectionHeading>
 
-        <ul className="mb-6 list-[circle] pl-6 text-[0.9rem] text-gray">
-          <li className="py-1 leading-[1.45] text-fg3 min-[481px]:py-0 min-[481px]:leading-[1.35]">
+        <ul className="mb-6 list-[circle] space-y-2 pl-6 text-[0.9rem] leading-[1.45] text-gray md:space-y-1 md:leading-[1.35]">
+          <li className="text-fg3">
             <ExternalLink
               href="https://youtu.be/WlSkFFIchMw?si=mGwrEpNj6yfEMmcc"
               thinGreyUnderline
@@ -56,7 +56,7 @@ export default function About() {
               Yale Symphony Orchestra Halloween Show
             </ExternalLink>
           </li>
-          <li className="py-1 leading-[1.45] text-fg3 min-[481px]:py-0 min-[481px]:leading-[1.35]">
+          <li className="text-fg3">
             <ExternalLink
               href="https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK"
               thinGreyUnderline
@@ -66,7 +66,7 @@ export default function About() {
               Yale Dance Lab and Yale Symphony Orchestra perform Stravinsky's Le Sacre du Printemps
             </ExternalLink>
           </li>
-          <li className="py-1 leading-[1.45] text-fg3 min-[481px]:py-0 min-[481px]:leading-[1.35]">
+          <li className="text-fg3">
             <ExternalLink
               href="https://youtu.be/7DqunJ6kFoU?si=am_9A10YKeiwEUR7&t=6"
               thinGreyUnderline
@@ -76,7 +76,7 @@ export default function About() {
               Yale Symphony Orchestra Rimsky-Korsakov Scheherazade
             </ExternalLink>
           </li>
-          <li className="py-1 leading-[1.45] text-fg3 min-[481px]:py-0 min-[481px]:leading-[1.35]">
+          <li className="text-fg3">
             <ExternalLink
               href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH"
               thinGreyUnderline
@@ -86,7 +86,7 @@ export default function About() {
               NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"
             </ExternalLink>
           </li>
-          <li className="py-1 leading-[1.45] text-fg3 min-[481px]:py-0 min-[481px]:leading-[1.35]">
+          <li className="text-fg3">
             <ExternalLink
               href="https://youtu.be/VrcXomyo1yI?si=yQnD_OzlZ8pKsPWH"
               thinGreyUnderline
@@ -96,7 +96,7 @@ export default function About() {
               NYO-USA 2019 BBC Proms
             </ExternalLink>
           </li>
-          <li className="py-1 leading-[1.45] text-fg3 min-[481px]:py-0 min-[481px]:leading-[1.35]">
+          <li className="text-fg3">
             <ExternalLink
               href="https://youtu.be/rpyJp9MEnAE?si=yqsxIOrXO_ptMv8j&t=23"
               thinGreyUnderline
