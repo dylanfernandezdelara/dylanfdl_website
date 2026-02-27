@@ -38,9 +38,9 @@ Add these repository secrets so the workflow can deploy:
 
 You can get `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` from `.vercel/project.json` after running `vercel link`, or from your Vercel project settings.
 
-## Secret Scanning (Local + CI)
+## Secret Scanning (Local Hooks)
 
-This repo includes local git hooks and a GitHub Actions workflow to block leaked secrets.
+This repo includes local git hooks to block leaked secrets before push.
 
 ### One-time local setup
 
@@ -57,4 +57,4 @@ git config core.hooksPath .githooks
 chmod +x .githooks/pre-commit .githooks/pre-push
 ```
 
-After this, `gitleaks` runs automatically on commit/push, and CI runs on pull requests and pushes to `main`.
+After this, `gitleaks` runs automatically on commit and push.
