@@ -1017,36 +1017,6 @@ article img {
    Page Search Palette (CMD/Ctrl + K)
    ========================================================================== */
 
-.page-search-trigger {
-  position: fixed;
-  right: 1.25rem;
-  bottom: 1.25rem;
-  z-index: 900;
-  border: 1px solid color-mix(in oklab, white, transparent 45%);
-  background: color-mix(in oklab, var(--bg0), transparent 20%);
-  color: var(--fg2);
-  border-radius: 999px;
-  padding: 0.45rem 0.8rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  cursor: pointer;
-  font-size: 0.78rem;
-  font-weight: 600;
-  backdrop-filter: blur(18px) saturate(120%);
-  -webkit-backdrop-filter: blur(18px) saturate(120%);
-  box-shadow: 0 8px 20px rgba(42, 42, 42, 0.12);
-}
-
-.page-search-trigger kbd {
-  border: 1px solid var(--bg3);
-  border-radius: 0.4rem;
-  padding: 0.12rem 0.35rem;
-  color: var(--fg3);
-  background: color-mix(in oklab, var(--bg0), white 25%);
-  font-size: 0.72rem;
-}
-
 .page-search-overlay {
   position: fixed;
   inset: 0;

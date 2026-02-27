@@ -155,16 +155,6 @@ export default function PageSearchPalette() {
 
   return (
     <>
-      <button
-        type="button"
-        className="page-search-trigger"
-        onClick={() => setIsOpen(true)}
-        aria-label="Open page search"
-      >
-        <span>Search</span>
-        <kbd>⌘K</kbd>
-      </button>
-
       {isOpen && (
         <div
           className="page-search-overlay"
