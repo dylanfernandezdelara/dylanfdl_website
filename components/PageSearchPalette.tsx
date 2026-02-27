@@ -99,7 +99,7 @@ export default function PageSearchPalette() {
       >
         <DialogTitle className="sr-only">Search</DialogTitle>
         <Command shouldFilter={false} className="bg-transparent">
-          <div className="border-b border-[color:color-mix(in_oklab,var(--bg3),transparent_20%)] px-4">
+          <div className="px-4">
             <CommandInput
               ref={inputRef}
               value={query}
