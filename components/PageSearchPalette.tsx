@@ -117,24 +117,26 @@ export default function PageSearchPalette() {
             />
           </div>
 
-          <CommandList className="max-h-[min(22rem,60vh)] overflow-y-auto p-1">
-            {query.length === 0 ? null : results.length === 0 ? (
-              <CommandEmpty className="px-3 py-3 text-left text-[0.85rem] text-fg3">
-                No matches found.
-              </CommandEmpty>
-            ) : (
-              results.map((result) => (
-                <CommandItem
-                  key={result.id}
-                  value={result.id}
-                  onSelect={() => goToResult(result)}
-                  className="cursor-pointer rounded-[0.55rem] px-[0.7rem] py-[0.65rem] text-left text-[0.87rem] leading-[1.45] text-fg1 aria-selected:bg-[color:color-mix(in_oklab,var(--bg3),white_35%)] aria-selected:text-fg1"
-                >
-                  {result.snippet}
-                </CommandItem>
-              ))
-            )}
-          </CommandList>
+          {query.length > 0 && (
+            <CommandList className="max-h-[min(22rem,60vh)] overflow-y-auto p-1">
+              {results.length === 0 ? (
+                <CommandEmpty className="px-3 py-3 text-left text-[0.85rem] text-fg3">
+                  No matches found.
+                </CommandEmpty>
+              ) : (
+                results.map((result) => (
+                  <CommandItem
+                    key={result.id}
+                    value={result.id}
+                    onSelect={() => goToResult(result)}
+                    className="cursor-pointer rounded-[0.55rem] px-[0.7rem] py-[0.65rem] text-left text-[0.87rem] leading-[1.45] text-fg1 aria-selected:bg-[color:color-mix(in_oklab,var(--bg3),white_35%)] aria-selected:text-fg1"
+                  >
+                    {result.snippet}
+                  </CommandItem>
+                ))
+              )}
+            </CommandList>
+          )}
         </Command>
       </DialogContent>
     </Dialog>
