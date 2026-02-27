@@ -4,7 +4,6 @@ import { getPostBySlug, getPostSlugs, formatPostDate } from '@/lib/posts'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 import type { Metadata } from 'next'
-import type { CSSProperties } from 'react'
 
 export async function generateMetadata({
   params,
@@ -12,13 +11,13 @@ export async function generateMetadata({
   params: { slug: string }
 }): Promise<Metadata> {
   const post = getPostBySlug(params.slug)
-  
+
   if (!post) {
     return {
       title: 'Post not found',
     }
   }
-  
+
   return {
     title: post.title,
   }
@@ -31,71 +30,8 @@ export async function generateStaticParams() {
   }))
 }
 
-const CONTENT_WRAPPER_STYLE: CSSProperties = {
-  paddingTop: '3.25rem',
-  paddingBottom: '4.5rem',
-}
-
-const ARTICLE_LAYOUT_STYLE: CSSProperties = {
-  display: 'grid',
-  gap: '0',
-}
-
-const ARTICLE_HEADER_STYLE: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.5rem',
-  maxWidth: '60ch',
-  marginTop: '1.5rem',
-  marginBottom: '0',
-}
-
-const ARTICLE_TITLE_STYLE: CSSProperties = {
-  fontSize: '1.875rem',
-  fontWeight: 700,
-  lineHeight: 1.3,
-  letterSpacing: '-0.01em',
-  margin: 0,
-  color: 'var(--yellow)',
-}
-
-const ARTICLE_DATE_STYLE: CSSProperties = {
-  fontSize: '0.9375rem',
-  color: 'var(--fg2)',
-}
-
-const ARTICLE_AUTHOR_NAME_STYLE: CSSProperties = {
-  marginLeft: '0.4rem',
-  fontStyle: 'normal',
-  fontWeight: 500,
-}
-
-const ARTICLE_EXCERPT_STYLE: CSSProperties = {
-  fontSize: '1.0625rem',
-  fontStyle: 'italic',
-  color: 'var(--fg2)',
-  marginTop: '0.75rem',
-  lineHeight: '1.6',
-}
-
-const ARTICLE_CONTENT_STYLE: CSSProperties = {
-  fontSize: '1.02rem',
-  lineHeight: '1.7',
-  color: 'var(--fg1)',
-  display: 'grid',
-  gap: '1.25rem',
-  marginTop: '0',
-}
-
-const BACK_LINK_STYLE: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '0.4rem',
-  color: 'var(--fg2)',
-  textDecoration: 'none',
-  fontWeight: 600,
-  fontSize: '0.9375rem',
-}
+const BACK_LINK_CLASSES =
+  'inline-flex items-center gap-[0.4rem] text-[0.9375rem] font-semibold tracking-[0.01em] text-fg2 no-underline transition-colors duration-150 hover:text-fg1 hover:underline hover:decoration-[color:color-mix(in_oklab,var(--fg2),transparent_40%)] focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-3'
 
 export default async function PostPage({
   params,
@@ -113,48 +49,43 @@ export default async function PostPage({
     .process(post.content)
   const contentHtml = processedContent.toString()
 
-  // Count words in the content (split on whitespace, filter empty strings)
   const wordCount = post.content.split(/\s+/).filter(word => word.length > 0).length
   const showExcerpt = post.excerpt && wordCount > 500
 
   return (
-    <>
-      <div className="content-wrapper" style={CONTENT_WRAPPER_STYLE}>
-        <article style={ARTICLE_LAYOUT_STYLE}>
-          <Link
-            href="/about"
-            className="essay-back-link"
-            style={BACK_LINK_STYLE}
-            aria-label="Back to about"
-          >
-            <span aria-hidden="true">←</span>
-            <span>Back</span>
-          </Link>
+    <div className="mx-auto max-w-reading px-6 pb-[4.5rem] pt-[3.25rem] md:px-8">
+      <article className="grid gap-0">
+        <Link
+          href="/about"
+          className={BACK_LINK_CLASSES}
+          aria-label="Back to about"
+        >
+          <span aria-hidden="true">←</span>
+          <span>Back</span>
+        </Link>
 
-          <header style={ARTICLE_HEADER_STYLE}>
-            <h1 style={ARTICLE_TITLE_STYLE}>
-              {post.title}
-            </h1>
+        <header className="mb-0 mt-6 flex max-w-[60ch] flex-col gap-2">
+          <h1 className="m-0 text-[1.875rem] font-bold leading-[1.3] tracking-[-0.01em] text-yellow">
+            {post.title}
+          </h1>
 
-            <p style={ARTICLE_DATE_STYLE}>
-              {formatPostDate(post.date)}
-              <span style={ARTICLE_AUTHOR_NAME_STYLE}>— Dylan Fernandez de Lara</span>
+          <p className="text-[0.9375rem] text-fg2">
+            {formatPostDate(post.date)}
+            <span className="ml-[0.4rem] font-medium not-italic">— Dylan Fernandez de Lara</span>
+          </p>
+
+          {showExcerpt && (
+            <p className="mt-3 text-[1.0625rem] italic leading-[1.6] text-fg2">
+              {post.excerpt}
             </p>
+          )}
+        </header>
 
-            {showExcerpt && (
-              <p style={ARTICLE_EXCERPT_STYLE}>
-                {post.excerpt}
-              </p>
-            )}
-          </header>
-
-          <div
-            style={ARTICLE_CONTENT_STYLE}
-            dangerouslySetInnerHTML={{ __html: contentHtml }}
-          />
-        </article>
-      </div>
-    </>
+        <div
+          className="mt-0 grid gap-5 text-[1.02rem] leading-[1.7] text-fg1"
+          dangerouslySetInnerHTML={{ __html: contentHtml }}
+        />
+      </article>
+    </div>
   )
 }
-
