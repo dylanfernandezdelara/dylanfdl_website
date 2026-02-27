@@ -88,12 +88,13 @@ export default function PageSearchPalette() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
+        showCloseButton={false}
         data-search-overlay="true"
         onOpenAutoFocus={(event) => {
           event.preventDefault()
           requestAnimationFrame(() => inputRef.current?.focus())
         }}
-        className="top-24 w-[min(40rem,calc(100%-2rem))] translate-y-0 gap-0 overflow-hidden rounded-2xl border border-[color:color-mix(in_oklab,white,transparent_35%)] bg-[color:color-mix(in_oklab,var(--bg0),white_22%)] p-0 shadow-[0_16px_40px_rgba(42,42,42,0.22)] backdrop-blur-[24px] saturate-[130%] max-md:top-20 [&>button]:hidden"
+        className="top-24 w-[min(40rem,calc(100%-2rem))] translate-y-0 gap-0 overflow-hidden rounded-2xl border border-[color:color-mix(in_oklab,white,transparent_35%)] bg-[color:color-mix(in_oklab,var(--bg0),white_22%)] p-0 shadow-[0_16px_40px_rgba(42,42,42,0.22)] backdrop-blur-[24px] saturate-[130%] max-md:top-20"
       >
         <Command shouldFilter={false} className="bg-transparent">
           <div className="border-b border-[color:color-mix(in_oklab,var(--bg3),transparent_20%)] px-4">
