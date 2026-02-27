@@ -108,7 +108,7 @@ export default function PageSearchPalette() {
               value={query}
               onValueChange={setQuery}
               placeholder="Search this page..."
-              className="h-12 py-0 text-[0.95rem] text-fg0 placeholder:text-fg3"
+              className="page-search-input h-12 py-0 text-[0.95rem] text-fg0 placeholder:text-fg3 focus:!outline-none focus-visible:!outline-none focus:!ring-0 focus-visible:!ring-0"
             />
           </div>
 

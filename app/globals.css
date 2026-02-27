@@ -375,6 +375,57 @@ article img {
   animation: page-search-pulse 1.2s ease;
 }
 
+/* Keep the CMD/Ctrl+K panel centered while it softly materializes. */
+@keyframes search-panel-materialize-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+@keyframes search-panel-materialize-out {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.99);
+  }
+}
+
+@keyframes search-dialog-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes search-dialog-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.page-search-input:focus,
+.page-search-input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 @keyframes page-search-pulse {
   0% {
     background-color: color-mix(in oklab, var(--yellow), transparent 65%);
