@@ -1,4 +1,5 @@
 import { ArrowUpRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface ExternalLinkProps {
   href: string
@@ -17,28 +18,28 @@ export default function ExternalLink({
   className,
   allowWrap = false
 }: ExternalLinkProps) {
-  const classes = ['external-link', className].filter(Boolean).join(' ')
+  const classes = cn(
+    'inline align-baseline leading-[inherit] text-fg1',
+    allowWrap ? 'whitespace-normal' : 'whitespace-nowrap',
+    noUnderline ? 'no-underline' : 'underline',
+    thinGreyUnderline && 'decoration-gray decoration-[1px]',
+    className
+  )
 
   return (
-    <a 
-      href={href} 
+    <a
+      href={href}
       target="_blank" 
       rel="noopener noreferrer"
       className={classes}
-      style={{ 
-        textDecoration: noUnderline ? 'none' : thinGreyUnderline ? 'underline' : 'underline',
-        textDecorationColor: thinGreyUnderline ? 'color-mix(in oklab, var(--gray), transparent 50%)' : undefined,
-        textDecorationThickness: thinGreyUnderline ? '1px' : undefined,
-        display: 'inline',
-        verticalAlign: 'baseline',
-        lineHeight: 'inherit',
-        whiteSpace: allowWrap ? 'normal' : 'nowrap'
-      }}
     >
       {children}
-      <span style={{ whiteSpace: 'nowrap' }}>
+      <span className="whitespace-nowrap">
         {'\u00A0'}
-        <ArrowUpRight size={8} style={{ verticalAlign: 'baseline', display: 'inline-block', marginLeft: '0.125rem', marginBottom: '-0.125rem' }} />
+        <ArrowUpRight
+          size={8}
+          className="mb-[-0.125rem] ml-0.5 inline-block align-baseline"
+        />
       </span>
     </a>
   )

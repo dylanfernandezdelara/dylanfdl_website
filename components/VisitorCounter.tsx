@@ -1,16 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-
-const COUNTER_STYLES: React.CSSProperties = {
-  opacity: 0,
-  transition: 'opacity 0.6s ease-in-out',
-}
-
-const COUNTER_VISIBLE_STYLES: React.CSSProperties = {
-  ...COUNTER_STYLES,
-  opacity: 1,
-}
+import { cn } from '@/lib/utils'
 
 function formatNumber(num: number): string {
   return num.toLocaleString()
@@ -77,9 +68,13 @@ export default function VisitorCounter() {
   }
 
   return (
-    <span style={isVisible ? COUNTER_VISIBLE_STYLES : COUNTER_STYLES}>
+    <span
+      className={cn(
+        'transition-opacity duration-700 ease-in-out',
+        isVisible ? 'opacity-100' : 'opacity-0'
+      )}
+    >
       {formatNumber(count)} visits
     </span>
   )
 }
-
