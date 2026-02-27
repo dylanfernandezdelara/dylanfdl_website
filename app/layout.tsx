@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <main>{children}</main>
+        <main className="flex-1 pb-16 min-[481px]:pb-14 md:pb-12 md:pt-8">{children}</main>
       </body>
     </html>
   )

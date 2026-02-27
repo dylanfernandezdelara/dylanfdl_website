@@ -1,34 +1,6 @@
 import Link from 'next/link'
-import type { CSSProperties } from 'react'
 import SectionHeading from '@/components/SectionHeading'
 import { formatPostDateShort, getPostsByYear } from '@/lib/posts'
-
-const LIST_STYLE: CSSProperties = {
-  listStyle: 'none',
-  padding: 0,
-  margin: '1rem 0 0 0',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.75rem',
-}
-
-const ITEM_STYLE: CSSProperties = {
-  display: 'flex',
-  gap: '0.5rem',
-  alignItems: 'baseline',
-}
-
-const DATE_STYLE: CSSProperties = {
-  color: 'var(--gray)',
-  fontSize: '1rem',
-}
-
-const TITLE_STYLE: CSSProperties = {
-  color: 'var(--fg2)',
-  fontSize: '1rem',
-  fontWeight: 400,
-  textDecoration: 'none',
-}
 
 export default function WritingSection() {
   const postsByYear = getPostsByYear()
@@ -36,15 +8,14 @@ export default function WritingSection() {
 
   if (years.length === 0) {
     return (
-      <div style={{ marginTop: '3rem' }}>
+      <div className="mt-12">
         <SectionHeading
           marginTop="0"
-          className="about-section-heading fun-artifacts-heading"
-          style={{ color: 'var(--fg2)' }}
+          className="text-fg2 [--section-heading-font-size:1.25rem] min-[481px]:[--section-heading-font-size:1.375rem] md:[--section-heading-font-size:1.5rem]"
         >
           Essays
         </SectionHeading>
-        <p style={{ color: 'var(--fg1)', marginTop: '0.5rem' }}>
+        <p className="mt-2 text-fg1">
           No essays yet. Add markdown files to <code>content/essays/</code> and they will appear here.
         </p>
       </div>
@@ -52,22 +23,24 @@ export default function WritingSection() {
   }
 
   return (
-    <div style={{ marginTop: '3rem' }}>
+    <div className="mt-12">
       {years.map((year, index) => (
-        <div key={year} style={{ marginTop: index === 0 ? '0' : '2rem' }}>
+        <div key={year} className={index === 0 ? 'mt-0' : 'mt-8'}>
           <SectionHeading
             marginTop={index === 0 ? '0' : undefined}
-            className="about-section-heading fun-artifacts-heading"
-            style={{ color: 'var(--fg2)' }}
+            className="text-fg2 [--section-heading-font-size:1.25rem] min-[481px]:[--section-heading-font-size:1.375rem] md:[--section-heading-font-size:1.5rem]"
           >
             {year}
           </SectionHeading>
 
-          <ul style={LIST_STYLE}>
+          <ul className="mt-4 flex list-none flex-col gap-3 p-0">
             {postsByYear[year].map((post) => (
-              <li key={post.slug} style={ITEM_STYLE}>
-                <span style={DATE_STYLE}>{formatPostDateShort(post.date)}</span>
-                <Link href={`/essays/${post.slug}`} style={TITLE_STYLE}>
+              <li key={post.slug} className="flex items-baseline gap-2">
+                <span className="text-base text-gray">{formatPostDateShort(post.date)}</span>
+                <Link
+                  href={`/essays/${post.slug}`}
+                  className="text-base font-normal text-fg2 no-underline transition-colors hover:text-fg1"
+                >
                   {post.title}
                 </Link>
               </li>

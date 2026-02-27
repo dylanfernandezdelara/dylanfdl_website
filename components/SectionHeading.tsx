@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils'
+
 interface SectionHeadingProps {
   children: React.ReactNode
   marginTop?: string
@@ -13,17 +15,16 @@ export default function SectionHeading({ children, marginTop, fontSize, classNam
   }
 
   return (
-    <h2 className={className} style={{
-      // Use CSS variables so page-level CSS can control sizing/spacing without `!important`
-      // and without fighting inline styles.
-      fontSize: 'var(--section-heading-font-size, 1.75rem)',
-      fontWeight: '500',
-      marginTop: 'var(--section-heading-margin-top, 3rem)',
-      marginBottom: 'var(--section-heading-margin-bottom, 1rem)',
-      color: 'var(--fg0)',
-      ...cssVarOverrides,
-      ...style
-    }}>
+    <h2
+      className={cn(
+        'mb-[var(--section-heading-margin-bottom,1rem)] mt-[var(--section-heading-margin-top,3rem)] text-[var(--section-heading-font-size,1.75rem)] font-medium text-fg0',
+        className
+      )}
+      style={{
+        ...cssVarOverrides,
+        ...style,
+      }}
+    >
       {children}
     </h2>
   )

@@ -10,127 +10,135 @@ export const metadata: Metadata = {
   title: 'About me',
 }
 
-const CONTENT_STYLES = {
-  fontSize: '1rem',
-  lineHeight: '1.6'
-}
-
-const PARAGRAPH_STYLES = {
-  color: 'var(--fg1)'
-}
-
-const LIST_STYLES = {
-  paddingLeft: '1.5rem',
-  color: 'var(--gray)',
-  listStyleType: 'disc' as const,
-  fontSize: '1rem'
-}
-
-const LIST_ITEM_STYLES = {
-  marginBlock: '0.125rem'
-}
-
-const ARTIFACTS_LIST_STYLES = {
-  paddingLeft: '1.5rem',
-  color: 'var(--gray)',
-  listStyleType: 'circle' as const,
-  fontSize: '0.9rem'
-}
-
-const ARTIFACTS_LIST_ITEM_STYLES = {
-  marginBlock: '0.3rem'
-}
-
-const CONTACT_SECTION_STYLES = {
-  fontSize: '0.875rem',
-  color: 'var(--fg2)'
-}
+const CONTACT_LINK_STYLES =
+  'text-fg2 no-underline transition-colors duration-150 hover:text-fg1 hover:underline hover:decoration-[color:color-mix(in_oklab,var(--fg2),transparent_35%)] focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-3'
 
 export default function About() {
   return (
     <>
-      <div className="content-wrapper about-content-wrapper">
-        <div style={CONTENT_STYLES}>
-          <p className="about-paragraph" style={PARAGRAPH_STYLES}>
-            I'm Dylan. I am an{' '}
-            <RainbowText text="optimist." />
-          </p>
+      <div className="mx-auto max-w-reading px-6 pb-8 pt-14 text-base leading-[1.6] min-[481px]:pb-10 min-[481px]:pt-12 md:px-8 md:pb-16 md:pt-16">
+        <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
+          I'm Dylan. I am an{' '}
+          <RainbowText text="optimist." />
+        </p>
 
-          <p className="about-paragraph" style={PARAGRAPH_STYLES}>
-            I am a Yale graduate and an engineer on the{' '}
-            <ExternalLink href="https://www.meta.com/ai-glasses/meta-ray-ban-display/">
-              Wearables
-            </ExternalLink>
-            {' '}Core OS team at Meta.
-          </p>
+        <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
+          I am a Yale graduate and an engineer on the{' '}
+          <ExternalLink href="https://www.meta.com/ai-glasses/meta-ray-ban-display/">
+            Wearables
+          </ExternalLink>
+          {' '}Core OS team at Meta.
+        </p>
 
-          <p className="about-paragraph" style={PARAGRAPH_STYLES}>
-            I've been using ML to improve stability across our hardware fleet and scaling infrastructure to support a growing number of{' '}
-            <ExternalLink href="https://www.meta.com/ai-glasses/">
-              devices.
-            </ExternalLink>
-          </p>
+        <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
+          I've been using ML to improve stability across our hardware fleet and scaling infrastructure to support a growing number of{' '}
+          <ExternalLink href="https://www.meta.com/ai-glasses/">
+            devices.
+          </ExternalLink>
+        </p>
 
-          <WritingSection />
+        <WritingSection />
 
-          <SectionHeading
-            className="about-section-heading fun-artifacts-heading fun-artifacts-section-heading"
-            style={{ color: 'var(--fg2)' }}
-          >
-            Artifacts
-          </SectionHeading>
+        <SectionHeading
+          className="text-fg2 [--section-heading-font-size:1.25rem] [--section-heading-margin-bottom:0.5rem] [--section-heading-margin-top:3rem] min-[481px]:[--section-heading-font-size:1.375rem] min-[481px]:[--section-heading-margin-top:4rem] md:[--section-heading-font-size:1.5rem] md:[--section-heading-margin-top:3rem]"
+        >
+          Artifacts
+        </SectionHeading>
 
-          <ul className="about-list" style={ARTIFACTS_LIST_STYLES}>
-            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/WlSkFFIchMw?si=mGwrEpNj6yfEMmcc" thinGreyUnderline allowWrap>
-                Yale Symphony Orchestra Halloween Show
-              </ExternalLink>
-            </li>
-            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK" thinGreyUnderline allowWrap>
-                Yale Dance Lab and Yale Symphony Orchestra perform Stravinsky's Le Sacre du Printemps
-              </ExternalLink>
-            </li>
-            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/7DqunJ6kFoU?si=am_9A10YKeiwEUR7&t=6" thinGreyUnderline allowWrap>
-                Yale Symphony Orchestra Rimsky-Korsakov Scheherazade
-              </ExternalLink>
-            </li>
-            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH" thinGreyUnderline allowWrap>
-                NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"
-              </ExternalLink>
-            </li>
-            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/VrcXomyo1yI?si=yQnD_OzlZ8pKsPWH" thinGreyUnderline allowWrap>
-                NYO-USA 2019 BBC Proms
-              </ExternalLink>
-            </li>
-            <li style={ARTIFACTS_LIST_ITEM_STYLES}>
-              <ExternalLink href="https://youtu.be/rpyJp9MEnAE?si=yqsxIOrXO_ptMv8j&t=23" thinGreyUnderline allowWrap>
-                NYO-USA 2019 Young Euro Classic Prokofiev Symphony No. 5
-              </ExternalLink>
-            </li>
-          </ul>
-
-          <hr className="about-hr" />
-
-          <div className="contactMeta" style={CONTACT_SECTION_STYLES}>
-            <a
-              className="contactMeta__link"
-              href="https://www.threads.com/@dylan.fernandezdelara"
+        <ul className="mb-6 list-[circle] pl-6 text-[0.9rem] text-gray">
+          <li className="my-[0.3rem] leading-[1.3] text-fg3">
+            <ExternalLink
+              href="https://youtu.be/WlSkFFIchMw?si=mGwrEpNj6yfEMmcc"
+              thinGreyUnderline
+              allowWrap
+              className="text-fg3"
             >
-              Threads
-            </a>
-            <span className="contactMeta__dot" aria-hidden="true">·</span>
-            <a className="contactMeta__link" href="https://x.com/dylan_fdl_">
-              Twitter
-            </a>
-            <span className="contactMeta__dot" aria-hidden="true">·</span>
-            <a className="contactMeta__link" href="mailto:fernandezdelaradylan@gmail.com">Email</a>
-            <span className="contactMeta__dot" aria-hidden="true">·</span>
-            <VisitorCounter />
-          </div>
+              Yale Symphony Orchestra Halloween Show
+            </ExternalLink>
+          </li>
+          <li className="my-[0.3rem] leading-[1.3] text-fg3">
+            <ExternalLink
+              href="https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK"
+              thinGreyUnderline
+              allowWrap
+              className="text-fg3"
+            >
+              Yale Dance Lab and Yale Symphony Orchestra perform Stravinsky's Le Sacre du Printemps
+            </ExternalLink>
+          </li>
+          <li className="my-[0.3rem] leading-[1.3] text-fg3">
+            <ExternalLink
+              href="https://youtu.be/7DqunJ6kFoU?si=am_9A10YKeiwEUR7&t=6"
+              thinGreyUnderline
+              allowWrap
+              className="text-fg3"
+            >
+              Yale Symphony Orchestra Rimsky-Korsakov Scheherazade
+            </ExternalLink>
+          </li>
+          <li className="my-[0.3rem] leading-[1.3] text-fg3">
+            <ExternalLink
+              href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH"
+              thinGreyUnderline
+              allowWrap
+              className="text-fg3"
+            >
+              NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"
+            </ExternalLink>
+          </li>
+          <li className="my-[0.3rem] leading-[1.3] text-fg3">
+            <ExternalLink
+              href="https://youtu.be/VrcXomyo1yI?si=yQnD_OzlZ8pKsPWH"
+              thinGreyUnderline
+              allowWrap
+              className="text-fg3"
+            >
+              NYO-USA 2019 BBC Proms
+            </ExternalLink>
+          </li>
+          <li className="my-[0.3rem] leading-[1.3] text-fg3">
+            <ExternalLink
+              href="https://youtu.be/rpyJp9MEnAE?si=yqsxIOrXO_ptMv8j&t=23"
+              thinGreyUnderline
+              allowWrap
+              className="text-fg3"
+            >
+              NYO-USA 2019 Young Euro Classic Prokofiev Symphony No. 5
+            </ExternalLink>
+          </li>
+        </ul>
+
+        <hr className="mb-3 mt-6 border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
+
+        <div className="flex flex-wrap items-baseline gap-2 text-sm text-fg2">
+          <a className={CONTACT_LINK_STYLES} href="https://www.threads.com/@dylan.fernandezdelara">
+            Threads
+          </a>
+          <span
+            className="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
+            aria-hidden="true"
+          >
+            ·
+          </span>
+          <a className={CONTACT_LINK_STYLES} href="https://x.com/dylan_fdl_">
+            Twitter
+          </a>
+          <span
+            className="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
+            aria-hidden="true"
+          >
+            ·
+          </span>
+          <a className={CONTACT_LINK_STYLES} href="mailto:fernandezdelaradylan@gmail.com">
+            Email
+          </a>
+          <span
+            className="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
+            aria-hidden="true"
+          >
+            ·
+          </span>
+          <VisitorCounter />
         </div>
       </div>
       <PageSearchPalette />

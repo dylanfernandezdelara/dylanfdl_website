@@ -5,7 +5,7 @@ interface RainbowTextProps {
 
 export default function RainbowText({ text, delayMultiplier = 0.2 }: RainbowTextProps) {
   return (
-    <span style={{ display: 'inline-block' }}>
+    <span className="inline-block">
       {text.split('').map((letter, index) => {
         const delay = index * delayMultiplier
 
