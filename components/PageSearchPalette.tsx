@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import {
   SEARCHABLE_SELECTOR,
   computeSearchResults,
@@ -90,12 +90,17 @@ export default function PageSearchPalette() {
       <DialogContent
         showCloseButton={false}
         data-search-overlay="true"
+        aria-describedby="page-search-description"
         onOpenAutoFocus={(event) => {
           event.preventDefault()
           requestAnimationFrame(() => inputRef.current?.focus())
         }}
         className="top-24 w-[min(40rem,calc(100%-2rem))] translate-y-0 gap-0 overflow-hidden rounded-2xl border border-[color:color-mix(in_oklab,white,transparent_35%)] bg-[color:color-mix(in_oklab,var(--bg0),white_22%)] p-0 shadow-[0_16px_40px_rgba(42,42,42,0.22)] backdrop-blur-[24px] saturate-[130%] max-md:top-20"
       >
+        <DialogTitle className="sr-only">Search this page</DialogTitle>
+        <DialogDescription id="page-search-description" className="sr-only">
+          Type to search current page content. Use arrow keys and Enter to jump.
+        </DialogDescription>
         <Command shouldFilter={false} className="bg-transparent">
           <div className="border-b border-[color:color-mix(in_oklab,var(--bg3),transparent_20%)] px-4">
             <CommandInput
