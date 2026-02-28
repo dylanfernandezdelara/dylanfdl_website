@@ -11,7 +11,7 @@ export default function WritingSection() {
       <div className="mt-12">
         <SectionHeading
           marginTop="0"
-          className="text-fg2 [--section-heading-font-size:1.25rem] min-[481px]:[--section-heading-font-size:1.375rem] md:[--section-heading-font-size:1.5rem]"
+          className="text-fg2 [--section-heading-font-size:1.0625rem] min-[481px]:[--section-heading-font-size:1.125rem] md:[--section-heading-font-size:1.125rem]"
         >
           Essays
         </SectionHeading>
@@ -28,7 +28,7 @@ export default function WritingSection() {
         <div key={year} className={index === 0 ? 'mt-0' : 'mt-8'}>
           <SectionHeading
             marginTop={index === 0 ? '0' : undefined}
-            className="text-fg2 [--section-heading-font-size:1.25rem] min-[481px]:[--section-heading-font-size:1.375rem] md:[--section-heading-font-size:1.5rem]"
+            className="text-fg2 [--section-heading-font-size:1.0625rem] min-[481px]:[--section-heading-font-size:1.125rem] md:[--section-heading-font-size:1.125rem]"
           >
             {year}
           </SectionHeading>

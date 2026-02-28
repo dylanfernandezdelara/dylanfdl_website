@@ -40,12 +40,12 @@ export default function About() {
         <WritingSection />
 
         <SectionHeading
-          className="text-fg2 [--section-heading-font-size:1.25rem] [--section-heading-margin-bottom:0.5rem] [--section-heading-margin-top:3rem] min-[481px]:[--section-heading-font-size:1.375rem] min-[481px]:[--section-heading-margin-top:4rem] md:[--section-heading-font-size:1.5rem] md:[--section-heading-margin-top:3rem]"
+          className="text-fg2 [--section-heading-font-size:1.0625rem] [--section-heading-margin-bottom:0.5rem] [--section-heading-margin-top:3rem] min-[481px]:[--section-heading-font-size:1.125rem] min-[481px]:[--section-heading-margin-top:4rem] md:[--section-heading-font-size:1.125rem] md:[--section-heading-margin-top:3rem]"
         >
           Artifacts
         </SectionHeading>
 
-        <ul className="mb-6 list-[circle] space-y-2 pl-6 text-[0.9rem] leading-[1.45] text-gray md:space-y-1 md:leading-[1.35]">
+        <ul className="mb-6 list-[circle] space-y-3 pl-6 text-[0.9rem] leading-[1.55] text-gray md:space-y-2 md:leading-[1.45]">
           <li className="text-fg3">
             <ExternalLink
               href="https://youtu.be/WlSkFFIchMw?si=mGwrEpNj6yfEMmcc"

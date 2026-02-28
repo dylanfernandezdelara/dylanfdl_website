@@ -17,10 +17,11 @@ export default function SectionHeading({ children, marginTop, fontSize, classNam
   return (
     <h2
       className={cn(
-        'mb-[var(--section-heading-margin-bottom,1rem)] mt-[var(--section-heading-margin-top,3rem)] text-[var(--section-heading-font-size,1.75rem)] font-medium text-fg0',
+        'mb-[var(--section-heading-margin-bottom,1rem)] mt-[var(--section-heading-margin-top,3rem)] font-medium text-fg0',
         className
       )}
       style={{
+        fontSize: 'var(--section-heading-font-size,1.75rem)',
         ...cssVarOverrides,
         ...style,
       }}
