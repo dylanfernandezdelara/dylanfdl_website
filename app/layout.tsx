@@ -7,6 +7,9 @@ export const metadata: Metadata = {
     default: 'dfdl',
   },
   description: 'Personal website',
+  icons: {
+    icon: '/favicon.svg',
+  },
 }
 
 export const viewport: Viewport = {
