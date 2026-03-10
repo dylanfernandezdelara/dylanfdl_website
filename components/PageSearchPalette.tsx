@@ -95,7 +95,7 @@ export default function PageSearchPalette() {
           event.preventDefault()
           requestAnimationFrame(() => inputRef.current?.focus())
         }}
-        className="top-[33.333%] w-[min(40rem,calc(100%-2rem))] -translate-y-1/2 gap-0 overflow-hidden rounded-2xl border border-[color:color-mix(in_oklab,white,transparent_35%)] bg-[color:color-mix(in_oklab,var(--bg0),white_22%)] p-0 shadow-[0_16px_40px_rgba(42,42,42,0.22)] backdrop-blur-[24px] saturate-[130%]"
+        className="top-[16.667%] w-[min(40rem,calc(100%-2rem))] -translate-y-1/2 gap-0 overflow-hidden rounded-2xl border border-[color:color-mix(in_oklab,white,transparent_35%)] bg-[color:color-mix(in_oklab,var(--bg0),white_22%)] p-0 shadow-[0_16px_40px_rgba(42,42,42,0.22)] backdrop-blur-[24px] saturate-[130%]"
       >
         <DialogTitle className="sr-only">Search</DialogTitle>
         <Command shouldFilter={false} className="bg-transparent">
