@@ -1,60 +1,24 @@
-## Getting Started
+# Dylan's website
+
+This is my personal website.
+
+## Local development
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the site.
+Then open [http://localhost:3000](http://localhost:3000).
 
-## Adding New Writing Posts
+## Writing posts
 
-Create a new markdown file in `content/essays/` with the following frontmatter:
+Add Markdown files under `content/essays/` and use standard frontmatter:
 
-```markdown
+```md
 ---
 title: "Your Post Title"
 date: "2024-01-01"
-excerpt: "A brief excerpt of your post"
+excerpt: "Brief excerpt"
 ---
-
-Your post content here...
 ```
-
-## Vercel Deployment Behavior
-
-This repository is configured to keep production deploys manual while automatically updating Vercel development/preview on each push to `main`.
-
-- `vercel.json` keeps git-triggered deployments disabled by default (no automatic production deploys).
-- `.github/workflows/vercel-dev-on-main.yml` runs on every push to `main` and performs a Vercel preview deploy.
-
-### Required GitHub Secrets
-
-Add these repository secrets so the workflow can deploy:
-
-- `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
-
-You can get `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` from `.vercel/project.json` after running `vercel link`, or from your Vercel project settings.
-
-## Secret Scanning (Local Hooks)
-
-This repo includes local git hooks to block leaked secrets before push.
-
-### One-time local setup
-
-Install `gitleaks`:
-
-```bash
-brew install gitleaks
-```
-
-Enable repo-managed hooks:
-
-```bash
-git config core.hooksPath .githooks
-chmod +x .githooks/pre-commit .githooks/pre-push
-```
-
-After this, `gitleaks` runs automatically on commit and push.
