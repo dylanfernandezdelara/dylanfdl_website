@@ -108,7 +108,7 @@ export async function GET() {
       )
     }
 
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)
 
     if (!sessionCookie) {
@@ -145,4 +145,3 @@ export async function GET() {
     )
   }
 }
-
