@@ -69,22 +69,29 @@ export default function ArtifactCardDeck() {
   const totalCards = ARTIFACTS.length
 
   const goNext = useCallback(() => {
+    if (exitDirection) return
     setExitDirection('left')
     setTimeout(() => {
       setCurrentIndex((prev) => (prev + 1) % totalCards)
       setExitDirection(null)
       setDragX(0)
     }, 250)
-  }, [totalCards])
+  }, [totalCards, exitDirection])
 
   const goPrev = useCallback(() => {
+    if (exitDirection) return
     setExitDirection('right')
     setTimeout(() => {
       setCurrentIndex((prev) => (prev - 1 + totalCards) % totalCards)
       setExitDirection(null)
       setDragX(0)
     }, 250)
-  }, [totalCards])
+  }, [totalCards, exitDirection])
+
+  const handlePointerCancel = useCallback(() => {
+    setIsDragging(false)
+    setDragX(0)
+  }, [])
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     setIsDragging(true)
@@ -212,6 +219,7 @@ export default function ArtifactCardDeck() {
                 onPointerDown={isTop ? handlePointerDown : undefined}
                 onPointerMove={isTop ? handlePointerMove : undefined}
                 onPointerUp={isTop ? handlePointerUp : undefined}
+                onPointerCancel={isTop ? handlePointerCancel : undefined}
                 onClick={isTop ? () => handleCardClick(artifact.url) : undefined}
                 aria-label={isTop ? 'Current video — click to open or swipe to browse' : undefined}
                 role={isTop ? 'button' : undefined}
