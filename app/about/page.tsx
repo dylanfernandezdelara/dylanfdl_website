@@ -1,8 +1,7 @@
 import ExternalLink from '@/components/ExternalLink'
 import RainbowText from '@/components/RainbowText'
 import VisitorCounter from '@/components/VisitorCounter'
-import WritingSection from '@/components/WritingSection'
-import ArtifactsSection from '@/components/ArtifactsSection'
+import CardGrid from '@/components/CardGrid'
 import PageSearchPalette from '@/components/PageSearchPalette'
 import type { Metadata } from 'next'
 
@@ -16,7 +15,7 @@ const CONTACT_LINK_STYLES =
 export default function About() {
   return (
     <>
-      <div className="mx-auto max-w-2xl px-6 pb-8 pt-14 text-base leading-[1.6] min-[481px]:pb-10 min-[481px]:pt-12 md:px-8 md:pb-16 md:pt-16">
+      <div className="mx-auto max-w-4xl px-6 pb-8 pt-14 text-base leading-[1.6] min-[481px]:pb-10 min-[481px]:pt-12 md:px-8 md:pb-16 md:pt-16">
         <div className="max-w-reading">
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
             I'm Dylan. I am an{' '}
@@ -38,10 +37,9 @@ export default function About() {
             </ExternalLink>
           </p>
 
-          <WritingSection />
         </div>
 
-        <ArtifactsSection />
+        <CardGrid />
 
         <div className="max-w-reading">
           <hr className="mb-3 mt-8 border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
