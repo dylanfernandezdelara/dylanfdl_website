@@ -80,7 +80,7 @@ export default function ArtifactCardCarousel() {
         Math.abs(info.offset.x) > swipeThreshold ||
         Math.abs(info.velocity.x) > velocityThreshold
       ) {
-        navigate(info.offset.x > 0 ? 1 : -1)
+        navigate(info.offset.x > 0 ? -1 : 1)
       }
     },
     [navigate],
