@@ -47,15 +47,6 @@ export default function About() {
           <hr className="mb-3 mt-8 border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
 
           <div className="flex flex-wrap items-baseline gap-2 text-sm text-fg2">
-            <a className={CONTACT_LINK_STYLES} href="https://www.threads.com/@dylan.fernandezdelara">
-              Threads
-            </a>
-            <span
-              className="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
-              aria-hidden="true"
-            >
-              ·
-            </span>
             <a className={CONTACT_LINK_STYLES} href="https://x.com/dylan_fdl_">
               Twitter
             </a>
