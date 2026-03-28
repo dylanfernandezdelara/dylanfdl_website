@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { motion, AnimatePresence, type PanInfo, type Variants } from 'framer-motion'
 
 interface ArtifactCard {
@@ -21,12 +21,15 @@ function getThumbnail(videoId: string): string {
   return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
 }
 
-/** Spiral-deck stack: alternating left/right tilt with increasing Z-depth */
-const STACK_CONFIG = [
-  { rotate: 0, y: 0, z: 0, scale: 1, opacity: 1 },
-  { rotate: -4, y: 6, z: -30, scale: 0.95, opacity: 0.6 },
-  { rotate: 3.5, y: 12, z: -60, scale: 0.90, opacity: 0.4 },
-  { rotate: -2.5, y: 18, z: -90, scale: 0.85, opacity: 0.25 },
+/**
+ * Playing-card fan: cards fan out from the bottom-left origin,
+ * each successive card rotated a bit more clockwise.
+ */
+const FAN_CONFIG = [
+  { rotate: 0, x: 0, y: 0, scale: 1, opacity: 1 },
+  { rotate: 5, x: 8, y: -2, scale: 0.97, opacity: 0.7 },
+  { rotate: 10, x: 16, y: -6, scale: 0.94, opacity: 0.5 },
+  { rotate: 15, x: 24, y: -12, scale: 0.91, opacity: 0.35 },
 ]
 
 const MAX_VISIBLE = 4
@@ -35,8 +38,8 @@ const spring = { type: 'spring' as const, stiffness: 300, damping: 28 }
 
 const topCardVariants: Variants = {
   enter: (dir: number) => ({
-    x: dir > 0 ? 280 : -280,
-    rotateZ: dir > 0 ? 15 : -15,
+    x: dir > 0 ? 200 : -200,
+    rotateZ: dir > 0 ? 12 : -12,
     opacity: 0,
     scale: 0.85,
   }),
@@ -48,8 +51,8 @@ const topCardVariants: Variants = {
     transition: spring,
   },
   exit: (dir: number) => ({
-    x: dir > 0 ? -280 : 280,
-    rotateZ: dir > 0 ? -15 : 15,
+    x: dir > 0 ? -200 : 200,
+    rotateZ: dir > 0 ? -12 : 12,
     opacity: 0,
     scale: 0.85,
     transition: { ...spring, stiffness: 250 },
@@ -59,6 +62,7 @@ const topCardVariants: Variants = {
 export default function ArtifactCardCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [direction, setDirection] = useState(0)
+  const isDragging = useRef(false)
 
   const total = ARTIFACTS.length
 
@@ -72,6 +76,10 @@ export default function ArtifactCardCarousel() {
 
   const getCardAt = (stackPos: number) => (currentIndex + stackPos) % total
 
+  const handleDragStart = useCallback(() => {
+    isDragging.current = true
+  }, [])
+
   const handleDragEnd = useCallback(
     (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
       const swipeThreshold = 40
@@ -82,142 +90,120 @@ export default function ArtifactCardCarousel() {
       ) {
         navigate(info.offset.x > 0 ? -1 : 1)
       }
+      requestAnimationFrame(() => {
+        isDragging.current = false
+      })
     },
     [navigate],
   )
 
+  const handleClick = useCallback(() => {
+    if (isDragging.current) return
+    window.open(ARTIFACTS[currentIndex].url, '_blank', 'noopener,noreferrer')
+  }, [currentIndex])
+
   return (
-    <div className="flex justify-center pb-4 pt-2">
-      <div className="relative flex items-center gap-3">
-        {/* Left arrow */}
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          aria-label="Previous card"
-          className="z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full
-                     bg-bg2 text-fg3 shadow-sm transition-colors hover:bg-bg3 hover:text-fg1
-                     focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+    <div className="pb-4 pt-2">
+      {/* Card stack — left-aligned, playing-card fan from bottom-left */}
+      <div
+        className="relative"
+        style={{
+          width: '20vw',
+          minWidth: '150px',
+          maxWidth: '260px',
+          aspectRatio: '4 / 3',
+          perspective: '800px',
+          marginRight: '40px',
+        }}
+      >
+        {/* Background stack cards — fanned out like playing cards */}
+        {Array.from(
+          { length: Math.min(MAX_VISIBLE - 1, total - 1) },
+          (_, i) => MAX_VISIBLE - 1 - i,
+        ).map(stackPos => {
+          const cardIdx = getCardAt(stackPos)
+          const card = ARTIFACTS[cardIdx]
+          const cfg = FAN_CONFIG[stackPos]
 
-        {/* Card stack container with 3D perspective */}
-        <div
-          className="relative"
-          style={{
-            width: '20vw',
-            minWidth: '150px',
-            maxWidth: '260px',
-            aspectRatio: '4 / 3',
-            perspective: '800px',
-          }}
-        >
-          {/* Background stack cards (rendered bottom-to-top) */}
-          {Array.from(
-            { length: Math.min(MAX_VISIBLE - 1, total - 1) },
-            (_, i) => MAX_VISIBLE - 1 - i,
-          ).map(stackPos => {
-            const cardIdx = getCardAt(stackPos)
-            const card = ARTIFACTS[cardIdx]
-            const cfg = STACK_CONFIG[stackPos]
-
-            return (
-              <motion.div
-                key={`bg-${stackPos}-${cardIdx}`}
-                className="absolute inset-0 overflow-hidden rounded-xl"
-                animate={{
-                  rotateZ: cfg.rotate,
-                  y: cfg.y,
-                  z: cfg.z,
-                  scale: cfg.scale,
-                  opacity: cfg.opacity,
-                }}
-                transition={spring}
-                style={{
-                  zIndex: MAX_VISIBLE - stackPos,
-                  transformStyle: 'preserve-3d',
-                  boxShadow: `0 ${2 + stackPos * 2}px ${6 + stackPos * 4}px rgba(0,0,0,0.08)`,
-                }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={getThumbnail(card.videoId)}
-                  alt=""
-                  className="h-full w-full object-cover pointer-events-none select-none"
-                  draggable={false}
-                  loading="lazy"
-                />
-              </motion.div>
-            )
-          })}
-
-          {/* Top card with AnimatePresence for enter/exit */}
-          <AnimatePresence initial={false} custom={direction} mode="popLayout">
+          return (
             <motion.div
-              key={currentIndex}
-              custom={direction}
-              variants={topCardVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.7}
-              onDragEnd={handleDragEnd}
-              onClick={() =>
-                window.open(ARTIFACTS[currentIndex].url, '_blank', 'noopener,noreferrer')
-              }
-              onKeyDown={e => {
-                if (e.key === 'ArrowLeft') {
-                  e.preventDefault()
-                  navigate(-1)
-                } else if (e.key === 'ArrowRight') {
-                  e.preventDefault()
-                  navigate(1)
-                } else if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  window.open(ARTIFACTS[currentIndex].url, '_blank', 'noopener,noreferrer')
-                }
+              key={`bg-${stackPos}-${cardIdx}`}
+              className="absolute inset-0 overflow-hidden rounded-lg"
+              animate={{
+                rotateZ: cfg.rotate,
+                x: cfg.x,
+                y: cfg.y,
+                scale: cfg.scale,
+                opacity: cfg.opacity,
               }}
-              role="button"
-              tabIndex={0}
-              aria-label={`Video ${currentIndex + 1} of ${total}. Press Enter to play.`}
-              className="absolute inset-0 cursor-grab overflow-hidden rounded-xl outline-none
-                         active:cursor-grabbing
-                         focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2"
+              transition={spring}
               style={{
-                zIndex: MAX_VISIBLE + 1,
-                transformStyle: 'preserve-3d',
-                boxShadow: '0 8px 28px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)',
+                zIndex: MAX_VISIBLE - stackPos,
+                transformOrigin: 'bottom left',
+                boxShadow: `0 ${2 + stackPos * 2}px ${6 + stackPos * 4}px rgba(0,0,0,0.10)`,
               }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={getThumbnail(ARTIFACTS[currentIndex].videoId)}
+                src={getThumbnail(card.videoId)}
                 alt=""
                 className="h-full w-full object-cover pointer-events-none select-none"
                 draggable={false}
-                loading="eager"
+                loading="lazy"
               />
             </motion.div>
-          </AnimatePresence>
-        </div>
+          )
+        })}
 
-        {/* Right arrow */}
-        <button
-          type="button"
-          onClick={() => navigate(1)}
-          aria-label="Next card"
-          className="z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full
-                     bg-bg2 text-fg3 shadow-sm transition-colors hover:bg-bg3 hover:text-fg1
-                     focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 6 15 12 9 18" />
-          </svg>
-        </button>
+        {/* Top card with AnimatePresence for enter/exit */}
+        <AnimatePresence initial={false} custom={direction} mode="popLayout">
+          <motion.div
+            key={currentIndex}
+            custom={direction}
+            variants={topCardVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.7}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onClick={handleClick}
+            onKeyDown={e => {
+              if (e.key === 'ArrowLeft') {
+                e.preventDefault()
+                navigate(-1)
+              } else if (e.key === 'ArrowRight') {
+                e.preventDefault()
+                navigate(1)
+              } else if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                window.open(ARTIFACTS[currentIndex].url, '_blank', 'noopener,noreferrer')
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`Video ${currentIndex + 1} of ${total}. Press Enter to play.`}
+            className="absolute inset-0 cursor-grab overflow-hidden rounded-lg outline-none
+                       active:cursor-grabbing
+                       focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-offset-2"
+            style={{
+              zIndex: MAX_VISIBLE + 1,
+              transformOrigin: 'bottom left',
+              boxShadow: '0 6px 24px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.08)',
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={getThumbnail(ARTIFACTS[currentIndex].videoId)}
+              alt=""
+              className="h-full w-full object-cover pointer-events-none select-none"
+              draggable={false}
+              loading="eager"
+            />
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   )
