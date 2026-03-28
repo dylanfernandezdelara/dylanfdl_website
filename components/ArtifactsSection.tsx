@@ -11,18 +11,18 @@ interface Artifact {
 
 const artifacts: Artifact[] = [
   {
-    title: 'YSO Halloween Show',
-    date: '2024',
-    href: 'https://youtu.be/WlSkFFIchMw?si=mGwrEpNj6yfEMmcc',
-    videoSrc: '/artifacts/yso-halloween.mp4',
-    posterSrc: '/artifacts/yso-halloween-poster.jpg',
-  },
-  {
     title: 'Stravinsky — Le Sacre du Printemps',
     date: '2023',
     href: 'https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK',
     videoSrc: '/artifacts/yale-dance-lab.mp4',
     posterSrc: '/artifacts/yale-dance-lab-poster.jpg',
+  },
+  {
+    title: 'YSO Halloween Show',
+    date: '2022',
+    href: 'https://youtu.be/WlSkFFIchMw?si=mGwrEpNj6yfEMmcc',
+    videoSrc: '/artifacts/yso-halloween.mp4',
+    posterSrc: '/artifacts/yso-halloween-poster.jpg',
   },
   {
     title: 'Rimsky-Korsakov — Scheherazade',
