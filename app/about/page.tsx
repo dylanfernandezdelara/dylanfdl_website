@@ -1,3 +1,4 @@
+import ArtifactsCarousel from '@/components/ArtifactsCarousel'
 import ExternalLink from '@/components/ExternalLink'
 import RainbowText from '@/components/RainbowText'
 import SectionHeading from '@/components/SectionHeading'
@@ -5,6 +6,33 @@ import VisitorCounter from '@/components/VisitorCounter'
 import WritingSection from '@/components/WritingSection'
 import PageSearchPalette from '@/components/PageSearchPalette'
 import type { Metadata } from 'next'
+
+const ARTIFACT_VIDEOS = [
+  {
+    href: 'https://youtu.be/WlSkFFIchMw?si=mGwrEpNj6yfEMmcc',
+    videoId: 'WlSkFFIchMw',
+  },
+  {
+    href: 'https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK',
+    videoId: 'mUGqOE6hAUA',
+  },
+  {
+    href: 'https://youtu.be/7DqunJ6kFoU?si=am_9A10YKeiwEUR7&t=6',
+    videoId: '7DqunJ6kFoU',
+  },
+  {
+    href: 'https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH',
+    videoId: '4rajIRu84Bk',
+  },
+  {
+    href: 'https://youtu.be/VrcXomyo1yI?si=yQnD_OzlZ8pKsPWH',
+    videoId: 'VrcXomyo1yI',
+  },
+  {
+    href: 'https://youtu.be/rpyJp9MEnAE?si=yqsxIOrXO_ptMv8j&t=23',
+    videoId: 'rpyJp9MEnAE',
+  },
+] as const
 
 export const metadata: Metadata = {
   title: 'About me',
@@ -45,68 +73,7 @@ export default function About() {
           Artifacts
         </SectionHeading>
 
-        <ul className="mb-6 list-[circle] space-y-3 pl-6 text-[0.9rem] leading-[1.55] text-gray md:space-y-2 md:leading-[1.45]">
-          <li className="text-fg3">
-            <ExternalLink
-              href="https://youtu.be/WlSkFFIchMw?si=mGwrEpNj6yfEMmcc"
-              thinGreyUnderline
-              allowWrap
-              className="text-fg3"
-            >
-              Yale Symphony Orchestra Halloween Show
-            </ExternalLink>
-          </li>
-          <li className="text-fg3">
-            <ExternalLink
-              href="https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK"
-              thinGreyUnderline
-              allowWrap
-              className="text-fg3"
-            >
-              Yale Dance Lab and Yale Symphony Orchestra perform Stravinsky's Le Sacre du Printemps
-            </ExternalLink>
-          </li>
-          <li className="text-fg3">
-            <ExternalLink
-              href="https://youtu.be/7DqunJ6kFoU?si=am_9A10YKeiwEUR7&t=6"
-              thinGreyUnderline
-              allowWrap
-              className="text-fg3"
-            >
-              Yale Symphony Orchestra Rimsky-Korsakov Scheherazade
-            </ExternalLink>
-          </li>
-          <li className="text-fg3">
-            <ExternalLink
-              href="https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH"
-              thinGreyUnderline
-              allowWrap
-              className="text-fg3"
-            >
-              NYO-USA 2019 R. Strauss's "Eine Alpensinfonie"
-            </ExternalLink>
-          </li>
-          <li className="text-fg3">
-            <ExternalLink
-              href="https://youtu.be/VrcXomyo1yI?si=yQnD_OzlZ8pKsPWH"
-              thinGreyUnderline
-              allowWrap
-              className="text-fg3"
-            >
-              NYO-USA 2019 BBC Proms
-            </ExternalLink>
-          </li>
-          <li className="text-fg3">
-            <ExternalLink
-              href="https://youtu.be/rpyJp9MEnAE?si=yqsxIOrXO_ptMv8j&t=23"
-              thinGreyUnderline
-              allowWrap
-              className="text-fg3"
-            >
-              NYO-USA 2019 Young Euro Classic Prokofiev Symphony No. 5
-            </ExternalLink>
-          </li>
-        </ul>
+        <ArtifactsCarousel items={[...ARTIFACT_VIDEOS]} />
 
         <hr className="mb-3 mt-6 border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
 
