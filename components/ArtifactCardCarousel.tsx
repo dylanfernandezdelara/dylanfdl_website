@@ -108,9 +108,9 @@ export default function ArtifactCardCarousel() {
       <div
         className="relative"
         style={{
-          width: '20vw',
-          minWidth: '150px',
-          maxWidth: '260px',
+          width: '15vw',
+          minWidth: '120px',
+          maxWidth: '200px',
           aspectRatio: '4 / 3',
           perspective: '800px',
           marginRight: '40px',
