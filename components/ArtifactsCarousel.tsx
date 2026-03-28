@@ -126,7 +126,7 @@ export default function ArtifactsCarousel({ items }: { items: ArtifactVideo[] })
 
   return (
     <div
-      className="artifacts-carousel mx-auto mb-6 w-[min(20vw,100%)] max-w-full"
+      className="artifacts-carousel mx-auto w-[min(20vw,100%)] max-w-full overflow-visible pb-16 pt-1 md:pb-20"
       role="region"
       aria-labelledby={labelId}
     >

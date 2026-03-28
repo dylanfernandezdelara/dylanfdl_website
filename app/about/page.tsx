@@ -67,15 +67,23 @@ export default function About() {
 
         <WritingSection />
 
-        <SectionHeading
-          className="text-fg2 [--section-heading-font-size:1.0625rem] [--section-heading-margin-bottom:0.5rem] [--section-heading-margin-top:3rem] min-[481px]:[--section-heading-font-size:1.125rem] min-[481px]:[--section-heading-margin-top:4rem] md:[--section-heading-font-size:1.125rem] md:[--section-heading-margin-top:3rem]"
+        <section
+          className="mt-[var(--section-heading-margin-top,3rem)] min-[481px]:mt-[4rem] md:mt-[3rem]"
+          aria-labelledby="artifacts-heading"
         >
-          Artifacts
-        </SectionHeading>
+          <SectionHeading
+            id="artifacts-heading"
+            className="mt-0 text-fg2 [--section-heading-font-size:1.0625rem] [--section-heading-margin-bottom:1rem] [--section-heading-margin-top:0] min-[481px]:[--section-heading-font-size:1.125rem] md:[--section-heading-font-size:1.125rem]"
+          >
+            Artifacts
+          </SectionHeading>
 
-        <ArtifactsCarousel items={[...ARTIFACT_VIDEOS]} />
+          <div className="flex w-full flex-col items-center pb-2 pt-1 md:pb-4 md:pt-2">
+            <ArtifactsCarousel items={[...ARTIFACT_VIDEOS]} />
+          </div>
+        </section>
 
-        <hr className="mb-3 mt-6 border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
+        <hr className="mb-3 mt-8 border-0 border-t border-bg3 min-[481px]:mb-4 min-[481px]:mt-10 md:mb-6 md:mt-12" />
 
         <div className="flex flex-wrap items-baseline gap-2 text-sm text-fg2">
           <a className={CONTACT_LINK_STYLES} href="https://www.threads.com/@dylan.fernandezdelara">
