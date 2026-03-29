@@ -123,7 +123,7 @@ export default function CardGrid() {
   const items = buildGridItems()
 
   return (
-    <div className="mt-12 grid grid-cols-1 gap-3 min-[481px]:grid-cols-2 md:gap-4">
+    <div className="mt-12 grid grid-cols-1 gap-3 min-[640px]:grid-cols-2 md:gap-4">
       {items.map((item) =>
         item.kind === 'artifact' ? (
           <Card
