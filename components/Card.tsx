@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 const cardClassName =
-  'group flex flex-col overflow-hidden rounded-xl border border-bg3 bg-bg1 no-underline transition-[border-color] duration-200 hover:border-fg4/25'
+  'group flex flex-col overflow-hidden rounded-xl border border-bg3 bg-bg1 no-underline hover:border-fg4/25'
 
 export type CardProps = {
   title: string

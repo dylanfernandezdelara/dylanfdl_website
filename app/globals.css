@@ -282,6 +282,15 @@ html.dark {
   color-scheme: dark;
 }
 
+/* Theme toggle: single cross-fade for the whole document (see ThemeToggle + startViewTransition). */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.2s;
+    animation-timing-function: ease;
+  }
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
   font-weight: 500;

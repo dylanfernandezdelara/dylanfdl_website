@@ -32,15 +32,26 @@ export default function ThemeToggle() {
 
   const toggle = () => {
     const nextIsDark = !resolvedDark()
-    document.documentElement.classList.remove('light', 'dark')
-    if (nextIsDark) {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-    } else {
-      document.documentElement.classList.add('light')
-      localStorage.setItem('theme', 'light')
+    const apply = () => {
+      document.documentElement.classList.remove('light', 'dark')
+      if (nextIsDark) {
+        document.documentElement.classList.add('dark')
+        localStorage.setItem('theme', 'dark')
+      } else {
+        document.documentElement.classList.add('light')
+        localStorage.setItem('theme', 'light')
+      }
+      setIsDark(nextIsDark)
     }
-    setIsDark(nextIsDark)
+
+    const reducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (!reducedMotion && typeof document.startViewTransition === 'function') {
+      document.startViewTransition(apply)
+    } else {
+      apply()
+    }
   }
 
   return (
@@ -48,7 +59,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       className={cn(
-        'fixed bottom-5 right-5 z-[100] flex h-11 w-11 items-center justify-center rounded-full border border-bg3 bg-bg1 text-fg0 shadow-[var(--elevated-shadow)] transition-[background-color,border-color,color] hover:border-fg4/35 hover:bg-bg2 focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2 motion-reduce:transition-none',
+        'fixed bottom-5 right-5 z-[100] flex h-11 w-11 items-center justify-center rounded-full border border-bg3 bg-bg1 text-fg0 shadow-[var(--elevated-shadow)] transition-none hover:border-fg4/35 hover:bg-bg2 focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2',
       )}
       aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
       suppressHydrationWarning
