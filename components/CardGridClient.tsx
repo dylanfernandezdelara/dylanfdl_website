@@ -110,6 +110,30 @@ function isDisjointProjectsMusicSwitch(
 }
 
 /**
+ * Music-only or Projects-only → All: visible cards were all `stay`; merge would only `enter` the
+ * missing category so one group animates and the other does not. Re-stagger everyone for a uniform enter.
+ */
+function isSingleCategoryViewExpandingToAll(
+  prev: GridRow[],
+  wantedSorted: CardGridSerializableItem[],
+): boolean {
+  const activePrev = prev.filter((r) => r.phase !== 'exit')
+  if (activePrev.length === 0) {
+    return false
+  }
+  const cats = new Set(activePrev.map((r) => r.item.category))
+  if (cats.size !== 1) {
+    return false
+  }
+  const only = cats.values().next().value
+  const wantCats = new Set(wantedSorted.map((i) => i.category))
+  if (wantCats.size < 2) {
+    return false
+  }
+  return only === 'music' || only === 'projects'
+}
+
+/**
  * Merge previous rows with the new filter’s list.
  *
  * Active (stay/enter) rows follow `wantedSorted` order so the grid matches the target filter
@@ -122,6 +146,14 @@ function mergeRowsForFilter(
   wantedSorted: CardGridSerializableItem[],
 ): GridRow[] {
   if (isDisjointProjectsMusicSwitch(prev, wantedSorted)) {
+    return wantedSorted.map((item, i) => ({
+      item,
+      phase: 'enter' as const,
+      enterDelayMs: i * cardStaggerMs,
+    }))
+  }
+
+  if (isSingleCategoryViewExpandingToAll(prev, wantedSorted)) {
     return wantedSorted.map((item, i) => ({
       item,
       phase: 'enter' as const,
