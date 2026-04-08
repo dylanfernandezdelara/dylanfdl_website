@@ -38,7 +38,7 @@ export default function About() {
             <ExternalLink href="https://www.meta.com/ai-glasses/">
               devices
             </ExternalLink>
-            , and I'm now leveraging AI to accelerate our engineering efforts.
+            , and I am now focused on AI engineering acceleration efforts.
           </p>
 
         </div>
