@@ -55,7 +55,7 @@ export default async function PostPage({
   const showExcerpt = post.excerpt && wordCount > 500
 
   return (
-    <div className="mx-auto max-w-reading px-6 pb-[4.5rem] pt-[3.25rem] md:px-8">
+    <div className="mx-auto max-w-reading px-4 pb-[4.5rem] pt-[3.25rem] min-[481px]:px-6 md:px-8">
       <article className="grid gap-0">
         <Link
           href="/about"

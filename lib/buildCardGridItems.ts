@@ -1,8 +1,29 @@
-import type { ReactNode } from 'react'
+import { formatPostDateCardGrid, getAllPosts } from '@/lib/posts'
 
-import Card from '@/components/Card'
-import EditorThumbnail from '@/components/EditorThumbnail'
-import { formatPostDateShort, getAllPosts } from '@/lib/posts'
+export type CardGridFilter = 'all' | 'projects' | 'music'
+
+export type CardGridSerializableItem =
+  | {
+      kind: 'essay'
+      category: 'projects'
+      sortDate: string
+      slug: string
+      title: string
+      dateLabel: string
+      href: string
+      videoSrc?: string
+      posterSrc?: string
+    }
+  | {
+      kind: 'artifact'
+      category: 'music'
+      sortDate: string
+      title: string
+      dateLabel: string
+      href: string
+      videoSrc: string
+      posterSrc: string
+    }
 
 interface ArtifactEntry {
   title: string
@@ -64,50 +85,21 @@ function artifactSortDate(date: string): string {
   return date
 }
 
-type GridItem =
-  | {
-      kind: 'essay'
-      sortDate: string
-      title: string
-      dateLabel: string
-      href: string
-      videoSrc?: string
-      posterSrc?: string
-      thumbnail?: ReactNode
-    }
-  | {
-      kind: 'artifact'
-      sortDate: string
-      title: string
-      dateLabel: string
-      href: string
-      videoSrc: string
-      posterSrc: string
-    }
-
-function buildGridItems(): GridItem[] {
+export function buildCardGridItems(): CardGridSerializableItem[] {
   const posts = getAllPosts()
-  const essayItems: GridItem[] = posts.map((post) => {
-    const base = {
-      kind: 'essay' as const,
-      sortDate: post.date,
-      title: post.title,
-      dateLabel: formatPostDateShort(post.date),
-      href: `/essays/${post.slug}`,
-    }
+  const essayItems: CardGridSerializableItem[] = posts.map((post) => ({
+    kind: 'essay' as const,
+    category: 'projects' as const,
+    sortDate: post.date,
+    slug: post.slug,
+    title: post.title,
+    dateLabel: formatPostDateCardGrid(post.date),
+    href: `/essays/${post.slug}`,
+  }))
 
-    if (post.slug === 'purpose-of-writing') {
-      return {
-        ...base,
-        thumbnail: <EditorThumbnail />,
-      }
-    }
-
-    return base
-  })
-
-  const artifactItems: GridItem[] = artifacts.map((a) => ({
+  const artifactItems: CardGridSerializableItem[] = artifacts.map((a) => ({
     kind: 'artifact',
+    category: 'music',
     sortDate: artifactSortDate(a.date),
     title: a.title,
     dateLabel: a.date,
@@ -117,36 +109,4 @@ function buildGridItems(): GridItem[] {
   }))
 
   return [...essayItems, ...artifactItems].sort((a, b) => b.sortDate.localeCompare(a.sortDate))
-}
-
-export default function CardGrid() {
-  const items = buildGridItems()
-
-  return (
-    <div className="mt-12 grid grid-cols-1 gap-3 min-[640px]:grid-cols-2 md:gap-4">
-      {items.map((item) =>
-        item.kind === 'artifact' ? (
-          <Card
-            key={item.href}
-            title={item.title}
-            dateLabel={item.dateLabel}
-            href={item.href}
-            external
-            videoSrc={item.videoSrc}
-            posterSrc={item.posterSrc}
-          />
-        ) : (
-          <Card
-            key={item.href}
-            title={item.title}
-            dateLabel={item.dateLabel}
-            href={item.href}
-            videoSrc={item.videoSrc}
-            posterSrc={item.posterSrc}
-            thumbnail={item.thumbnail}
-          />
-        ),
-      )}
-    </div>
-  )
 }

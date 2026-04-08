@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatPostDate, formatPostDateShort } from '../lib/posts'
+import { formatPostDate, formatPostDateCardGrid, formatPostDateShort } from '../lib/posts'
 
 describe('formatPostDate', () => {
   it('formats YYYY-MM-DD into long english date', () => {
@@ -18,5 +18,16 @@ describe('formatPostDateShort', () => {
 
   it('returns the original value for invalid input', () => {
     expect(formatPostDateShort('not-a-date')).toBe('not-a-date')
+  })
+})
+
+describe('formatPostDateCardGrid', () => {
+  it('formats YYYY-MM-DD as M/YYYY', () => {
+    expect(formatPostDateCardGrid('2025-12-20')).toBe('12/2025')
+    expect(formatPostDateCardGrid('2024-01-15')).toBe('1/2024')
+  })
+
+  it('returns the original value for invalid input', () => {
+    expect(formatPostDateCardGrid('not-a-date')).toBe('not-a-date')
   })
 })

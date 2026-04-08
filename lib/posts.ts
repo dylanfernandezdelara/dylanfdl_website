@@ -72,6 +72,25 @@ export function formatPostDateShort(date: string, locale: string = 'en-US'): str
 }
 
 /**
+ * Formats YYYY-MM-DD as M/YYYY for compact card labels (e.g. next to year-only artifact dates).
+ * Month is 1–12 without a leading zero. Invalid input is returned unchanged.
+ */
+export function formatPostDateCardGrid(date: string): string {
+  const parts = date.split('-').map(Number)
+  if (parts.length !== 3 || parts.some(isNaN)) {
+    return date
+  }
+
+  const [year, month, day] = parts
+  const dateObject = new Date(year, month - 1, day)
+  if (Number.isNaN(dateObject.getTime())) {
+    return date
+  }
+
+  return `${month}/${year}`
+}
+
+/**
  * Extracts the year from a date string (assumes YYYY-MM-DD format).
  * Returns 'Unknown' if the date string is too short.
  *

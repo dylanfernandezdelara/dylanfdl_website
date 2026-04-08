@@ -1,8 +1,9 @@
+import AboutCardGridWithFooter from '@/components/AboutCardGridWithFooter'
 import ExternalLink from '@/components/ExternalLink'
 import RainbowText from '@/components/RainbowText'
 import VisitorCounter from '@/components/VisitorCounter'
-import CardGrid from '@/components/CardGrid'
 import PageSearchPalette from '@/components/PageSearchPalette'
+import { buildCardGridItems } from '@/lib/buildCardGridItems'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -13,9 +14,11 @@ const CONTACT_LINK_STYLES =
   'text-fg2 no-underline transition-colors duration-150 hover:text-fg1 hover:underline hover:decoration-[color:color-mix(in_oklab,var(--fg2),transparent_35%)] focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-3'
 
 export default function About() {
+  const cardGridItems = buildCardGridItems()
+
   return (
     <>
-      <div className="mx-auto max-w-4xl px-6 pb-8 pt-14 text-base leading-[1.6] min-[481px]:pb-10 min-[481px]:pt-12 md:px-8 md:pb-16 md:pt-16">
+      <div className="mx-auto max-w-4xl px-4 pb-8 pt-14 text-base leading-[1.6] min-[481px]:px-6 min-[481px]:pb-10 min-[481px]:pt-12 md:px-8 md:pb-16 md:pt-16">
         <div className="max-w-reading">
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
             I'm Dylan. I am an{' '}
@@ -39,9 +42,7 @@ export default function About() {
 
         </div>
 
-        <CardGrid />
-
-        <div className="max-w-reading">
+        <AboutCardGridWithFooter items={cardGridItems}>
           <hr className="mb-3 mt-8 border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
 
           <div className="flex flex-wrap items-baseline gap-2 text-sm text-fg2">
@@ -74,7 +75,7 @@ export default function About() {
             </span>
             <VisitorCounter />
           </div>
-        </div>
+        </AboutCardGridWithFooter>
       </div>
       <PageSearchPalette />
     </>

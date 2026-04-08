@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 const FULL_TEXT = 'Writing is not algorithmic, and...'
 const TYPE_DELAY_MS = 230
@@ -11,6 +11,7 @@ const HOLD_FULL_MS = 900
 const HOLD_EMPTY_MS = 250
 const TEXT_LENGTH = FULL_TEXT.length
 const TRAILING_DOT_COUNT = 3
+const BASE_FONT_SIZE_PX = 15.2
 
 function getTypeDelay(nextVisibleLength: number) {
   const typedCharacter = FULL_TEXT[nextVisibleLength - 1]
@@ -102,8 +103,11 @@ function getVisibleLengthAt(cycleElapsedMs: number) {
 
 export default function EditorThumbnail() {
   const [visibleLength, setVisibleLength] = useState(0)
+  const [textSizePx, setTextSizePx] = useState(BASE_FONT_SIZE_PX)
   const cycleStartedAtRef = useRef<number | null>(null)
   const lastVisibleLengthRef = useRef(0)
+  const textShellRef = useRef<HTMLDivElement | null>(null)
+  const textMeasureRef = useRef<HTMLSpanElement | null>(null)
 
   useEffect(() => {
     let animationFrameId = 0
@@ -129,6 +133,53 @@ export default function EditorThumbnail() {
     return () => window.cancelAnimationFrame(animationFrameId)
   }, [])
 
+  useLayoutEffect(() => {
+    const shell = textShellRef.current
+    const measure = textMeasureRef.current
+
+    if (!shell || !measure) {
+      return
+    }
+
+    let animationFrameId = 0
+
+    const updateScale = () => {
+      animationFrameId = 0
+
+      const availableWidth = shell.clientWidth
+      const measureWidth = measure.getBoundingClientRect().width + 4
+
+      if (availableWidth === 0 || measureWidth === 0) {
+        return
+      }
+
+      const nextFontSize = Math.min(BASE_FONT_SIZE_PX, (availableWidth / measureWidth) * BASE_FONT_SIZE_PX)
+      setTextSizePx((current) =>
+        Math.abs(current - nextFontSize) < 0.1 ? current : nextFontSize,
+      )
+    }
+
+    const scheduleUpdate = () => {
+      if (animationFrameId === 0) {
+        animationFrameId = window.requestAnimationFrame(updateScale)
+      }
+    }
+
+    scheduleUpdate()
+
+    const resizeObserver = new ResizeObserver(scheduleUpdate)
+    resizeObserver.observe(shell)
+    resizeObserver.observe(measure)
+
+    return () => {
+      resizeObserver.disconnect()
+
+      if (animationFrameId !== 0) {
+        window.cancelAnimationFrame(animationFrameId)
+      }
+    }
+  }, [])
+
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-bg2">
       <div
@@ -141,11 +192,27 @@ export default function EditorThumbnail() {
           <span className="ml-1.5 h-2 w-2 rounded-full bg-[#28c840]" />
         </div>
         <div className="flex flex-1 items-center justify-center px-[8%]">
-          <div className="flex max-w-full items-end overflow-hidden">
-            <span className="whitespace-nowrap font-mono text-[clamp(0.7rem,1.35vw,0.95rem)] leading-[1.2] text-fg2">
-              {FULL_TEXT.slice(0, visibleLength)}
+          <div ref={textShellRef} className="relative flex w-full justify-center overflow-hidden">
+            <div className="flex items-end whitespace-nowrap">
+              <span
+                className="font-mono leading-[1.2] text-fg2"
+                style={{ fontSize: `${textSizePx}px` }}
+              >
+                {FULL_TEXT.slice(0, visibleLength)}
+              </span>
+              <span
+                className="editor-cursor-blink ml-px w-px shrink-0 bg-fg3"
+                style={{ height: `${textSizePx * 1.05}px` }}
+              />
+            </div>
+            <span
+              ref={textMeasureRef}
+              aria-hidden
+              className="pointer-events-none absolute opacity-0 whitespace-nowrap font-mono leading-[1.2]"
+              style={{ fontSize: `${BASE_FONT_SIZE_PX}px` }}
+            >
+              {FULL_TEXT}
             </span>
-            <span className="editor-cursor-blink ml-px h-[1.05em] w-px shrink-0 bg-fg3" />
           </div>
         </div>
       </div>

@@ -96,6 +96,9 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: unset;
+  /* Keep vertical scrollbar lane even when content is short — avoids ~12px horizontal jump when it would otherwise disappear */
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
 }
 
 body {

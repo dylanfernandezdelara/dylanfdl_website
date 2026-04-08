@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 const cardClassName =
-  'group block overflow-hidden rounded-xl border border-bg3 bg-bg1 no-underline transition-[border-color] duration-200 hover:border-fg4/25'
+  'group flex flex-col overflow-hidden rounded-xl border border-bg3 bg-bg1 no-underline transition-[border-color] duration-200 hover:border-fg4/25'
 
 export type CardProps = {
   title: string
@@ -54,13 +54,11 @@ export default function Card({
 
   const inner = (
     <>
-      <div className="flex items-baseline justify-between gap-3 px-3.5 pb-2 pt-3">
-        <span className="text-[0.8125rem] font-medium leading-snug text-fg1 transition-colors duration-200 group-hover:text-fg0">
-          {title}
-        </span>
-        <span className="shrink-0 text-[0.6875rem] tabular-nums text-fg4">{dateLabel}</span>
+      <div className="flex items-baseline justify-between gap-3 px-4 pb-3 pt-4">
+        <span className="text-sm font-medium leading-snug text-fg0">{title}</span>
+        <span className="shrink-0 text-[0.6875rem] font-normal tabular-nums text-fg4">{dateLabel}</span>
       </div>
-      <div className="relative mx-1.5 mb-1.5 aspect-video overflow-hidden rounded-lg bg-bg2">{media}</div>
+      <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-bg2">{media}</div>
     </>
   )
 
