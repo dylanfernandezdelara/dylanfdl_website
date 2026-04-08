@@ -1,4 +1,8 @@
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
+
+import ThemeToggle from '@/components/ThemeToggle'
+
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -25,9 +29,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`(function(){try{var t=localStorage.getItem('theme');document.documentElement.classList.remove('light','dark');if(t==='dark')document.documentElement.classList.add('dark');else if(t==='light')document.documentElement.classList.add('light');}catch(e){}})()`}
+        </Script>
         <main className="flex-1 pb-16 min-[481px]:pb-14 md:pb-12 md:pt-8">{children}</main>
+        <ThemeToggle />
       </body>
     </html>
   )

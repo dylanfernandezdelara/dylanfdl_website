@@ -58,6 +58,11 @@
   --input: var(--bg2);
   --ring: var(--blue);
   --radius: 0.5rem;
+
+  /* Modal / overlay tokens (theme-aware) */
+  --dialog-scrim: color-mix(in oklab, rgb(30 30 30), transparent 88%);
+  --elevated-shadow: 0 16px 40px rgba(42, 42, 42, 0.22);
+  --search-hit-pulse: color-mix(in oklab, var(--yellow), transparent 65%);
 }
 
 @supports (color: oklch(0 0 0)) {
@@ -86,6 +91,171 @@
   }
 }
 
+/* Warm ink — Seoul256-adjacent dark palette */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --bg0-hard: #141210;
+    --bg0: #171512;
+    --bg1: #1b1815;
+    --bg2: #201d19;
+    --bg3: #28241e;
+    --bg4: #302b24;
+
+    --fg0: #ebe6dc;
+    --fg1: #ddd8cc;
+    --fg2: #c8c2b6;
+    --fg3: #a39a8c;
+    --fg4: #878078;
+
+    --red: #c47070;
+    --green: #7a9a7a;
+    --yellow: #d4a870;
+    --blue: #9ca4e8;
+    --purple: #b898c8;
+    --aqua: #88b8b8;
+    --orange: #d4a870;
+    --gray: #878078;
+
+    --text-color: var(--fg1);
+    --bg-color: var(--bg0);
+    --border-color: var(--bg3);
+    --hover-color: var(--yellow);
+    --link-color: var(--blue);
+    --link-hover: var(--aqua);
+
+    --background: var(--bg0);
+    --foreground: var(--fg1);
+    --card: var(--bg1);
+    --card-foreground: var(--fg1);
+    --popover: color-mix(in oklab, var(--bg1), white 8%);
+    --popover-foreground: var(--fg0);
+    --primary: var(--blue);
+    --primary-foreground: var(--bg0-hard);
+    --secondary: var(--bg2);
+    --secondary-foreground: var(--fg1);
+    --muted: var(--bg2);
+    --muted-foreground: var(--fg3);
+    --accent: var(--bg3);
+    --accent-foreground: var(--fg0);
+    --destructive: var(--red);
+    --destructive-foreground: var(--bg0-hard);
+    --input: var(--bg3);
+    --ring: var(--blue);
+
+    --dialog-scrim: color-mix(in oklab, rgb(0 0 0), transparent 42%);
+    --elevated-shadow: 0 20px 56px rgba(0, 0, 0, 0.55);
+    --search-hit-pulse: color-mix(in oklab, var(--yellow), transparent 55%);
+  }
+}
+
+@supports (color: oklch(0 0 0)) {
+  @media (prefers-color-scheme: dark) {
+    :root:not(.light) {
+      --bg0-hard: oklch(20.5% 0.006 75);
+      --bg0: oklch(22.2% 0.007 75);
+      --bg1: oklch(24% 0.008 75);
+      --bg2: oklch(26.2% 0.009 75);
+      --bg3: oklch(29.5% 0.011 75);
+      --bg4: oklch(32.8% 0.012 78);
+
+      --fg0: oklch(93.5% 0.012 85);
+      --fg1: oklch(88.5% 0.014 85);
+      --fg2: oklch(82% 0.016 82);
+      --fg3: oklch(68% 0.018 78);
+      --fg4: oklch(58% 0.015 78);
+
+      --red: oklch(62% 0.11 20);
+      --green: oklch(62% 0.08 145);
+      --yellow: oklch(72% 0.09 75);
+      --blue: oklch(72% 0.12 278);
+      --purple: oklch(68% 0.09 320);
+      --aqua: oklch(70% 0.06 195);
+      --orange: oklch(72% 0.09 75);
+      --gray: oklch(58% 0.015 78);
+    }
+  }
+}
+
+html.dark {
+  --bg0-hard: #141210;
+  --bg0: #171512;
+  --bg1: #1b1815;
+  --bg2: #201d19;
+  --bg3: #28241e;
+  --bg4: #302b24;
+
+  --fg0: #ebe6dc;
+  --fg1: #ddd8cc;
+  --fg2: #c8c2b6;
+  --fg3: #a39a8c;
+  --fg4: #878078;
+
+  --red: #c47070;
+  --green: #7a9a7a;
+  --yellow: #d4a870;
+  --blue: #9ca4e8;
+  --purple: #b898c8;
+  --aqua: #88b8b8;
+  --orange: #d4a870;
+  --gray: #878078;
+
+  --text-color: var(--fg1);
+  --bg-color: var(--bg0);
+  --border-color: var(--bg3);
+  --hover-color: var(--yellow);
+  --link-color: var(--blue);
+  --link-hover: var(--aqua);
+
+  --background: var(--bg0);
+  --foreground: var(--fg1);
+  --card: var(--bg1);
+  --card-foreground: var(--fg1);
+  --popover: color-mix(in oklab, var(--bg1), white 8%);
+  --popover-foreground: var(--fg0);
+  --primary: var(--blue);
+  --primary-foreground: var(--bg0-hard);
+  --secondary: var(--bg2);
+  --secondary-foreground: var(--fg1);
+  --muted: var(--bg2);
+  --muted-foreground: var(--fg3);
+  --accent: var(--bg3);
+  --accent-foreground: var(--fg0);
+  --destructive: var(--red);
+  --destructive-foreground: var(--bg0-hard);
+  --input: var(--bg3);
+  --ring: var(--blue);
+
+  --dialog-scrim: color-mix(in oklab, rgb(0 0 0), transparent 42%);
+  --elevated-shadow: 0 20px 56px rgba(0, 0, 0, 0.55);
+  --search-hit-pulse: color-mix(in oklab, var(--yellow), transparent 55%);
+}
+
+@supports (color: oklch(0 0 0)) {
+  html.dark {
+    --bg0-hard: oklch(20.5% 0.006 75);
+    --bg0: oklch(22.2% 0.007 75);
+    --bg1: oklch(24% 0.008 75);
+    --bg2: oklch(26.2% 0.009 75);
+    --bg3: oklch(29.5% 0.011 75);
+    --bg4: oklch(32.8% 0.012 78);
+
+    --fg0: oklch(93.5% 0.012 85);
+    --fg1: oklch(88.5% 0.014 85);
+    --fg2: oklch(82% 0.016 82);
+    --fg3: oklch(68% 0.018 78);
+    --fg4: oklch(58% 0.015 78);
+
+    --red: oklch(62% 0.11 20);
+    --green: oklch(62% 0.08 145);
+    --yellow: oklch(72% 0.09 75);
+    --blue: oklch(72% 0.12 278);
+    --purple: oklch(68% 0.09 320);
+    --aqua: oklch(70% 0.06 195);
+    --orange: oklch(72% 0.09 75);
+    --gray: oklch(58% 0.015 78);
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -94,11 +264,22 @@
 
 html {
   font-size: 16px;
+  color-scheme: light;
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: unset;
   /* Keep vertical scrollbar lane even when content is short — avoids ~12px horizontal jump when it would otherwise disappear */
   overflow-y: scroll;
   scrollbar-gutter: stable;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light) {
+    color-scheme: dark;
+  }
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 body {
@@ -447,7 +628,7 @@ article img {
 
 @keyframes page-search-pulse {
   0% {
-    background-color: color-mix(in oklab, var(--yellow), transparent 65%);
+    background-color: var(--search-hit-pulse);
   }
 
   100% {
