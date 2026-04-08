@@ -1,4 +1,3 @@
-import { ArrowUpRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface ExternalLinkProps {
@@ -19,7 +18,7 @@ export default function ExternalLink({
   allowWrap = false
 }: ExternalLinkProps) {
   const classes = cn(
-    'inline align-baseline leading-[inherit] text-fg1',
+    'inline leading-[inherit] text-fg1',
     allowWrap ? 'whitespace-normal' : 'whitespace-nowrap',
     noUnderline ? 'no-underline' : 'underline',
     thinGreyUnderline && 'decoration-gray decoration-[1px]',
@@ -29,18 +28,11 @@ export default function ExternalLink({
   return (
     <a
       href={href}
-      target="_blank" 
+      target="_blank"
       rel="noopener noreferrer"
       className={classes}
     >
       {children}
-      <span className="whitespace-nowrap">
-        {'\u00A0'}
-        <ArrowUpRight
-          size={8}
-          className="mb-[-0.125rem] ml-0.5 inline-block align-baseline"
-        />
-      </span>
     </a>
   )
 }

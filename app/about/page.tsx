@@ -34,10 +34,11 @@ export default function About() {
           </p>
 
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
-            I've been using ML to improve stability across our hardware fleet and scaling infrastructure to support a growing number of{' '}
+            I've been scaling crash reporting infrastructure to support a growing number of{' '}
             <ExternalLink href="https://www.meta.com/ai-glasses/">
-              devices.
+              devices
             </ExternalLink>
+            , and I'm now leveraging AI to accelerate our engineering efforts.
           </p>
 
         </div>
