@@ -1,6 +1,15 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type AnimationEvent } from 'react'
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type AnimationEvent,
+  type ReactNode,
+} from 'react'
 
 import Card from '@/components/Card'
 import EditorThumbnail from '@/components/EditorThumbnail'
@@ -77,11 +86,32 @@ type GridRow = {
 
 type Props = {
   items: CardGridSerializableItem[]
-  /**
-   * Fires in the same synchronous turn as exiting rows are removed from the DOM (after exit animations).
-   * Lets the footer fade in at its final position without an earlier layout/opacity mismatch.
-   */
-  onExitBatchPrune?: () => void
+  /** Rendered in document flow immediately after the filtered (non-exiting) grid so it is not pushed down by exit animations. */
+  footer?: ReactNode
+}
+
+const gridMediaQuery = '(min-width: 640px)'
+
+function subscribeGridCols(callback: () => void) {
+  const mq = window.matchMedia(gridMediaQuery)
+  mq.addEventListener('change', callback)
+  return () => mq.removeEventListener('change', callback)
+}
+
+function getGridColsSnapshot(): 1 | 2 {
+  return window.matchMedia(gridMediaQuery).matches ? 2 : 1
+}
+
+function getGridColsServerSnapshot(): 1 | 2 {
+  return 2
+}
+
+function gridPlacementStyle(index: number, cols: 1 | 2): { gridColumn: number; gridRow: number } {
+  const c = cols
+  return {
+    gridColumn: (index % c) + 1,
+    gridRow: Math.floor(index / c) + 1,
+  }
 }
 
 /**
@@ -216,9 +246,10 @@ function mergeRowsForFilter(
   return [...active, ...exiting]
 }
 
-export default function CardGridClient({ items, onExitBatchPrune }: Props) {
+export default function CardGridClient({ items, footer }: Props) {
   const [filter, setFilter] = useState<CardGridFilter>('all')
   const reducedMotion = usePrefersReducedMotion()
+  const gridCols = useSyncExternalStore(subscribeGridCols, getGridColsSnapshot, getGridColsServerSnapshot)
 
   const itemsKey = useMemo(
     () =>
@@ -281,10 +312,9 @@ export default function CardGridClient({ items, onExitBatchPrune }: Props) {
     }
     const t = window.setTimeout(() => {
       setRows((prev) => prev.filter((r) => r.phase !== 'exit'))
-      onExitBatchPrune?.()
     }, exitBatch.maxEndMs)
     return () => window.clearTimeout(t)
-  }, [exitBatch?.signature, exitBatch?.maxEndMs, onExitBatchPrune])
+  }, [exitBatch?.signature, exitBatch?.maxEndMs])
 
   const tabContainerRef = useRef<HTMLDivElement>(null)
   const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([])
@@ -356,6 +386,93 @@ export default function CardGridClient({ items, onExitBatchPrune }: Props) {
     }
   }
 
+  const { activeRows, exitRows } = useMemo(() => {
+    const active: GridRow[] = []
+    const exiting: GridRow[] = []
+    for (const r of rows) {
+      if (r.phase === 'exit') {
+        exiting.push(r)
+      } else {
+        active.push(r)
+      }
+    }
+    return { activeRows: active, exitRows: exiting }
+  }, [rows])
+
+  function renderPlacedRow(row: GridRow, placementIndex: number) {
+    const href = itemKey(row.item)
+    const enterStagger = row.enterDelayMs ?? 0
+    const exitStagger = row.exitDelayMs ?? 0
+    const place = gridPlacementStyle(placementIndex, gridCols)
+
+    const wrapperClass = cn(
+      row.phase === 'enter' &&
+        'animate-in fade-in slide-in-from-bottom-2 fill-mode-both motion-reduce:animate-none motion-reduce:opacity-100 motion-reduce:transform-none',
+      row.phase === 'exit' &&
+        'animate-out fade-out slide-out-to-bottom-2 fill-mode-forwards motion-reduce:animate-none motion-reduce:opacity-0 motion-reduce:transform-none',
+      row.phase === 'stay' && 'opacity-100',
+      row.phase !== 'stay' &&
+        'will-change-[transform,opacity] [backface-visibility:hidden] [transform:translateZ(0)]',
+    )
+
+    const animStyle =
+      row.phase === 'enter'
+        ? {
+            animationDelay: `${enterStagger}ms`,
+            animationDuration: `${cardAnimMs}ms`,
+            animationTimingFunction: smoothEase,
+          }
+        : row.phase === 'exit'
+          ? {
+              animationDelay: `${exitStagger}ms`,
+              animationDuration: `${cardExitAnimMs}ms`,
+              animationTimingFunction: smoothEase,
+            }
+          : undefined
+
+    const mergedStyle = animStyle !== undefined ? { ...place, ...animStyle } : place
+
+    return row.item.kind === 'artifact' ? (
+      <div
+        key={href}
+        className={wrapperClass}
+        style={mergedStyle}
+        onAnimationEnd={(e) => handleRowAnimationEnd(e, href)}
+        aria-hidden={row.phase === 'exit'}
+      >
+        <div className={row.phase === 'exit' ? 'pointer-events-none' : undefined}>
+          <Card
+            title={row.item.title}
+            dateLabel={row.item.dateLabel}
+            href={row.item.href}
+            external
+            videoSrc={row.item.videoSrc}
+            posterSrc={row.item.posterSrc}
+          />
+        </div>
+      </div>
+    ) : (
+      <div
+        key={href}
+        className={wrapperClass}
+        style={mergedStyle}
+        onAnimationEnd={(e) => handleRowAnimationEnd(e, href)}
+        aria-hidden={row.phase === 'exit'}
+      >
+        <div className={row.phase === 'exit' ? 'pointer-events-none' : undefined}>
+          <Card
+            title={row.item.title}
+            dateLabel={row.item.dateLabel}
+            href={row.item.href}
+            videoSrc={row.item.videoSrc}
+            posterSrc={row.item.posterSrc}
+            thumbnail={row.item.slug === 'purpose-of-writing' ? <EditorThumbnail /> : undefined}
+          />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="mt-12">
       <div
@@ -407,79 +524,19 @@ export default function CardGridClient({ items, onExitBatchPrune }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 min-[640px]:grid-cols-2 md:gap-4">
-        {rows.map((row) => {
-          const href = itemKey(row.item)
-          const enterStagger = row.enterDelayMs ?? 0
-          const exitStagger = row.exitDelayMs ?? 0
-
-          const wrapperClass = cn(
-            row.phase === 'enter' &&
-              'animate-in fade-in slide-in-from-bottom-2 fill-mode-both motion-reduce:animate-none motion-reduce:opacity-100 motion-reduce:transform-none',
-            row.phase === 'exit' &&
-              'animate-out fade-out slide-out-to-bottom-2 fill-mode-forwards motion-reduce:animate-none motion-reduce:opacity-0 motion-reduce:transform-none',
-            row.phase === 'stay' && 'opacity-100',
-            row.phase !== 'stay' &&
-              'will-change-[transform,opacity] [backface-visibility:hidden] [transform:translateZ(0)]',
-          )
-
-          const wrapperStyle =
-            row.phase === 'enter'
-              ? {
-                  animationDelay: `${enterStagger}ms`,
-                  animationDuration: `${cardAnimMs}ms`,
-                  animationTimingFunction: smoothEase,
-                }
-              : row.phase === 'exit'
-                ? {
-                    animationDelay: `${exitStagger}ms`,
-                    animationDuration: `${cardExitAnimMs}ms`,
-                    animationTimingFunction: smoothEase,
-                  }
-                : undefined
-
-          return row.item.kind === 'artifact' ? (
-            <div
-              key={href}
-              className={wrapperClass}
-              style={wrapperStyle}
-              onAnimationEnd={(e) => handleRowAnimationEnd(e, href)}
-              aria-hidden={row.phase === 'exit'}
-            >
-              <div className={row.phase === 'exit' ? 'pointer-events-none' : undefined}>
-                <Card
-                  title={row.item.title}
-                  dateLabel={row.item.dateLabel}
-                  href={row.item.href}
-                  external
-                  videoSrc={row.item.videoSrc}
-                  posterSrc={row.item.posterSrc}
-                />
-              </div>
-            </div>
-          ) : (
-            <div
-              key={href}
-              className={wrapperClass}
-              style={wrapperStyle}
-              onAnimationEnd={(e) => handleRowAnimationEnd(e, href)}
-              aria-hidden={row.phase === 'exit'}
-            >
-              <div className={row.phase === 'exit' ? 'pointer-events-none' : undefined}>
-                <Card
-                  title={row.item.title}
-                  dateLabel={row.item.dateLabel}
-                  href={row.item.href}
-                  videoSrc={row.item.videoSrc}
-                  posterSrc={row.item.posterSrc}
-                  thumbnail={
-                    row.item.slug === 'purpose-of-writing' ? <EditorThumbnail /> : undefined
-                  }
-                />
-              </div>
-            </div>
-          )
-        })}
+      <div className="relative">
+        <div className="grid auto-rows-auto grid-cols-1 gap-3 min-[640px]:grid-cols-2 md:gap-4">
+          {activeRows.map((row, i) => renderPlacedRow(row, i))}
+        </div>
+        {footer != null ? <div className="relative z-20">{footer}</div> : null}
+        {exitRows.length > 0 ? (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 z-10 grid auto-rows-auto grid-cols-1 gap-3 min-[640px]:grid-cols-2 md:gap-4"
+          >
+            {exitRows.map((row, j) => renderPlacedRow(row, activeRows.length + j))}
+          </div>
+        ) : null}
       </div>
     </div>
   )
