@@ -1,0 +1,40 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "currentUrl": "http://localhost:3000/about",
+  "labelVisibility": {
+    "All": {
+      "exactButtons": 0,
+      "matchingButtons": 0,
+      "matchingTabs": 0,
+      "textNodes": 0
+    },
+    "Projects": {
+      "exactButtons": 0,
+      "matchingButtons": 0,
+      "matchingTabs": 0,
+      "textNodes": 0
+    },
+    "Music": {
+      "exactButtons": 0,
+      "matchingButtons": 0,
+      "matchingTabs": 0,
+      "textNodes": 0
+    }
+  },
+  "interactionLog": [
+    {
+      "label": "All",
+      "clicked": false
+    },
+    {
+      "label": "Projects",
+      "clicked": false
+    },
+    {
+      "label": "Music",
+      "clicked": false
+    }
+  ],
+  "screenshotPath": "/workspace/artifacts/filters-page.png",
+  "videoPath": "/workspace/artifacts/videos/page@b6ce23798dbd4a9d3de0e6763d69fa54.webm"
+}
