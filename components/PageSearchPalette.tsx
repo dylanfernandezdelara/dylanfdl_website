@@ -95,7 +95,7 @@ export default function PageSearchPalette() {
           event.preventDefault()
           requestAnimationFrame(() => inputRef.current?.focus())
         }}
-        className="top-[16.667%] w-[min(40rem,calc(100%-2rem))] -translate-y-1/2 gap-0 overflow-hidden rounded-2xl border border-[color:color-mix(in_oklab,white,transparent_35%)] bg-[color:color-mix(in_oklab,var(--bg0),white_22%)] p-0 shadow-[0_16px_40px_rgba(42,42,42,0.22)] backdrop-blur-[24px] saturate-[130%]"
+        className="top-[16.667%] w-[min(40rem,calc(100%-2rem))] -translate-y-1/2 gap-0 overflow-hidden rounded-2xl border border-bg3/55 bg-popover p-0 shadow-[var(--elevated-shadow)] backdrop-blur-[24px] saturate-[130%]"
       >
         <DialogTitle className="sr-only">Search</DialogTitle>
         <Command shouldFilter={false} className="bg-transparent">
@@ -129,7 +129,7 @@ export default function PageSearchPalette() {
                     key={result.id}
                     value={result.id}
                     onSelect={() => goToResult(result)}
-                    className="cursor-pointer rounded-[0.55rem] px-[0.7rem] py-[0.65rem] text-left text-[0.87rem] leading-[1.45] text-fg1 aria-selected:bg-[color:color-mix(in_oklab,var(--bg3),white_35%)] aria-selected:text-fg1"
+                    className="cursor-pointer rounded-[0.55rem] px-[0.7rem] py-[0.65rem] text-left text-[0.87rem] leading-[1.45] text-fg1 aria-selected:bg-accent aria-selected:text-fg1"
                   >
                     {result.snippet}
                   </CommandItem>

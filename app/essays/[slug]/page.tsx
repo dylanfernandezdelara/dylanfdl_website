@@ -8,9 +8,10 @@ import type { Metadata } from 'next'
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
-  const post = getPostBySlug(params.slug)
+  const { slug } = await params
+  const post = getPostBySlug(slug)
 
   if (!post) {
     return {
@@ -36,9 +37,10 @@ const BACK_LINK_CLASSES =
 export default async function PostPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const post = getPostBySlug(params.slug)
+  const { slug } = await params
+  const post = getPostBySlug(slug)
 
   if (!post) {
     notFound()
@@ -53,7 +55,7 @@ export default async function PostPage({
   const showExcerpt = post.excerpt && wordCount > 500
 
   return (
-    <div className="mx-auto max-w-reading px-6 pb-[4.5rem] pt-[3.25rem] md:px-8">
+    <div className="mx-auto max-w-reading px-4 pb-[4.5rem] pt-[3.25rem] min-[481px]:px-6 md:px-8">
       <article className="grid gap-0">
         <Link
           href="/about"
