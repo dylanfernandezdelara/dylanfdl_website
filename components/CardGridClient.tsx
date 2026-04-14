@@ -6,7 +6,6 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
   type AnimationEvent,
   type ReactNode,
 } from 'react'
@@ -88,30 +87,6 @@ type Props = {
   items: CardGridSerializableItem[]
   /** Rendered in document flow immediately after the filtered (non-exiting) grid so it is not pushed down by exit animations. */
   footer?: ReactNode
-}
-
-const gridMediaQuery = '(min-width: 640px)'
-
-function subscribeGridCols(callback: () => void) {
-  const mq = window.matchMedia(gridMediaQuery)
-  mq.addEventListener('change', callback)
-  return () => mq.removeEventListener('change', callback)
-}
-
-function getGridColsSnapshot(): 1 | 2 {
-  return window.matchMedia(gridMediaQuery).matches ? 2 : 1
-}
-
-function getGridColsServerSnapshot(): 1 | 2 {
-  return 2
-}
-
-function gridPlacementStyle(index: number, cols: 1 | 2): { gridColumn: number; gridRow: number } {
-  const c = cols
-  return {
-    gridColumn: (index % c) + 1,
-    gridRow: Math.floor(index / c) + 1,
-  }
 }
 
 /**
@@ -249,7 +224,6 @@ function mergeRowsForFilter(
 export default function CardGridClient({ items, footer }: Props) {
   const [filter, setFilter] = useState<CardGridFilter>('all')
   const reducedMotion = usePrefersReducedMotion()
-  const gridCols = useSyncExternalStore(subscribeGridCols, getGridColsSnapshot, getGridColsServerSnapshot)
 
   const itemsKey = useMemo(
     () =>
@@ -399,11 +373,10 @@ export default function CardGridClient({ items, footer }: Props) {
     return { activeRows: active, exitRows: exiting }
   }, [rows])
 
-  function renderPlacedRow(row: GridRow, placementIndex: number) {
+  function renderPlacedRow(row: GridRow) {
     const href = itemKey(row.item)
     const enterStagger = row.enterDelayMs ?? 0
     const exitStagger = row.exitDelayMs ?? 0
-    const place = gridPlacementStyle(placementIndex, gridCols)
 
     const wrapperClass = cn(
       row.phase === 'enter' &&
@@ -430,7 +403,7 @@ export default function CardGridClient({ items, footer }: Props) {
             }
           : undefined
 
-    const mergedStyle = animStyle !== undefined ? { ...place, ...animStyle } : place
+    const mergedStyle = animStyle
 
     return row.item.kind === 'artifact' ? (
       <div
@@ -525,17 +498,43 @@ export default function CardGridClient({ items, footer }: Props) {
       </div>
 
       <div className="relative">
-        <div className="grid auto-rows-auto grid-cols-1 items-start gap-3 min-[640px]:grid-cols-2 md:gap-4">
-          {activeRows.map((row, i) => renderPlacedRow(row, i))}
+        {/* Per-column flex stacks (no row-locked card pairs). Wrapper grid keeps both columns equal height. */}
+        <div className="flex flex-col gap-3 md:gap-4 min-[640px]:hidden">
+          {activeRows.map((row) => renderPlacedRow(row))}
+        </div>
+        <div className="hidden min-[640px]:grid min-[640px]:grid-cols-2 min-[640px]:gap-3 md:gap-4">
+          <div className="flex min-w-0 flex-col gap-3 md:gap-4">
+            {activeRows.map((row, i) => (i % 2 === 0 ? renderPlacedRow(row) : null))}
+          </div>
+          <div className="flex min-w-0 flex-col gap-3 md:gap-4">
+            {activeRows.map((row, i) => (i % 2 === 1 ? renderPlacedRow(row) : null))}
+          </div>
         </div>
         {footer != null ? <div className="relative z-20">{footer}</div> : null}
         {exitRows.length > 0 ? (
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 z-10 grid auto-rows-auto grid-cols-1 items-start gap-3 min-[640px]:grid-cols-2 md:gap-4"
-          >
-            {exitRows.map((row, j) => renderPlacedRow(row, activeRows.length + j))}
-          </div>
+          <>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-0 z-10 flex flex-col gap-3 md:gap-4 min-[640px]:hidden"
+            >
+              {exitRows.map((row, j) => renderPlacedRow(row))}
+            </div>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-0 z-10 hidden min-[640px]:grid min-[640px]:grid-cols-2 min-[640px]:gap-3 md:gap-4"
+            >
+              <div className="flex min-w-0 flex-col gap-3 md:gap-4">
+                {exitRows.map((row, j) =>
+                  (activeRows.length + j) % 2 === 0 ? renderPlacedRow(row) : null,
+                )}
+              </div>
+              <div className="flex min-w-0 flex-col gap-3 md:gap-4">
+                {exitRows.map((row, j) =>
+                  (activeRows.length + j) % 2 === 1 ? renderPlacedRow(row) : null,
+                )}
+              </div>
+            </div>
+          </>
         ) : null}
       </div>
     </div>
