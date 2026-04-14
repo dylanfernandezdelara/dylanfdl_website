@@ -22,9 +22,14 @@ describe('formatPostDateShort', () => {
 })
 
 describe('formatPostDateCardGrid', () => {
-  it('formats YYYY-MM-DD as M/YYYY', () => {
-    expect(formatPostDateCardGrid('2025-12-20')).toBe('12/2025')
-    expect(formatPostDateCardGrid('2024-01-15')).toBe('1/2024')
+  it('formats YYYY-MM-DD as short month and year', () => {
+    expect(formatPostDateCardGrid('2025-12-20')).toBe('Dec 2025')
+    expect(formatPostDateCardGrid('2024-01-15')).toBe('Jan 2024')
+  })
+
+  it('formats YYYY-MM and YYYY using the first day of the month or year', () => {
+    expect(formatPostDateCardGrid('2024-06')).toBe('Jun 2024')
+    expect(formatPostDateCardGrid('2024')).toBe('Jan 2024')
   })
 
   it('returns the original value for invalid input', () => {

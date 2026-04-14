@@ -36,54 +36,47 @@ interface ArtifactEntry {
 const artifacts: ArtifactEntry[] = [
   {
     title: 'Stravinsky: Le Sacre du Printemps',
-    date: '2023',
+    date: '2023-04-01',
     href: 'https://youtu.be/mUGqOE6hAUA?si=QF2wAeMQhvD56yHK',
     videoSrc: '/artifacts/yale-dance-lab.mp4',
     posterSrc: '/artifacts/yale-dance-lab-poster.jpg',
   },
   {
     title: 'YSO Halloween Show',
-    date: '2022',
+    date: '2022-10-01',
     href: 'https://youtu.be/WlSkFFIchMw?si=mGwrEpNj6yfEMmcc',
     videoSrc: '/artifacts/yso-halloween.mp4',
     posterSrc: '/artifacts/yso-halloween-poster.jpg',
   },
   {
     title: 'Rimsky-Korsakov: Scheherazade',
-    date: '2022',
+    date: '2022-03-01',
     href: 'https://youtu.be/7DqunJ6kFoU?si=am_9A10YKeiwEUR7&t=6',
     videoSrc: '/artifacts/scheherazade.mp4',
     posterSrc: '/artifacts/scheherazade-poster.jpg',
   },
   {
     title: 'R. Strauss: Eine Alpensinfonie',
-    date: '2019',
+    date: '2019-08-01',
     href: 'https://youtu.be/4rajIRu84Bk?si=_w1r3Vu2SEllKNsH',
     videoSrc: '/artifacts/alpensinfonie.mp4',
     posterSrc: '/artifacts/alpensinfonie-poster.jpg',
   },
   {
     title: 'NYO-USA: BBC Proms',
-    date: '2019',
+    date: '2019-08-01',
     href: 'https://youtu.be/VrcXomyo1yI?si=yQnD_OzlZ8pKsPWH',
     videoSrc: '/artifacts/bbc-proms.mp4',
     posterSrc: '/artifacts/bbc-proms-poster.jpg',
   },
   {
     title: 'Prokofiev: Symphony No. 5',
-    date: '2019',
+    date: '2019-08-01',
     href: 'https://youtu.be/rpyJp9MEnAE?si=yqsxIOrXO_ptMv8j&t=23',
     videoSrc: '/artifacts/prokofiev.mp4',
     posterSrc: '/artifacts/prokofiev-poster.jpg',
   },
 ]
-
-function artifactSortDate(date: string): string {
-  if (/^\d{4}$/.test(date)) {
-    return `${date}-01-01`
-  }
-  return date
-}
 
 export function buildCardGridItems(): CardGridSerializableItem[] {
   const posts = getAllPosts()
@@ -100,9 +93,9 @@ export function buildCardGridItems(): CardGridSerializableItem[] {
   const artifactItems: CardGridSerializableItem[] = artifacts.map((a) => ({
     kind: 'artifact',
     category: 'music',
-    sortDate: artifactSortDate(a.date),
+    sortDate: a.date,
     title: a.title,
-    dateLabel: a.date,
+    dateLabel: formatPostDateCardGrid(a.date),
     href: a.href,
     videoSrc: a.videoSrc,
     posterSrc: a.posterSrc,

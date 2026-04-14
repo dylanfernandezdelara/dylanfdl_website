@@ -72,22 +72,48 @@ export function formatPostDateShort(date: string, locale: string = 'en-US'): str
 }
 
 /**
- * Formats YYYY-MM-DD as M/YYYY for compact card labels (e.g. next to year-only artifact dates).
- * Month is 1–12 without a leading zero. Invalid input is returned unchanged.
+ * Formats a date string for compact card labels: abbreviated month and year (e.g. "Dec 2025").
+ * Accepts YYYY-MM-DD, YYYY-MM (first of month), or YYYY (January 1). Invalid input is returned unchanged.
  */
-export function formatPostDateCardGrid(date: string): string {
-  const parts = date.split('-').map(Number)
-  if (parts.length !== 3 || parts.some(isNaN)) {
+export function formatPostDateCardGrid(date: string, locale: string = 'en-US'): string {
+  const segments = date.split('-')
+  if (segments.length < 1 || segments.length > 3) {
     return date
   }
 
-  const [year, month, day] = parts
+  const nums = segments.map(Number)
+  if (nums.some((n) => Number.isNaN(n))) {
+    return date
+  }
+
+  let year: number
+  let month: number
+  let day: number
+  if (nums.length === 1) {
+    ;[year] = nums
+    month = 1
+    day = 1
+  } else if (nums.length === 2) {
+    ;[year, month] = nums
+    day = 1
+  } else {
+    ;[year, month, day] = nums
+  }
+
+  if (month < 1 || month > 12) {
+    return date
+  }
+
   const dateObject = new Date(year, month - 1, day)
   if (Number.isNaN(dateObject.getTime())) {
     return date
   }
 
-  return `${month}/${year}`
+  const formatted = dateObject.toLocaleDateString(locale, {
+    month: 'short',
+    year: 'numeric',
+  })
+  return formatted.replace(',', '')
 }
 
 /**
