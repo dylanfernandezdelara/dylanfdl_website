@@ -221,6 +221,15 @@ function mergeRowsForFilter(
   return [...active, ...exiting]
 }
 
+function wantedSortedForFilter(
+  source: CardGridSerializableItem[],
+  filter: CardGridFilter,
+): CardGridSerializableItem[] {
+  return source
+    .filter((i) => itemMatchesFilter(i, filter))
+    .sort((a, b) => b.sortDate.localeCompare(a.sortDate))
+}
+
 export default function CardGridClient({ items, footer }: Props) {
   const [filter, setFilter] = useState<CardGridFilter>('all')
   const reducedMotion = usePrefersReducedMotion()
@@ -248,12 +257,23 @@ export default function CardGridClient({ items, footer }: Props) {
   const itemsRef = useRef(items)
   itemsRef.current = items
 
-  /** useLayoutEffect: avoid one painted frame where the tab matches the new filter but `rows` still reflect the previous order (e.g. essay still first → Stravinsky looks like it “jumps” to slot 1). */
+  function selectTab(nextFilter: CardGridFilter) {
+    setFilter(nextFilter)
+    const wanted = wantedSortedForFilter(itemsRef.current, nextFilter)
+    if (reducedMotion) {
+      setRows(wanted.map((item) => ({ item, phase: 'stay' as const })))
+      return
+    }
+    setRows((prev) => mergeRowsForFilter(prev, wanted))
+  }
+
+  /**
+   * Re-merge when items or reduced-motion changes. Tab changes use `selectTab` so `filter` and
+   * `rows` update in one batch (avoids a frame where the tab shows the new filter but the grid
+   * still lists the previous filter’s cards).
+   */
   useLayoutEffect(() => {
-    const source = itemsRef.current
-    const wantedSorted = source
-      .filter((i) => itemMatchesFilter(i, filter))
-      .sort((a, b) => b.sortDate.localeCompare(a.sortDate))
+    const wantedSorted = wantedSortedForFilter(itemsRef.current, filter)
 
     if (reducedMotion) {
       setRows(wantedSorted.map((item) => ({ item, phase: 'stay' as const })))
@@ -261,7 +281,8 @@ export default function CardGridClient({ items, footer }: Props) {
     }
 
     setRows((prev) => mergeRowsForFilter(prev, wantedSorted))
-  }, [filter, itemsKey, reducedMotion])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `filter` updates are paired with `setRows` in `selectTab`
+  }, [itemsKey, reducedMotion])
 
   /** One reflow when exits finish — per-card removal was stepping the footer up repeatedly. */
   const exitBatch = useMemo(() => {
@@ -382,7 +403,8 @@ export default function CardGridClient({ items, footer }: Props) {
       row.phase === 'enter' &&
         'animate-in fade-in slide-in-from-bottom-2 fill-mode-both motion-reduce:animate-none motion-reduce:opacity-100 motion-reduce:transform-none',
       row.phase === 'exit' &&
-        'animate-out fade-out slide-out-to-bottom-2 fill-mode-forwards motion-reduce:animate-none motion-reduce:opacity-0 motion-reduce:transform-none',
+        // Fade only (no slide): slide-out showed dark video tiles below the z-20 active stack.
+        'animate-out fade-out fill-mode-forwards motion-reduce:animate-none motion-reduce:opacity-0 motion-reduce:transform-none',
       row.phase === 'stay' && 'opacity-100',
       row.phase !== 'stay' &&
         'will-change-[transform,opacity] [backface-visibility:hidden] [transform:translateZ(0)]',
@@ -488,7 +510,7 @@ export default function CardGridClient({ items, footer }: Props) {
                   tabButtonBase,
                   selected ? 'text-fg0' : 'text-fg3 hover:text-fg1',
                 )}
-                onClick={() => setFilter(id)}
+                onClick={() => selectTab(id)}
               >
                 {label}
               </button>
@@ -498,16 +520,19 @@ export default function CardGridClient({ items, footer }: Props) {
       </div>
 
       <div className="relative">
-        {/* Per-column flex stacks (no row-locked card pairs). Wrapper grid keeps both columns equal height. */}
-        <div className="flex flex-col gap-3 md:gap-4 min-[640px]:hidden">
-          {activeRows.map((row) => renderPlacedRow(row))}
-        </div>
-        <div className="hidden min-[640px]:grid min-[640px]:grid-cols-2 min-[640px]:gap-3 md:gap-4">
-          <div className="flex min-w-0 flex-col gap-3 md:gap-4">
-            {activeRows.map((row, i) => (i % 2 === 0 ? renderPlacedRow(row) : null))}
+        {/* z-20: keep filtered (active) cards above the exit overlay so exiting items don’t sit on top of the first slot (mobile column / visual swap). */}
+        <div className="relative z-20">
+          {/* Per-column flex stacks (no row-locked card pairs). Wrapper grid keeps both columns equal height. */}
+          <div className="flex flex-col gap-3 md:gap-4 min-[640px]:hidden">
+            {activeRows.map((row) => renderPlacedRow(row))}
           </div>
-          <div className="flex min-w-0 flex-col gap-3 md:gap-4">
-            {activeRows.map((row, i) => (i % 2 === 1 ? renderPlacedRow(row) : null))}
+          <div className="hidden min-[640px]:grid min-[640px]:grid-cols-2 min-[640px]:gap-3 md:gap-4">
+            <div className="flex min-w-0 flex-col gap-3 md:gap-4">
+              {activeRows.map((row, i) => (i % 2 === 0 ? renderPlacedRow(row) : null))}
+            </div>
+            <div className="flex min-w-0 flex-col gap-3 md:gap-4">
+              {activeRows.map((row, i) => (i % 2 === 1 ? renderPlacedRow(row) : null))}
+            </div>
           </div>
         </div>
         {footer != null ? <div className="relative z-20">{footer}</div> : null}
