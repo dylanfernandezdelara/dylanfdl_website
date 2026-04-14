@@ -2,70 +2,118 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
-const FULL_TEXT = 'Writing is not algorithmic, and...'
-const TYPE_DELAY_MS = 230
-const TYPE_DOT_DELAY_STEP_MS = 24
-const DELETE_DELAY_SLOW_MS = 180
-const DELETE_DELAY_FAST_MS = 58
-const HOLD_FULL_MS = 900
-const HOLD_EMPTY_MS = 250
+const FULL_TEXT = 'I hope to clarify my own ideas and'
 const TEXT_LENGTH = FULL_TEXT.length
-const TRAILING_DOT_COUNT = 3
 const BASE_FONT_SIZE_PX = 15.2
 
-function getTypeDelay(nextVisibleLength: number) {
-  const typedCharacter = FULL_TEXT[nextVisibleLength - 1]
-  const dotIndex = nextVisibleLength - (TEXT_LENGTH - TRAILING_DOT_COUNT)
+const HOLD_FULL_MS = 900
+const HOLD_EMPTY_MS = 250
 
-  if (typedCharacter === '.' && dotIndex > 0) {
-    return TYPE_DELAY_MS + dotIndex * TYPE_DOT_DELAY_STEP_MS
-  }
-
-  return TYPE_DELAY_MS
+/** Uniform float in [min, max] */
+function randomBetween(min: number, max: number): number {
+  return min + Math.random() * (max - min)
 }
 
-function getDeleteDelay(visibleLength: number) {
-  const progress = visibleLength / FULL_TEXT.length
-  const easedProgress = progress * progress
-
-  return Math.round(
-    DELETE_DELAY_FAST_MS + easedProgress * (DELETE_DELAY_SLOW_MS - DELETE_DELAY_FAST_MS),
-  )
+type CycleTiming = {
+  typeThresholds: number[]
+  typeTotalMs: number
+  deleteThresholds: number[]
+  deleteTotalMs: number
+  cycleDurationMs: number
 }
 
-function buildTypeThresholds() {
+function buildHumanTypeThresholds(): Pick<CycleTiming, 'typeThresholds' | 'typeTotalMs'> {
   const thresholds: number[] = []
-  let totalDelay = 0
+  let total = 0
 
   for (let nextVisibleLength = 1; nextVisibleLength <= TEXT_LENGTH; nextVisibleLength += 1) {
-    totalDelay += getTypeDelay(nextVisibleLength)
-    thresholds.push(totalDelay)
+    const char = FULL_TEXT[nextVisibleLength - 1]
+    let delay = randomBetween(95, 340)
+
+    if (char === ' ') {
+      delay *= randomBetween(0.72, 0.95)
+    }
+
+    if (nextVisibleLength >= 2 && FULL_TEXT[nextVisibleLength - 2] === ' ') {
+      delay += randomBetween(35, 220)
+    }
+
+    if (Math.random() < 0.07) {
+      delay += randomBetween(100, 420)
+    }
+
+    delay *= randomBetween(0.88, 1.12)
+
+    total += Math.round(delay)
+    thresholds.push(total)
   }
 
-  return thresholds
+  return { typeThresholds: thresholds, typeTotalMs: total }
 }
 
-function buildDeleteThresholds() {
+function buildHumanDeleteThresholds(): Pick<CycleTiming, 'deleteThresholds' | 'deleteTotalMs'> {
   const thresholds: number[] = []
-  let totalDelay = 0
+  let total = 0
+  let burstLeft = 0
 
   for (let visibleLength = TEXT_LENGTH; visibleLength > 0; visibleLength -= 1) {
-    totalDelay += getDeleteDelay(visibleLength)
-    thresholds.push(totalDelay)
+    const charRemoved = FULL_TEXT[visibleLength - 1]
+    let delay: number
+
+    if (burstLeft > 0) {
+      burstLeft -= 1
+      delay = randomBetween(24, 78)
+    } else {
+      const progress = visibleLength / TEXT_LENGTH
+      delay =
+        randomBetween(68, 175) + progress * randomBetween(25, 110) + randomBetween(-18, 38)
+      if (Math.random() < 0.44) {
+        burstLeft = Math.floor(randomBetween(1, 3))
+      }
+    }
+
+    if (charRemoved === ' ') {
+      burstLeft = 0
+      delay += randomBetween(65, 240)
+    }
+
+    if (visibleLength >= 3 && FULL_TEXT[visibleLength - 2] === ' ') {
+      burstLeft = 0
+      delay += randomBetween(40, 130)
+    }
+
+    if (Math.random() < 0.095) {
+      burstLeft = 0
+      delay += randomBetween(130, 420)
+    }
+
+    delay *= randomBetween(0.8, 1.22)
+    delay = Math.max(18, delay)
+
+    total += Math.round(delay)
+    thresholds.push(total)
   }
 
-  return thresholds
+  return { deleteThresholds: thresholds, deleteTotalMs: total }
 }
 
-const TYPE_THRESHOLDS_MS = buildTypeThresholds()
-const TYPE_TOTAL_MS = TYPE_THRESHOLDS_MS[TYPE_THRESHOLDS_MS.length - 1] ?? 0
-const DELETE_THRESHOLDS_MS = buildDeleteThresholds()
-const DELETE_TOTAL_MS = DELETE_THRESHOLDS_MS[DELETE_THRESHOLDS_MS.length - 1] ?? 0
-const CYCLE_DURATION_MS = TYPE_TOTAL_MS + HOLD_FULL_MS + DELETE_TOTAL_MS + HOLD_EMPTY_MS
+function rollCycleTiming(): CycleTiming {
+  const typing = buildHumanTypeThresholds()
+  const deleting = buildHumanDeleteThresholds()
 
-function getTypingLength(elapsedMs: number) {
-  for (let index = 0; index < TYPE_THRESHOLDS_MS.length; index += 1) {
-    if (elapsedMs < TYPE_THRESHOLDS_MS[index]) {
+  return {
+    typeThresholds: typing.typeThresholds,
+    typeTotalMs: typing.typeTotalMs,
+    deleteThresholds: deleting.deleteThresholds,
+    deleteTotalMs: deleting.deleteTotalMs,
+    cycleDurationMs:
+      typing.typeTotalMs + HOLD_FULL_MS + deleting.deleteTotalMs + HOLD_EMPTY_MS,
+  }
+}
+
+function getTypingLength(elapsedMs: number, typeThresholds: number[]): number {
+  for (let index = 0; index < typeThresholds.length; index += 1) {
+    if (elapsedMs < typeThresholds[index]) {
       return index
     }
   }
@@ -73,9 +121,9 @@ function getTypingLength(elapsedMs: number) {
   return TEXT_LENGTH
 }
 
-function getDeletingLength(elapsedMs: number) {
-  for (let index = 0; index < DELETE_THRESHOLDS_MS.length; index += 1) {
-    if (elapsedMs < DELETE_THRESHOLDS_MS[index]) {
+function getDeletingLength(elapsedMs: number, deleteThresholds: number[]): number {
+  for (let index = 0; index < deleteThresholds.length; index += 1) {
+    if (elapsedMs < deleteThresholds[index]) {
       return TEXT_LENGTH - index
     }
   }
@@ -83,19 +131,19 @@ function getDeletingLength(elapsedMs: number) {
   return 0
 }
 
-function getVisibleLengthAt(cycleElapsedMs: number) {
-  if (cycleElapsedMs < TYPE_TOTAL_MS) {
-    return getTypingLength(cycleElapsedMs)
+function getVisibleLengthAt(cycleElapsedMs: number, t: CycleTiming): number {
+  if (cycleElapsedMs < t.typeTotalMs) {
+    return getTypingLength(cycleElapsedMs, t.typeThresholds)
   }
 
-  if (cycleElapsedMs < TYPE_TOTAL_MS + HOLD_FULL_MS) {
+  if (cycleElapsedMs < t.typeTotalMs + HOLD_FULL_MS) {
     return TEXT_LENGTH
   }
 
-  const deleteElapsedMs = cycleElapsedMs - TYPE_TOTAL_MS - HOLD_FULL_MS
+  const deleteElapsedMs = cycleElapsedMs - t.typeTotalMs - HOLD_FULL_MS
 
-  if (deleteElapsedMs < DELETE_TOTAL_MS) {
-    return getDeletingLength(deleteElapsedMs)
+  if (deleteElapsedMs < t.deleteTotalMs) {
+    return getDeletingLength(deleteElapsedMs, t.deleteThresholds)
   }
 
   return 0
@@ -104,21 +152,38 @@ function getVisibleLengthAt(cycleElapsedMs: number) {
 export default function EditorThumbnail() {
   const [visibleLength, setVisibleLength] = useState(0)
   const [textSizePx, setTextSizePx] = useState(BASE_FONT_SIZE_PX)
-  const cycleStartedAtRef = useRef<number | null>(null)
+  const cycleAnchorRef = useRef<number | null>(null)
+  const timingRef = useRef<CycleTiming | null>(null)
   const lastVisibleLengthRef = useRef(0)
   const textShellRef = useRef<HTMLDivElement | null>(null)
   const textMeasureRef = useRef<HTMLSpanElement | null>(null)
 
   useEffect(() => {
+    timingRef.current = rollCycleTiming()
+
     let animationFrameId = 0
 
     const tick = (timestamp: number) => {
-      if (cycleStartedAtRef.current === null) {
-        cycleStartedAtRef.current = timestamp
+      if (cycleAnchorRef.current === null) {
+        cycleAnchorRef.current = timestamp
       }
 
-      const cycleElapsedMs = (timestamp - cycleStartedAtRef.current) % CYCLE_DURATION_MS
-      const nextVisibleLength = getVisibleLengthAt(cycleElapsedMs)
+      let timing = timingRef.current
+      if (!timing) {
+        animationFrameId = window.requestAnimationFrame(tick)
+        return
+      }
+
+      let elapsed = timestamp - cycleAnchorRef.current
+
+      if (elapsed >= timing.cycleDurationMs) {
+        timingRef.current = rollCycleTiming()
+        cycleAnchorRef.current = timestamp
+        timing = timingRef.current
+        elapsed = 0
+      }
+
+      const nextVisibleLength = getVisibleLengthAt(elapsed, timing)
 
       if (nextVisibleLength !== lastVisibleLengthRef.current) {
         lastVisibleLengthRef.current = nextVisibleLength
