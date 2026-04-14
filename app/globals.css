@@ -267,9 +267,9 @@ html {
   color-scheme: light;
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: unset;
-  /* Keep vertical scrollbar lane even when content is short — avoids ~12px horizontal jump when it would otherwise disappear */
+  /* Always show vertical scrollbar; clip horizontal bleed so card transforms cannot widen the scrollport. */
+  overflow-x: clip;
   overflow-y: scroll;
-  scrollbar-gutter: stable;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -292,6 +292,7 @@ html.dark {
 }
 
 body {
+  width: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
   font-weight: 500;
   color: var(--text-color);
@@ -305,14 +306,16 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   word-wrap: break-word;
-  overflow-x: hidden;
+  /* Horizontal clipping lives on html — avoids overflow-x non-visible pairing that forces overflow-y:auto on body and nested scrollbars squeezing main by ~1 scrollbar width during grid animations. */
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
 main {
-  flex: 1;
+  /* Grow into spare viewport height; basis auto (not 0%) keeps height content-driven vs flex-1’s basis-0 quirks. */
+  flex: 1 0 auto;
+  width: 100%;
 }
 
 h1,

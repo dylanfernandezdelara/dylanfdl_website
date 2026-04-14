@@ -525,14 +525,14 @@ export default function CardGridClient({ items, footer }: Props) {
       </div>
 
       <div className="relative">
-        <div className="grid auto-rows-auto grid-cols-1 gap-3 min-[640px]:grid-cols-2 md:gap-4">
+        <div className="grid auto-rows-auto grid-cols-1 items-start gap-3 min-[640px]:grid-cols-2 md:gap-4">
           {activeRows.map((row, i) => renderPlacedRow(row, i))}
         </div>
         {footer != null ? <div className="relative z-20">{footer}</div> : null}
         {exitRows.length > 0 ? (
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 z-10 grid auto-rows-auto grid-cols-1 gap-3 min-[640px]:grid-cols-2 md:gap-4"
+            className="pointer-events-none absolute inset-x-0 top-0 z-10 grid auto-rows-auto grid-cols-1 items-start gap-3 min-[640px]:grid-cols-2 md:gap-4"
           >
             {exitRows.map((row, j) => renderPlacedRow(row, activeRows.length + j))}
           </div>

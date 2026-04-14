@@ -27,10 +27,13 @@ export default function About() {
 
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
             I am a Yale graduate and an engineer on the{' '}
-            <ExternalLink href="https://www.meta.com/ai-glasses/meta-ray-ban-display/">
+            <ExternalLink
+              allowWrap
+              href="https://www.meta.com/ai-glasses/meta-ray-ban-display/"
+            >
               Wearables
-            </ExternalLink>
-            {' '}Core OS team at Meta.
+            </ExternalLink>{' '}
+            <span className="min-[481px]:whitespace-nowrap">Core OS team at Meta.</span>
           </p>
 
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">

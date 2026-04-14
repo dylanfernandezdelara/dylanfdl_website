@@ -34,7 +34,7 @@ export default function RootLayout({
         <Script id="theme-init" strategy="beforeInteractive">
           {`(function(){try{var t=localStorage.getItem('theme');document.documentElement.classList.remove('light','dark');if(t==='dark')document.documentElement.classList.add('dark');else if(t==='light')document.documentElement.classList.add('light');}catch(e){}})()`}
         </Script>
-        <main className="flex-1 pb-16 min-[481px]:pb-14 md:pb-12 md:pt-8">{children}</main>
+        <main className="pb-16 min-[481px]:pb-14 md:pb-12 md:pt-8">{children}</main>
         <ThemeToggle />
       </body>
     </html>
