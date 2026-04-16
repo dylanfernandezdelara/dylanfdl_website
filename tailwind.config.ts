@@ -69,9 +69,9 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
+          'var(--font-inter)',
           '-apple-system',
           'BlinkMacSystemFont',
-          'Inter',
           'IBM Plex Sans',
           "'Segoe UI'",
           'Helvetica',
