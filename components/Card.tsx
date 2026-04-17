@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
+import CardVideo from '@/components/CardVideo'
 import { cn } from '@/lib/utils'
 
 const cardClassName =
@@ -28,16 +29,11 @@ export default function Card({
   const media = (() => {
     if (videoSrc) {
       return (
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
+        <CardVideo
+          src={videoSrc}
           poster={posterSrc}
           className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source src={videoSrc} type="video/mp4" />
-        </video>
+        />
       )
     }
     if (posterSrc) {
