@@ -183,9 +183,13 @@ export default function EditorThumbnail() {
       if (elapsed >= timing.cycleDurationMs) {
         const remainder = elapsed % timing.cycleDurationMs
         timingRef.current = rollCycleTiming()
-        cycleAnchorRef.current = timestamp - remainder
         timing = timingRef.current
-        elapsed = remainder
+        // The new cycle's duration can be shorter than the old remainder,
+        // so clamp against the new timing too — otherwise the next frame
+        // would immediately re-roll again and flash an empty editor.
+        const clampedRemainder = remainder % timing.cycleDurationMs
+        cycleAnchorRef.current = timestamp - clampedRemainder
+        elapsed = clampedRemainder
       }
 
       const nextVisibleLength = getVisibleLengthAt(elapsed, timing)
