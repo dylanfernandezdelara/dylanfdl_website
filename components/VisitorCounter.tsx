@@ -9,11 +9,20 @@ function formatNumber(num: number): string {
 
 type VisitorCountResponse = { count?: unknown }
 
+// Match the server-side cache TTL in app/api/visitor-count/route.ts so the
+// client doesn't hit the API more aggressively than the server is willing to
+// serve fresh data, but still refreshes on SPA navigations instead of holding
+// a cached value for the lifetime of the tab.
+const CLIENT_CACHE_TTL_MS = 15_000
+
 let inflightCountPromise: Promise<number> | null = null
 let cachedCount: number | null = null
+let cachedAt = 0
 
 async function getVisitorCount(): Promise<number> {
-  if (cachedCount !== null) return cachedCount
+  if (cachedCount !== null && Date.now() - cachedAt < CLIENT_CACHE_TTL_MS) {
+    return cachedCount
+  }
 
   if (!inflightCountPromise) {
     inflightCountPromise = fetch('/api/visitor-count', { cache: 'no-store' })
@@ -26,6 +35,7 @@ async function getVisitorCount(): Promise<number> {
       .then((data) => {
         const count = typeof data?.count === 'number' ? data.count : 0
         cachedCount = count
+        cachedAt = Date.now()
         return count
       })
       .finally(() => {
