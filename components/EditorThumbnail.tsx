@@ -176,11 +176,16 @@ export default function EditorThumbnail() {
 
       let elapsed = timestamp - cycleAnchorRef.current
 
+      // When the tab is backgrounded, rAF pauses. On resume `elapsed` may
+      // span many cycles. Collapse that into a single re-roll at a phase
+      // equal to the remainder, so we land mid-cycle instead of always
+      // restarting from 0 and drifting the apparent pacing.
       if (elapsed >= timing.cycleDurationMs) {
+        const remainder = elapsed % timing.cycleDurationMs
         timingRef.current = rollCycleTiming()
-        cycleAnchorRef.current = timestamp
+        cycleAnchorRef.current = timestamp - remainder
         timing = timingRef.current
-        elapsed = 0
+        elapsed = remainder
       }
 
       const nextVisibleLength = getVisibleLengthAt(elapsed, timing)
