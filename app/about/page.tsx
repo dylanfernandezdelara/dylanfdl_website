@@ -21,7 +21,7 @@ export default function About() {
       <div className="mx-auto max-w-4xl px-4 pb-8 pt-14 text-base leading-[1.6] min-[481px]:px-6 min-[481px]:pb-10 min-[481px]:pt-12 md:px-8 md:pb-16 md:pt-16">
         <div className="about-intro-blurb">
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
-            I'm Dylan. I am an{' '}
+            I&apos;m Dylan. I am an{' '}
             <RainbowText text="optimist." />
           </p>
 
@@ -37,7 +37,7 @@ export default function About() {
           </p>
 
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
-            I've been scaling crash reporting infrastructure to support a growing number of{' '}
+            I&apos;ve been scaling crash reporting infrastructure to support a growing number of{' '}
             <ExternalLink href="https://www.meta.com/ai-glasses/">
               devices
             </ExternalLink>
