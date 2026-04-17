@@ -71,7 +71,10 @@ export default function ThemeToggle() {
       aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
       suppressHydrationWarning
     >
-      {isDark ? (
+      {!mounted ? (
+        // Reserve icon slot to keep the button's size stable pre-hydration.
+        <span className="h-5 w-5 shrink-0" aria-hidden />
+      ) : isDark ? (
         <Sun
           className="h-5 w-5 shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.55)]"
           strokeWidth={2}
