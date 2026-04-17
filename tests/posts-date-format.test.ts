@@ -9,6 +9,13 @@ describe('formatPostDate', () => {
   it('returns the original value for invalid input', () => {
     expect(formatPostDate('not-a-date')).toBe('not-a-date')
   })
+
+  it('rejects inputs with empty segments rather than silently coercing to 0', () => {
+    // Previously '2024-1-' parsed to new Date(2024, 0, 0) = Dec 31, 2023.
+    expect(formatPostDate('2024-1-')).toBe('2024-1-')
+    expect(formatPostDate('-1-15')).toBe('-1-15')
+    expect(formatPostDate('2024--15')).toBe('2024--15')
+  })
 })
 
 describe('formatPostDateShort', () => {

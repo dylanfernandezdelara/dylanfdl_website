@@ -23,11 +23,16 @@ export interface Post {
 export function formatPostDate(date: string, locale: string = 'en-US'): string {
   // Parse date string as local date to avoid timezone issues
   // Date strings in YYYY-MM-DD format are parsed as UTC, which can cause off-by-one errors
-  const parts = date.split('-').map(Number)
-  if (parts.length !== 3 || parts.some(isNaN)) {
+  const segments = date.split('-')
+  if (segments.length !== 3 || segments.some((segment) => segment.length === 0)) {
     return date
   }
-  
+
+  const parts = segments.map(Number)
+  if (parts.some((n) => !Number.isFinite(n))) {
+    return date
+  }
+
   const dateObject = new Date(parts[0], parts[1] - 1, parts[2]) // month is 0-indexed
   if (Number.isNaN(dateObject.getTime())) {
     return date
@@ -52,11 +57,16 @@ export function formatPostDate(date: string, locale: string = 'en-US'): string {
 export function formatPostDateShort(date: string, locale: string = 'en-US'): string {
   // Parse date string as local date to avoid timezone issues
   // Date strings in YYYY-MM-DD format are parsed as UTC, which can cause off-by-one errors
-  const parts = date.split('-').map(Number)
-  if (parts.length !== 3 || parts.some(isNaN)) {
+  const segments = date.split('-')
+  if (segments.length !== 3 || segments.some((segment) => segment.length === 0)) {
     return date
   }
-  
+
+  const parts = segments.map(Number)
+  if (parts.some((n) => !Number.isFinite(n))) {
+    return date
+  }
+
   const dateObject = new Date(parts[0], parts[1] - 1, parts[2]) // month is 0-indexed
   if (Number.isNaN(dateObject.getTime())) {
     return date
