@@ -81,8 +81,12 @@ export function formatPostDateCardGrid(date: string, locale: string = 'en-US'): 
     return date
   }
 
+  if (segments.some((segment) => segment.length === 0)) {
+    return date
+  }
+
   const nums = segments.map(Number)
-  if (nums.some((n) => Number.isNaN(n))) {
+  if (nums.some((n) => !Number.isFinite(n))) {
     return date
   }
 
@@ -101,6 +105,13 @@ export function formatPostDateCardGrid(date: string, locale: string = 'en-US'): 
   }
 
   if (month < 1 || month > 12) {
+    return date
+  }
+
+  // Reject days that don't exist in the given month (e.g. Feb 31) instead of
+  // silently letting new Date() roll them into the next month.
+  const daysInMonth = new Date(year, month, 0).getDate()
+  if (day < 1 || day > daysInMonth) {
     return date
   }
 
