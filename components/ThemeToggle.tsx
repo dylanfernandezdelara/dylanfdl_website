@@ -1,7 +1,7 @@
 'use client'
 
 import { Moon, Sun } from 'lucide-react'
-import { useLayoutEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -14,10 +14,17 @@ function resolvedDark(): boolean {
 }
 
 export default function ThemeToggle() {
+  // `mounted` stays false during SSR and on the first client render, so we
+  // don't commit to a Sun/Moon before reading the DOM. The pre-hydration
+  // theme-init script has already applied `.dark` / `.light` to <html>, so
+  // the first post-mount paint is correct. Without this guard, dark-mode
+  // users briefly see the Moon icon before useEffect swaps to Sun.
+  const [mounted, setMounted] = useState(false)
   const [isDark, setIsDark] = useState(false)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setIsDark(resolvedDark())
+    setMounted(true)
 
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
     const onSchemeChange = () => {
@@ -64,7 +71,10 @@ export default function ThemeToggle() {
       aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
       suppressHydrationWarning
     >
-      {isDark ? (
+      {!mounted ? (
+        // Reserve icon slot to keep the button's size stable pre-hydration.
+        <span className="h-5 w-5 shrink-0" aria-hidden />
+      ) : isDark ? (
         <Sun
           className="h-5 w-5 shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.55)]"
           strokeWidth={2}
