@@ -159,52 +159,91 @@ export default function EditorThumbnail() {
   const textMeasureRef = useRef<HTMLSpanElement | null>(null)
 
   useEffect(() => {
-    timingRef.current = rollCycleTiming()
+    // Users with prefers-reduced-motion shouldn't see endless typing/deleting.
+    // Show the full sentence as a static snapshot instead.
+    const reducedMotionQuery =
+      typeof window !== 'undefined'
+        ? window.matchMedia('(prefers-reduced-motion: reduce)')
+        : null
 
     let animationFrameId = 0
 
-    const tick = (timestamp: number) => {
-      if (cycleAnchorRef.current === null) {
-        cycleAnchorRef.current = timestamp
-      }
+    const startTickingAnimation = () => {
+      timingRef.current = rollCycleTiming()
+      cycleAnchorRef.current = null
 
-      let timing = timingRef.current
-      if (!timing) {
+      const tick = (timestamp: number) => {
+        if (cycleAnchorRef.current === null) {
+          cycleAnchorRef.current = timestamp
+        }
+
+        let timing = timingRef.current
+        if (!timing) {
+          animationFrameId = window.requestAnimationFrame(tick)
+          return
+        }
+
+        let elapsed = timestamp - cycleAnchorRef.current
+
+        // When the tab is backgrounded, rAF pauses. On resume `elapsed` may
+        // span many cycles. Collapse that into a single re-roll at a phase
+        // equal to the remainder, so we land mid-cycle instead of always
+        // restarting from 0 and drifting the apparent pacing.
+        if (elapsed >= timing.cycleDurationMs) {
+          const remainder = elapsed % timing.cycleDurationMs
+          timingRef.current = rollCycleTiming()
+          timing = timingRef.current
+          // The new cycle's duration can be shorter than the old remainder,
+          // so clamp against the new timing too — otherwise the next frame
+          // would immediately re-roll again and flash an empty editor.
+          const clampedRemainder = remainder % timing.cycleDurationMs
+          cycleAnchorRef.current = timestamp - clampedRemainder
+          elapsed = clampedRemainder
+        }
+
+        const nextVisibleLength = getVisibleLengthAt(elapsed, timing)
+
+        if (nextVisibleLength !== lastVisibleLengthRef.current) {
+          lastVisibleLengthRef.current = nextVisibleLength
+          setVisibleLength(nextVisibleLength)
+        }
+
         animationFrameId = window.requestAnimationFrame(tick)
-        return
-      }
-
-      let elapsed = timestamp - cycleAnchorRef.current
-
-      // When the tab is backgrounded, rAF pauses. On resume `elapsed` may
-      // span many cycles. Collapse that into a single re-roll at a phase
-      // equal to the remainder, so we land mid-cycle instead of always
-      // restarting from 0 and drifting the apparent pacing.
-      if (elapsed >= timing.cycleDurationMs) {
-        const remainder = elapsed % timing.cycleDurationMs
-        timingRef.current = rollCycleTiming()
-        timing = timingRef.current
-        // The new cycle's duration can be shorter than the old remainder,
-        // so clamp against the new timing too — otherwise the next frame
-        // would immediately re-roll again and flash an empty editor.
-        const clampedRemainder = remainder % timing.cycleDurationMs
-        cycleAnchorRef.current = timestamp - clampedRemainder
-        elapsed = clampedRemainder
-      }
-
-      const nextVisibleLength = getVisibleLengthAt(elapsed, timing)
-
-      if (nextVisibleLength !== lastVisibleLengthRef.current) {
-        lastVisibleLengthRef.current = nextVisibleLength
-        setVisibleLength(nextVisibleLength)
       }
 
       animationFrameId = window.requestAnimationFrame(tick)
     }
 
-    animationFrameId = window.requestAnimationFrame(tick)
+    const pinStaticText = () => {
+      if (animationFrameId !== 0) {
+        window.cancelAnimationFrame(animationFrameId)
+        animationFrameId = 0
+      }
+      lastVisibleLengthRef.current = TEXT_LENGTH
+      setVisibleLength(TEXT_LENGTH)
+    }
 
-    return () => window.cancelAnimationFrame(animationFrameId)
+    const applyMotionPreference = (prefersReduced: boolean) => {
+      if (prefersReduced) {
+        pinStaticText()
+      } else {
+        startTickingAnimation()
+      }
+    }
+
+    applyMotionPreference(reducedMotionQuery?.matches ?? false)
+
+    const handleChange = (event: MediaQueryListEvent) => {
+      applyMotionPreference(event.matches)
+    }
+    reducedMotionQuery?.addEventListener('change', handleChange)
+
+    return () => {
+      if (animationFrameId !== 0) {
+        window.cancelAnimationFrame(animationFrameId)
+      }
+      reducedMotionQuery?.removeEventListener('change', handleChange)
+    }
   }, [])
 
   useLayoutEffect(() => {
