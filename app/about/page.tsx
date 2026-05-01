@@ -26,22 +26,18 @@ export default function About() {
           </p>
 
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
-            I am a Yale graduate and an engineer on the{' '}
+            I am a Yale graduate and an engineer in{' '}
             <ExternalLink
               allowWrap
               href="https://www.meta.com/ai-glasses/meta-ray-ban-display/"
             >
-              Wearables
+              Reality Labs
             </ExternalLink>{' '}
-            <span className="min-[481px]:whitespace-nowrap">Core OS team at Meta.</span>
+            <span className="min-[481px]:whitespace-nowrap">at Meta.</span>
           </p>
 
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
-            I&apos;ve been scaling crash reporting infrastructure to support a growing number of{' '}
-            <ExternalLink href="https://www.meta.com/ai-glasses/">
-              devices
-            </ExternalLink>
-            , and I am now focused on AI engineering acceleration efforts.
+            I am currently focused on AI engineering acceleration efforts.
           </p>
 
         </div>
