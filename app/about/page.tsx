@@ -73,6 +73,15 @@ export default function About() {
             >
               ·
             </span>
+            <a className={CONTACT_LINK_STYLES} href="https://www.linkedin.com/in/dylan-fernandez-de-lara-219b821a6">
+              LinkedIn
+            </a>
+            <span
+              className="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
+              aria-hidden="true"
+            >
+              ·
+            </span>
             <VisitorCounter />
           </div>
         </AboutCardGridWithFooter>
