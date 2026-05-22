@@ -31,21 +31,20 @@ export default function About() {
               allowWrap
               href="https://www.reuters.com/technology/meta-transfers-top-engineers-into-new-ai-tooling-team-2026-04-09/"
             >
-              Applied AI Engineering
+              Applied AI
             </ExternalLink>{' '}
-            <span className="min-[481px]:whitespace-nowrap">at Meta.</span>
+            Engineering at Meta.
           </p>
 
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
-            Previously, I worked on{' '}
+            Previously, I scaled infrastructure to support a growing number of devices in{' '}
             <ExternalLink
               allowWrap
               href="https://www.meta.com/ai-glasses/meta-ray-ban-display/"
             >
               Wearables
-            </ExternalLink>{' '}
-            in Reality Labs where I built both crash reporting infrastructure and
-            agents to improve the stability of our hardware fleet.
+            </ExternalLink>
+            , and built agents to improve stability across our hardware fleet.
           </p>
 
         </div>
