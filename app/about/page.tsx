@@ -33,7 +33,7 @@ export default function About() {
             >
               Applied AI
             </ExternalLink>{' '}
-            Engineering at Meta.
+            at Meta.
           </p>
 
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
