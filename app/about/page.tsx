@@ -29,15 +29,23 @@ export default function About() {
             I am a Yale graduate and an engineer in{' '}
             <ExternalLink
               allowWrap
-              href="https://www.meta.com/ai-glasses/meta-ray-ban-display/"
+              href="https://www.reuters.com/technology/meta-transfers-top-engineers-into-new-ai-tooling-team-2026-04-09/"
             >
-              Reality Labs
+              Applied AI Engineering
             </ExternalLink>{' '}
             <span className="min-[481px]:whitespace-nowrap">at Meta.</span>
           </p>
 
           <p className="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
-            I am currently focused on AI engineering acceleration efforts.
+            Previously, I worked on{' '}
+            <ExternalLink
+              allowWrap
+              href="https://www.meta.com/ai-glasses/meta-ray-ban-display/"
+            >
+              Wearables
+            </ExternalLink>{' '}
+            in Reality Labs where I built both crash reporting infrastructure and
+            agents to improve the stability of our hardware fleet.
           </p>
 
         </div>
