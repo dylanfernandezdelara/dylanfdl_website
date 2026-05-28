@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type CardVideoProps = {
   src: string
@@ -15,16 +15,38 @@ type CardVideoProps = {
  */
 export default function CardVideo({ src, poster, className }: CardVideoProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
+  const sourceAttachedRef = useRef(false)
+  const [sourceAttached, setSourceAttached] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
 
-    // If IntersectionObserver isn't available, fall back to eager play.
-    if (typeof IntersectionObserver === 'undefined') {
+    const attachSource = () => {
+      if (sourceAttachedRef.current) return
+      sourceAttachedRef.current = true
+      video.src = src
+      setSourceAttached(true)
+      video.load()
+    }
+
+    const play = () => {
       video.play().catch(() => {
         /* autoplay may be blocked; ignore */
       })
+    }
+
+    const playWhenReady = () => {
+      if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        play()
+      } else {
+        video.addEventListener('loadeddata', play, { once: true })
+      }
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      attachSource()
+      playWhenReady()
       return
     }
 
@@ -32,9 +54,8 @@ export default function CardVideo({ src, poster, className }: CardVideoProps) {
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            video.play().catch(() => {
-              /* autoplay may be blocked; ignore */
-            })
+            attachSource()
+            playWhenReady()
           } else {
             video.pause()
           }
@@ -47,7 +68,7 @@ export default function CardVideo({ src, poster, className }: CardVideoProps) {
     return () => {
       observer.disconnect()
     }
-  }, [])
+  }, [src])
 
   return (
     <video
@@ -55,11 +76,10 @@ export default function CardVideo({ src, poster, className }: CardVideoProps) {
       muted
       loop
       playsInline
-      preload="metadata"
+      preload="none"
       poster={poster}
       className={className}
-    >
-      <source src={src} type="video/mp4" />
-    </video>
+      data-source-attached={sourceAttached ? 'true' : undefined}
+    />
   )
 }

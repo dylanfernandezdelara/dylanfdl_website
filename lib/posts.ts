@@ -192,7 +192,7 @@ export function getPostBySlug(slug: string): Post | null {
       excerpt: frontMatter.excerpt || '',
       content,
     }
-  } catch (error) {
+  } catch {
     // Silently return null on any file reading or parsing errors
     return null
   }
