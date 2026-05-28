@@ -8,9 +8,12 @@
 # testing
 /coverage
 
-# next.js
+# astro
+/dist/
+/.astro/
+
+# legacy next.js (if present)
 /.next/
-/out/
 
 # production
 /build
@@ -32,7 +35,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
 # IDE and editor files
 .cursor/

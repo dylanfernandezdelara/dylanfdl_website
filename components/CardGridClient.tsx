@@ -281,7 +281,6 @@ export default function CardGridClient({ items, footer }: Props) {
     }
 
     setRows((prev) => mergeRowsForFilter(prev, wantedSorted))
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `filter` updates are paired with `setRows` in `selectTab`
   }, [itemsKey, reducedMotion])
 
   /** One reflow when exits finish — per-card removal was stepping the footer up repeatedly. */
@@ -542,20 +541,20 @@ export default function CardGridClient({ items, footer }: Props) {
               aria-hidden
               className="pointer-events-none absolute inset-x-0 top-0 z-10 flex flex-col gap-3 md:gap-4 min-[640px]:hidden"
             >
-              {exitRows.map((row, j) => renderPlacedRow(row))}
+              {exitRows.map((row) => renderPlacedRow(row))}
             </div>
             <div
               aria-hidden
               className="pointer-events-none absolute inset-x-0 top-0 z-10 hidden min-[640px]:grid min-[640px]:grid-cols-2 min-[640px]:gap-3 md:gap-4"
             >
               <div className="flex min-w-0 flex-col gap-3 md:gap-4">
-                {exitRows.map((row, j) =>
-                  (activeRows.length + j) % 2 === 0 ? renderPlacedRow(row) : null,
+                {exitRows.map((row, exitIndex) =>
+                  (activeRows.length + exitIndex) % 2 === 0 ? renderPlacedRow(row) : null,
                 )}
               </div>
               <div className="flex min-w-0 flex-col gap-3 md:gap-4">
-                {exitRows.map((row, j) =>
-                  (activeRows.length + j) % 2 === 1 ? renderPlacedRow(row) : null,
+                {exitRows.map((row, exitIndex) =>
+                  (activeRows.length + exitIndex) % 2 === 1 ? renderPlacedRow(row) : null,
                 )}
               </div>
             </div>

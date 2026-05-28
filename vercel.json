@@ -1,1 +1,9 @@
-{}
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/about",
+      "statusCode": 307
+    }
+  ]
+}
