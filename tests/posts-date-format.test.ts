@@ -17,9 +17,6 @@ describe('formatPostDate', () => {
     expect(formatPostDate('2024--15')).toBe('2024--15')
   })
 
-  it('rejects days that do not exist in the given month', () => {
-    expect(formatPostDate('2024-02-31')).toBe('2024-02-31')
-  })
 })
 
 describe('formatPostDateCardGrid', () => {

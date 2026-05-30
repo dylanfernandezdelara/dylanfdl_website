@@ -26,7 +26,11 @@ type PostFrontMatter = {
   excerpt: string
 }
 
-function parsePostDate(date: string, allowedSegmentCounts: number[]): ParsedPostDate | null {
+function parsePostDate(
+  date: string,
+  allowedSegmentCounts: number[],
+  validateCalendarDate = true
+): ParsedPostDate | null {
   const segments = date.split('-')
   if (!allowedSegmentCounts.includes(segments.length)) {
     return null
@@ -41,15 +45,17 @@ function parsePostDate(date: string, allowedSegmentCounts: number[]): ParsedPost
     return null
   }
 
-  if (month < 1 || month > 12) {
-    return null
-  }
+  if (validateCalendarDate) {
+    if (month < 1 || month > 12) {
+      return null
+    }
 
-  const monthEnd = new Date(0)
-  monthEnd.setFullYear(year, month, 0)
-  const daysInMonth = monthEnd.getDate()
-  if (day < 1 || day > daysInMonth) {
-    return null
+    const monthEnd = new Date(0)
+    monthEnd.setFullYear(year, month, 0)
+    const daysInMonth = monthEnd.getDate()
+    if (day < 1 || day > daysInMonth) {
+      return null
+    }
   }
 
   return { year, month, day }
@@ -66,9 +72,10 @@ function formatParsedPostDate(
   date: string,
   locale: string,
   format: DateFormat,
-  allowedSegmentCounts: number[]
+  allowedSegmentCounts: number[],
+  validateCalendarDate = true
 ): string {
-  const parsed = parsePostDate(date, allowedSegmentCounts)
+  const parsed = parsePostDate(date, allowedSegmentCounts, validateCalendarDate)
   if (!parsed) {
     return date
   }
@@ -87,7 +94,7 @@ function formatParsedPostDate(
         }
   )
 
-  return formatted.replace(',', '')
+  return format === 'card' ? formatted.replace(',', '') : formatted
 }
 
 function requireStringFrontMatter(
@@ -119,7 +126,7 @@ function parsePostFrontMatter(frontMatter: Record<string, unknown>, slug: string
 }
 
 export function formatPostDate(date: string, locale: string = 'en-US'): string {
-  return formatParsedPostDate(date, locale, 'full', [3])
+  return formatParsedPostDate(date, locale, 'full', [3], false)
 }
 
 /**

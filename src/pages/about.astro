@@ -40,42 +40,44 @@ const CONTACT_LINK_STYLES =
     </div>
 
     <CardGridClient items={cardGridItems} client:load>
-      <hr class="mb-3 mt-8 border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
+      <div class="max-w-reading">
+        <hr class="mb-3 mt-8 border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
 
-      <div class="flex flex-wrap items-baseline gap-2 text-sm text-fg2">
-        <a class={CONTACT_LINK_STYLES} href="https://github.com/dylanfernandezdelara">
-          GitHub
-        </a>
-        <span
-          class="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
-          aria-hidden="true"
-        >
-          ·
-        </span>
-        <a class={CONTACT_LINK_STYLES} href="mailto:fernandezdelaradylan@gmail.com">
-          Email
-        </a>
-        <span
-          class="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
-          aria-hidden="true"
-        >
-          ·
-        </span>
-        <a class={CONTACT_LINK_STYLES} href="https://x.com/dylan_fdl_">
-          Twitter
-        </a>
-        <span
-          class="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
-          aria-hidden="true"
-        >
-          ·
-        </span>
-        <a
-          class={CONTACT_LINK_STYLES}
-          href="https://www.linkedin.com/in/dylan-fernandez-de-lara-219b821a6"
-        >
-          LinkedIn
-        </a>
+        <div class="flex flex-wrap items-baseline gap-2 text-sm text-fg2">
+          <a class={CONTACT_LINK_STYLES} href="https://github.com/dylanfernandezdelara">
+            GitHub
+          </a>
+          <span
+            class="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
+            aria-hidden="true"
+          >
+            ·
+          </span>
+          <a class={CONTACT_LINK_STYLES} href="mailto:fernandezdelaradylan@gmail.com">
+            Email
+          </a>
+          <span
+            class="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
+            aria-hidden="true"
+          >
+            ·
+          </span>
+          <a class={CONTACT_LINK_STYLES} href="https://x.com/dylan_fdl_">
+            Twitter
+          </a>
+          <span
+            class="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
+            aria-hidden="true"
+          >
+            ·
+          </span>
+          <a
+            class={CONTACT_LINK_STYLES}
+            href="https://www.linkedin.com/in/dylan-fernandez-de-lara-219b821a6"
+          >
+            LinkedIn
+          </a>
+        </div>
       </div>
     </CardGridClient>
   </div>

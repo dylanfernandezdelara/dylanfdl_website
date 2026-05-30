@@ -1,6 +1,6 @@
 'use client'
 
-import type { CSSProperties, RefObject } from 'react'
+import type { CSSProperties, MutableRefObject, RefObject } from 'react'
 
 import { TAB_OPTIONS } from '@/components/card-grid/constants'
 import type { CardGridFilter } from '@/lib/buildCardGridItems'
@@ -21,7 +21,7 @@ type Props = {
   indicator: TabIndicator
   indicatorReady: boolean
   indicatorStyle: CSSProperties
-  tabButtonRefs: RefObject<(HTMLButtonElement | null)[]>
+  tabButtonRefs: MutableRefObject<(HTMLButtonElement | null)[]>
   tabContainerRef: RefObject<HTMLDivElement>
   onSelect: (filter: CardGridFilter) => void
 }

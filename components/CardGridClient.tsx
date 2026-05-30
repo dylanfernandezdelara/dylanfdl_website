@@ -104,7 +104,7 @@ export default function CardGridClient({ items, children }: Props) {
         <div className="relative z-20">
           <CardGridColumns rows={activeRows} onRowEntered={markRowEntered} />
         </div>
-        {children != null ? <div className="relative z-20 max-w-reading">{children}</div> : null}
+        {children != null ? <div className="relative z-20">{children}</div> : null}
         {exitRows.length > 0 ? (
           <>
             <div
