@@ -4,14 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import {
-  SEARCHABLE_SELECTOR,
-  computeSearchResults,
-  dedupeStructuralTargets,
-  normalizeText,
-  type SearchResult,
-  type SearchTarget,
-} from '@/lib/page-search'
+import { activatePageSearchResult, collectPageSearchTargets } from '@/components/page-search/dom'
+import { computeSearchResults, type SearchResult, type SearchTarget } from '@/lib/page-search'
 
 export default function PageSearchPalette() {
   const [isOpen, setIsOpen] = useState(false)
@@ -41,27 +35,7 @@ export default function PageSearchPalette() {
       return
     }
 
-    const nextTargets = Array.from(document.querySelectorAll<HTMLElement>(SEARCHABLE_SELECTOR))
-      .filter((element) => !element.closest('[data-search-overlay="true"]'))
-      .map((element, index) => {
-        const text = normalizeText(element.textContent || '')
-
-        return {
-          id: `search-target-${index}`,
-          text,
-          textLower: text.toLowerCase(),
-          element,
-          order: index,
-        }
-      })
-      .filter((target) => target.text.length > 0)
-
-    const structurallyDeduped = dedupeStructuralTargets(nextTargets, (possibleAncestor, possibleDescendant) => {
-      return possibleAncestor.contains(possibleDescendant)
-    })
-
-    setTargets(structurallyDeduped)
-
+    setTargets(collectPageSearchTargets())
     requestAnimationFrame(() => inputRef.current?.focus())
   }, [isOpen])
 
@@ -73,15 +47,7 @@ export default function PageSearchPalette() {
     setIsOpen(false)
 
     requestAnimationFrame(() => {
-      result.element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      })
-
-      result.element.classList.add('page-search-hit')
-      window.setTimeout(() => {
-        result.element.classList.remove('page-search-hit')
-      }, 1200)
+      activatePageSearchResult(result)
     })
   }
 

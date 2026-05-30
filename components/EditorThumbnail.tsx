@@ -2,6 +2,8 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
+import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
+
 const FULL_TEXT = 'I hope to clarify my own ideas and'
 const TEXT_LENGTH = FULL_TEXT.length
 const BASE_FONT_SIZE_PX = 15.2
@@ -152,6 +154,7 @@ function getVisibleLengthAt(cycleElapsedMs: number, t: CycleTiming): number {
 export default function EditorThumbnail() {
   const [visibleLength, setVisibleLength] = useState(0)
   const [textSizePx, setTextSizePx] = useState(BASE_FONT_SIZE_PX)
+  const prefersReducedMotion = usePrefersReducedMotion()
   const cycleAnchorRef = useRef<number | null>(null)
   const timingRef = useRef<CycleTiming | null>(null)
   const lastVisibleLengthRef = useRef(0)
@@ -159,83 +162,55 @@ export default function EditorThumbnail() {
   const textMeasureRef = useRef<HTMLSpanElement | null>(null)
 
   useEffect(() => {
-    // Users with prefers-reduced-motion shouldn't see endless typing/deleting.
-    // Show the full sentence as a static snapshot instead.
-    const reducedMotionQuery =
-      typeof window !== 'undefined'
-        ? window.matchMedia('(prefers-reduced-motion: reduce)')
-        : null
-
     let animationFrameId = 0
 
-    const startTickingAnimation = () => {
-      timingRef.current = rollCycleTiming()
-      cycleAnchorRef.current = null
+    if (prefersReducedMotion) {
+      lastVisibleLengthRef.current = TEXT_LENGTH
+      setVisibleLength(TEXT_LENGTH)
+      return undefined
+    }
 
-      const tick = (timestamp: number) => {
-        if (cycleAnchorRef.current === null) {
-          cycleAnchorRef.current = timestamp
-        }
+    timingRef.current = rollCycleTiming()
+    cycleAnchorRef.current = null
 
-        let timing = timingRef.current
-        if (!timing) {
-          animationFrameId = window.requestAnimationFrame(tick)
-          return
-        }
+    const tick = (timestamp: number) => {
+      if (cycleAnchorRef.current === null) {
+        cycleAnchorRef.current = timestamp
+      }
 
-        let elapsed = timestamp - cycleAnchorRef.current
-
-        if (elapsed >= timing.cycleDurationMs) {
-          timingRef.current = rollCycleTiming()
-          cycleAnchorRef.current = timestamp
-          timing = timingRef.current
-          elapsed = 0
-        }
-
-        const nextVisibleLength = getVisibleLengthAt(elapsed, timing)
-
-        if (nextVisibleLength !== lastVisibleLengthRef.current) {
-          lastVisibleLengthRef.current = nextVisibleLength
-          setVisibleLength(nextVisibleLength)
-        }
-
+      let timing = timingRef.current
+      if (!timing) {
         animationFrameId = window.requestAnimationFrame(tick)
+        return
+      }
+
+      let elapsed = timestamp - cycleAnchorRef.current
+
+      if (elapsed >= timing.cycleDurationMs) {
+        timingRef.current = rollCycleTiming()
+        cycleAnchorRef.current = timestamp
+        timing = timingRef.current
+        elapsed = 0
+      }
+
+      const nextVisibleLength = getVisibleLengthAt(elapsed, timing)
+
+      if (nextVisibleLength !== lastVisibleLengthRef.current) {
+        lastVisibleLengthRef.current = nextVisibleLength
+        setVisibleLength(nextVisibleLength)
       }
 
       animationFrameId = window.requestAnimationFrame(tick)
     }
 
-    const pinStaticText = () => {
-      if (animationFrameId !== 0) {
-        window.cancelAnimationFrame(animationFrameId)
-        animationFrameId = 0
-      }
-      lastVisibleLengthRef.current = TEXT_LENGTH
-      setVisibleLength(TEXT_LENGTH)
-    }
-
-    const applyMotionPreference = (prefersReduced: boolean) => {
-      if (prefersReduced) {
-        pinStaticText()
-      } else {
-        startTickingAnimation()
-      }
-    }
-
-    applyMotionPreference(reducedMotionQuery?.matches ?? false)
-
-    const handleChange = (event: MediaQueryListEvent) => {
-      applyMotionPreference(event.matches)
-    }
-    reducedMotionQuery?.addEventListener('change', handleChange)
+    animationFrameId = window.requestAnimationFrame(tick)
 
     return () => {
       if (animationFrameId !== 0) {
         window.cancelAnimationFrame(animationFrameId)
       }
-      reducedMotionQuery?.removeEventListener('change', handleChange)
     }
-  }, [])
+  }, [prefersReducedMotion])
 
   useLayoutEffect(() => {
     const shell = textShellRef.current
