@@ -3,6 +3,7 @@
 import { Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
 import { cn } from '@/lib/utils'
 
 function resolvedDark(): boolean {
@@ -21,6 +22,7 @@ export default function ThemeToggle() {
   // users briefly see the Moon icon before useEffect swaps to Sun.
   const [mounted, setMounted] = useState(false)
   const [isDark, setIsDark] = useState(false)
+  const prefersReducedMotion = usePrefersReducedMotion()
 
   useEffect(() => {
     setIsDark(resolvedDark())
@@ -51,10 +53,7 @@ export default function ThemeToggle() {
       setIsDark(nextIsDark)
     }
 
-    const reducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (!reducedMotion && typeof document.startViewTransition === 'function') {
+    if (!prefersReducedMotion && typeof document.startViewTransition === 'function') {
       document.startViewTransition(apply)
     } else {
       apply()

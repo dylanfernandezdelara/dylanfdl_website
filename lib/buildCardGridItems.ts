@@ -1,6 +1,7 @@
 import { formatPostDateCardGrid, getAllPosts } from '@/lib/posts'
 
 export type CardGridFilter = 'all' | 'projects' | 'music'
+export type CardGridThumbnail = 'editor'
 
 export type CardGridSerializableItem =
   | {
@@ -13,6 +14,7 @@ export type CardGridSerializableItem =
       href: string
       videoSrc?: string
       posterSrc?: string
+      thumbnail?: CardGridThumbnail
     }
   | {
       kind: 'artifact'
@@ -78,6 +80,8 @@ const artifacts: ArtifactEntry[] = [
   },
 ]
 
+const essayThumbnails = new Map<string, CardGridThumbnail>([['purpose-of-writing', 'editor']])
+
 export function buildCardGridItems(): CardGridSerializableItem[] {
   const posts = getAllPosts()
   const essayItems: CardGridSerializableItem[] = posts.map((post) => ({
@@ -88,6 +92,7 @@ export function buildCardGridItems(): CardGridSerializableItem[] {
     title: post.title,
     dateLabel: formatPostDateCardGrid(post.date),
     href: `/essays/${post.slug}`,
+    thumbnail: essayThumbnails.get(post.slug),
   }))
 
   const artifactItems: CardGridSerializableItem[] = artifacts.map((a) => ({
