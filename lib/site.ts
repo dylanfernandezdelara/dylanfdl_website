@@ -1,4 +1,6 @@
-export const SITE_URL = 'https://dylanfdl.com'
+import { SITE_URL } from '../site.config.mjs'
+
+export { SITE_URL }
 
 export const SITE_NAME = 'dylanfdl'
 
@@ -9,6 +11,10 @@ export const PERSON_GIVEN_NAME = 'Dylan'
 export const PERSON_FAMILY_NAME = 'Fernandez de Lara'
 
 export const PERSON_TAGLINE = 'Engineer at Meta · Applied AI'
+
+export const PERSON_PAGE_PATH = '/about'
+
+export const OG_IMAGE_PATH = '/og-image.png'
 
 /**
  * Common name and handle spellings for structured data (schema.org alternateName).
@@ -28,18 +34,45 @@ export const PERSON_NAME_ALTERNATES = [
 export const DEFAULT_DESCRIPTION =
   'Dylan Fernandez de Lara (Dylan Fernandez, Dylan Lara, dylanfdl) is an engineer at Meta working on Applied AI. Portfolio, projects, essays, and music.'
 
+export const NOT_FOUND_DESCRIPTION = 'Page not found on dylanfdl.com.'
+
 /** Title for the main profile page — full name first for name-based searches. */
 export const HOME_PAGE_TITLE = `${PERSON_NAME} — ${PERSON_TAGLINE}`
 
-/** Public profile URLs used for identity signals (JSON-LD sameAs, rel=me). */
+/** Public profile URLs used for identity signals (JSON-LD sameAs). */
 export const SAME_AS = [
   'https://github.com/dylanfernandezdelara',
   'https://x.com/dylan_fdl_',
   'https://www.linkedin.com/in/dylan-fernandez-de-lara-219b821a6',
 ] as const
 
+/**
+ * Profiles that support rel=me round-trip verification (LinkedIn does not).
+ * @see https://indieweb.org/rel-me
+ */
+export const REL_ME_URLS = SAME_AS.filter((url) => !url.includes('linkedin.com'))
+
+const TWITTER_PROFILE = SAME_AS.find((url) => url.includes('x.com') || url.includes('twitter.com'))
+
+export const TWITTER_CREATOR = TWITTER_PROFILE
+  ? `@${new URL(TWITTER_PROFILE).pathname.replace(/^\//, '').replace(/\/$/, '')}`
+  : undefined
+
 export function absoluteUrl(path: string): string {
   return new URL(path, SITE_URL).href
+}
+
+export const PERSON_URL = absoluteUrl(PERSON_PAGE_PATH)
+
+export const OG_IMAGE_URL = absoluteUrl(OG_IMAGE_PATH)
+
+/** Normalize YYYY-MM-DD post dates to ISO 8601 datetimes for Open Graph / schema.org. */
+export function toIsoDateTime(date: string): string {
+  if (date.includes('T')) {
+    return date
+  }
+
+  return `${date}T00:00:00.000Z`
 }
 
 /** Document title: profile pages lead with the full name; inner pages lead with content. */

@@ -6,14 +6,19 @@ import sitemap from '@astrojs/sitemap'
 import tailwind from '@astrojs/tailwind'
 import { defineConfig } from 'astro/config'
 
+import { SITE_URL } from './site.config.mjs'
+
 const root = path.dirname(fileURLToPath(import.meta.url))
 
 /** @type {import('astro').AstroUserConfig} */
 export default defineConfig({
-  site: 'https://dylanfdl.com',
+  site: SITE_URL,
+  trailingSlash: 'never',
   integrations: [
     react(),
-    sitemap(),
+    sitemap({
+      filter: (page) => page !== `${SITE_URL}/` && !page.endsWith('/404'),
+    }),
     tailwind({
       applyBaseStyles: false,
     }),
