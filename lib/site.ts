@@ -10,8 +10,23 @@ export const PERSON_FAMILY_NAME = 'Fernandez de Lara'
 
 export const PERSON_TAGLINE = 'Engineer at Meta · Applied AI'
 
+/**
+ * Common name and handle spellings for structured data (schema.org alternateName).
+ * Canonical display name remains PERSON_NAME everywhere user-facing.
+ */
+export const PERSON_NAME_ALTERNATES = [
+  'Dylan Fernandez',
+  'Dylan Fernandez de lara',
+  'Dylan Lara',
+  'Dylan fernandezdelara',
+  'Dylan F',
+  SITE_NAME,
+  'dylan_fdl_',
+  'dylanfernandezdelara',
+] as const
+
 export const DEFAULT_DESCRIPTION =
-  'Dylan Fernandez de Lara is an engineer at Meta working on Applied AI. Portfolio, projects, essays, and music by dylanfdl.'
+  'Dylan Fernandez de Lara (Dylan Fernandez, Dylan Lara, dylanfdl) is an engineer at Meta working on Applied AI. Portfolio, projects, essays, and music.'
 
 /** Title for the main profile page — full name first for name-based searches. */
 export const HOME_PAGE_TITLE = `${PERSON_NAME} — ${PERSON_TAGLINE}`

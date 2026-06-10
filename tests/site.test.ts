@@ -3,11 +3,21 @@ import {
   DEFAULT_DESCRIPTION,
   HOME_PAGE_TITLE,
   PERSON_NAME,
+  PERSON_NAME_ALTERNATES,
   SITE_NAME,
   SITE_URL,
   absoluteUrl,
   buildPageTitle,
 } from '../lib/site'
+
+/** Name spellings the site should signal to search engines. */
+const REQUESTED_NAME_VARIANTS = [
+  'Dylan Fernandez',
+  'Dylan Fernandez de lara',
+  'Dylan Lara',
+  'Dylan fernandezdelara',
+  'Dylan F',
+] as const
 
 describe('site', () => {
   it('uses the production domain', () => {
@@ -22,6 +32,12 @@ describe('site', () => {
     expect(SITE_NAME).toBe('dylanfdl')
     expect(DEFAULT_DESCRIPTION).toContain('Dylan Fernandez de Lara')
     expect(DEFAULT_DESCRIPTION).toContain('dylanfdl')
+  })
+
+  it('lists all requested name variants for structured data', () => {
+    for (const variant of REQUESTED_NAME_VARIANTS) {
+      expect(PERSON_NAME_ALTERNATES).toContain(variant)
+    }
   })
 
   it('leads profile page titles with the full name', () => {
