@@ -2,11 +2,14 @@
 import ThemeToggle from '@/components/ThemeToggle'
 import {
   DEFAULT_DESCRIPTION,
+  PERSON_FAMILY_NAME,
+  PERSON_GIVEN_NAME,
   PERSON_NAME,
   SAME_AS,
   SITE_NAME,
   SITE_URL,
   absoluteUrl,
+  buildPageTitle,
 } from '@/lib/site'
 
 import '@/src/styles/theme.css'
@@ -19,6 +22,8 @@ interface Props {
   description?: string
   /** Canonical path (e.g. `/about`). Defaults to the current pathname. */
   path?: string
+  /** Use name-first title and ProfilePage structured data (for `/about`). */
+  profilePage?: boolean
   ogType?: 'website' | 'article'
   articlePublishedTime?: string
 }
@@ -27,22 +32,24 @@ const {
   title,
   description = DEFAULT_DESCRIPTION,
   path,
+  profilePage = false,
   ogType = 'website',
   articlePublishedTime,
 } = Astro.props
 
 const canonicalPath = path ?? Astro.url.pathname
 const canonicalUrl = absoluteUrl(canonicalPath)
+const personId = `${SITE_URL}/#person`
 
-const pageTitle = title
-  ? `${title} — ${PERSON_NAME} (${SITE_NAME})`
-  : `${PERSON_NAME} (${SITE_NAME})`
+const pageTitle = buildPageTitle({ title, profilePage })
 
 const personJsonLd = {
-  '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': personId,
   name: PERSON_NAME,
-  alternateName: SITE_NAME,
+  givenName: PERSON_GIVEN_NAME,
+  familyName: PERSON_FAMILY_NAME,
+  alternateName: [SITE_NAME, 'Dylan Fernandez de lara'],
   url: SITE_URL,
   sameAs: [...SAME_AS],
   jobTitle: 'Engineer',
@@ -52,29 +59,47 @@ const personJsonLd = {
   },
 }
 
+const websiteJsonLd = {
+  '@type': 'WebSite',
+  '@id': `${SITE_URL}/#website`,
+  name: PERSON_NAME,
+  alternateName: SITE_NAME,
+  url: SITE_URL,
+  publisher: { '@id': personId },
+}
+
+const profilePageJsonLd = profilePage
+  ? {
+      '@type': 'ProfilePage',
+      '@id': canonicalUrl,
+      url: canonicalUrl,
+      name: PERSON_NAME,
+      description,
+      mainEntity: { '@id': personId },
+      isPartOf: { '@id': `${SITE_URL}/#website` },
+    }
+  : null
+
 const articleJsonLd =
   ogType === 'article' && title && articlePublishedTime
     ? {
-        '@context': 'https://schema.org',
         '@type': 'Article',
         headline: title,
         description,
         datePublished: articlePublishedTime,
-        author: {
-          '@type': 'Person',
-          name: PERSON_NAME,
-          url: SITE_URL,
-        },
-        publisher: {
-          '@type': 'Person',
-          name: PERSON_NAME,
-          url: SITE_URL,
-        },
+        author: { '@id': personId },
+        publisher: { '@id': personId },
         mainEntityOfPage: canonicalUrl,
+        isPartOf: { '@id': `${SITE_URL}/#website` },
       }
     : null
 
-const jsonLd = articleJsonLd ? [personJsonLd, articleJsonLd] : personJsonLd
+const graph = [websiteJsonLd, personJsonLd, profilePageJsonLd, articleJsonLd].filter(Boolean)
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': graph,
+}
 ---
 
 <!doctype html>
@@ -88,7 +113,7 @@ const jsonLd = articleJsonLd ? [personJsonLd, articleJsonLd] : personJsonLd
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     {SAME_AS.map((profileUrl) => <link rel="me" href={profileUrl} />)}
     <meta property="og:type" content={ogType} />
-    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:site_name" content={PERSON_NAME} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
