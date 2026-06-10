@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://dylanfdl.com/sitemap-index.xml

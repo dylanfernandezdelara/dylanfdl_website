@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest'
 import {
   DEFAULT_DESCRIPTION,
   HOME_PAGE_TITLE,
+  OG_IMAGE_ALT,
+  OG_IMAGE_HEIGHT,
   OG_IMAGE_URL,
+  OG_IMAGE_WIDTH,
   PERSON_NAME,
   PERSON_NAME_ALTERNATES,
   PERSON_URL,
@@ -10,9 +13,11 @@ import {
   SAME_AS,
   SITE_NAME,
   SITE_URL,
+  SITEMAP_INDEX_URL,
   TWITTER_CREATOR,
   absoluteUrl,
   buildPageTitle,
+  serializeJsonLd,
   toIsoDateTime,
 } from '../lib/site'
 
@@ -70,5 +75,21 @@ describe('site', () => {
   it('normalizes post dates to ISO datetimes', () => {
     expect(toIsoDateTime('2025-12-20')).toBe('2025-12-20T00:00:00.000Z')
     expect(toIsoDateTime('2025-12-20T12:00:00.000Z')).toBe('2025-12-20T12:00:00.000Z')
+  })
+
+  it('defines OG image dimensions and alt text', () => {
+    expect(OG_IMAGE_WIDTH).toBe(1200)
+    expect(OG_IMAGE_HEIGHT).toBe(630)
+    expect(OG_IMAGE_ALT).toContain(PERSON_NAME)
+  })
+
+  it('derives the sitemap index URL from SITE_URL', () => {
+    expect(SITEMAP_INDEX_URL).toBe('https://dylanfdl.com/sitemap-index.xml')
+  })
+
+  it('escapes less-than in JSON-LD serialization', () => {
+    const serialized = serializeJsonLd({ headline: '</script><img onerror=alert(1)>' })
+    expect(serialized).not.toContain('</script>')
+    expect(serialized).toContain('\\u003c')
   })
 })

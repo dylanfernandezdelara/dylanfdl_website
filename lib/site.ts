@@ -16,6 +16,16 @@ export const PERSON_PAGE_PATH = '/about'
 
 export const OG_IMAGE_PATH = '/og-image.png'
 
+export const OG_IMAGE_WIDTH = 1200
+
+export const OG_IMAGE_HEIGHT = 630
+
+export const OG_IMAGE_ALT = `${PERSON_NAME} — ${PERSON_TAGLINE}`
+
+export const EMPLOYER_NAME = 'Meta'
+
+export const EMPLOYER_URL = 'https://www.meta.com'
+
 /**
  * Common name and handle spellings for structured data (schema.org alternateName).
  * Canonical display name remains PERSON_NAME everywhere user-facing.
@@ -65,6 +75,13 @@ export function absoluteUrl(path: string): string {
 export const PERSON_URL = absoluteUrl(PERSON_PAGE_PATH)
 
 export const OG_IMAGE_URL = absoluteUrl(OG_IMAGE_PATH)
+
+export const SITEMAP_INDEX_URL = absoluteUrl('/sitemap-index.xml')
+
+/** Safe JSON-LD serialization for inline script tags (escapes `<` to prevent breakout). */
+export function serializeJsonLd(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c')
+}
 
 /** Normalize YYYY-MM-DD post dates to ISO 8601 datetimes for Open Graph / schema.org. */
 export function toIsoDateTime(date: string): string {
