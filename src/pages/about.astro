@@ -5,6 +5,7 @@ import ExternalLink from '@/components/ExternalLink'
 import PageSearchPalette from '@/components/PageSearchPalette'
 import RainbowText from '@/components/RainbowText'
 import { buildCardGridItems } from '@/lib/buildCardGridItems'
+import { DEFAULT_DESCRIPTION } from '@/lib/site'
 
 const cardGridItems = buildCardGridItems()
 
@@ -12,9 +13,11 @@ const CONTACT_LINK_STYLES =
   'text-fg2 no-underline transition-colors duration-150 hover:text-fg1 hover:underline hover:decoration-[color:color-mix(in_oklab,var(--fg2),transparent_35%)] focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-3'
 ---
 
-<BaseLayout title="About me">
+<BaseLayout description={DEFAULT_DESCRIPTION} path="/about" profilePage>
   <div class="mx-auto max-w-4xl px-4 pb-8 pt-14 text-base leading-[1.6] min-[481px]:px-6 min-[481px]:pb-10 min-[481px]:pt-12 md:px-8 md:pb-16 md:pt-16">
     <div class="about-intro-blurb">
+      <h1 class="sr-only">Dylan Fernandez de Lara</h1>
+
       <p class="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
         I'm Dylan. I am an{' '}
         <RainbowText text="optimist." />
