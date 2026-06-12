@@ -54,6 +54,7 @@ export const SAME_AS = [
   'https://github.com/dylanfernandezdelara',
   'https://x.com/dylan_fdl_',
   'https://www.linkedin.com/in/dylan-fernandez-de-lara-219b821a6',
+  'https://cursor.com/@dylanf',
 ] as const
 
 /**
