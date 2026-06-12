@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  CONTACT_LINKS,
   DEFAULT_DESCRIPTION,
   HOME_PAGE_TITLE,
   OG_IMAGE_ALT,
@@ -67,9 +68,18 @@ describe('site', () => {
     expect(TWITTER_CREATOR).toBe('@dylan_fdl_')
   })
 
+  it('derives sameAs URLs from contact link flags', () => {
+    expect(SAME_AS).toEqual(CONTACT_LINKS.filter((link) => link.sameAs).map((link) => link.href))
+  })
+
+  it('derives rel=me URLs from contact link flags', () => {
+    expect(REL_ME_URLS).toEqual(CONTACT_LINKS.filter((link) => link.relMe).map((link) => link.href))
+  })
+
   it('excludes LinkedIn from rel=me URLs', () => {
-    expect(REL_ME_URLS).not.toContain(SAME_AS[2])
-    expect(REL_ME_URLS.every((url) => !url.includes('linkedin.com'))).toBe(true)
+    const linkedInUrl = CONTACT_LINKS.find((link) => link.href.includes('linkedin.com'))?.href
+    expect(linkedInUrl).toBeDefined()
+    expect(REL_ME_URLS).not.toContain(linkedInUrl)
   })
 
   it('normalizes post dates to ISO datetimes', () => {

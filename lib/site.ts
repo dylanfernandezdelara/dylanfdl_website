@@ -49,24 +49,56 @@ export const NOT_FOUND_DESCRIPTION = 'Page not found on dylanfdl.com.'
 /** Title for the main profile page — full name first for name-based searches. */
 export const HOME_PAGE_TITLE = `${PERSON_NAME} — ${PERSON_TAGLINE}`
 
+type ContactLink = {
+  label: string
+  href: string
+  sameAs?: true
+  relMe?: true
+  twitterHandle?: true
+}
+
+/** Canonical contact/profile links (footer, JSON-LD sameAs, rel=me, Twitter meta). */
+export const CONTACT_LINKS = [
+  {
+    label: 'GitHub',
+    href: 'https://github.com/dylanfernandezdelara',
+    sameAs: true,
+    relMe: true,
+  },
+  { label: 'Email', href: 'mailto:fernandezdelaradylan@gmail.com' },
+  {
+    label: 'Twitter',
+    href: 'https://x.com/dylan_fdl_',
+    sameAs: true,
+    relMe: true,
+    twitterHandle: true,
+  },
+  {
+    label: 'LinkedIn',
+    href: 'https://www.linkedin.com/in/dylan-fernandez-de-lara-219b821a6',
+    sameAs: true,
+  },
+  {
+    label: 'Cursor',
+    href: 'https://cursor.com/@dylanf',
+    sameAs: true,
+    relMe: true,
+  },
+] as const satisfies readonly ContactLink[]
+
 /** Public profile URLs used for identity signals (JSON-LD sameAs). */
-export const SAME_AS = [
-  'https://github.com/dylanfernandezdelara',
-  'https://x.com/dylan_fdl_',
-  'https://www.linkedin.com/in/dylan-fernandez-de-lara-219b821a6',
-  'https://cursor.com/@dylanf',
-] as const
+export const SAME_AS = CONTACT_LINKS.filter((link) => link.sameAs).map((link) => link.href)
 
 /**
  * Profiles that support rel=me round-trip verification (LinkedIn does not).
  * @see https://indieweb.org/rel-me
  */
-export const REL_ME_URLS = SAME_AS.filter((url) => !url.includes('linkedin.com'))
+export const REL_ME_URLS = CONTACT_LINKS.filter((link) => link.relMe).map((link) => link.href)
 
-const TWITTER_PROFILE = SAME_AS.find((url) => url.includes('x.com') || url.includes('twitter.com'))
+const twitterProfile = CONTACT_LINKS.find((link) => link.twitterHandle)
 
-export const TWITTER_CREATOR = TWITTER_PROFILE
-  ? `@${new URL(TWITTER_PROFILE).pathname.replace(/^\//, '').replace(/\/$/, '')}`
+export const TWITTER_CREATOR = twitterProfile
+  ? `@${new URL(twitterProfile.href).pathname.replace(/^\//, '').replace(/\/$/, '')}`
   : undefined
 
 export function absoluteUrl(path: string): string {
