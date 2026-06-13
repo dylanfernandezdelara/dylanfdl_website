@@ -14,8 +14,11 @@ interface OptimistTextProps {
   className?: string
 }
 
-const TRIGGER_CLASS =
-  'optimist-text-trigger cursor-pointer border-0 bg-transparent p-0 font-inherit leading-inherit text-inherit transition-opacity hover:opacity-85'
+const BASE_CLASS =
+  'optimist-text-trigger border-0 bg-transparent p-0 font-inherit leading-inherit text-inherit'
+
+const INTERACTIVE_CLASS = 'cursor-pointer transition-opacity hover:opacity-85'
+const STATIC_CLASS = 'cursor-default'
 
 function StaticRainbowText({
   text,
@@ -60,29 +63,41 @@ export default function OptimistText({
   }
 
   const isInteractive = ready && !prefersReducedMotion
-  const staticClassName = prefersReducedMotion
-    ? ' cursor-default hover:opacity-100'
-    : ''
+  const modeClass = isInteractive ? INTERACTIVE_CLASS : STATIC_CLASS
+  const content = (
+    <span
+      key={isInteractive ? 'interactive' : 'static'}
+      ref={slotRef}
+      className="optimist-text-content"
+    >
+      {!isInteractive ? (
+        <StaticRainbowText
+          text={text}
+          delayMultiplier={delayMultiplier}
+          phaseMs={restPhaseMs}
+        />
+      ) : null}
+    </span>
+  )
+
+  if (!isInteractive) {
+    return (
+      <span className={`${BASE_CLASS} ${modeClass}${className ? ` ${className}` : ''}`}>
+        {content}
+      </span>
+    )
+  }
 
   return (
     <button
       type="button"
-      className={`${TRIGGER_CLASS}${staticClassName}${className ? ` ${className}` : ''}`}
-      aria-label={isInteractive ? `${text} — press to animate` : text}
-      aria-disabled={!isInteractive || undefined}
+      className={`${BASE_CLASS} ${modeClass}${className ? ` ${className}` : ''}`}
+      aria-label={`${text} — press to animate`}
       aria-busy={isBusy}
-      onClick={isInteractive ? roll : undefined}
-      onKeyDown={isInteractive ? handleKeyDown : undefined}
+      onClick={roll}
+      onKeyDown={handleKeyDown}
     >
-      <span ref={slotRef} className="optimist-text-content">
-        {!isInteractive ? (
-          <StaticRainbowText
-            text={text}
-            delayMultiplier={delayMultiplier}
-            phaseMs={restPhaseMs}
-          />
-        ) : null}
-      </span>
+      {content}
     </button>
   )
 }
