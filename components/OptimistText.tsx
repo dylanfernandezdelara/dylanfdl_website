@@ -1,4 +1,3 @@
-import { type KeyboardEvent } from 'react'
 import type { SlotOptions } from 'slot-text'
 import 'slot-text/style.css'
 
@@ -55,15 +54,9 @@ export default function OptimistText({
     prefersReducedMotion,
   })
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      roll()
-    }
-  }
-
   const isInteractive = ready && !prefersReducedMotion
   const modeClass = isInteractive ? INTERACTIVE_CLASS : STATIC_CLASS
+
   const content = (
     <span
       key={isInteractive ? 'interactive' : 'static'}
@@ -95,7 +88,6 @@ export default function OptimistText({
       aria-label={`${text} — press to animate`}
       aria-busy={isBusy}
       onClick={roll}
-      onKeyDown={handleKeyDown}
     >
       {content}
     </button>
