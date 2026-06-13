@@ -40,3 +40,4 @@ yarn-error.log*
 # IDE and editor files
 .cursor/
 .tmp_*
+.env*

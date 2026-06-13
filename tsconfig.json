@@ -7,6 +7,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["src/**/*", "components/**/*", "hooks/**/*", "lib/**/*", "tests/**/*"],
+  "include": ["src/**/*", "components/**/*", "hooks/**/*", "lib/**/*", "api/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist"]
 }
