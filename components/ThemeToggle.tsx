@@ -22,7 +22,7 @@ export default function ThemeToggle() {
   // users briefly see the Moon icon before useEffect swaps to Sun.
   const [mounted, setMounted] = useState(false)
   const [isDark, setIsDark] = useState(false)
-  const prefersReducedMotion = usePrefersReducedMotion()
+  const { reduced: prefersReducedMotion, ready: motionReady } = usePrefersReducedMotion()
 
   useEffect(() => {
     setIsDark(resolvedDark())
@@ -53,7 +53,7 @@ export default function ThemeToggle() {
       setIsDark(nextIsDark)
     }
 
-    if (!prefersReducedMotion && typeof document.startViewTransition === 'function') {
+    if (motionReady && !prefersReducedMotion && typeof document.startViewTransition === 'function') {
       document.startViewTransition(apply)
     } else {
       apply()

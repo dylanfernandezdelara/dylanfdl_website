@@ -3,26 +3,26 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
+import {
+  EDITOR_THUMBNAIL_HOLD_EMPTY_MS,
+  EDITOR_THUMBNAIL_HOLD_FULL_MS,
+  getVisibleLengthAt,
+  type EditorThumbnailCycleTiming,
+} from '@/lib/editorThumbnailCycle'
 
 const FULL_TEXT = 'I hope to clarify my own ideas and'
 const TEXT_LENGTH = FULL_TEXT.length
 const BASE_FONT_SIZE_PX = 15.2
 
-const HOLD_FULL_MS = 900
-const HOLD_EMPTY_MS = 250
+const HOLD_FULL_MS = EDITOR_THUMBNAIL_HOLD_FULL_MS
+const HOLD_EMPTY_MS = EDITOR_THUMBNAIL_HOLD_EMPTY_MS
 
 /** Uniform float in [min, max] */
 function randomBetween(min: number, max: number): number {
   return min + Math.random() * (max - min)
 }
 
-type CycleTiming = {
-  typeThresholds: number[]
-  typeTotalMs: number
-  deleteThresholds: number[]
-  deleteTotalMs: number
-  cycleDurationMs: number
-}
+type CycleTiming = EditorThumbnailCycleTiming
 
 function buildHumanTypeThresholds(): Pick<CycleTiming, 'typeThresholds' | 'typeTotalMs'> {
   const thresholds: number[] = []
@@ -113,60 +113,29 @@ function rollCycleTiming(): CycleTiming {
   }
 }
 
-function getTypingLength(elapsedMs: number, typeThresholds: number[]): number {
-  for (let index = 0; index < typeThresholds.length; index += 1) {
-    if (elapsedMs < typeThresholds[index]) {
-      return index
-    }
-  }
-
-  return TEXT_LENGTH
-}
-
-function getDeletingLength(elapsedMs: number, deleteThresholds: number[]): number {
-  for (let index = 0; index < deleteThresholds.length; index += 1) {
-    if (elapsedMs < deleteThresholds[index]) {
-      return TEXT_LENGTH - index
-    }
-  }
-
-  return 0
-}
-
-function getVisibleLengthAt(cycleElapsedMs: number, t: CycleTiming): number {
-  if (cycleElapsedMs < t.typeTotalMs) {
-    return getTypingLength(cycleElapsedMs, t.typeThresholds)
-  }
-
-  if (cycleElapsedMs < t.typeTotalMs + HOLD_FULL_MS) {
-    return TEXT_LENGTH
-  }
-
-  const deleteElapsedMs = cycleElapsedMs - t.typeTotalMs - HOLD_FULL_MS
-
-  if (deleteElapsedMs < t.deleteTotalMs) {
-    return getDeletingLength(deleteElapsedMs, t.deleteThresholds)
-  }
-
-  return 0
-}
-
 export default function EditorThumbnail() {
-  const [visibleLength, setVisibleLength] = useState(0)
+  const [visibleLength, setVisibleLength] = useState(TEXT_LENGTH)
   const [textSizePx, setTextSizePx] = useState(BASE_FONT_SIZE_PX)
-  const prefersReducedMotion = usePrefersReducedMotion()
+  const { reduced: prefersReducedMotion, ready } = usePrefersReducedMotion()
   const cycleAnchorRef = useRef<number | null>(null)
   const timingRef = useRef<CycleTiming | null>(null)
   const lastVisibleLengthRef = useRef(0)
   const textShellRef = useRef<HTMLDivElement | null>(null)
   const textMeasureRef = useRef<HTMLSpanElement | null>(null)
 
+  useLayoutEffect(() => {
+    if (!ready) {
+      return
+    }
+
+    lastVisibleLengthRef.current = TEXT_LENGTH
+    setVisibleLength(TEXT_LENGTH)
+  }, [ready])
+
   useEffect(() => {
     let animationFrameId = 0
 
-    if (prefersReducedMotion) {
-      lastVisibleLengthRef.current = TEXT_LENGTH
-      setVisibleLength(TEXT_LENGTH)
+    if (!ready || prefersReducedMotion) {
       return undefined
     }
 
@@ -175,25 +144,27 @@ export default function EditorThumbnail() {
 
     const tick = (timestamp: number) => {
       if (cycleAnchorRef.current === null) {
-        cycleAnchorRef.current = timestamp
+        const timing = timingRef.current
+        cycleAnchorRef.current =
+          timing === null ? timestamp : timestamp - (timing.typeTotalMs + HOLD_FULL_MS)
       }
 
-      let timing = timingRef.current
-      if (!timing) {
+      let activeTiming = timingRef.current
+      if (!activeTiming) {
         animationFrameId = window.requestAnimationFrame(tick)
         return
       }
 
       let elapsed = timestamp - cycleAnchorRef.current
 
-      if (elapsed >= timing.cycleDurationMs) {
+      if (elapsed >= activeTiming.cycleDurationMs) {
         timingRef.current = rollCycleTiming()
         cycleAnchorRef.current = timestamp
-        timing = timingRef.current
+        activeTiming = timingRef.current
         elapsed = 0
       }
 
-      const nextVisibleLength = getVisibleLengthAt(elapsed, timing)
+      const nextVisibleLength = getVisibleLengthAt(elapsed, activeTiming, TEXT_LENGTH)
 
       if (nextVisibleLength !== lastVisibleLengthRef.current) {
         lastVisibleLengthRef.current = nextVisibleLength
@@ -210,7 +181,7 @@ export default function EditorThumbnail() {
         window.cancelAnimationFrame(animationFrameId)
       }
     }
-  }, [prefersReducedMotion])
+  }, [prefersReducedMotion, ready])
 
   useLayoutEffect(() => {
     const shell = textShellRef.current

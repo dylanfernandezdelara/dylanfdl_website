@@ -7,8 +7,8 @@ function wobble(index: number, salt: number): number {
   return (n - Math.floor(n)) * 2 - 1
 }
 
-/** Match slot-text@0.2.2 internal maxEnd + safety-net buffer for transform-only rolls. */
-export function estimateSlotTextRollDuration(
+/** Match slot-text@0.2.2 internal maxEnd + safety-net buffer for OptimistText rolls. */
+export function estimateOptimistRollDuration(
   text: string,
   options: Pick<SlotOptions, keyof typeof OPTIMIST_ROLL_DEFAULTS> = {},
 ): number {

@@ -1,6 +1,9 @@
 import type { SlotOptions } from 'slot-text'
 
-/** Mirrors slot-text@0.2.2 defaults used by OptimistText rolls. */
+/**
+ * Mirrors slot-text@0.2.2 defaults used by OptimistText rolls.
+ * slot-text is pinned to 0.2.2 in package.json — bump only with tests/estimateOptimistRollDuration.test.ts.
+ */
 export const OPTIMIST_ROLL_DEFAULTS = {
   stagger: 45,
   duration: 300,

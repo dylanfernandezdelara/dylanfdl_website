@@ -20,15 +20,24 @@ export function readRainbowDurationMs(element: HTMLElement): number {
 }
 
 export function readRainbowPhaseMs(container: HTMLElement, durationMs: number): number {
-  const face = container.querySelector('.char-face')
+  const face = container.querySelector('.char-face, .rainbow-letter')
   if (!(face instanceof HTMLElement)) return 0
 
   const rainbow = face
     .getAnimations()
     .find((animation) => animation.animationName === RAINBOW_ANIMATION_NAME)
   const currentTime = rainbow?.currentTime
-  if (typeof currentTime === 'number' && Number.isFinite(currentTime)) {
+  if (typeof currentTime === 'number' && Number.isFinite(currentTime) && currentTime > 0) {
     return currentTime % durationMs
+  }
+
+  const delayRaw = face.style.animationDelay.trim()
+  const delayMatch = delayRaw.match(/^-([\d.]+)ms$/)
+  if (delayMatch) {
+    const parsed = Number.parseFloat(delayMatch[1])
+    if (Number.isFinite(parsed)) {
+      return parsed % durationMs
+    }
   }
 
   return 0

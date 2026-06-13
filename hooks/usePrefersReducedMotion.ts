@@ -1,17 +1,27 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
-export default function usePrefersReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(() =>
-    typeof window === 'undefined'
-      ? false
-      : window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
+/** `ready` is false until the first client layout read. Callers must gate on `ready` before trusting `reduced`. */
+export type PrefersReducedMotionState = {
+  reduced: boolean
+  ready: boolean
+}
 
-  useEffect(() => {
+export default function usePrefersReducedMotion(): PrefersReducedMotionState {
+  const [state, setState] = useState<PrefersReducedMotionState>({
+    reduced: false,
+    ready: false,
+  })
+
+  useLayoutEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const update = () => setReduced(mediaQuery.matches)
+    const update = () => {
+      setState({
+        reduced: mediaQuery.matches,
+        ready: true,
+      })
+    }
 
     update()
     mediaQuery.addEventListener('change', update)
@@ -19,5 +29,5 @@ export default function usePrefersReducedMotion(): boolean {
     return () => mediaQuery.removeEventListener('change', update)
   }, [])
 
-  return reduced
+  return state
 }

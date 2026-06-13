@@ -100,7 +100,12 @@ export default function CardGridClient({ items, children }: Props) {
         onSelect={selectFilter}
       />
 
-      <div className="relative">
+      <div
+        className="relative"
+        role="tabpanel"
+        id={`tabpanel-${filter}`}
+        aria-labelledby={`tab-${filter}`}
+      >
         <div className="relative z-20">
           <CardGridColumns rows={activeRows} onRowEntered={markRowEntered} />
         </div>
