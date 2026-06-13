@@ -1,3 +1,7 @@
+:root {
+  --rainbow-duration: 15s;
+}
+
 @keyframes rainbow {
   0% { color: #ff6b7a; }
   5% { color: #ff6347; }
@@ -50,7 +54,7 @@
 
 .rainbow-letter {
   display: inline-block;
-  animation: rainbow 15s ease-in-out infinite;
+  animation: rainbow var(--rainbow-duration) ease-in-out infinite;
 }
 
 @keyframes editor-cursor-blink {

@@ -1,0 +1,35 @@
+/* Loaded after slot-text/style.css so these overrides win. */
+
+.optimist-text-trigger {
+  vertical-align: baseline;
+}
+
+.optimist-text-content.slot-text {
+  display: inline-block;
+  line-height: inherit;
+  vertical-align: baseline;
+  white-space: pre;
+}
+
+.optimist-text-content.slot-text .char-slot {
+  display: inline-block;
+  line-height: inherit;
+  vertical-align: baseline;
+}
+
+.optimist-text-content .char-face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: rainbow var(--rainbow-duration) ease-in-out infinite;
+}
+
+.optimist-text-content.is-rolling .char-face {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .optimist-text-content .char-face {
+    animation: none;
+  }
+}

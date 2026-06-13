@@ -25,6 +25,7 @@
     "react-dom": "^18.2.0",
     "remark": "^15.0.1",
     "remark-html": "^16.0.1",
+    "slot-text": "0.2.2",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {

@@ -17,7 +17,10 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
-      filter: (page) => page !== `${SITE_URL}/` && !page.endsWith('/404'),
+      filter: (page) =>
+        page !== `${SITE_URL}/` &&
+        !page.endsWith('/404') &&
+        !page.includes('/prototype/'),
     }),
     tailwind({
       applyBaseStyles: false,
