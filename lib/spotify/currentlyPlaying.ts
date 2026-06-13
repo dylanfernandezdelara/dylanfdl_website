@@ -54,7 +54,7 @@ export function toNowPlayingCache(track: CachedTrack): NowPlayingCache {
 
 export async function fetchCurrentlyPlaying(
   accessToken: string,
-): Promise<{ isPlaying: boolean; track: CachedTrack | null } | null> {
+): Promise<{ isPlaying: boolean; track: CachedTrack | null }> {
   const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
     headers: {
       Authorization: `Bearer ${accessToken}`,

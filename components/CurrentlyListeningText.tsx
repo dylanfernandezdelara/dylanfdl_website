@@ -8,19 +8,14 @@ import useNowPlaying from '@/hooks/useNowPlaying'
 export default function CurrentlyListeningText() {
   const { visible, label, trackUrl, titleSlotRef, artistSlotRef } = useNowPlaying()
 
-  if (!visible) {
+  if (!visible || !trackUrl) {
     return null
   }
 
   return (
     <>
       {label}{' '}
-      <ExternalLink
-        href={trackUrl ?? '#'}
-        noUnderline
-        className="inline"
-        onClick={trackUrl ? undefined : (event) => event.preventDefault()}
-      >
+      <ExternalLink href={trackUrl} noUnderline className="inline">
         <span ref={titleSlotRef} />
       </ExternalLink>{' '}
       by <span ref={artistSlotRef} />.

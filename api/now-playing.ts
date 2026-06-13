@@ -1,3 +1,4 @@
+import { isSameOriginRequest } from '../lib/api/origin.js'
 import { refreshSpotifyAccessToken } from '../lib/spotify/auth.js'
 import {
   getCachedAccessToken,
@@ -8,7 +9,7 @@ import {
   shouldSkipLiveRefresh,
 } from '../lib/spotify/cache.js'
 import { fetchCurrentlyPlaying, toNowPlayingCache } from '../lib/spotify/currentlyPlaying.js'
-import { toNowPlayingResponse } from '../lib/spotify/response.js'
+import { toLiveTrackResponse, toNowPlayingResponse } from '../lib/spotify/response.js'
 import { getQueryParam, type ApiRequest, type ApiResponse } from '../lib/api/vercel.js'
 
 async function getSpotifyAccessToken(): Promise<string> {
@@ -27,6 +28,11 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
   }
 
   const live = getQueryParam(req, 'live') === '1'
+
+  if (live && !isSameOriginRequest(req)) {
+    res.status(403).json({ error: 'Live refresh requires a same-origin request' })
+    return
+  }
 
   try {
     const cached = await getNowPlayingCache()
@@ -49,12 +55,9 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
       if (playback.track) {
         const nextCache = toNowPlayingCache(playback.track)
         await setNowPlayingCache(nextCache)
-        res.status(200).json({
-          source: 'live',
-          track: nextCache.track,
-          isPlaying: playback.isPlaying,
-          updatedAt: nextCache.updatedAt,
-        })
+        res.status(200).json(
+          toLiveTrackResponse(nextCache.track, playback.isPlaying, nextCache.updatedAt),
+        )
         return
       }
 

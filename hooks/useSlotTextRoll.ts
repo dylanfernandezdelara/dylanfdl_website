@@ -1,9 +1,10 @@
 'use client'
 
 import { useCallback, useLayoutEffect, useRef, useState, type Ref } from 'react'
-import { buildSlotText, slotText, type SlotOptions, type SlotTextController } from 'slot-text'
+import { slotText, type SlotOptions, type SlotTextController } from 'slot-text'
 
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
+import { seedEmptyBaseline } from '@/lib/slotTextSeed'
 
 export type UseSlotTextRollOptions = {
   direction: 'up' | 'down'
@@ -14,14 +15,6 @@ export type UseSlotTextRollResult = {
   slotRef: Ref<HTMLSpanElement>
   rollTo: (text: string) => void
   setInstant: (text: string) => void
-  ready: boolean
-}
-
-/** slot-text instant-builds when no `.char-slot` nodes exist; seed placeholders so the first roll animates. */
-function seedEmptyBaseline(container: HTMLElement, length: number): string {
-  const baseline = '\u00A0'.repeat(length)
-  buildSlotText(container, baseline)
-  return baseline
 }
 
 export default function useSlotTextRoll({
@@ -126,6 +119,5 @@ export default function useSlotTextRoll({
     slotRef: assignSlotRef,
     rollTo,
     setInstant,
-    ready: canAnimate,
   }
 }

@@ -3,59 +3,18 @@
 import { useEffect, useRef, useState, type Ref } from 'react'
 
 import useSlotTextRoll from '@/hooks/useSlotTextRoll'
+import {
+  computeTrackUpdate,
+  type TrackRollState,
+  type TrackUpdate,
+} from '@/lib/nowPlaying/applyTrackUpdate'
+import { planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
+import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
+import { parseNowPlayingResponse } from '@/lib/spotify/parseNowPlayingResponse'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 const POLL_INTERVAL_MS = 20_000
-const DEV_MOCK_CYCLE_MS = 14_000
-
-/** Rotated in `npm run dev` to preview slot-text rolls without Spotify. */
-const DEV_MOCK_TRACKS: NowPlayingResponse[] = [
-  {
-    source: 'live',
-    track: {
-      id: 'dev-mock-1',
-      name: 'Blinding Lights',
-      artists: ['The Weeknd'],
-      url: 'https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b',
-    },
-    isPlaying: true,
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    source: 'live',
-    track: {
-      id: 'dev-mock-2',
-      name: 'Motion',
-      artists: ['Luke Hemmings'],
-      url: 'https://open.spotify.com/track/4OSwjumisE6U7mHjJuVyEn',
-    },
-    isPlaying: true,
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    source: 'live',
-    track: {
-      id: 'dev-mock-3',
-      name: 'Bohemian Rhapsody',
-      artists: ['Queen'],
-      url: 'https://open.spotify.com/track/4u7EneptDzaNVyFuJS10OJ',
-    },
-    isPlaying: false,
-    updatedAt: new Date().toISOString(),
-  },
-]
-
-function formatArtists(artists: string[]): string {
-  return artists.join(', ')
-}
-
-function getLabel(isPlaying: boolean | null): string {
-  if (isPlaying === true) {
-    return 'Currently listening to'
-  }
-  return 'Recently listened to'
-}
 
 async function fetchNowPlaying(live: boolean): Promise<NowPlayingResponse> {
   const url = live ? '/api/now-playing?live=1' : '/api/now-playing'
@@ -63,7 +22,31 @@ async function fetchNowPlaying(live: boolean): Promise<NowPlayingResponse> {
   if (!response.ok) {
     throw new Error(`now-playing request failed (${response.status})`)
   }
-  return (await response.json()) as NowPlayingResponse
+  return parseNowPlayingResponse(await response.json())
+}
+
+function applyTrackUpdate(
+  update: TrackUpdate,
+  actions: {
+    setLabel: (label: string) => void
+    setTrackUrl: (url: string) => void
+    setVisible: (visible: boolean) => void
+    rollTitle: (title: string) => void
+    rollArtist: (artist: string) => void
+  },
+): TrackRollState {
+  if (update.label !== null) {
+    actions.setLabel(update.label)
+  }
+  actions.setTrackUrl(update.trackUrl)
+  actions.setVisible(true)
+
+  if (update.shouldRoll) {
+    actions.rollTitle(update.title)
+    actions.rollArtist(update.artist)
+  }
+
+  return update.nextRollState
 }
 
 export type UseNowPlayingResult = {
@@ -77,26 +60,39 @@ export type UseNowPlayingResult = {
 export default function useNowPlaying(): UseNowPlayingResult {
   const isDevPreview = import.meta.env.DEV
 
-  const [visible, setVisible] = useState(isDevPreview)
+  const [visible, setVisible] = useState(false)
   const [label, setLabel] = useState('Currently listening to')
   const [trackUrl, setTrackUrl] = useState<string | null>(null)
 
-  const trackIdRef = useRef<string | null>(null)
-  const hasRolledRef = useRef(false)
+  const rollStateRef = useRef<TrackRollState>({ trackId: null, hasRolled: false })
 
-  const {
-    slotRef: titleSlotRef,
-    rollTo: rollTitleTo,
-  } = useSlotTextRoll({ direction: 'up', slotOptions: NOW_PLAYING_ROLL_OPTIONS })
-  const {
-    slotRef: artistSlotRef,
-    rollTo: rollArtistTo,
-  } = useSlotTextRoll({ direction: 'down', slotOptions: NOW_PLAYING_ROLL_OPTIONS })
+  const { slotRef: titleSlotRef, rollTo: rollTitleTo } = useSlotTextRoll({
+    direction: 'up',
+    slotOptions: NOW_PLAYING_ROLL_OPTIONS,
+  })
+  const { slotRef: artistSlotRef, rollTo: rollArtistTo } = useSlotTextRoll({
+    direction: 'down',
+    slotOptions: NOW_PLAYING_ROLL_OPTIONS,
+  })
 
   const rollTitleRef = useRef(rollTitleTo)
   const rollArtistRef = useRef(rollArtistTo)
   rollTitleRef.current = rollTitleTo
   rollArtistRef.current = rollArtistTo
+
+  const applyPayload = (payload: NowPlayingResponse, options: { forceRoll: boolean }): boolean => {
+    const update = computeTrackUpdate(payload, rollStateRef.current, options)
+    if (!update) return false
+
+    rollStateRef.current = applyTrackUpdate(update, {
+      setLabel,
+      setTrackUrl,
+      setVisible,
+      rollTitle: (title) => rollTitleRef.current(title),
+      rollArtist: (artist) => rollArtistRef.current(artist),
+    })
+    return true
+  }
 
   useEffect(() => {
     if (!isDevPreview) return undefined
@@ -105,15 +101,8 @@ export default function useNowPlaying(): UseNowPlayingResult {
     let cancelled = false
 
     const showMock = (mock: NowPlayingResponse) => {
-      if (!mock.track || cancelled) return
-
-      setLabel(getLabel(mock.isPlaying))
-      setTrackUrl(mock.track.url)
-      setVisible(true)
-      rollTitleRef.current(mock.track.name)
-      rollArtistRef.current(formatArtists(mock.track.artists))
-      trackIdRef.current = mock.track.id
-      hasRolledRef.current = true
+      if (cancelled) return
+      applyPayload(mock, { forceRoll: true })
     }
 
     showMock(DEV_MOCK_TRACKS[0]!)
@@ -135,38 +124,13 @@ export default function useNowPlaying(): UseNowPlayingResult {
     let cancelled = false
     let pollTimer: number | null = null
 
-    const applyTrack = (payload: NowPlayingResponse, options: { forceRoll: boolean }): boolean => {
-      if (!payload.track) {
-        return false
-      }
-
-      const nextTrackId = payload.track.id
-      const shouldRoll =
-        options.forceRoll || !hasRolledRef.current || trackIdRef.current !== nextTrackId
-
-      if (payload.isPlaying !== null) {
-        setLabel(getLabel(payload.isPlaying))
-      }
-      setTrackUrl(payload.track.url)
-      setVisible(true)
-
-      if (shouldRoll) {
-        rollTitleRef.current(payload.track.name)
-        rollArtistRef.current(formatArtists(payload.track.artists))
-        hasRolledRef.current = true
-        trackIdRef.current = nextTrackId
-      }
-
-      return true
-    }
-
     const refreshNowPlaying = async (options: {
       forceRoll: boolean
       live: boolean
     }): Promise<boolean> => {
       const payload = await fetchNowPlaying(options.live)
       if (cancelled) return false
-      return applyTrack(payload, { forceRoll: options.forceRoll })
+      return applyPayload(payload, { forceRoll: options.forceRoll })
     }
 
     const clearPoll = () => {
@@ -195,23 +159,11 @@ export default function useNowPlaying(): UseNowPlayingResult {
     }
 
     void (async () => {
-      try {
-        const cached = await fetchNowPlaying(false)
-        if (cancelled) return
+      const steps = await planBootstrapNowPlaying(fetchNowPlaying)
+      if (cancelled) return
 
-        if (applyTrack(cached, { forceRoll: true })) {
-          try {
-            await refreshNowPlaying({ forceRoll: false, live: true })
-          } catch {
-            // Cache display is enough when live refresh is unavailable.
-          }
-        }
-      } catch {
-        try {
-          await refreshNowPlaying({ forceRoll: true, live: true })
-        } catch {
-          // No track data available yet.
-        }
+      for (const step of steps) {
+        applyPayload(step.payload, { forceRoll: step.forceRoll })
       }
 
       if (!cancelled) {

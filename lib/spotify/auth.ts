@@ -22,14 +22,14 @@ export function getSpotifyRedirectUri(host: string, proto: string): string {
   return `${proto}://${host}/api/spotify/callback`
 }
 
-export function buildSpotifyAuthorizeUrl(redirectUri: string): string {
+export function buildSpotifyAuthorizeUrl(redirectUri: string, state: string): string {
   const clientId = requireEnv('SPOTIFY_CLIENT_ID')
   const params = new URLSearchParams({
     client_id: clientId,
     response_type: 'code',
     redirect_uri: redirectUri,
     scope: SPOTIFY_SCOPE,
-    access_type: 'offline',
+    state,
   })
   return `${SPOTIFY_AUTHORIZE_URL}?${params.toString()}`
 }

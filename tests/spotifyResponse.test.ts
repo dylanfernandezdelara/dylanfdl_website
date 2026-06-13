@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import type { NowPlayingCache, NowPlayingResponse } from '@/lib/spotify/types'
+import type { NowPlayingCache } from '@/lib/spotify/types'
 
-import { toNowPlayingResponse } from '@/lib/spotify/response'
+import { toLiveTrackResponse, toNowPlayingResponse } from '@/lib/spotify/response'
 
 describe('toNowPlayingResponse', () => {
   const cache: NowPlayingCache = {
@@ -33,11 +33,12 @@ describe('toNowPlayingResponse', () => {
     })
   })
 
-  it('maps live playback state onto cached track metadata', () => {
-    const response: NowPlayingResponse = toNowPlayingResponse('live', cache, false)
-    expect(response.source).toBe('live')
-    expect(response.track).toEqual(cache.track)
-    expect(response.isPlaying).toBe(false)
-    expect(response.updatedAt).toBe(cache.updatedAt)
+  it('maps live track metadata directly', () => {
+    expect(toLiveTrackResponse(cache.track, true, cache.updatedAt)).toEqual({
+      source: 'live',
+      track: cache.track,
+      isPlaying: true,
+      updatedAt: cache.updatedAt,
+    })
   })
 })

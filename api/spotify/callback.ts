@@ -2,6 +2,7 @@ import {
   exchangeSpotifyCode,
   getSpotifyRedirectUri,
 } from '../../lib/spotify/auth.js'
+import { buildClearCookie, getCookie } from '../../lib/api/cookies.js'
 import {
   getQueryParam,
   getRequestHost,
@@ -9,6 +10,12 @@ import {
   type ApiRequest,
   type ApiResponse,
 } from '../../lib/api/vercel.js'
+import {
+  isSpotifyOAuthCallbackAuthorized,
+  SPOTIFY_OAUTH_COOKIE_PATH,
+  SPOTIFY_OAUTH_STATE_COOKIE,
+  validateSpotifyOAuthState,
+} from '../../lib/spotify/oauthSetup.js'
 
 function escapeHtml(value: string): string {
   return value
@@ -25,11 +32,29 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
     return
   }
 
+  if (!isSpotifyOAuthCallbackAuthorized()) {
+    res.status(404).send('Not found')
+    return
+  }
+
   const error = getQueryParam(req, 'error')
   if (error) {
     res.status(400).send(`Spotify authorization failed: ${escapeHtml(error)}`)
     return
   }
+
+  const state = getQueryParam(req, 'state')
+  const cookieState = getCookie(req, SPOTIFY_OAUTH_STATE_COOKIE)
+  if (!validateSpotifyOAuthState(state, cookieState)) {
+    res.status(400).send('Invalid OAuth state. Start again at /api/spotify/login')
+    return
+  }
+
+  const proto = getRequestProto(req)
+  res.setHeader(
+    'Set-Cookie',
+    buildClearCookie(SPOTIFY_OAUTH_STATE_COOKIE, SPOTIFY_OAUTH_COOKIE_PATH, proto === 'https'),
+  )
 
   const code = getQueryParam(req, 'code')
   if (!code) {
@@ -64,7 +89,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
     <h1>Spotify OAuth complete</h1>
     <p>Add this value to Vercel as <code>SPOTIFY_REFRESH_TOKEN</code> (Production and Preview):</p>
     <pre>${escapeHtml(refreshToken)}</pre>
-    <p>Do not commit this token to git. You can close this tab after saving it.</p>
+    <p>Disable <code>SPOTIFY_OAUTH_SETUP_ENABLED</code> after saving the token. Do not commit this token to git.</p>
   </body>
 </html>`)
   } catch (caught) {
