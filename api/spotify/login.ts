@@ -1,10 +1,10 @@
-import { buildSpotifyAuthorizeUrl, getSpotifyRedirectUri } from '@/lib/spotify/auth'
+import { buildSpotifyAuthorizeUrl, getSpotifyRedirectUri } from '../../lib/spotify/auth.js'
 import {
   getRequestHost,
   getRequestProto,
   type ApiRequest,
   type ApiResponse,
-} from '@/lib/api/vercel'
+} from '../../lib/api/vercel.js'
 
 export default function handler(req: ApiRequest, res: ApiResponse): void {
   if (req.method !== 'GET') {

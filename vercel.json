@@ -1,6 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
+  "installCommand": "npm install",
+  "devCommand": "astro dev --port $PORT --host 127.0.0.1",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "redirects": [

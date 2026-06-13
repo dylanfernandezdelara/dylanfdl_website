@@ -15,14 +15,15 @@ export default function CurrentlyListeningText() {
   return (
     <>
       {label}{' '}
-      {trackUrl ? (
-        <ExternalLink href={trackUrl} noUnderline className="inline">
-          <span ref={titleSlotRef} />
-        </ExternalLink>
-      ) : (
+      <ExternalLink
+        href={trackUrl ?? '#'}
+        noUnderline
+        className="inline"
+        onClick={trackUrl ? undefined : (event) => event.preventDefault()}
+      >
         <span ref={titleSlotRef} />
-      )}{' '}
-      by <span ref={artistSlotRef} />
+      </ExternalLink>{' '}
+      by <span ref={artistSlotRef} />.
     </>
   )
 }

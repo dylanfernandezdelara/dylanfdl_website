@@ -1,4 +1,4 @@
-import type { CachedTrack, NowPlayingCache } from '@/lib/spotify/types'
+import type { CachedTrack, NowPlayingCache } from './types'
 
 type SpotifyArtist = { name: string }
 type SpotifyTrackItem = {

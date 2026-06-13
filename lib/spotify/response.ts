@@ -1,4 +1,4 @@
-import type { NowPlayingCache, NowPlayingResponse } from '@/lib/spotify/types'
+import type { NowPlayingCache, NowPlayingResponse } from './types'
 
 export function toNowPlayingResponse(
   source: 'cache' | 'live',

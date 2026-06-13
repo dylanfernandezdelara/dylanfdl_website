@@ -1,4 +1,4 @@
-import { refreshSpotifyAccessToken } from '@/lib/spotify/auth'
+import { refreshSpotifyAccessToken } from '../lib/spotify/auth.js'
 import {
   getCachedAccessToken,
   getNowPlayingCache,
@@ -6,10 +6,10 @@ import {
   setCachedAccessToken,
   setNowPlayingCache,
   shouldSkipLiveRefresh,
-} from '@/lib/spotify/cache'
-import { fetchCurrentlyPlaying, toNowPlayingCache } from '@/lib/spotify/currentlyPlaying'
-import { toNowPlayingResponse } from '@/lib/spotify/response'
-import { getQueryParam, type ApiRequest, type ApiResponse } from '@/lib/api/vercel'
+} from '../lib/spotify/cache.js'
+import { fetchCurrentlyPlaying, toNowPlayingCache } from '../lib/spotify/currentlyPlaying.js'
+import { toNowPlayingResponse } from '../lib/spotify/response.js'
+import { getQueryParam, type ApiRequest, type ApiResponse } from '../lib/api/vercel.js'
 
 async function getSpotifyAccessToken(): Promise<string> {
   const cached = await getCachedAccessToken()

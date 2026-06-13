@@ -1,14 +1,14 @@
 import {
   exchangeSpotifyCode,
   getSpotifyRedirectUri,
-} from '@/lib/spotify/auth'
+} from '../../lib/spotify/auth.js'
 import {
   getQueryParam,
   getRequestHost,
   getRequestProto,
   type ApiRequest,
   type ApiResponse,
-} from '@/lib/api/vercel'
+} from '../../lib/api/vercel.js'
 
 function escapeHtml(value: string): string {
   return value

@@ -1,6 +1,6 @@
 import { Redis } from '@upstash/redis'
 
-import type { NowPlayingCache } from '@/lib/spotify/types'
+import type { NowPlayingCache } from './types'
 
 export const NOW_PLAYING_CACHE_KEY = 'dylanfdl:spotify:now-playing'
 export const ACCESS_TOKEN_CACHE_KEY = 'dylanfdl:spotify:access-token'

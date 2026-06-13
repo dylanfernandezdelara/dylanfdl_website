@@ -1,50 +1,70 @@
 'use client'
 
-import { useCallback, useLayoutEffect, useRef, type RefObject } from 'react'
-import { chromatic, slotText, type SlotTextController } from 'slot-text'
+import { useCallback, useLayoutEffect, useRef, useState, type Ref } from 'react'
+import { buildSlotText, slotText, type SlotOptions, type SlotTextController } from 'slot-text'
 
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
 
-const CHROMATIC_ROLL = { color: chromatic({ from: 190 }) }
-
 export type UseSlotTextRollOptions = {
   direction: 'up' | 'down'
+  slotOptions?: Omit<SlotOptions, 'direction'>
 }
 
 export type UseSlotTextRollResult = {
-  slotRef: RefObject<HTMLSpanElement>
+  slotRef: Ref<HTMLSpanElement>
   rollTo: (text: string) => void
   setInstant: (text: string) => void
+  ready: boolean
+}
+
+/** slot-text instant-builds when no `.char-slot` nodes exist; seed placeholders so the first roll animates. */
+function seedEmptyBaseline(container: HTMLElement, length: number): string {
+  const baseline = '\u00A0'.repeat(length)
+  buildSlotText(container, baseline)
+  return baseline
 }
 
 export default function useSlotTextRoll({
   direction,
+  slotOptions,
 }: UseSlotTextRollOptions): UseSlotTextRollResult {
-  const { reduced: prefersReducedMotion, ready } = usePrefersReducedMotion()
+  const { reduced: prefersReducedMotion, ready: motionReady } = usePrefersReducedMotion()
   const slotRef = useRef<HTMLSpanElement>(null)
   const controllerRef = useRef<SlotTextController | null>(null)
   const currentTextRef = useRef('')
+  const pendingTextRef = useRef<string | null>(null)
+  const [slotMounted, setSlotMounted] = useState(false)
+
+  const canAnimate = motionReady && slotMounted && !prefersReducedMotion
 
   const setInstant = useCallback((text: string) => {
     const slot = slotRef.current
     if (!slot) return
 
+    pendingTextRef.current = null
     currentTextRef.current = text
     controllerRef.current?.destroy()
     controllerRef.current = null
     slot.textContent = text
   }, [])
 
-  const rollTo = useCallback(
+  const animateTo = useCallback(
     (text: string) => {
       const slot = slotRef.current
-      if (!slot || !ready) return
+      if (!slot) return
 
-      if (text === currentTextRef.current) return
+      if (text === currentTextRef.current) {
+        pendingTextRef.current = null
+        return
+      }
 
       if (prefersReducedMotion) {
         setInstant(text)
         return
+      }
+
+      if (!slot.querySelector('.char-slot') && text.length > 0) {
+        currentTextRef.current = seedEmptyBaseline(slot, text.length)
       }
 
       if (!controllerRef.current) {
@@ -53,33 +73,59 @@ export default function useSlotTextRoll({
 
       controllerRef.current.set(text, {
         direction,
-        ...CHROMATIC_ROLL,
+        ...slotOptions,
       })
       currentTextRef.current = text
+      pendingTextRef.current = null
     },
-    [direction, prefersReducedMotion, ready, setInstant],
+    [direction, prefersReducedMotion, setInstant, slotOptions],
   )
 
-  useLayoutEffect(() => {
-    if (!ready) return undefined
+  const rollTo = useCallback(
+    (text: string) => {
+      if (!motionReady || !slotMounted) {
+        pendingTextRef.current = text
+        return
+      }
 
-    const slot = slotRef.current
-    if (!slot) return undefined
+      animateTo(text)
+    },
+    [animateTo, motionReady, slotMounted],
+  )
+
+  const assignSlotRef = useCallback((node: HTMLSpanElement | null) => {
+    slotRef.current = node
+    setSlotMounted(node !== null)
+  }, [])
+
+  const animateToRef = useRef(animateTo)
+  animateToRef.current = animateTo
+
+  useLayoutEffect(() => {
+    if (!motionReady || !slotMounted) return undefined
+
+    const pending = pendingTextRef.current
+    if (pending === null) return undefined
 
     if (prefersReducedMotion) {
-      return () => {
-        controllerRef.current?.destroy()
-        controllerRef.current = null
-      }
+      setInstant(pending)
+      return undefined
     }
 
-    controllerRef.current = slotText(slot, currentTextRef.current)
+    if (!canAnimate) return undefined
+
+    animateToRef.current(pending)
 
     return () => {
       controllerRef.current?.destroy()
       controllerRef.current = null
     }
-  }, [ready, prefersReducedMotion])
+  }, [canAnimate, motionReady, prefersReducedMotion, setInstant, slotMounted])
 
-  return { slotRef, rollTo, setInstant }
+  return {
+    slotRef: assignSlotRef,
+    rollTo,
+    setInstant,
+    ready: canAnimate,
+  }
 }

@@ -7,6 +7,7 @@ interface ExternalLinkProps {
   thinGreyUnderline?: boolean
   className?: string
   allowWrap?: boolean
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>
 }
 
 export default function ExternalLink({
@@ -15,7 +16,8 @@ export default function ExternalLink({
   noUnderline = false,
   thinGreyUnderline = false,
   className,
-  allowWrap = false
+  allowWrap = false,
+  onClick,
 }: ExternalLinkProps) {
   const classes = cn(
     'inline leading-[inherit] text-fg1',
@@ -31,6 +33,7 @@ export default function ExternalLink({
       target="_blank"
       rel="noopener noreferrer"
       className={classes}
+      onClick={onClick}
     >
       {children}
     </a>

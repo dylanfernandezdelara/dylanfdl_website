@@ -1,11 +1,50 @@
 'use client'
 
-import { useEffect, useRef, useState, type RefObject } from 'react'
+import { useEffect, useRef, useState, type Ref } from 'react'
 
 import useSlotTextRoll from '@/hooks/useSlotTextRoll'
+import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 const POLL_INTERVAL_MS = 20_000
+const DEV_MOCK_CYCLE_MS = 14_000
+
+/** Rotated in `npm run dev` to preview slot-text rolls without Spotify. */
+const DEV_MOCK_TRACKS: NowPlayingResponse[] = [
+  {
+    source: 'live',
+    track: {
+      id: 'dev-mock-1',
+      name: 'Blinding Lights',
+      artists: ['The Weeknd'],
+      url: 'https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b',
+    },
+    isPlaying: true,
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    source: 'live',
+    track: {
+      id: 'dev-mock-2',
+      name: 'Motion',
+      artists: ['Luke Hemmings'],
+      url: 'https://open.spotify.com/track/4OSwjumisE6U7mHjJuVyEn',
+    },
+    isPlaying: true,
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    source: 'live',
+    track: {
+      id: 'dev-mock-3',
+      name: 'Bohemian Rhapsody',
+      artists: ['Queen'],
+      url: 'https://open.spotify.com/track/4u7EneptDzaNVyFuJS10OJ',
+    },
+    isPlaying: false,
+    updatedAt: new Date().toISOString(),
+  },
+]
 
 function formatArtists(artists: string[]): string {
   return artists.join(', ')
@@ -31,20 +70,28 @@ export type UseNowPlayingResult = {
   visible: boolean
   label: string
   trackUrl: string | null
-  titleSlotRef: RefObject<HTMLSpanElement>
-  artistSlotRef: RefObject<HTMLSpanElement>
+  titleSlotRef: Ref<HTMLSpanElement>
+  artistSlotRef: Ref<HTMLSpanElement>
 }
 
 export default function useNowPlaying(): UseNowPlayingResult {
-  const [visible, setVisible] = useState(false)
-  const [label, setLabel] = useState('Recently listened to')
+  const isDevPreview = import.meta.env.DEV
+
+  const [visible, setVisible] = useState(isDevPreview)
+  const [label, setLabel] = useState('Currently listening to')
   const [trackUrl, setTrackUrl] = useState<string | null>(null)
 
   const trackIdRef = useRef<string | null>(null)
   const hasRolledRef = useRef(false)
 
-  const { slotRef: titleSlotRef, rollTo: rollTitleTo } = useSlotTextRoll({ direction: 'up' })
-  const { slotRef: artistSlotRef, rollTo: rollArtistTo } = useSlotTextRoll({ direction: 'down' })
+  const {
+    slotRef: titleSlotRef,
+    rollTo: rollTitleTo,
+  } = useSlotTextRoll({ direction: 'up', slotOptions: NOW_PLAYING_ROLL_OPTIONS })
+  const {
+    slotRef: artistSlotRef,
+    rollTo: rollArtistTo,
+  } = useSlotTextRoll({ direction: 'down', slotOptions: NOW_PLAYING_ROLL_OPTIONS })
 
   const rollTitleRef = useRef(rollTitleTo)
   const rollArtistRef = useRef(rollArtistTo)
@@ -52,6 +99,39 @@ export default function useNowPlaying(): UseNowPlayingResult {
   rollArtistRef.current = rollArtistTo
 
   useEffect(() => {
+    if (!isDevPreview) return undefined
+
+    let index = 0
+    let cancelled = false
+
+    const showMock = (mock: NowPlayingResponse) => {
+      if (!mock.track || cancelled) return
+
+      setLabel(getLabel(mock.isPlaying))
+      setTrackUrl(mock.track.url)
+      setVisible(true)
+      rollTitleRef.current(mock.track.name)
+      rollArtistRef.current(formatArtists(mock.track.artists))
+      trackIdRef.current = mock.track.id
+      hasRolledRef.current = true
+    }
+
+    showMock(DEV_MOCK_TRACKS[0]!)
+
+    const cycleTimer = window.setInterval(() => {
+      index = (index + 1) % DEV_MOCK_TRACKS.length
+      showMock(DEV_MOCK_TRACKS[index]!)
+    }, DEV_MOCK_CYCLE_MS)
+
+    return () => {
+      cancelled = true
+      window.clearInterval(cycleTimer)
+    }
+  }, [isDevPreview])
+
+  useEffect(() => {
+    if (isDevPreview) return undefined
+
     let cancelled = false
     let pollTimer: number | null = null
 
@@ -64,6 +144,12 @@ export default function useNowPlaying(): UseNowPlayingResult {
       const shouldRoll =
         options.forceRoll || !hasRolledRef.current || trackIdRef.current !== nextTrackId
 
+      if (payload.isPlaying !== null) {
+        setLabel(getLabel(payload.isPlaying))
+      }
+      setTrackUrl(payload.track.url)
+      setVisible(true)
+
       if (shouldRoll) {
         rollTitleRef.current(payload.track.name)
         rollArtistRef.current(formatArtists(payload.track.artists))
@@ -71,16 +157,16 @@ export default function useNowPlaying(): UseNowPlayingResult {
         trackIdRef.current = nextTrackId
       }
 
-      setLabel(getLabel(payload.isPlaying))
-      setTrackUrl(payload.track.url)
-      setVisible(true)
       return true
     }
 
-    const refreshNowPlaying = async (options: { forceRoll: boolean; live: boolean }) => {
+    const refreshNowPlaying = async (options: {
+      forceRoll: boolean
+      live: boolean
+    }): Promise<boolean> => {
       const payload = await fetchNowPlaying(options.live)
-      if (cancelled) return
-      applyTrack(payload, { forceRoll: options.forceRoll })
+      if (cancelled) return false
+      return applyTrack(payload, { forceRoll: options.forceRoll })
     }
 
     const clearPoll = () => {
@@ -124,7 +210,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
         try {
           await refreshNowPlaying({ forceRoll: true, live: true })
         } catch {
-          // Hide the line until we have a track to show.
+          // No track data available yet.
         }
       }
 
@@ -140,7 +226,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
       clearPoll()
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [])
+  }, [isDevPreview])
 
   return {
     visible,
