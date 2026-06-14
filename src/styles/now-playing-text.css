@@ -1,3 +1,5 @@
+@import './slot-text-cell-clip.css';
+
 /* Loaded after slot-text/style.css so these overrides win. */
 
 .now-playing-slot,
@@ -5,24 +7,10 @@
   display: inline-flex;
   line-height: inherit;
   vertical-align: baseline;
+  --slot-text-cell-line-height: var(--slot-text-cell-line-height-italic);
+  /*
+   * Requires Inter 500 Italic (@fontsource/inter/500-italic in globals.css).
+   * font-synthesis: none disables synthetic slant when the face is missing.
+   */
   font-synthesis: none;
-}
-
-/*
- * slot-text masks rolls with overflow-y clip on fixed-height cells. Safari clips
- * synthetic/real italic ascenders and diacritics (e.g. ë) more aggressively than
- * Chrome at the default 1.3 line-height — give cells extra headroom.
- */
-.now-playing-slot.slot-text .char-slot,
-.now-playing-slot.slot-text .char-sizer {
-  line-height: 1.45em;
-}
-
-.now-playing-slot.slot-text .char-slot {
-  display: inline-block;
-  height: 1.45em;
-  vertical-align: text-bottom;
-  overflow: hidden;
-  overflow-y: clip;
-  overflow-x: visible;
 }

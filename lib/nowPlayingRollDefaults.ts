@@ -17,6 +17,3 @@ export const NOW_PLAYING_ROLL_OPTIONS: Omit<SlotOptions, 'direction'> = {
   color: chromatic({ from: 190 }),
   skipUnchanged: false,
 }
-
-/** slot-text wrap contract: flex-wrap only engages once `.slot-text` is applied. */
-export const NOW_PLAYING_SLOT_CLASS = 'now-playing-slot italic max-w-full flex-wrap'

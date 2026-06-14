@@ -1,3 +1,5 @@
+@import './slot-text-cell-clip.css';
+
 /* Loaded after slot-text/style.css so these overrides win. */
 
 .optimist-text-trigger {
@@ -17,31 +19,13 @@
   line-height: inherit;
   vertical-align: baseline;
   white-space: pre;
+  --slot-text-cell-line-height: var(--slot-text-cell-line-height-roman);
 }
 
 /* Pre-hydration / reduced-motion fallback only. */
 .optimist-text-content .rainbow-letter {
   display: inline;
   vertical-align: baseline;
-}
-
-/*
- * slot-text cells must be inline-block so overflow-y: clip masks the roll.
- * display: inline lets both char-faces show at once (double "optimist").
- * Glyph-sized cells + text-bottom keeps baseline aligned with surrounding text.
- */
-.optimist-text-content.slot-text .char-slot,
-.optimist-text-content.slot-text .char-sizer {
-  line-height: 1.25em;
-}
-
-.optimist-text-content.slot-text .char-slot {
-  display: inline-block;
-  height: 1.25em;
-  vertical-align: text-bottom;
-  overflow: hidden;
-  overflow-y: clip;
-  overflow-x: visible;
 }
 
 .optimist-text-content .char-face {
