@@ -30,7 +30,7 @@ export default function CurrentlyListeningText() {
       >
         <ExternalLink href={trackUrl} noUnderline className="now-playing-title">
           <span ref={titleSlotRef} className={NOW_PLAYING_SLOT_CLASS} />
-        </ExternalLink>
+        </ExternalLink>{' '}
         <span className="now-playing-artist-line">
           <span className="now-playing-by">by </span>
           <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS} />
