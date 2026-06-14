@@ -74,7 +74,7 @@ export default function OptimistText({
       onClick={isInteractive ? roll : undefined}
       onKeyDown={isInteractive ? handleKeyDown : undefined}
     >
-      <span ref={slotRef} className="optimist-text-content">
+      <span ref={slotRef} className="optimist-text-content slot-text-cell-clip">
         {!isInteractive ? (
           <StaticRainbowText
             text={text}

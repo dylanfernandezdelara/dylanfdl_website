@@ -1,0 +1,23 @@
+/*
+ * Shared slot-text cell sizing for overflow-y clip roll masks.
+ * Consumers add `slot-text-cell-clip` on the slot root and set
+ * --slot-text-cell-line-height (defaults to roman).
+ */
+:root {
+  --slot-text-cell-line-height-roman: 1.25em;
+  --slot-text-cell-line-height-italic: 1.45em;
+}
+
+.slot-text-cell-clip.slot-text .char-slot,
+.slot-text-cell-clip.slot-text .char-sizer {
+  line-height: var(--slot-text-cell-line-height, var(--slot-text-cell-line-height-roman));
+}
+
+.slot-text-cell-clip.slot-text .char-slot {
+  display: inline-block;
+  height: var(--slot-text-cell-line-height, var(--slot-text-cell-line-height-roman));
+  vertical-align: text-bottom;
+  overflow: hidden;
+  overflow-y: clip;
+  overflow-x: visible;
+}
