@@ -16,9 +16,9 @@ export default function CurrentlyListeningText() {
     <>
       {label}{' '}
       <ExternalLink href={trackUrl} noUnderline className="inline">
-        <span ref={titleSlotRef} />
+        <span ref={titleSlotRef} className="italic" />
       </ExternalLink>{' '}
-      by <span ref={artistSlotRef} />.
+      by <span ref={artistSlotRef} className="italic" />.
     </>
   )
 }
