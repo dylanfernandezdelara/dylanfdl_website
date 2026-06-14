@@ -47,10 +47,16 @@ export async function getCachedAccessToken(): Promise<string | null> {
 
 export async function setCachedAccessToken(token: string, expiresInSeconds: number): Promise<void> {
   const redis = getRedis()
-  await redis.set(ACCESS_TOKEN_CACHE_KEY, {
-    token,
-    expiresAt: Date.now() + expiresInSeconds * 1000,
-  })
+  try {
+    await redis.set(ACCESS_TOKEN_CACHE_KEY, {
+      token,
+      expiresAt: Date.now() + expiresInSeconds * 1000,
+    })
+  } catch {
+    // Upstash embeds the SET command body (which includes the access token) in its
+    // error message; rethrow a sanitized error so the token can never reach logs.
+    throw new Error('Failed to cache Spotify access token')
+  }
 }
 
 export async function shouldSkipLiveRefresh(): Promise<boolean> {
