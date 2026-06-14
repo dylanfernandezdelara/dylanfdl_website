@@ -8,6 +8,7 @@ import {
   type TrackRollState,
   type TrackUpdate,
 } from '@/lib/nowPlaying/applyTrackUpdate'
+import { markPendingInstantFill } from '@/lib/nowPlayingInstantFill'
 import { planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
@@ -85,6 +86,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
 
   const {
     slotRef: titleSlotRef,
+    slotMounted: titleSlotMounted,
     rollTo: rollTitleTo,
     setInstant: setInstantTitle,
   } = useSlotTextRoll({
@@ -93,6 +95,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
   })
   const {
     slotRef: artistSlotRef,
+    slotMounted: artistSlotMounted,
     rollTo: rollArtistTo,
     setInstant: setInstantArtist,
   } = useSlotTextRoll({
@@ -112,7 +115,11 @@ export default function useNowPlaying(): UseNowPlayingResult {
     if (!update) return false
 
     const instant = options.forceRoll && !rollStateRef.current.hasRolled
-    pendingInstantRef.current = instant && update.shouldRoll
+    pendingInstantRef.current = markPendingInstantFill(
+      pendingInstantRef.current,
+      instant,
+      update.shouldRoll,
+    )
 
     rollStateRef.current = applyTrackUpdate(
       update,
@@ -220,11 +227,20 @@ export default function useNowPlaying(): UseNowPlayingResult {
 
   useLayoutEffect(() => {
     if (!pendingInstantRef.current || !visible || title.length === 0) return
+    if (!titleSlotMounted || !artistSlotMounted) return
 
     setInstantTitle(title)
     setInstantArtist(artist)
     pendingInstantRef.current = false
-  }, [artist, setInstantArtist, setInstantTitle, title, visible])
+  }, [
+    artist,
+    artistSlotMounted,
+    setInstantArtist,
+    setInstantTitle,
+    title,
+    titleSlotMounted,
+    visible,
+  ])
 
   return {
     visible,
