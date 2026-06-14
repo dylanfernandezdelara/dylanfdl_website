@@ -2,6 +2,57 @@
 
 /* Loaded after slot-text/style.css so these overrides win. */
 
+.now-playing {
+  display: block;
+}
+
+.now-playing-label {
+  display: block;
+}
+
+.now-playing-track {
+  display: block;
+}
+
+.now-playing-title {
+  display: inline;
+  max-width: 100%;
+}
+
+.now-playing-separator,
+.now-playing-artist-line,
+.now-playing-by {
+  display: inline;
+}
+
+.now-playing-track[data-layout='compact'] .now-playing-by {
+  display: none;
+}
+
+.now-playing-track[data-layout='stacked'] .now-playing-title {
+  display: block;
+}
+
+.now-playing-track[data-layout='stacked'] .now-playing-separator {
+  display: none;
+}
+
+.now-playing-track[data-layout='stacked'] .now-playing-artist-line {
+  display: block;
+}
+
+.now-playing-measure {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+  visibility: hidden;
+  font-synthesis: none;
+  font-style: italic;
+}
+
 .now-playing-slot,
 .now-playing-slot.slot-text {
   display: inline-flex;
