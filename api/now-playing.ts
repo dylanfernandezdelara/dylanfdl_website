@@ -62,10 +62,12 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
       }
 
       res.status(200).json(toNowPlayingResponse('live', cached, playback.isPlaying))
-    } catch {
+    } catch (error) {
+      console.warn('[now-playing] live refresh failed', error)
       res.status(200).json(toNowPlayingResponse('cache', cached, null))
     }
-  } catch {
+  } catch (error) {
+    console.error('[now-playing] request failed', error)
     res.status(200).json(toNowPlayingResponse(live ? 'live' : 'cache', null, null))
   }
 }
