@@ -1,7 +1,7 @@
 export type NowPlayingTrackLayout = 'compact' | 'stacked'
 
 export function formatCompactTrackLine(title: string, artist: string): string {
-  return `${title} • ${artist}`
+  return `${title} by ${artist}`
 }
 
 export function pickNowPlayingTrackLayout(

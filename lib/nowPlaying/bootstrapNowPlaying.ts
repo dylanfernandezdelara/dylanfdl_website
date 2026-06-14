@@ -16,7 +16,7 @@ export async function planBootstrapNowPlaying(
 
     try {
       const live = await fetchNowPlaying(true)
-      steps.push({ payload: live, forceRoll: false })
+      steps.push({ payload: live, forceRoll: true })
     } catch {
       // Cache display is enough when live refresh is unavailable.
     }

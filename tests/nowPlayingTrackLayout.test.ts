@@ -8,7 +8,7 @@ import {
 describe('nowPlayingTrackLayout', () => {
   it('formats the compact single-line track copy', () => {
     expect(formatCompactTrackLine('Instant Crush', 'Daft Punk')).toBe(
-      'Instant Crush • Daft Punk',
+      'Instant Crush by Daft Punk',
     )
   })
 

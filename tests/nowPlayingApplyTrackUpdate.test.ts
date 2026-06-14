@@ -78,7 +78,7 @@ describe('computeTrackUpdate', () => {
 })
 
 describe('planBootstrapNowPlaying', () => {
-  it('applies cache first and then live without forcing a re-roll', async () => {
+  it('applies cache first and then live with a forced update roll', async () => {
     const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
     const live: NowPlayingResponse = { ...trackPayload, source: 'live', isPlaying: true }
     const fetchNowPlaying = vi
@@ -88,7 +88,7 @@ describe('planBootstrapNowPlaying', () => {
 
     await expect(planBootstrapNowPlaying(fetchNowPlaying)).resolves.toEqual([
       { payload: cached, forceRoll: true },
-      { payload: live, forceRoll: false },
+      { payload: live, forceRoll: true },
     ])
   })
 

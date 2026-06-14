@@ -19,22 +19,13 @@
   max-width: 100%;
 }
 
-.now-playing-separator,
 .now-playing-artist-line,
 .now-playing-by {
   display: inline;
 }
 
-.now-playing-track[data-layout='compact'] .now-playing-by {
-  display: none;
-}
-
 .now-playing-track[data-layout='stacked'] .now-playing-title {
   display: block;
-}
-
-.now-playing-track[data-layout='stacked'] .now-playing-separator {
-  display: none;
 }
 
 .now-playing-track[data-layout='stacked'] .now-playing-artist-line {
