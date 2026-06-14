@@ -12,6 +12,7 @@
 
 .now-playing-track {
   display: block;
+  max-width: 100%;
 }
 
 .now-playing-title {
@@ -24,8 +25,20 @@
   display: inline;
 }
 
+.now-playing-track[data-layout='compact'] {
+  white-space: nowrap;
+}
+
+.now-playing-track[data-layout='stacked'] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .now-playing-track[data-layout='stacked'] .now-playing-title {
   display: block;
+  white-space: normal;
+  max-width: 100%;
 }
 
 .now-playing-track[data-layout='stacked'] .now-playing-artist-line {
@@ -41,7 +54,6 @@
   pointer-events: none;
   visibility: hidden;
   font-synthesis: none;
-  font-style: italic;
 }
 
 .now-playing-slot,

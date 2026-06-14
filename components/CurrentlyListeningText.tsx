@@ -13,24 +13,28 @@ import '@/src/styles/now-playing-text.css'
 
 export default function CurrentlyListeningText() {
   const { visible, label, trackUrl, title, artist, titleSlotRef, artistSlotRef } = useNowPlaying()
-  const trackRef = useRef<HTMLSpanElement>(null)
-  const { layout, measureRef } = useNowPlayingTrackLayout(title, artist, trackRef)
+  const containerRef = useRef<HTMLSpanElement>(null)
+  const { layout, measureRef } = useNowPlayingTrackLayout(title, artist, containerRef)
 
   if (!visible || !trackUrl || title.length === 0) {
     return null
   }
 
+  const isCompact = layout === 'compact'
+
   return (
-    <span className="now-playing">
+    <span ref={containerRef} className="now-playing">
       <span className="now-playing-label">{label}</span>
-      <span
-        ref={trackRef}
-        className="now-playing-track"
-        data-layout={layout}
-      >
-        <ExternalLink href={trackUrl} noUnderline className="now-playing-title">
+      <span className="now-playing-track" data-layout={layout}>
+        <ExternalLink
+          href={trackUrl}
+          noUnderline
+          allowWrap={!isCompact}
+          className="now-playing-title"
+        >
           <span ref={titleSlotRef} className={NOW_PLAYING_SLOT_CLASS} />
-        </ExternalLink>{' '}
+        </ExternalLink>
+        {isCompact ? ' ' : null}
         <span className="now-playing-artist-line">
           <span className="now-playing-by">by </span>
           <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS} />
@@ -38,7 +42,7 @@ export default function CurrentlyListeningText() {
       </span>
       <span
         ref={measureRef}
-        className="now-playing-measure"
+        className={`now-playing-measure ${NOW_PLAYING_SLOT_CLASS}`}
         aria-hidden="true"
       />
     </span>
