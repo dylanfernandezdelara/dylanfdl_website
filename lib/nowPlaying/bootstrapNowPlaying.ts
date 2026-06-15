@@ -34,20 +34,6 @@ export function resolveLiveBootstrapEffects(
   }
 }
 
-export async function fetchBootstrapCacheStep(
-  fetchNowPlaying: (live: boolean) => Promise<NowPlayingResponse>,
-): Promise<BootstrapApplyStep> {
-  const cached = await fetchNowPlaying(false)
-  return { payload: cached, forceRoll: true }
-}
-
-export async function fetchBootstrapLiveStep(
-  fetchNowPlaying: (live: boolean) => Promise<NowPlayingResponse>,
-): Promise<BootstrapApplyStep> {
-  const live = await fetchNowPlaying(true)
-  return { payload: live, forceRoll: true }
-}
-
 type BootstrapFetchHandlers = {
   onCacheError?: (error: unknown) => void
   onLiveError?: (error: unknown) => void
@@ -61,13 +47,15 @@ export async function runBootstrapFetches(
   let liveStep: BootstrapApplyStep | null = null
 
   try {
-    cacheStep = await fetchBootstrapCacheStep(fetchNowPlaying)
+    const cached = await fetchNowPlaying(false)
+    cacheStep = { payload: cached, forceRoll: true }
   } catch (error) {
     handlers.onCacheError?.(error)
   }
 
   try {
-    liveStep = await fetchBootstrapLiveStep(fetchNowPlaying)
+    const live = await fetchNowPlaying(true)
+    liveStep = { payload: live, forceRoll: true }
   } catch (error) {
     handlers.onLiveError?.(error)
   }
