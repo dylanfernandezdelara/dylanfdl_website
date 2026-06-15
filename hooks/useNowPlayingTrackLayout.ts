@@ -3,20 +3,13 @@
 import { useLayoutEffect, useRef, useState, type RefObject } from 'react'
 
 import {
-  formatByArtistLine,
-  formatFullTrackLine,
-  pickNowPlayingTrackLayout,
+  resolveNowPlayingTrackLayout,
   type NowPlayingTrackLayout,
 } from '@/lib/nowPlayingTrackLayout'
 
 export type UseNowPlayingTrackLayoutResult = {
   layout: NowPlayingTrackLayout
   measureRef: RefObject<HTMLSpanElement | null>
-}
-
-function measureLineWidth(measure: HTMLSpanElement, text: string): number {
-  measure.textContent = text
-  return measure.getBoundingClientRect().width
 }
 
 export default function useNowPlayingTrackLayout(
@@ -36,18 +29,7 @@ export default function useNowPlayingTrackLayout(
 
     const updateLayout = () => {
       const containerWidth = container.getBoundingClientRect().width
-      const titleWidth = measureLineWidth(measure, title)
-      const byArtistWidth = measureLineWidth(measure, formatByArtistLine(artist))
-      const fullLineWidth = measureLineWidth(measure, formatFullTrackLine(title, artist))
-
-      setLayout(
-        pickNowPlayingTrackLayout({
-          containerWidth,
-          titleWidth,
-          byArtistWidth,
-          fullLineWidth,
-        }),
-      )
+      setLayout(resolveNowPlayingTrackLayout(measure, containerWidth, title, artist))
     }
 
     updateLayout()
