@@ -1,12 +1,5 @@
 import { extractErrorMessage } from '@/lib/extractErrorMessage'
-
-function shouldSuppressErrorObject(error: unknown): boolean {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    (error as { logSuppressed?: boolean }).logSuppressed === true
-  )
-}
+import { isLogSuppressedError } from '@/lib/sanitizedInfrastructureError'
 
 function logNowPlaying(
   scope: string,
@@ -14,7 +7,7 @@ function logNowPlaying(
   log: (message: string, ...details: unknown[]) => void,
 ): void {
   const message = extractErrorMessage(error)
-  if (shouldSuppressErrorObject(error)) {
+  if (isLogSuppressedError(error)) {
     log(`[now-playing] ${scope}:`, message)
     return
   }

@@ -7,5 +7,9 @@ export function extractErrorMessage(error: unknown): string {
     return error.message
   }
 
+  if (typeof error === 'string' || typeof error === 'number' || typeof error === 'boolean') {
+    return String(error)
+  }
+
   return 'Unknown error'
 }

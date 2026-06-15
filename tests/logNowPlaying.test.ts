@@ -56,12 +56,20 @@ describe('logNowPlaying', () => {
   it('logs only the message for non-Error warn values', () => {
     logNowPlayingWarn('cache bootstrap failed', 'offline')
 
-    expect(console.warn).toHaveBeenCalledWith('[now-playing] cache bootstrap failed:', 'Unknown error')
+    expect(console.warn).toHaveBeenCalledWith('[now-playing] cache bootstrap failed:', 'offline')
   })
 
   it('logs only the message for non-Error error values', () => {
     logNowPlayingError('request failed', 'offline')
 
-    expect(console.error).toHaveBeenCalledWith('[now-playing] request failed:', 'Unknown error')
+    expect(console.error).toHaveBeenCalledWith('[now-playing] request failed:', 'offline')
+  })
+
+  it('logs only the message for duck-typed suppressed errors', () => {
+    const error = Object.assign(new Error('safe failure'), { logSuppressed: true as const })
+    logNowPlayingWarn('live refresh failed', error)
+
+    expect(console.warn).toHaveBeenCalledWith('[now-playing] live refresh failed:', 'safe failure')
+    expect(console.warn).not.toHaveBeenCalledWith('[now-playing] live refresh failed:', 'safe failure', error)
   })
 })

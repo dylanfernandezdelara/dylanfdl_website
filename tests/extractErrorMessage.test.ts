@@ -8,7 +8,7 @@ describe('extractErrorMessage', () => {
   })
 
   it('returns a generic message for non-Error values', () => {
-    expect(extractErrorMessage('network down')).toBe('Unknown error')
+    expect(extractErrorMessage('network down')).toBe('network down')
     expect(extractErrorMessage(null)).toBe('Unknown error')
   })
 })

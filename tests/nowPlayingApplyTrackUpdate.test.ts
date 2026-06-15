@@ -110,6 +110,20 @@ describe('planBootstrapNowPlaying', () => {
     ])
     expect(logNowPlaying.logNowPlayingWarn).toHaveBeenCalledWith('cache bootstrap failed', cacheError)
   })
+
+  it('logs and skips live bootstrap when live fetch fails after cache succeeds', async () => {
+    const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
+    const liveError = new Error('live miss')
+    const fetchNowPlaying = vi
+      .fn()
+      .mockResolvedValueOnce(cached)
+      .mockRejectedValueOnce(liveError)
+
+    await expect(planBootstrapNowPlaying(fetchNowPlaying)).resolves.toEqual([
+      { payload: cached, forceRoll: true },
+    ])
+    expect(logNowPlaying.logNowPlayingWarn).toHaveBeenCalledWith('live bootstrap failed', liveError)
+  })
 })
 
 describe('liveBootstrapMode', () => {

@@ -35,6 +35,7 @@ async function expectSanitizedInfrastructureFailure(
 ): Promise<void> {
   const error = await operation().catch((caught) => caught)
   expect(error).toBeInstanceOf(SanitizedInfrastructureError)
+  expect((error as SanitizedInfrastructureError).logSuppressed).toBe(true)
   expect((error as Error).message).toBe(expectedMessage)
   expect((error as Error).message).not.toContain(SECRET_TOKEN)
 }
