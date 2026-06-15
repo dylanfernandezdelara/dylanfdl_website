@@ -4,14 +4,13 @@ import { useEffect, useRef, useState, type Ref } from 'react'
 
 import useSlotTextRoll from '@/hooks/useSlotTextRoll'
 import {
+  applyTrackUpdate,
   computeTrackUpdate,
   type TrackRollState,
-  type TrackUpdate,
 } from '@/lib/nowPlaying/applyTrackUpdate'
 import {
-  fetchBootstrapCacheStep,
-  fetchBootstrapLiveStep,
   resolveLiveBootstrapEffects,
+  runBootstrapFetches,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
@@ -28,34 +27,6 @@ async function fetchNowPlaying(live: boolean): Promise<NowPlayingResponse> {
     throw new Error(`now-playing request failed (${response.status})`)
   }
   return parseNowPlayingResponse(await response.json())
-}
-
-function applyTrackUpdate(
-  update: TrackUpdate,
-  actions: {
-    setLabel: (label: string) => void
-    setTrackUrl: (url: string) => void
-    setVisible: (visible: boolean) => void
-    setTitle: (title: string) => void
-    setArtist: (artist: string) => void
-    rollTitle: (title: string) => void
-    rollArtist: (artist: string) => void
-  },
-): TrackRollState {
-  if (update.label !== null) {
-    actions.setLabel(update.label)
-  }
-  actions.setTrackUrl(update.trackUrl)
-  actions.setTitle(update.title)
-  actions.setArtist(update.artist)
-  actions.setVisible(true)
-
-  if (update.shouldRoll) {
-    actions.rollTitle(update.title)
-    actions.rollArtist(update.artist)
-  }
-
-  return update.nextRollState
 }
 
 export type UseNowPlayingResult = {
@@ -190,23 +161,16 @@ export default function useNowPlaying(): UseNowPlayingResult {
     }
 
     void (async () => {
-      let cacheApplied = false
-
-      try {
-        const cacheStep = await fetchBootstrapCacheStep(fetchNowPlaying)
-        if (cancelled) return
-        cacheApplied = applyPayload(cacheStep.payload, { forceRoll: cacheStep.forceRoll })
-      } catch (error) {
-        logNowPlayingWarn('cache bootstrap failed', error)
-      }
-
-      let liveStep: Awaited<ReturnType<typeof fetchBootstrapLiveStep>> | null = null
-      try {
-        liveStep = await fetchBootstrapLiveStep(fetchNowPlaying)
-      } catch (error) {
-        logNowPlayingWarn('live bootstrap failed', error)
-      }
+      const { cacheStep, liveStep } = await runBootstrapFetches(fetchNowPlaying, {
+        onCacheError: (error) => logNowPlayingWarn('cache bootstrap failed', error),
+        onLiveError: (error) => logNowPlayingWarn('live bootstrap failed', error),
+      })
       if (cancelled) return
+
+      let cacheApplied = false
+      if (cacheStep) {
+        cacheApplied = applyPayload(cacheStep.payload, { forceRoll: cacheStep.forceRoll })
+      }
 
       const effects = resolveLiveBootstrapEffects(cacheApplied, liveStep)
       switch (effects.kind) {

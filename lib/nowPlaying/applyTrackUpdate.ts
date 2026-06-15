@@ -49,3 +49,31 @@ export function computeTrackUpdate(
       : rollState,
   }
 }
+
+export function applyTrackUpdate(
+  update: TrackUpdate,
+  actions: {
+    setLabel: (label: string) => void
+    setTrackUrl: (url: string) => void
+    setVisible: (visible: boolean) => void
+    setTitle: (title: string) => void
+    setArtist: (artist: string) => void
+    rollTitle: (title: string) => void
+    rollArtist: (artist: string) => void
+  },
+): TrackRollState {
+  if (update.label !== null) {
+    actions.setLabel(update.label)
+  }
+  actions.setTrackUrl(update.trackUrl)
+  actions.setTitle(update.title)
+  actions.setArtist(update.artist)
+  actions.setVisible(true)
+
+  if (update.shouldRoll) {
+    actions.rollTitle(update.title)
+    actions.rollArtist(update.artist)
+  }
+
+  return update.nextRollState
+}

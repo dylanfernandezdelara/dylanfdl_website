@@ -108,4 +108,24 @@ describe('spotify cache redis error sanitization', () => {
       'Failed to mark live refresh debounce',
     )
   })
+
+  it('sanitizes getRedis initialization failures when env vars are missing', async () => {
+    vi.resetModules()
+    delete process.env.KV_REST_API_URL
+    delete process.env.KV_REST_API_TOKEN
+
+    const { getNowPlayingCache } = await import('@/lib/spotify/cache')
+    const { SanitizedInfrastructureError: FreshSanitizedInfrastructureError } = await import(
+      '@/lib/sanitizedInfrastructureError'
+    )
+
+    const error = await getNowPlayingCache().catch((caught) => caught)
+    expect(error).toBeInstanceOf(FreshSanitizedInfrastructureError)
+    expect((error as Error).message).toBe('Failed to initialize Redis client')
+    expect((error as { logSuppressed?: boolean }).logSuppressed).toBe(true)
+
+    process.env.KV_REST_API_URL = 'https://example.upstash.io'
+    process.env.KV_REST_API_TOKEN = 'test-token'
+    vi.resetModules()
+  })
 })

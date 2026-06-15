@@ -2,12 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { computeTrackUpdate, getNowPlayingLabel } from '@/lib/nowPlaying/applyTrackUpdate'
 import {
-  planLiveBootstrapAction,
   resolveLiveBootstrapEffects,
+  runBootstrapFetches,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import * as logNowPlaying from '@/lib/nowPlaying/logNowPlaying'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
-import { planBootstrapNowPlaying } from '@/tests/fixtures/planBootstrapTestSteps'
 
 const trackPayload: NowPlayingResponse = {
   source: 'live',
@@ -82,12 +81,12 @@ describe('computeTrackUpdate', () => {
   })
 })
 
-describe('planBootstrapNowPlaying', () => {
+describe('runBootstrapFetches', () => {
   beforeEach(() => {
     vi.spyOn(logNowPlaying, 'logNowPlayingWarn').mockImplementation(() => undefined)
   })
 
-  it('applies cache first and then live with a forced update roll', async () => {
+  it('returns cache and live steps when both fetches succeed', async () => {
     const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
     const live: NowPlayingResponse = { ...trackPayload, source: 'live', isPlaying: true }
     const fetchNowPlaying = vi
@@ -95,54 +94,46 @@ describe('planBootstrapNowPlaying', () => {
       .mockResolvedValueOnce(cached)
       .mockResolvedValueOnce(live)
 
-    await expect(planBootstrapNowPlaying(fetchNowPlaying)).resolves.toEqual([
-      { payload: cached, forceRoll: true },
-      { payload: live, forceRoll: true },
-    ])
+    await expect(runBootstrapFetches(fetchNowPlaying)).resolves.toEqual({
+      cacheStep: { payload: cached, forceRoll: true },
+      liveStep: { payload: live, forceRoll: true },
+    })
   })
 
   it('falls back to live-only bootstrap when cache fetch fails', async () => {
     const live: NowPlayingResponse = { ...trackPayload, source: 'live' }
+    const cacheError = new Error('cache miss')
     const fetchNowPlaying = vi
       .fn()
-      .mockRejectedValueOnce(new Error('cache miss'))
+      .mockRejectedValueOnce(cacheError)
       .mockResolvedValueOnce(live)
 
-    await expect(planBootstrapNowPlaying(fetchNowPlaying)).resolves.toEqual([
-      { payload: live, forceRoll: true },
-    ])
+    const onCacheError = vi.fn()
+    await expect(
+      runBootstrapFetches(fetchNowPlaying, { onCacheError }),
+    ).resolves.toEqual({
+      cacheStep: null,
+      liveStep: { payload: live, forceRoll: true },
+    })
+    expect(onCacheError).toHaveBeenCalledWith(cacheError)
   })
 
   it('returns cache only when live fetch fails after cache succeeds', async () => {
     const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
+    const liveError = new Error('live miss')
     const fetchNowPlaying = vi
       .fn()
       .mockResolvedValueOnce(cached)
-      .mockRejectedValueOnce(new Error('live miss'))
+      .mockRejectedValueOnce(liveError)
 
-    await expect(planBootstrapNowPlaying(fetchNowPlaying)).resolves.toEqual([
-      { payload: cached, forceRoll: true },
-    ])
-  })
-})
-
-describe('planLiveBootstrapAction', () => {
-  const liveStep = { payload: trackPayload, forceRoll: true }
-
-  it('defers live bootstrap only when cache already displayed a track', () => {
-    expect(planLiveBootstrapAction(true, liveStep)).toEqual({ kind: 'defer', step: liveStep })
-  })
-
-  it('applies live immediately when cache did not display a track', () => {
-    expect(planLiveBootstrapAction(false, liveStep)).toEqual({
-      kind: 'apply-immediately',
-      step: liveStep,
+    const onLiveError = vi.fn()
+    await expect(
+      runBootstrapFetches(fetchNowPlaying, { onLiveError }),
+    ).resolves.toEqual({
+      cacheStep: { payload: cached, forceRoll: true },
+      liveStep: null,
     })
-  })
-
-  it('skips live handling when there is no live step', () => {
-    expect(planLiveBootstrapAction(true, null)).toEqual({ kind: 'none' })
-    expect(planLiveBootstrapAction(false, null)).toEqual({ kind: 'none' })
+    expect(onLiveError).toHaveBeenCalledWith(liveError)
   })
 })
 

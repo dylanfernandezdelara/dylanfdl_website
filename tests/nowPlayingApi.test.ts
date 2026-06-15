@@ -171,4 +171,57 @@ describe('api/now-playing handler', () => {
       track: null,
     })
   })
+
+  it('returns a live track response when refresh succeeds', async () => {
+    const { default: handler } = await import('../api/now-playing')
+    const res = makeResponse()
+    mockFetchCurrentlyPlaying.mockResolvedValue({
+      track: cache.track,
+      isPlaying: true,
+    })
+
+    await handler(makeRequest({ query: { live: '1' } }), res)
+
+    expect(mockSetNowPlayingCache).toHaveBeenCalled()
+    expect(mockMarkLiveRefresh).toHaveBeenCalled()
+    expect(res.statusCode).toBe(200)
+    expect(res.body).toMatchObject({
+      source: 'live',
+      track: cache.track,
+      isPlaying: true,
+    })
+  })
+
+  it('returns cached playback when live refresh is debounced', async () => {
+    const { default: handler } = await import('../api/now-playing')
+    const res = makeResponse()
+    mockShouldSkipLiveRefresh.mockResolvedValue(true)
+
+    await handler(makeRequest({ query: { live: '1' } }), res)
+
+    expect(mockFetchCurrentlyPlaying).not.toHaveBeenCalled()
+    expect(res.statusCode).toBe(200)
+    expect(res.body).toMatchObject({
+      source: 'live',
+      track: cache.track,
+    })
+  })
+
+  it('returns live playback state without a track when Spotify has nothing playing', async () => {
+    const { default: handler } = await import('../api/now-playing')
+    const res = makeResponse()
+    mockFetchCurrentlyPlaying.mockResolvedValue({
+      track: null,
+      isPlaying: false,
+    })
+
+    await handler(makeRequest({ query: { live: '1' } }), res)
+
+    expect(res.statusCode).toBe(200)
+    expect(res.body).toMatchObject({
+      source: 'live',
+      track: cache.track,
+      isPlaying: false,
+    })
+  })
 })

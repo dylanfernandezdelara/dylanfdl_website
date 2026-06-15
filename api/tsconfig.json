@@ -16,6 +16,7 @@
   },
   "include": [
     "./**/*.ts",
+    "../lib/api/**/*.ts",
     "../lib/spotify/**/*.ts",
     "../lib/nowPlaying/**/*.ts",
     "../lib/extractErrorMessage.ts",
