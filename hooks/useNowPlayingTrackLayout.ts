@@ -1,0 +1,47 @@
+'use client'
+
+import { useLayoutEffect, useRef, useState, type RefObject } from 'react'
+
+import {
+  resolveNowPlayingTrackLayout,
+  type NowPlayingTrackLayout,
+} from '@/lib/nowPlayingTrackLayout'
+
+export type UseNowPlayingTrackLayoutResult = {
+  layout: NowPlayingTrackLayout
+  measureRef: RefObject<HTMLSpanElement | null>
+}
+
+export default function useNowPlayingTrackLayout(
+  label: string,
+  title: string,
+  artist: string,
+  containerRef: RefObject<HTMLElement | null>,
+): UseNowPlayingTrackLayoutResult {
+  const measureRef = useRef<HTMLSpanElement>(null)
+  const [layout, setLayout] = useState<NowPlayingTrackLayout>('stacked')
+
+  useLayoutEffect(() => {
+    const container = containerRef.current
+    const measure = measureRef.current
+    if (!container || !measure || title.length === 0 || label.length === 0) {
+      return undefined
+    }
+
+    const updateLayout = () => {
+      const containerWidth = container.getBoundingClientRect().width
+      setLayout(resolveNowPlayingTrackLayout(measure, containerWidth, label, title, artist))
+    }
+
+    updateLayout()
+
+    const observer = new ResizeObserver(updateLayout)
+    observer.observe(container)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [artist, containerRef, label, title])
+
+  return { layout, measureRef }
+}

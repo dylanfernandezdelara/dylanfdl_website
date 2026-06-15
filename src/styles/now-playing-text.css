@@ -2,6 +2,74 @@
 
 /* Loaded after slot-text/style.css so these overrides win. */
 
+.now-playing {
+  display: block;
+  max-width: 100%;
+}
+
+.now-playing-label {
+  display: inline;
+}
+
+.now-playing-track {
+  display: inline;
+  max-width: 100%;
+}
+
+.now-playing-title {
+  display: inline;
+  max-width: 100%;
+}
+
+.now-playing-artist-line,
+.now-playing-by {
+  display: inline;
+}
+
+.now-playing[data-layout='inline'] {
+  white-space: nowrap;
+}
+
+.now-playing[data-layout='split'] .now-playing-label {
+  display: block;
+}
+
+.now-playing[data-layout='split'] .now-playing-track {
+  display: block;
+  white-space: nowrap;
+}
+
+.now-playing[data-layout='stacked'] .now-playing-label {
+  display: block;
+}
+
+.now-playing[data-layout='stacked'] .now-playing-track {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.now-playing[data-layout='stacked'] .now-playing-title {
+  display: block;
+  white-space: normal;
+  max-width: 100%;
+}
+
+.now-playing[data-layout='stacked'] .now-playing-artist-line {
+  display: block;
+}
+
+.now-playing-measure {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+  visibility: hidden;
+  font-synthesis: none;
+}
+
 .now-playing-slot,
 .now-playing-slot.slot-text {
   display: inline-flex;

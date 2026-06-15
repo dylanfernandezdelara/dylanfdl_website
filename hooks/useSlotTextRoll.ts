@@ -13,6 +13,7 @@ export type UseSlotTextRollOptions = {
 
 export type UseSlotTextRollResult = {
   slotRef: Ref<HTMLSpanElement>
+  slotMounted: boolean
   rollTo: (text: string) => void
   setInstant: (text: string) => void
 }
@@ -117,6 +118,7 @@ export default function useSlotTextRoll({
 
   return {
     slotRef: assignSlotRef,
+    slotMounted,
     rollTo,
     setInstant,
   }

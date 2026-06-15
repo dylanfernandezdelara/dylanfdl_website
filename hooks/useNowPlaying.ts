@@ -8,7 +8,7 @@ import {
   type TrackRollState,
   type TrackUpdate,
 } from '@/lib/nowPlaying/applyTrackUpdate'
-import { planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
+import { liveBootstrapMode, planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
 import { parseNowPlayingResponse } from '@/lib/spotify/parseNowPlayingResponse'
@@ -31,6 +31,8 @@ function applyTrackUpdate(
     setLabel: (label: string) => void
     setTrackUrl: (url: string) => void
     setVisible: (visible: boolean) => void
+    setTitle: (title: string) => void
+    setArtist: (artist: string) => void
     rollTitle: (title: string) => void
     rollArtist: (artist: string) => void
   },
@@ -39,6 +41,8 @@ function applyTrackUpdate(
     actions.setLabel(update.label)
   }
   actions.setTrackUrl(update.trackUrl)
+  actions.setTitle(update.title)
+  actions.setArtist(update.artist)
   actions.setVisible(true)
 
   if (update.shouldRoll) {
@@ -53,6 +57,8 @@ export type UseNowPlayingResult = {
   visible: boolean
   label: string
   trackUrl: string | null
+  title: string
+  artist: string
   titleSlotRef: Ref<HTMLSpanElement>
   artistSlotRef: Ref<HTMLSpanElement>
 }
@@ -63,14 +69,26 @@ export default function useNowPlaying(): UseNowPlayingResult {
   const [visible, setVisible] = useState(false)
   const [label, setLabel] = useState('Currently listening to')
   const [trackUrl, setTrackUrl] = useState<string | null>(null)
+  const [title, setTitle] = useState('')
+  const [artist, setArtist] = useState('')
 
   const rollStateRef = useRef<TrackRollState>({ trackId: null, hasRolled: false })
+  const pendingLivePayloadRef = useRef<NowPlayingResponse | null>(null)
+  const beginPollingRef = useRef<(() => void) | null>(null)
 
-  const { slotRef: titleSlotRef, rollTo: rollTitleTo } = useSlotTextRoll({
+  const {
+    slotRef: titleSlotRef,
+    slotMounted: titleSlotMounted,
+    rollTo: rollTitleTo,
+  } = useSlotTextRoll({
     direction: 'up',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
   })
-  const { slotRef: artistSlotRef, rollTo: rollArtistTo } = useSlotTextRoll({
+  const {
+    slotRef: artistSlotRef,
+    slotMounted: artistSlotMounted,
+    rollTo: rollArtistTo,
+  } = useSlotTextRoll({
     direction: 'down',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
   })
@@ -88,8 +106,10 @@ export default function useNowPlaying(): UseNowPlayingResult {
       setLabel,
       setTrackUrl,
       setVisible,
-      rollTitle: (title) => rollTitleRef.current(title),
-      rollArtist: (artist) => rollArtistRef.current(artist),
+      setTitle,
+      setArtist,
+      rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
+      rollArtist: (nextArtist) => rollArtistRef.current(nextArtist),
     })
     return true
   }
@@ -149,6 +169,8 @@ export default function useNowPlaying(): UseNowPlayingResult {
       }, POLL_INTERVAL_MS)
     }
 
+    beginPollingRef.current = schedulePoll
+
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         void refreshNowPlaying({ forceRoll: false, live: true }).catch(() => undefined)
@@ -162,11 +184,26 @@ export default function useNowPlaying(): UseNowPlayingResult {
       const steps = await planBootstrapNowPlaying(fetchNowPlaying)
       if (cancelled) return
 
-      for (const step of steps) {
-        applyPayload(step.payload, { forceRoll: step.forceRoll })
+      const [cacheStep, liveStep] = steps
+      let cacheApplied = false
+
+      if (cacheStep) {
+        cacheApplied = applyPayload(cacheStep.payload, { forceRoll: cacheStep.forceRoll })
       }
 
-      if (!cancelled) {
+      if (liveStep) {
+        switch (liveBootstrapMode(cacheApplied, true)) {
+          case 'defer':
+            pendingLivePayloadRef.current = liveStep.payload
+            break
+          case 'apply-immediately':
+            applyPayload(liveStep.payload, { forceRoll: liveStep.forceRoll })
+            schedulePoll()
+            break
+          case 'none':
+            break
+        }
+      } else if (!cancelled) {
         schedulePoll()
       }
     })()
@@ -175,15 +212,33 @@ export default function useNowPlaying(): UseNowPlayingResult {
 
     return () => {
       cancelled = true
+      beginPollingRef.current = null
       clearPoll()
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [isDevPreview])
 
+  useEffect(() => {
+    if (isDevPreview) return undefined
+
+    const livePayload = pendingLivePayloadRef.current
+    if (!livePayload || !visible || !titleSlotMounted || !artistSlotMounted) {
+      return undefined
+    }
+
+    pendingLivePayloadRef.current = null
+    applyPayload(livePayload, { forceRoll: false })
+    beginPollingRef.current?.()
+
+    return undefined
+  }, [artistSlotMounted, isDevPreview, titleSlotMounted, visible])
+
   return {
     visible,
     label,
     trackUrl,
+    title,
+    artist,
     titleSlotRef,
     artistSlotRef,
   }
