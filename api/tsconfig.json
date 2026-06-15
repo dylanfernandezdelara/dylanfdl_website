@@ -18,7 +18,7 @@
     "./**/*.ts",
     "../lib/api/**/*.ts",
     "../lib/spotify/**/*.ts",
-    "../lib/nowPlaying/logNowPlaying.ts",
+    "../lib/nowPlaying/**/*.ts",
     "../lib/extractErrorMessage.ts",
     "../lib/sanitizedInfrastructureError.ts"
   ]

@@ -63,7 +63,7 @@
 .now-playing-measure {
   position: absolute;
   top: 0;
-  left: 0;
+  left: -9999px;
   width: max-content;
   height: auto;
   overflow: visible;

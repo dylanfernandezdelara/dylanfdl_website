@@ -25,16 +25,18 @@ export function getRedis(): Redis {
 }
 
 async function redisGet<T>(key: string, context: string): Promise<T | null> {
+  const redis = getRedis()
   try {
-    return await getRedis().get<T>(key)
+    return await redis.get<T>(key)
   } catch {
     throw new SanitizedInfrastructureError(context)
   }
 }
 
 async function redisSet(key: string, value: unknown, context: string): Promise<void> {
+  const redis = getRedis()
   try {
-    await getRedis().set(key, value)
+    await redis.set(key, value)
   } catch {
     throw new SanitizedInfrastructureError(context)
   }

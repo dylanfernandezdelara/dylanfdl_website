@@ -1,9 +1,13 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { fetchCurrentlyPlaying, parseSpotifyTrack, toNowPlayingCache } from '@/lib/spotify/currentlyPlaying'
 import { SanitizedInfrastructureError } from '@/lib/sanitizedInfrastructureError'
 
 describe('fetchCurrentlyPlaying', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
   it('sanitizes non-OK Spotify API failures', async () => {
     vi.stubGlobal(
       'fetch',
@@ -19,8 +23,6 @@ describe('fetchCurrentlyPlaying', () => {
     expect(error).toBeInstanceOf(SanitizedInfrastructureError)
     expect((error as Error).message).toBe('Failed to fetch Spotify currently-playing (503)')
     expect((error as Error).message).not.toContain('SECRET_TOKEN_VALUE')
-
-    vi.unstubAllGlobals()
   })
 })
 
