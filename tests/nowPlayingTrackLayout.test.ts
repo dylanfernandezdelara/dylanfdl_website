@@ -29,7 +29,7 @@ describe('nowPlayingTrackLayout formatting', () => {
     )
     expect(formatByArtistLine('Daft Punk')).toBe('by Daft Punk')
     expect(formatFullNowPlayingLine(NOW_PLAYING_LABEL, 'Liv Likë Dis', 'Yeat')).toBe(
-      'Recently listened to Liv Likë Dis by Yeat',
+      'Recently listened to Liv Likë Dis by Yeat.',
     )
   })
 })

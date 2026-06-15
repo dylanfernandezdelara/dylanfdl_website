@@ -39,7 +39,7 @@ export default function CurrentlyListeningText() {
         {isInline || isSplit ? ' ' : null}
         <span className="now-playing-artist-line">
           <span className="now-playing-by">by </span>
-          <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS} />
+          <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS} />.
         </span>
       </span>
       <span

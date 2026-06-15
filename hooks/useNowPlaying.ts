@@ -8,7 +8,7 @@ import {
   type TrackRollState,
   type TrackUpdate,
 } from '@/lib/nowPlaying/applyTrackUpdate'
-import { planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
+import { liveBootstrapMode, planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
 import { parseNowPlayingResponse } from '@/lib/spotify/parseNowPlayingResponse'
@@ -185,13 +185,25 @@ export default function useNowPlaying(): UseNowPlayingResult {
       if (cancelled) return
 
       const [cacheStep, liveStep] = steps
+      let cacheApplied = false
+
       if (cacheStep) {
-        applyPayload(cacheStep.payload, { forceRoll: cacheStep.forceRoll })
+        cacheApplied = applyPayload(cacheStep.payload, { forceRoll: cacheStep.forceRoll })
       }
 
       if (liveStep) {
-        pendingLivePayloadRef.current = liveStep.payload
-      } else {
+        switch (liveBootstrapMode(cacheApplied, true)) {
+          case 'defer':
+            pendingLivePayloadRef.current = liveStep.payload
+            break
+          case 'apply-immediately':
+            applyPayload(liveStep.payload, { forceRoll: liveStep.forceRoll })
+            schedulePoll()
+            break
+          case 'none':
+            break
+        }
+      } else if (!cancelled) {
         schedulePoll()
       }
     })()
@@ -215,7 +227,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
     }
 
     pendingLivePayloadRef.current = null
-    applyPayload(livePayload, { forceRoll: true })
+    applyPayload(livePayload, { forceRoll: false })
     beginPollingRef.current?.()
 
     return undefined

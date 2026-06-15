@@ -5,6 +5,19 @@ export type BootstrapApplyStep = {
   forceRoll: boolean
 }
 
+export type LiveBootstrapMode = 'defer' | 'apply-immediately' | 'none'
+
+export function liveBootstrapMode(
+  cacheApplied: boolean,
+  hasLiveStep: boolean,
+): LiveBootstrapMode {
+  if (!hasLiveStep) {
+    return 'none'
+  }
+
+  return cacheApplied ? 'defer' : 'apply-immediately'
+}
+
 export async function planBootstrapNowPlaying(
   fetchNowPlaying: (live: boolean) => Promise<NowPlayingResponse>,
 ): Promise<BootstrapApplyStep[]> {

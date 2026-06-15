@@ -22,7 +22,7 @@ export function formatFullNowPlayingLine(
   title: string,
   artist: string,
 ): string {
-  return `${label} ${formatFullTrackLine(title, artist)}`
+  return `${label} ${formatFullTrackLine(title, artist)}.`
 }
 
 export function fitsTrackOnOneLine(

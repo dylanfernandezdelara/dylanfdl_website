@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { computeTrackUpdate, getNowPlayingLabel } from '@/lib/nowPlaying/applyTrackUpdate'
-import { planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
+import { liveBootstrapMode, planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 const trackPayload: NowPlayingResponse = {
@@ -102,5 +102,20 @@ describe('planBootstrapNowPlaying', () => {
     await expect(planBootstrapNowPlaying(fetchNowPlaying)).resolves.toEqual([
       { payload: live, forceRoll: true },
     ])
+  })
+})
+
+describe('liveBootstrapMode', () => {
+  it('defers live bootstrap only when cache already displayed a track', () => {
+    expect(liveBootstrapMode(true, true)).toBe('defer')
+  })
+
+  it('applies live immediately when cache did not display a track', () => {
+    expect(liveBootstrapMode(false, true)).toBe('apply-immediately')
+  })
+
+  it('skips live handling when there is no live step', () => {
+    expect(liveBootstrapMode(true, false)).toBe('none')
+    expect(liveBootstrapMode(false, false)).toBe('none')
   })
 })
