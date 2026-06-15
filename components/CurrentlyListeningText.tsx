@@ -27,16 +27,17 @@ export default function CurrentlyListeningText() {
 
   const isInline = layout === 'inline'
   const isSplit = layout === 'split'
+  const isPrefixSplit = layout === 'prefix-split'
 
   return (
     <span ref={containerRef} className="now-playing" data-layout={layout}>
       <span className="now-playing-label">{label}</span>
-      {isInline ? ' ' : null}
+      {isInline || isPrefixSplit ? ' ' : null}
       <span className="now-playing-track">
         <ExternalLink
           href={trackUrl}
           noUnderline
-          allowWrap={!isInline && !isSplit}
+          allowWrap={!isInline && !isSplit && !isPrefixSplit}
           className="now-playing-title"
         >
           <span ref={titleSlotRef} className={NOW_PLAYING_SLOT_CLASS} />

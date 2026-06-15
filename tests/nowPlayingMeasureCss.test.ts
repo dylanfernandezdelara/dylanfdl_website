@@ -26,6 +26,12 @@ describe('now-playing production measure CSS', () => {
     expect(nowPlayingCss).toContain('display: block')
   })
 
+  it('keeps label and title together with artist on the next row for prefix-split', () => {
+    expect(nowPlayingCss).toContain(".now-playing[data-layout='prefix-split']")
+    expect(nowPlayingCss).toContain(".now-playing[data-layout='prefix-split'] .now-playing-artist-line")
+    expect(nowPlayingCss).toContain('display: block')
+  })
+
   it('forces stacked title and artist onto separate rows', () => {
     expect(nowPlayingCss).toContain(".now-playing[data-layout='stacked']")
     expect(nowPlayingCss).toContain('flex-direction: column')

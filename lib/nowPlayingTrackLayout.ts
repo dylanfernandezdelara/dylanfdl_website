@@ -1,10 +1,11 @@
-export type NowPlayingTrackLayout = 'inline' | 'split' | 'stacked'
+export type NowPlayingTrackLayout = 'inline' | 'prefix-split' | 'split' | 'stacked'
 
 export type NowPlayingTrackMeasurements = {
   containerWidth: number
   labelWidth: number
   titleWidth: number
   byArtistWidth: number
+  labelTitleWidth: number
   trackLineWidth: number
   fullLineWidth: number
 }
@@ -64,11 +65,15 @@ export function resolveNowPlayingTrackLayout(
   const trackLineWidth = measureTextWidth(trackMeasure, formatFullTrackLine(title, artist))
   const trackSuffix = ` ${formatFullTrackLine(title, artist)}.`
 
+  const titleWidth = measureTextWidth(trackMeasure, title)
+  const titleSuffixWidth = measureTextWidth(trackMeasure, ` ${title}`)
+
   return pickNowPlayingTrackLayout({
     containerWidth,
     labelWidth,
-    titleWidth: measureTextWidth(trackMeasure, title),
+    titleWidth,
     byArtistWidth: measureTextWidth(trackMeasure, formatByArtistLine(artist)),
+    labelTitleWidth: labelWidth + titleSuffixWidth,
     trackLineWidth,
     fullLineWidth: labelWidth + measureTextWidth(trackMeasure, trackSuffix),
   })
@@ -77,6 +82,7 @@ export function resolveNowPlayingTrackLayout(
 /**
  * Pick how the now-playing line should break:
  * - inline: "label title by artist" fits on one line
+ * - prefix-split: "label title" on one row, then "by artist" on the next
  * - split: label on its own row, then "title by artist" on the next
  * - stacked: label on its own row, title on the next, then "by artist"
  */
@@ -88,6 +94,7 @@ export function pickNowPlayingTrackLayout(
     labelWidth,
     titleWidth,
     byArtistWidth,
+    labelTitleWidth,
     trackLineWidth,
     fullLineWidth,
   } = measurements
@@ -109,6 +116,10 @@ export function pickNowPlayingTrackLayout(
     trackFits
   ) {
     return 'inline'
+  }
+
+  if (labelTitleWidth <= containerWidth && byArtistWidth <= containerWidth) {
+    return 'prefix-split'
   }
 
   if (trackFits) {

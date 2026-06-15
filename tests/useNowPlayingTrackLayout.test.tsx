@@ -126,6 +126,7 @@ describe('useNowPlayingTrackLayout', () => {
     const trackSuffix = ` ${trackLine}.`
     const trackWidthsByText = {
       [title]: 118,
+      [` ${title}`]: 122,
       [formatByArtistLine(artist)]: 108,
       [trackLine]: 236,
       [trackSuffix]: 248,
