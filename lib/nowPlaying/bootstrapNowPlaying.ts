@@ -8,7 +8,11 @@ export type BootstrapApplyStep = {
 
 export type LiveBootstrapMode = 'defer' | 'apply-immediately' | 'none'
 
-export type ActiveLiveBootstrapMode = Exclude<LiveBootstrapMode, 'none'>
+type ActiveLiveBootstrapMode = Exclude<LiveBootstrapMode, 'none'>
+
+export function resolveLiveBootstrapMode(cacheApplied: boolean): ActiveLiveBootstrapMode {
+  return cacheApplied ? 'defer' : 'apply-immediately'
+}
 
 export function liveBootstrapMode(
   cacheApplied: boolean,
@@ -18,11 +22,7 @@ export function liveBootstrapMode(
     return 'none'
   }
 
-  return activeLiveBootstrapMode(cacheApplied)
-}
-
-export function activeLiveBootstrapMode(cacheApplied: boolean): ActiveLiveBootstrapMode {
-  return cacheApplied ? 'defer' : 'apply-immediately'
+  return resolveLiveBootstrapMode(cacheApplied)
 }
 
 export async function fetchBootstrapCacheStep(

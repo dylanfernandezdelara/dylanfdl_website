@@ -14,12 +14,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": [
-    "./**/*.ts",
-    "../lib/api/**/*.ts",
-    "../lib/spotify/**/*.ts",
-    "../lib/nowPlaying/**/*.ts",
-    "../lib/extractErrorMessage.ts",
-    "../lib/sanitizedInfrastructureError.ts"
-  ]
+  "include": ["./**/*.ts", "../lib/**/*.ts"],
+  "exclude": ["../lib/buildCardGridItems.ts", "../lib/site.ts", "../lib/rainbowPhaseSync.ts"]
 }

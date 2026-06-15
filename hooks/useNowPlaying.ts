@@ -11,7 +11,7 @@ import {
 import {
   fetchBootstrapCacheStep,
   fetchBootstrapLiveStep,
-  activeLiveBootstrapMode,
+  resolveLiveBootstrapMode,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
@@ -202,7 +202,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
       if (cancelled) return
 
       if (liveStep) {
-        const mode = activeLiveBootstrapMode(cacheApplied)
+        const mode = resolveLiveBootstrapMode(cacheApplied)
         switch (mode) {
           case 'defer':
             setPendingLivePayload(liveStep.payload)

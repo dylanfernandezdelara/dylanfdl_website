@@ -52,6 +52,8 @@ export function toNowPlayingCache(track: CachedTrack): NowPlayingCache {
   }
 }
 
+import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError.js'
+
 export async function fetchCurrentlyPlaying(
   accessToken: string,
 ): Promise<{ isPlaying: boolean; track: CachedTrack | null }> {
@@ -66,7 +68,7 @@ export async function fetchCurrentlyPlaying(
   }
 
   if (!response.ok) {
-    throw new Error(`Spotify currently-playing failed (${response.status})`)
+    throw new SanitizedInfrastructureError(`fetch Spotify currently-playing (${response.status})`)
   }
 
   const data = (await response.json()) as SpotifyCurrentlyPlayingResponse
