@@ -13,6 +13,7 @@ import {
   fetchBootstrapLiveStep,
   liveBootstrapMode,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
+import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { toLogErrorMessage } from '@/lib/sanitizeLogError'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
 import { parseNowPlayingResponse } from '@/lib/spotify/parseNowPlayingResponse'
