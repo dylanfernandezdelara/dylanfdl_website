@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "lint": "eslint . --ext .js,.mjs,.ts,.tsx,.astro",
     "typecheck:api": "tsc -p api/tsconfig.json",
+    "check": "npm run lint && npm run typecheck:api && npm run test",
     "test": "vitest run"
   },
   "dependencies": {
