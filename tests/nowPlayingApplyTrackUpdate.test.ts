@@ -1,7 +1,11 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { computeTrackUpdate, getNowPlayingLabel } from '@/lib/nowPlaying/applyTrackUpdate'
-import { liveBootstrapMode, planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
+import {
+  resolveLiveBootstrapEffects,
+  runBootstrapFetches,
+} from '@/lib/nowPlaying/bootstrapNowPlaying'
+import * as logNowPlaying from '@/lib/nowPlaying/logNowPlaying'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 const trackPayload: NowPlayingResponse = {
@@ -77,8 +81,12 @@ describe('computeTrackUpdate', () => {
   })
 })
 
-describe('planBootstrapNowPlaying', () => {
-  it('applies cache first and then live with a forced update roll', async () => {
+describe('runBootstrapFetches', () => {
+  beforeEach(() => {
+    vi.spyOn(logNowPlaying, 'logNowPlayingWarn').mockImplementation(() => undefined)
+  })
+
+  it('returns cache and live steps when both fetches succeed', async () => {
     const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
     const live: NowPlayingResponse = { ...trackPayload, source: 'live', isPlaying: true }
     const fetchNowPlaying = vi
@@ -86,36 +94,69 @@ describe('planBootstrapNowPlaying', () => {
       .mockResolvedValueOnce(cached)
       .mockResolvedValueOnce(live)
 
-    await expect(planBootstrapNowPlaying(fetchNowPlaying)).resolves.toEqual([
-      { payload: cached, forceRoll: true },
-      { payload: live, forceRoll: true },
-    ])
+    await expect(runBootstrapFetches(fetchNowPlaying)).resolves.toEqual({
+      cacheStep: { payload: cached, forceRoll: true },
+      liveStep: { payload: live, forceRoll: true },
+    })
   })
 
   it('falls back to live-only bootstrap when cache fetch fails', async () => {
     const live: NowPlayingResponse = { ...trackPayload, source: 'live' }
+    const cacheError = new Error('cache miss')
     const fetchNowPlaying = vi
       .fn()
-      .mockRejectedValueOnce(new Error('cache miss'))
+      .mockRejectedValueOnce(cacheError)
       .mockResolvedValueOnce(live)
 
-    await expect(planBootstrapNowPlaying(fetchNowPlaying)).resolves.toEqual([
-      { payload: live, forceRoll: true },
-    ])
+    const onCacheError = vi.fn()
+    await expect(
+      runBootstrapFetches(fetchNowPlaying, { onCacheError }),
+    ).resolves.toEqual({
+      cacheStep: null,
+      liveStep: { payload: live, forceRoll: true },
+    })
+    expect(onCacheError).toHaveBeenCalledWith(cacheError)
+  })
+
+  it('returns cache only when live fetch fails after cache succeeds', async () => {
+    const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
+    const liveError = new Error('live miss')
+    const fetchNowPlaying = vi
+      .fn()
+      .mockResolvedValueOnce(cached)
+      .mockRejectedValueOnce(liveError)
+
+    const onLiveError = vi.fn()
+    await expect(
+      runBootstrapFetches(fetchNowPlaying, { onLiveError }),
+    ).resolves.toEqual({
+      cacheStep: { payload: cached, forceRoll: true },
+      liveStep: null,
+    })
+    expect(onLiveError).toHaveBeenCalledWith(liveError)
   })
 })
 
-describe('liveBootstrapMode', () => {
-  it('defers live bootstrap only when cache already displayed a track', () => {
-    expect(liveBootstrapMode(true, true)).toBe('defer')
+describe('resolveLiveBootstrapEffects', () => {
+  const liveStep = { payload: trackPayload, forceRoll: true }
+
+  it('defers live payload when cache was applied so slots can mount first', () => {
+    expect(resolveLiveBootstrapEffects(true, liveStep)).toEqual({
+      kind: 'defer-live',
+      payload: trackPayload,
+    })
   })
 
-  it('applies live immediately when cache did not display a track', () => {
-    expect(liveBootstrapMode(false, true)).toBe('apply-immediately')
+  it('applies live immediately and starts polling when cache did not apply', () => {
+    expect(resolveLiveBootstrapEffects(false, liveStep)).toEqual({
+      kind: 'apply-live-immediately',
+      payload: trackPayload,
+      forceRoll: true,
+    })
   })
 
-  it('skips live handling when there is no live step', () => {
-    expect(liveBootstrapMode(true, false)).toBe('none')
-    expect(liveBootstrapMode(false, false)).toBe('none')
+  it('schedules polling when live bootstrap is unavailable', () => {
+    expect(resolveLiveBootstrapEffects(true, null)).toEqual({ kind: 'schedule-poll' })
+    expect(resolveLiveBootstrapEffects(false, null)).toEqual({ kind: 'schedule-poll' })
   })
 })

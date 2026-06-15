@@ -6,11 +6,13 @@ import { useRef } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import useNowPlayingTrackLayout from '@/hooks/useNowPlayingTrackLayout'
-import { formatByArtistLine, formatFullNowPlayingLine, formatFullTrackLine } from '@/lib/nowPlayingTrackLayout'
+import { formatByArtistLine, formatFullTrackLine } from '@/lib/nowPlayingTrackLayout'
+import { attachMockTextMeasure } from '@/tests/fixtures/mockTextMeasure'
 import {
   NOW_PLAYING_LABEL,
   NOW_PLAYING_LAYOUT_SCENARIOS,
-  widthsForScenario,
+  labelWidthsForScenario,
+  trackWidthsForScenario,
 } from '@/tests/fixtures/nowPlayingLayoutScenarios'
 
 class ResizeObserverMock {
@@ -40,16 +42,23 @@ function TrackLayoutProbe({
   title,
   artist,
   containerWidth,
-  widthsByText,
+  labelWidthsByText,
+  trackWidthsByText,
 }: {
   label: string
   title: string
   artist: string
   containerWidth: number
-  widthsByText: Record<string, number>
+  labelWidthsByText: Record<string, number>
+  trackWidthsByText: Record<string, number>
 }) {
   const containerRef = useRef<HTMLSpanElement>(null)
-  const { layout, measureRef } = useNowPlayingTrackLayout(label, title, artist, containerRef)
+  const { layout, labelMeasureRef, trackMeasureRef } = useNowPlayingTrackLayout(
+    label,
+    title,
+    artist,
+    containerRef,
+  )
 
   return (
     <span
@@ -62,16 +71,17 @@ function TrackLayoutProbe({
     >
       <span
         ref={(node) => {
-          measureRef.current = node
+          labelMeasureRef.current = node
           if (node) {
-            node.getBoundingClientRect = function getBoundingClientRect(this: HTMLSpanElement) {
-              const text = this.textContent ?? ''
-              const width = widthsByText[text]
-              if (width === undefined) {
-                throw new Error(`Missing mocked width for text: ${text}`)
-              }
-              return mockRect(width)
-            }
+            attachMockTextMeasure(node, labelWidthsByText)
+          }
+        }}
+      />
+      <span
+        ref={(node) => {
+          trackMeasureRef.current = node
+          if (node) {
+            attachMockTextMeasure(node, trackWidthsByText)
           }
         }}
       />
@@ -96,7 +106,8 @@ describe('useNowPlayingTrackLayout', () => {
           title={scenario.title}
           artist={scenario.artist}
           containerWidth={scenario.containerWidth}
-          widthsByText={widthsForScenario(scenario)}
+          labelWidthsByText={labelWidthsForScenario(scenario)}
+          trackWidthsByText={trackWidthsForScenario(scenario)}
         />,
       )
 
@@ -110,12 +121,14 @@ describe('useNowPlayingTrackLayout', () => {
     const label = NOW_PLAYING_LABEL
     const title = 'Instant Crush'
     const artist = 'Daft Punk'
-    const widthsByText = {
-      [label]: 168,
+    const labelWidthsByText = { [label]: 168 }
+    const trackLine = formatFullTrackLine(title, artist)
+    const trackSuffix = ` ${trackLine}.`
+    const trackWidthsByText = {
       [title]: 118,
       [formatByArtistLine(artist)]: 108,
-      [formatFullTrackLine(title, artist)]: 236,
-      [formatFullNowPlayingLine(label, title, artist)]: 416,
+      [trackLine]: 236,
+      [trackSuffix]: 248,
     }
 
     let containerWidth = 864
@@ -138,7 +151,12 @@ describe('useNowPlayingTrackLayout', () => {
 
     function ResizableProbe() {
       const containerRef = useRef<HTMLSpanElement>(null)
-      const { layout, measureRef } = useNowPlayingTrackLayout(label, title, artist, containerRef)
+      const { layout, labelMeasureRef, trackMeasureRef } = useNowPlayingTrackLayout(
+        label,
+        title,
+        artist,
+        containerRef,
+      )
 
       return (
         <span
@@ -151,12 +169,17 @@ describe('useNowPlayingTrackLayout', () => {
         >
           <span
             ref={(node) => {
-              measureRef.current = node
+              labelMeasureRef.current = node
               if (node) {
-                node.getBoundingClientRect = function getBoundingClientRect(this: HTMLSpanElement) {
-                  const text = this.textContent ?? ''
-                  return mockRect(widthsByText[text as keyof typeof widthsByText] ?? 0)
-                }
+                attachMockTextMeasure(node, labelWidthsByText)
+              }
+            }}
+          />
+          <span
+            ref={(node) => {
+              trackMeasureRef.current = node
+              if (node) {
+                attachMockTextMeasure(node, trackWidthsByText, { fallbackWidth: 0 })
               }
             }}
           />

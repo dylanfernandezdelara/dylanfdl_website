@@ -1,5 +1,5 @@
 import type { NowPlayingTrackLayout } from '@/lib/nowPlayingTrackLayout'
-import { formatFullNowPlayingLine, formatFullTrackLine } from '@/lib/nowPlayingTrackLayout'
+import { formatFullTrackLine } from '@/lib/nowPlayingTrackLayout'
 
 export const NOW_PLAYING_LABEL = 'Recently listened to'
 
@@ -179,41 +179,27 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
   },
 ]
 
-export function createMockTextMeasure(
-  widthsByText: Record<string, number>,
-): Pick<HTMLElement, 'textContent' | 'getBoundingClientRect'> {
-  let text = ''
-
-  return {
-    get textContent() {
-      return text
-    },
-    set textContent(value) {
-      text = value ?? ''
-    },
-    getBoundingClientRect() {
-      const width = widthsByText[text]
-      if (width === undefined) {
-        throw new Error(`Missing mocked width for text: ${text}`)
-      }
-
-      return { width } as DOMRect
-    },
-  }
-}
-
-export function widthsForScenario(
-  scenario: Pick<
-    NowPlayingLayoutScenario,
-    'label' | 'title' | 'artist' | 'labelWidth' | 'titleWidth' | 'byArtistWidth' | 'trackLineWidth' | 'fullLineWidth'
-  >,
+export function labelWidthsForScenario(
+  scenario: Pick<NowPlayingLayoutScenario, 'label' | 'labelWidth'>,
 ): Record<string, number> {
   return {
     [scenario.label]: scenario.labelWidth,
+  }
+}
+
+export function trackWidthsForScenario(
+  scenario: Pick<
+    NowPlayingLayoutScenario,
+    'title' | 'artist' | 'titleWidth' | 'byArtistWidth' | 'trackLineWidth' | 'fullLineWidth' | 'labelWidth'
+  >,
+): Record<string, number> {
+  const trackLine = formatFullTrackLine(scenario.title, scenario.artist)
+  const trackSuffix = ` ${trackLine}.`
+
+  return {
     [scenario.title]: scenario.titleWidth,
     [`by ${scenario.artist}`]: scenario.byArtistWidth,
-    [formatFullTrackLine(scenario.title, scenario.artist)]: scenario.trackLineWidth,
-    [formatFullNowPlayingLine(scenario.label, scenario.title, scenario.artist)]:
-      scenario.fullLineWidth,
+    [trackLine]: scenario.trackLineWidth,
+    [trackSuffix]: scenario.fullLineWidth - scenario.labelWidth,
   }
 }

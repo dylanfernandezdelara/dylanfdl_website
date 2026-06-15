@@ -1,5 +1,7 @@
 import { Redis } from '@upstash/redis'
 
+import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError.js'
+
 import type { NowPlayingCache } from './types'
 
 export const NOW_PLAYING_CACHE_KEY = 'dylanfdl:spotify:now-playing'
@@ -15,21 +17,37 @@ export function getRedis(): Redis {
     const url = process.env.KV_REST_API_URL
     const token = process.env.KV_REST_API_TOKEN
     if (!url || !token) {
-      throw new Error('Missing KV_REST_API_URL or KV_REST_API_TOKEN')
+      throw new SanitizedInfrastructureError('initialize Redis client')
     }
     redisClient = new Redis({ url, token })
   }
   return redisClient
 }
 
-export async function getNowPlayingCache(): Promise<NowPlayingCache | null> {
+async function redisGet<T>(key: string, context: string): Promise<T | null> {
   const redis = getRedis()
-  return redis.get<NowPlayingCache>(NOW_PLAYING_CACHE_KEY)
+  try {
+    return await redis.get<T>(key)
+  } catch (error) {
+    throw new SanitizedInfrastructureError(context, { cause: error })
+  }
+}
+
+async function redisSet(key: string, value: unknown, context: string): Promise<void> {
+  const redis = getRedis()
+  try {
+    await redis.set(key, value)
+  } catch (error) {
+    throw new SanitizedInfrastructureError(context, { cause: error })
+  }
+}
+
+export async function getNowPlayingCache(): Promise<NowPlayingCache | null> {
+  return redisGet<NowPlayingCache>(NOW_PLAYING_CACHE_KEY, 'read now-playing cache')
 }
 
 export async function setNowPlayingCache(cache: NowPlayingCache): Promise<void> {
-  const redis = getRedis()
-  await redis.set(NOW_PLAYING_CACHE_KEY, cache)
+  await redisSet(NOW_PLAYING_CACHE_KEY, cache, 'cache now-playing track')
 }
 
 type AccessTokenCache = {
@@ -38,35 +56,32 @@ type AccessTokenCache = {
 }
 
 export async function getCachedAccessToken(): Promise<string | null> {
-  const redis = getRedis()
-  const cached = await redis.get<AccessTokenCache>(ACCESS_TOKEN_CACHE_KEY)
+  const cached = await redisGet<AccessTokenCache>(
+    ACCESS_TOKEN_CACHE_KEY,
+    'read Spotify access token cache',
+  )
   if (!cached) return null
   if (Date.now() >= cached.expiresAt - 60_000) return null
   return cached.token
 }
 
 export async function setCachedAccessToken(token: string, expiresInSeconds: number): Promise<void> {
-  const redis = getRedis()
-  try {
-    await redis.set(ACCESS_TOKEN_CACHE_KEY, {
+  await redisSet(
+    ACCESS_TOKEN_CACHE_KEY,
+    {
       token,
       expiresAt: Date.now() + expiresInSeconds * 1000,
-    })
-  } catch {
-    // Upstash embeds the SET command body (which includes the access token) in its
-    // error message; rethrow a sanitized error so the token can never reach logs.
-    throw new Error('Failed to cache Spotify access token')
-  }
+    },
+    'cache Spotify access token',
+  )
 }
 
 export async function shouldSkipLiveRefresh(): Promise<boolean> {
-  const redis = getRedis()
-  const lastRefresh = await redis.get<number>(LIVE_DEBOUNCE_KEY)
+  const lastRefresh = await redisGet<number>(LIVE_DEBOUNCE_KEY, 'read live refresh debounce')
   if (!lastRefresh) return false
   return Date.now() - lastRefresh < LIVE_DEBOUNCE_MS
 }
 
 export async function markLiveRefresh(): Promise<void> {
-  const redis = getRedis()
-  await redis.set(LIVE_DEBOUNCE_KEY, Date.now())
+  await redisSet(LIVE_DEBOUNCE_KEY, Date.now(), 'mark live refresh debounce')
 }

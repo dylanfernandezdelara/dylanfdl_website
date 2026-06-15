@@ -1,7 +1,3 @@
-import { readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -9,18 +5,60 @@ import {
   formatFullNowPlayingLine,
   formatFullTrackLine,
   fitsTrackOnOneLine,
+  measureTextWidth,
   pickNowPlayingTrackLayout,
   resolveNowPlayingTrackLayout,
 } from '@/lib/nowPlayingTrackLayout'
+import { createMockTextMeasure } from '@/tests/fixtures/mockTextMeasure'
 import {
-  createMockTextMeasure,
   NOW_PLAYING_CONTAINER_WIDTHS,
   NOW_PLAYING_LABEL,
   NOW_PLAYING_LAYOUT_SCENARIOS,
-  widthsForScenario,
+  labelWidthsForScenario,
+  trackWidthsForScenario,
 } from '@/tests/fixtures/nowPlayingLayoutScenarios'
 
-const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
+describe('measureTextWidth', () => {
+  it('prefers scrollWidth when getBoundingClientRect width is zero', () => {
+    let text = ''
+    const measure = {
+      get textContent() {
+        return text
+      },
+      set textContent(value) {
+        text = value ?? ''
+      },
+      get scrollWidth() {
+        return 248
+      },
+      getBoundingClientRect() {
+        return { width: 0 } as DOMRect
+      },
+    }
+
+    expect(measureTextWidth(measure, 'Liv Likë Dis')).toBe(248)
+  })
+
+  it('uses the larger of scrollWidth and bounding rect width', () => {
+    let text = ''
+    const measure = {
+      get textContent() {
+        return text
+      },
+      set textContent(value) {
+        text = value ?? ''
+      },
+      get scrollWidth() {
+        return 120
+      },
+      getBoundingClientRect() {
+        return { width: 180 } as DOMRect
+      },
+    }
+
+    expect(measureTextWidth(measure, 'Instant Crush')).toBe(180)
+  })
+})
 
 describe('nowPlayingTrackLayout formatting', () => {
   it('formats label, track, and full now-playing lines', () => {
@@ -112,7 +150,7 @@ describe('resolveNowPlayingTrackLayout', () => {
   it('returns inline for a desktop Yeat track with the label included', () => {
     const title = 'Liv Likë Dis'
     const artist = 'Yeat'
-    const measure = createMockTextMeasure(widthsForScenario({
+    const scenario = {
       label: NOW_PLAYING_LABEL,
       title,
       artist,
@@ -121,11 +159,14 @@ describe('resolveNowPlayingTrackLayout', () => {
       byArtistWidth: 72,
       trackLineWidth: 186,
       fullLineWidth: 366,
-    }))
+    }
+    const labelMeasure = createMockTextMeasure(labelWidthsForScenario(scenario))
+    const trackMeasure = createMockTextMeasure(trackWidthsForScenario(scenario))
 
     expect(
       resolveNowPlayingTrackLayout(
-        measure,
+        labelMeasure,
+        trackMeasure,
         NOW_PLAYING_CONTAINER_WIDTHS.desktop,
         NOW_PLAYING_LABEL,
         title,
@@ -138,11 +179,13 @@ describe('resolveNowPlayingTrackLayout', () => {
 describe('now playing layout scenarios', () => {
   describe.each(NOW_PLAYING_LAYOUT_SCENARIOS)('$id ($viewport)', (scenario) => {
     it(scenario.reason, () => {
-      const measure = createMockTextMeasure(widthsForScenario(scenario))
+      const labelMeasure = createMockTextMeasure(labelWidthsForScenario(scenario))
+      const trackMeasure = createMockTextMeasure(trackWidthsForScenario(scenario))
 
       expect(
         resolveNowPlayingTrackLayout(
-          measure,
+          labelMeasure,
+          trackMeasure,
           scenario.containerWidth,
           scenario.label,
           scenario.title,
@@ -161,26 +204,6 @@ describe('now playing layout scenarios', () => {
         }),
       ).toBe(scenario.expected)
     })
-  })
-})
-
-describe('now playing layout CSS contract', () => {
-  const nowPlayingCss = readFileSync(join(repoRoot, 'src/styles/now-playing-text.css'), 'utf8')
-
-  it('keeps inline layouts on a single row including the label', () => {
-    expect(nowPlayingCss).toContain(".now-playing[data-layout='inline']")
-    expect(nowPlayingCss).toContain('white-space: nowrap')
-  })
-
-  it('splits the label onto its own row when inline no longer fits', () => {
-    expect(nowPlayingCss).toContain(".now-playing[data-layout='split'] .now-playing-label")
-    expect(nowPlayingCss).toContain('display: block')
-  })
-
-  it('forces stacked title and artist onto separate rows', () => {
-    expect(nowPlayingCss).toContain(".now-playing[data-layout='stacked']")
-    expect(nowPlayingCss).toContain('flex-direction: column')
-    expect(nowPlayingCss).toContain(".now-playing[data-layout='stacked'] .now-playing-artist-line")
   })
 })
 

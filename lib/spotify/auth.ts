@@ -1,3 +1,5 @@
+import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError.js'
+
 const SPOTIFY_SCOPE = 'user-read-currently-playing'
 const SPOTIFY_AUTHORIZE_URL = 'https://accounts.spotify.com/authorize'
 const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
@@ -56,8 +58,7 @@ export async function exchangeSpotifyCode(
   })
 
   if (!response.ok) {
-    const body = await response.text()
-    throw new Error(`Spotify token exchange failed (${response.status}): ${body}`)
+    throw new SanitizedInfrastructureError(`exchange Spotify access token (${response.status})`)
   }
 
   return (await response.json()) as SpotifyTokenResponse
@@ -85,8 +86,7 @@ export async function refreshSpotifyAccessToken(): Promise<{
   })
 
   if (!response.ok) {
-    const body = await response.text()
-    throw new Error(`Spotify token refresh failed (${response.status}): ${body}`)
+    throw new SanitizedInfrastructureError(`refresh Spotify access token (${response.status})`)
   }
 
   const data = (await response.json()) as SpotifyTokenResponse

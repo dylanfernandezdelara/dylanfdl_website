@@ -5,60 +5,60 @@ export type BootstrapApplyStep = {
   forceRoll: boolean
 }
 
-export type LiveBootstrapMode = 'defer' | 'apply-immediately' | 'none'
+export type LiveBootstrapEffects =
+  | { kind: 'defer-live'; payload: NowPlayingResponse }
+  | { kind: 'apply-live-immediately'; payload: NowPlayingResponse; forceRoll: boolean }
+  | { kind: 'schedule-poll' }
 
-export function liveBootstrapMode(
-  cacheApplied: boolean,
-  hasLiveStep: boolean,
-): LiveBootstrapMode {
-  if (!hasLiveStep) {
-    return 'none'
-  }
-
-  return cacheApplied ? 'defer' : 'apply-immediately'
+export type BootstrapFetchOutcome = {
+  cacheStep: BootstrapApplyStep | null
+  liveStep: BootstrapApplyStep | null
 }
 
-export async function fetchBootstrapCacheStep(
+export function resolveLiveBootstrapEffects(
+  cacheApplied: boolean,
+  liveStep: BootstrapApplyStep | null,
+): LiveBootstrapEffects {
+  if (!liveStep) {
+    return { kind: 'schedule-poll' }
+  }
+
+  if (cacheApplied) {
+    return { kind: 'defer-live', payload: liveStep.payload }
+  }
+
+  return {
+    kind: 'apply-live-immediately',
+    payload: liveStep.payload,
+    forceRoll: liveStep.forceRoll,
+  }
+}
+
+type BootstrapFetchHandlers = {
+  onCacheError?: (error: unknown) => void
+  onLiveError?: (error: unknown) => void
+}
+
+export async function runBootstrapFetches(
   fetchNowPlaying: (live: boolean) => Promise<NowPlayingResponse>,
-): Promise<BootstrapApplyStep | null> {
+  handlers: BootstrapFetchHandlers = {},
+): Promise<BootstrapFetchOutcome> {
+  let cacheStep: BootstrapApplyStep | null = null
+  let liveStep: BootstrapApplyStep | null = null
+
   try {
     const cached = await fetchNowPlaying(false)
-    return { payload: cached, forceRoll: true }
-  } catch {
-    return null
+    cacheStep = { payload: cached, forceRoll: true }
+  } catch (error) {
+    handlers.onCacheError?.(error)
   }
-}
 
-export async function fetchBootstrapLiveStep(
-  fetchNowPlaying: (live: boolean) => Promise<NowPlayingResponse>,
-): Promise<BootstrapApplyStep | null> {
   try {
     const live = await fetchNowPlaying(true)
-    return { payload: live, forceRoll: true }
-  } catch {
-    return null
-  }
-}
-
-/** Returns cache then live steps in order. Used by tests; production applies cache before awaiting live. */
-export async function planBootstrapNowPlaying(
-  fetchNowPlaying: (live: boolean) => Promise<NowPlayingResponse>,
-): Promise<BootstrapApplyStep[]> {
-  const steps: BootstrapApplyStep[] = []
-
-  const cacheStep = await fetchBootstrapCacheStep(fetchNowPlaying)
-  if (cacheStep) {
-    steps.push(cacheStep)
-    const liveStep = await fetchBootstrapLiveStep(fetchNowPlaying)
-    if (liveStep) {
-      steps.push(liveStep)
-    }
-    return steps
+    liveStep = { payload: live, forceRoll: true }
+  } catch (error) {
+    handlers.onLiveError?.(error)
   }
 
-  const liveStep = await fetchBootstrapLiveStep(fetchNowPlaying)
-  if (liveStep) {
-    steps.push(liveStep)
-  }
-  return steps
+  return { cacheStep, liveStep }
 }

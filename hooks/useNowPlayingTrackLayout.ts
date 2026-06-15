@@ -9,7 +9,8 @@ import {
 
 export type UseNowPlayingTrackLayoutResult = {
   layout: NowPlayingTrackLayout
-  measureRef: RefObject<HTMLSpanElement | null>
+  labelMeasureRef: RefObject<HTMLSpanElement | null>
+  trackMeasureRef: RefObject<HTMLSpanElement | null>
 }
 
 export default function useNowPlayingTrackLayout(
@@ -18,19 +19,30 @@ export default function useNowPlayingTrackLayout(
   artist: string,
   containerRef: RefObject<HTMLElement | null>,
 ): UseNowPlayingTrackLayoutResult {
-  const measureRef = useRef<HTMLSpanElement>(null)
+  const labelMeasureRef = useRef<HTMLSpanElement>(null)
+  const trackMeasureRef = useRef<HTMLSpanElement>(null)
   const [layout, setLayout] = useState<NowPlayingTrackLayout>('stacked')
 
   useLayoutEffect(() => {
     const container = containerRef.current
-    const measure = measureRef.current
-    if (!container || !measure || title.length === 0 || label.length === 0) {
+    const labelMeasure = labelMeasureRef.current
+    const trackMeasure = trackMeasureRef.current
+    if (!container || !labelMeasure || !trackMeasure || title.length === 0 || label.length === 0) {
       return undefined
     }
 
     const updateLayout = () => {
       const containerWidth = container.getBoundingClientRect().width
-      setLayout(resolveNowPlayingTrackLayout(measure, containerWidth, label, title, artist))
+      setLayout(
+        resolveNowPlayingTrackLayout(
+          labelMeasure,
+          trackMeasure,
+          containerWidth,
+          label,
+          title,
+          artist,
+        ),
+      )
     }
 
     updateLayout()
@@ -43,5 +55,5 @@ export default function useNowPlayingTrackLayout(
     }
   }, [artist, containerRef, label, title])
 
-  return { layout, measureRef }
+  return { layout, labelMeasureRef, trackMeasureRef }
 }

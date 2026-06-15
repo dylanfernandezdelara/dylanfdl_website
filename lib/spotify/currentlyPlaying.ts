@@ -1,3 +1,5 @@
+import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError.js'
+
 import type { CachedTrack, NowPlayingCache } from './types'
 
 type SpotifyArtist = { name: string }
@@ -66,7 +68,7 @@ export async function fetchCurrentlyPlaying(
   }
 
   if (!response.ok) {
-    throw new Error(`Spotify currently-playing failed (${response.status})`)
+    throw new SanitizedInfrastructureError(`fetch Spotify currently-playing (${response.status})`)
   }
 
   const data = (await response.json()) as SpotifyCurrentlyPlayingResponse

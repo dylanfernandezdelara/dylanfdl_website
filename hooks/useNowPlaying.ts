@@ -4,16 +4,16 @@ import { useEffect, useRef, useState, type Ref } from 'react'
 
 import useSlotTextRoll from '@/hooks/useSlotTextRoll'
 import {
+  applyTrackUpdate,
   computeTrackUpdate,
   type TrackRollState,
-  type TrackUpdate,
 } from '@/lib/nowPlaying/applyTrackUpdate'
 import {
-  fetchBootstrapCacheStep,
-  fetchBootstrapLiveStep,
-  liveBootstrapMode,
+  resolveLiveBootstrapEffects,
+  runBootstrapFetches,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
+import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
 import { parseNowPlayingResponse } from '@/lib/spotify/parseNowPlayingResponse'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
@@ -27,34 +27,6 @@ async function fetchNowPlaying(live: boolean): Promise<NowPlayingResponse> {
     throw new Error(`now-playing request failed (${response.status})`)
   }
   return parseNowPlayingResponse(await response.json())
-}
-
-function applyTrackUpdate(
-  update: TrackUpdate,
-  actions: {
-    setLabel: (label: string) => void
-    setTrackUrl: (url: string) => void
-    setVisible: (visible: boolean) => void
-    setTitle: (title: string) => void
-    setArtist: (artist: string) => void
-    rollTitle: (title: string) => void
-    rollArtist: (artist: string) => void
-  },
-): TrackRollState {
-  if (update.label !== null) {
-    actions.setLabel(update.label)
-  }
-  actions.setTrackUrl(update.trackUrl)
-  actions.setTitle(update.title)
-  actions.setArtist(update.artist)
-  actions.setVisible(true)
-
-  if (update.shouldRoll) {
-    actions.rollTitle(update.title)
-    actions.rollArtist(update.artist)
-  }
-
-  return update.nextRollState
 }
 
 export type UseNowPlayingResult = {
@@ -169,7 +141,9 @@ export default function useNowPlaying(): UseNowPlayingResult {
       if (document.visibilityState !== 'visible') return
 
       pollTimer = window.setInterval(() => {
-        void refreshNowPlaying({ forceRoll: false, live: true }).catch(() => undefined)
+        void refreshNowPlaying({ forceRoll: false, live: true }).catch((error) => {
+          logNowPlayingWarn('poll refresh failed', error)
+        })
       }, POLL_INTERVAL_MS)
     }
 
@@ -177,7 +151,9 @@ export default function useNowPlaying(): UseNowPlayingResult {
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        void refreshNowPlaying({ forceRoll: false, live: true }).catch(() => undefined)
+        void refreshNowPlaying({ forceRoll: false, live: true }).catch((error) => {
+          logNowPlayingWarn('visibility refresh failed', error)
+        })
         schedulePoll()
         return
       }
@@ -185,7 +161,10 @@ export default function useNowPlaying(): UseNowPlayingResult {
     }
 
     void (async () => {
-      const cacheStep = await fetchBootstrapCacheStep(fetchNowPlaying)
+      const { cacheStep, liveStep } = await runBootstrapFetches(fetchNowPlaying, {
+        onCacheError: (error) => logNowPlayingWarn('cache bootstrap failed', error),
+        onLiveError: (error) => logNowPlayingWarn('live bootstrap failed', error),
+      })
       if (cancelled) return
 
       let cacheApplied = false
@@ -193,23 +172,22 @@ export default function useNowPlaying(): UseNowPlayingResult {
         cacheApplied = applyPayload(cacheStep.payload, { forceRoll: cacheStep.forceRoll })
       }
 
-      const liveStep = await fetchBootstrapLiveStep(fetchNowPlaying)
-      if (cancelled) return
-
-      if (liveStep) {
-        switch (liveBootstrapMode(cacheApplied, true)) {
-          case 'defer':
-            setPendingLivePayload(liveStep.payload)
-            break
-          case 'apply-immediately':
-            applyPayload(liveStep.payload, { forceRoll: liveStep.forceRoll })
-            schedulePoll()
-            break
-          case 'none':
-            break
+      const effects = resolveLiveBootstrapEffects(cacheApplied, liveStep)
+      switch (effects.kind) {
+        case 'defer-live':
+          setPendingLivePayload(effects.payload)
+          break
+        case 'apply-live-immediately':
+          applyPayload(effects.payload, { forceRoll: effects.forceRoll })
+          schedulePoll()
+          break
+        case 'schedule-poll':
+          if (!cancelled) schedulePoll()
+          break
+        default: {
+          const exhaustive: never = effects
+          return exhaustive
         }
-      } else if (!cancelled) {
-        schedulePoll()
       }
     })()
 
