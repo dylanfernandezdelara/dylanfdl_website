@@ -8,7 +8,11 @@ import {
   type TrackRollState,
   type TrackUpdate,
 } from '@/lib/nowPlaying/applyTrackUpdate'
-import { liveBootstrapMode, planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
+import {
+  fetchBootstrapCacheStep,
+  fetchBootstrapLiveStep,
+  liveBootstrapMode,
+} from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
 import { parseNowPlayingResponse } from '@/lib/spotify/parseNowPlayingResponse'
@@ -73,7 +77,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
   const [artist, setArtist] = useState('')
 
   const rollStateRef = useRef<TrackRollState>({ trackId: null, hasRolled: false })
-  const pendingLivePayloadRef = useRef<NowPlayingResponse | null>(null)
+  const [pendingLivePayload, setPendingLivePayload] = useState<NowPlayingResponse | null>(null)
   const beginPollingRef = useRef<(() => void) | null>(null)
 
   const {
@@ -181,20 +185,21 @@ export default function useNowPlaying(): UseNowPlayingResult {
     }
 
     void (async () => {
-      const steps = await planBootstrapNowPlaying(fetchNowPlaying)
+      const cacheStep = await fetchBootstrapCacheStep(fetchNowPlaying)
       if (cancelled) return
 
-      const [cacheStep, liveStep] = steps
       let cacheApplied = false
-
       if (cacheStep) {
         cacheApplied = applyPayload(cacheStep.payload, { forceRoll: cacheStep.forceRoll })
       }
 
+      const liveStep = await fetchBootstrapLiveStep(fetchNowPlaying)
+      if (cancelled) return
+
       if (liveStep) {
         switch (liveBootstrapMode(cacheApplied, true)) {
           case 'defer':
-            pendingLivePayloadRef.current = liveStep.payload
+            setPendingLivePayload(liveStep.payload)
             break
           case 'apply-immediately':
             applyPayload(liveStep.payload, { forceRoll: liveStep.forceRoll })
@@ -221,17 +226,16 @@ export default function useNowPlaying(): UseNowPlayingResult {
   useEffect(() => {
     if (isDevPreview) return undefined
 
-    const livePayload = pendingLivePayloadRef.current
-    if (!livePayload || !visible || !titleSlotMounted || !artistSlotMounted) {
+    if (!pendingLivePayload || !visible || !titleSlotMounted || !artistSlotMounted) {
       return undefined
     }
 
-    pendingLivePayloadRef.current = null
-    applyPayload(livePayload, { forceRoll: false })
+    applyPayload(pendingLivePayload, { forceRoll: false })
+    setPendingLivePayload(null)
     beginPollingRef.current?.()
 
     return undefined
-  }, [artistSlotMounted, isDevPreview, titleSlotMounted, visible])
+  }, [artistSlotMounted, isDevPreview, pendingLivePayload, titleSlotMounted, visible])
 
   return {
     visible,
