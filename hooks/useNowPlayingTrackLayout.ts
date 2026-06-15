@@ -13,6 +13,7 @@ export type UseNowPlayingTrackLayoutResult = {
 }
 
 export default function useNowPlayingTrackLayout(
+  label: string,
   title: string,
   artist: string,
   containerRef: RefObject<HTMLElement | null>,
@@ -23,13 +24,13 @@ export default function useNowPlayingTrackLayout(
   useLayoutEffect(() => {
     const container = containerRef.current
     const measure = measureRef.current
-    if (!container || !measure || title.length === 0) {
+    if (!container || !measure || title.length === 0 || label.length === 0) {
       return undefined
     }
 
     const updateLayout = () => {
       const containerWidth = container.getBoundingClientRect().width
-      setLayout(resolveNowPlayingTrackLayout(measure, containerWidth, title, artist))
+      setLayout(resolveNowPlayingTrackLayout(measure, containerWidth, label, title, artist))
     }
 
     updateLayout()
@@ -40,7 +41,7 @@ export default function useNowPlayingTrackLayout(
     return () => {
       observer.disconnect()
     }
-  }, [artist, containerRef, title])
+  }, [artist, containerRef, label, title])
 
   return { layout, measureRef }
 }

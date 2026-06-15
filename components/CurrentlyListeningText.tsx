@@ -14,27 +14,29 @@ import '@/src/styles/now-playing-text.css'
 export default function CurrentlyListeningText() {
   const { visible, label, trackUrl, title, artist, titleSlotRef, artistSlotRef } = useNowPlaying()
   const containerRef = useRef<HTMLSpanElement>(null)
-  const { layout, measureRef } = useNowPlayingTrackLayout(title, artist, containerRef)
+  const { layout, measureRef } = useNowPlayingTrackLayout(label, title, artist, containerRef)
 
   if (!visible || !trackUrl || title.length === 0) {
     return null
   }
 
-  const isCompact = layout === 'compact'
+  const isInline = layout === 'inline'
+  const isSplit = layout === 'split'
 
   return (
-    <span ref={containerRef} className="now-playing">
+    <span ref={containerRef} className="now-playing" data-layout={layout}>
       <span className="now-playing-label">{label}</span>
-      <span className="now-playing-track" data-layout={layout}>
+      {isInline ? ' ' : null}
+      <span className="now-playing-track">
         <ExternalLink
           href={trackUrl}
           noUnderline
-          allowWrap={!isCompact}
+          allowWrap={!isInline && !isSplit}
           className="now-playing-title"
         >
           <span ref={titleSlotRef} className={NOW_PLAYING_SLOT_CLASS} />
         </ExternalLink>
-        {isCompact ? ' ' : null}
+        {isInline || isSplit ? ' ' : null}
         <span className="now-playing-artist-line">
           <span className="now-playing-by">by </span>
           <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS} />

@@ -4,14 +4,15 @@
 
 .now-playing {
   display: block;
+  max-width: 100%;
 }
 
 .now-playing-label {
-  display: block;
+  display: inline;
 }
 
 .now-playing-track {
-  display: block;
+  display: inline;
   max-width: 100%;
 }
 
@@ -25,23 +26,36 @@
   display: inline;
 }
 
-.now-playing-track[data-layout='compact'] {
+.now-playing[data-layout='inline'] {
   white-space: nowrap;
 }
 
-.now-playing-track[data-layout='stacked'] {
+.now-playing[data-layout='split'] .now-playing-label {
+  display: block;
+}
+
+.now-playing[data-layout='split'] .now-playing-track {
+  display: block;
+  white-space: nowrap;
+}
+
+.now-playing[data-layout='stacked'] .now-playing-label {
+  display: block;
+}
+
+.now-playing[data-layout='stacked'] .now-playing-track {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.now-playing-track[data-layout='stacked'] .now-playing-title {
+.now-playing[data-layout='stacked'] .now-playing-title {
   display: block;
   white-space: normal;
   max-width: 100%;
 }
 
-.now-playing-track[data-layout='stacked'] .now-playing-artist-line {
+.now-playing[data-layout='stacked'] .now-playing-artist-line {
   display: block;
 }
 

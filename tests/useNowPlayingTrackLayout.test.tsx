@@ -6,8 +6,9 @@ import { useRef } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import useNowPlayingTrackLayout from '@/hooks/useNowPlayingTrackLayout'
-import { formatByArtistLine, formatFullTrackLine } from '@/lib/nowPlayingTrackLayout'
+import { formatByArtistLine, formatFullNowPlayingLine, formatFullTrackLine } from '@/lib/nowPlayingTrackLayout'
 import {
+  NOW_PLAYING_LABEL,
   NOW_PLAYING_LAYOUT_SCENARIOS,
   widthsForScenario,
 } from '@/tests/fixtures/nowPlayingLayoutScenarios'
@@ -35,18 +36,20 @@ function mockRect(width: number): DOMRect {
 }
 
 function TrackLayoutProbe({
+  label,
   title,
   artist,
   containerWidth,
   widthsByText,
 }: {
+  label: string
   title: string
   artist: string
   containerWidth: number
   widthsByText: Record<string, number>
 }) {
   const containerRef = useRef<HTMLSpanElement>(null)
-  const { layout, measureRef } = useNowPlayingTrackLayout(title, artist, containerRef)
+  const { layout, measureRef } = useNowPlayingTrackLayout(label, title, artist, containerRef)
 
   return (
     <span
@@ -89,6 +92,7 @@ describe('useNowPlayingTrackLayout', () => {
     async (scenario) => {
       render(
         <TrackLayoutProbe
+          label={scenario.label}
           title={scenario.title}
           artist={scenario.artist}
           containerWidth={scenario.containerWidth}
@@ -103,12 +107,15 @@ describe('useNowPlayingTrackLayout', () => {
   )
 
   it('recomputes when resize observer callback runs with new container width', async () => {
+    const label = NOW_PLAYING_LABEL
     const title = 'Instant Crush'
     const artist = 'Daft Punk'
     const widthsByText = {
+      [label]: 168,
       [title]: 118,
       [formatByArtistLine(artist)]: 108,
       [formatFullTrackLine(title, artist)]: 236,
+      [formatFullNowPlayingLine(label, title, artist)]: 416,
     }
 
     let containerWidth = 864
@@ -131,7 +138,7 @@ describe('useNowPlayingTrackLayout', () => {
 
     function ResizableProbe() {
       const containerRef = useRef<HTMLSpanElement>(null)
-      const { layout, measureRef } = useNowPlayingTrackLayout(title, artist, containerRef)
+      const { layout, measureRef } = useNowPlayingTrackLayout(label, title, artist, containerRef)
 
       return (
         <span
@@ -161,7 +168,7 @@ describe('useNowPlayingTrackLayout', () => {
     render(<ResizableProbe />)
 
     await waitFor(() => {
-      expect(screen.getByTestId('layout').textContent).toBe('compact')
+      expect(screen.getByTestId('layout').textContent).toBe('inline')
     })
 
     containerWidth = 200
