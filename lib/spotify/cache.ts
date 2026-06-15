@@ -1,6 +1,6 @@
 import { Redis } from '@upstash/redis'
 
-import { SanitizedRedisError } from '../sanitizedRedisError.js'
+import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError.js'
 
 import type { NowPlayingCache } from './types'
 
@@ -28,7 +28,7 @@ async function redisGet<T>(key: string, context: string): Promise<T | null> {
   try {
     return await getRedis().get<T>(key)
   } catch {
-    throw new SanitizedRedisError(context)
+    throw new SanitizedInfrastructureError(context)
   }
 }
 
@@ -36,7 +36,7 @@ async function redisSet(key: string, value: unknown, context: string): Promise<v
   try {
     await getRedis().set(key, value)
   } catch {
-    throw new SanitizedRedisError(context)
+    throw new SanitizedInfrastructureError(context)
   }
 }
 

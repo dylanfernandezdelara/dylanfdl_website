@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { computeTrackUpdate, getNowPlayingLabel } from '@/lib/nowPlaying/applyTrackUpdate'
 import { liveBootstrapMode, planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
+import * as logNowPlaying from '@/lib/nowPlaying/logNowPlaying'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 const trackPayload: NowPlayingResponse = {
@@ -79,7 +80,7 @@ describe('computeTrackUpdate', () => {
 
 describe('planBootstrapNowPlaying', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    vi.spyOn(logNowPlaying, 'logNowPlayingWarn').mockImplementation(() => undefined)
   })
 
   it('applies cache first and then live with a forced update roll', async () => {
@@ -98,14 +99,16 @@ describe('planBootstrapNowPlaying', () => {
 
   it('falls back to live-only bootstrap when cache fetch fails', async () => {
     const live: NowPlayingResponse = { ...trackPayload, source: 'live' }
+    const cacheError = new Error('cache miss')
     const fetchNowPlaying = vi
       .fn()
-      .mockRejectedValueOnce(new Error('cache miss'))
+      .mockRejectedValueOnce(cacheError)
       .mockResolvedValueOnce(live)
 
     await expect(planBootstrapNowPlaying(fetchNowPlaying)).resolves.toEqual([
       { payload: live, forceRoll: true },
     ])
+    expect(logNowPlaying.logNowPlayingWarn).toHaveBeenCalledWith('cache bootstrap failed', cacheError)
   })
 })
 

@@ -1,5 +1,5 @@
 import { extractErrorMessage } from '@/lib/extractErrorMessage'
-import { isSanitizedRedisError } from '@/lib/sanitizedRedisError'
+import { SanitizedInfrastructureError } from '@/lib/sanitizedInfrastructureError'
 
 function logNowPlaying(
   scope: string,
@@ -7,7 +7,12 @@ function logNowPlaying(
   log: (message: string, ...details: unknown[]) => void,
 ): void {
   const message = extractErrorMessage(error)
-  if (error instanceof Error && !isSanitizedRedisError(error)) {
+  if (error instanceof SanitizedInfrastructureError) {
+    log(`[now-playing] ${scope}:`, message)
+    return
+  }
+
+  if (error instanceof Error) {
     log(`[now-playing] ${scope}:`, message, error)
     return
   }

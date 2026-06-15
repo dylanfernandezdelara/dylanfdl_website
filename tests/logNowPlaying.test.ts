@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { logNowPlayingError, logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
-import { SanitizedRedisError } from '@/lib/sanitizedRedisError'
+import { SanitizedInfrastructureError } from '@/lib/sanitizedInfrastructureError'
 
 describe('logNowPlaying', () => {
   beforeEach(() => {
@@ -16,8 +16,15 @@ describe('logNowPlaying', () => {
     expect(console.warn).toHaveBeenCalledWith('[now-playing] poll refresh failed:', 'Failed to fetch', error)
   })
 
-  it('logs only the message for sanitized Redis failures', () => {
-    const error = new SanitizedRedisError('read now-playing cache')
+  it('logs message and error object for ordinary error-level failures', () => {
+    const error = new TypeError('Failed to fetch')
+    logNowPlayingError('request failed', error)
+
+    expect(console.error).toHaveBeenCalledWith('[now-playing] request failed:', 'Failed to fetch', error)
+  })
+
+  it('logs only the message for sanitized infrastructure failures', () => {
+    const error = new SanitizedInfrastructureError('read now-playing cache')
     logNowPlayingWarn('live refresh failed', error)
 
     expect(console.warn).toHaveBeenCalledWith(

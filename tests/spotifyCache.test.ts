@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { SanitizedInfrastructureError } from '@/lib/sanitizedInfrastructureError'
+
 const { mockGet, mockSet } = vi.hoisted(() => ({
   mockGet: vi.fn(),
   mockSet: vi.fn(),
@@ -32,7 +34,7 @@ async function expectSanitizedRedisFailure(
   expectedMessage: string,
 ): Promise<void> {
   const error = await operation().catch((caught) => caught)
-  expect(error).toBeInstanceOf(Error)
+  expect(error).toBeInstanceOf(SanitizedInfrastructureError)
   expect((error as Error).message).toBe(expectedMessage)
   expect((error as Error).message).not.toContain(SECRET_TOKEN)
 }
