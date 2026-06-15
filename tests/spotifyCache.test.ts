@@ -31,16 +31,12 @@ async function expectSanitizedRedisFailure(
   operation: () => Promise<unknown>,
   expectedMessage: string,
 ): Promise<void> {
-  let caught: Error | undefined
-  try {
-    await operation()
-  } catch (error) {
-    caught = error as Error
-  }
-
-  expect(caught).toBeInstanceOf(Error)
-  expect(caught!.message).toBe(expectedMessage)
-  expect(caught!.message).not.toContain(SECRET_TOKEN)
+  await expect(operation()).rejects.toSatisfy((error: unknown) => {
+    expect(error).toBeInstanceOf(Error)
+    expect((error as Error).message).toBe(expectedMessage)
+    expect((error as Error).message).not.toContain(SECRET_TOKEN)
+    return true
+  })
 }
 
 describe('spotify cache redis error sanitization', () => {

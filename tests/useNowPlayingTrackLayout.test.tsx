@@ -7,10 +7,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import useNowPlayingTrackLayout from '@/hooks/useNowPlayingTrackLayout'
 import { formatByArtistLine, formatFullNowPlayingLine, formatFullTrackLine } from '@/lib/nowPlayingTrackLayout'
+import { attachMockTextMeasure } from '@/tests/fixtures/mockTextMeasure'
 import {
   NOW_PLAYING_LABEL,
   NOW_PLAYING_LAYOUT_SCENARIOS,
-  attachMockTextMeasure,
   widthsForScenario,
 } from '@/tests/fixtures/nowPlayingLayoutScenarios'
 

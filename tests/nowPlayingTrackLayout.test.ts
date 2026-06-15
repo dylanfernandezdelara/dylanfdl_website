@@ -13,8 +13,8 @@ import {
   pickNowPlayingTrackLayout,
   resolveNowPlayingTrackLayout,
 } from '@/lib/nowPlayingTrackLayout'
+import { createMockTextMeasure } from '@/tests/fixtures/mockTextMeasure'
 import {
-  createMockTextMeasure,
   NOW_PLAYING_CONTAINER_WIDTHS,
   NOW_PLAYING_LABEL,
   NOW_PLAYING_LAYOUT_SCENARIOS,

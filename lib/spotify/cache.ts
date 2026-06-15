@@ -22,33 +22,28 @@ export function getRedis(): Redis {
   return redisClient
 }
 
-export async function getNowPlayingCache(): Promise<NowPlayingCache | null> {
-  const redis = getRedis()
-  return withSanitizedRedisError('read now-playing cache', () =>
-    redis.get<NowPlayingCache>(NOW_PLAYING_CACHE_KEY),
-  )
-}
-
-function sanitizeRedisError(context: string): Error {
-  return new Error(`Failed to ${context}`)
-}
-
-async function withSanitizedRedisError<T>(
-  context: string,
-  operation: () => Promise<T>,
-): Promise<T> {
+async function redisGet<T>(key: string, context: string): Promise<T | null> {
   try {
-    return await operation()
+    return await getRedis().get<T>(key)
   } catch {
-    throw sanitizeRedisError(context)
+    throw new Error(`Failed to ${context}`)
   }
 }
 
+async function redisSet(key: string, value: unknown, context: string): Promise<void> {
+  try {
+    await getRedis().set(key, value)
+  } catch {
+    throw new Error(`Failed to ${context}`)
+  }
+}
+
+export async function getNowPlayingCache(): Promise<NowPlayingCache | null> {
+  return redisGet<NowPlayingCache>(NOW_PLAYING_CACHE_KEY, 'read now-playing cache')
+}
+
 export async function setNowPlayingCache(cache: NowPlayingCache): Promise<void> {
-  const redis = getRedis()
-  await withSanitizedRedisError('cache now-playing track', () =>
-    redis.set(NOW_PLAYING_CACHE_KEY, cache),
-  )
+  await redisSet(NOW_PLAYING_CACHE_KEY, cache, 'cache now-playing track')
 }
 
 type AccessTokenCache = {
@@ -57,9 +52,9 @@ type AccessTokenCache = {
 }
 
 export async function getCachedAccessToken(): Promise<string | null> {
-  const redis = getRedis()
-  const cached = await withSanitizedRedisError('read Spotify access token cache', () =>
-    redis.get<AccessTokenCache>(ACCESS_TOKEN_CACHE_KEY),
+  const cached = await redisGet<AccessTokenCache>(
+    ACCESS_TOKEN_CACHE_KEY,
+    'read Spotify access token cache',
   )
   if (!cached) return null
   if (Date.now() >= cached.expiresAt - 60_000) return null
@@ -67,27 +62,22 @@ export async function getCachedAccessToken(): Promise<string | null> {
 }
 
 export async function setCachedAccessToken(token: string, expiresInSeconds: number): Promise<void> {
-  const redis = getRedis()
-  await withSanitizedRedisError('cache Spotify access token', () =>
-    redis.set(ACCESS_TOKEN_CACHE_KEY, {
+  await redisSet(
+    ACCESS_TOKEN_CACHE_KEY,
+    {
       token,
       expiresAt: Date.now() + expiresInSeconds * 1000,
-    }),
+    },
+    'cache Spotify access token',
   )
 }
 
 export async function shouldSkipLiveRefresh(): Promise<boolean> {
-  const redis = getRedis()
-  const lastRefresh = await withSanitizedRedisError('read live refresh debounce', () =>
-    redis.get<number>(LIVE_DEBOUNCE_KEY),
-  )
+  const lastRefresh = await redisGet<number>(LIVE_DEBOUNCE_KEY, 'read live refresh debounce')
   if (!lastRefresh) return false
   return Date.now() - lastRefresh < LIVE_DEBOUNCE_MS
 }
 
 export async function markLiveRefresh(): Promise<void> {
-  const redis = getRedis()
-  await withSanitizedRedisError('mark live refresh debounce', () =>
-    redis.set(LIVE_DEBOUNCE_KEY, Date.now()),
-  )
+  await redisSet(LIVE_DEBOUNCE_KEY, Date.now(), 'mark live refresh debounce')
 }
