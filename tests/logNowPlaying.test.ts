@@ -65,7 +65,7 @@ describe('logNowPlaying', () => {
     expect(console.error).toHaveBeenCalledWith('[now-playing] request failed:', 'offline')
   })
 
-  it('logs only the message for duck-typed suppressed errors', () => {
+  it('logs only the message for suppressed Error objects', () => {
     const error = Object.assign(new Error('safe failure'), { logSuppressed: true as const })
     logNowPlayingWarn('live refresh failed', error)
 

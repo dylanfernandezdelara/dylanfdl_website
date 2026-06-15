@@ -1,6 +1,28 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import { parseSpotifyTrack, toNowPlayingCache } from '@/lib/spotify/currentlyPlaying'
+import { fetchCurrentlyPlaying, parseSpotifyTrack, toNowPlayingCache } from '@/lib/spotify/currentlyPlaying'
+import { SanitizedInfrastructureError } from '@/lib/sanitizedInfrastructureError'
+
+describe('fetchCurrentlyPlaying', () => {
+  it('sanitizes non-OK Spotify API failures', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 503,
+        json: async () => ({ error: { message: 'SECRET_TOKEN_VALUE' } }),
+      }),
+    )
+
+    const error = await fetchCurrentlyPlaying('access-token').catch((caught) => caught)
+
+    expect(error).toBeInstanceOf(SanitizedInfrastructureError)
+    expect((error as Error).message).toBe('Failed to fetch Spotify currently-playing (503)')
+    expect((error as Error).message).not.toContain('SECRET_TOKEN_VALUE')
+
+    vi.unstubAllGlobals()
+  })
+})
 
 describe('parseSpotifyTrack', () => {
   it('maps Spotify track fields into cached track shape', () => {

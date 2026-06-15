@@ -1,3 +1,5 @@
+import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError.js'
+
 import type { CachedTrack, NowPlayingCache } from './types'
 
 type SpotifyArtist = { name: string }
@@ -51,8 +53,6 @@ export function toNowPlayingCache(track: CachedTrack): NowPlayingCache {
     updatedAt: new Date().toISOString(),
   }
 }
-
-import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError.js'
 
 export async function fetchCurrentlyPlaying(
   accessToken: string,
