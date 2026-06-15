@@ -40,6 +40,24 @@
   white-space: nowrap;
 }
 
+.now-playing[data-layout='prefix-split'] {
+  white-space: nowrap;
+}
+
+.now-playing[data-layout='prefix-split'] .now-playing-track {
+  display: inline;
+}
+
+.now-playing[data-layout='prefix-split'] .now-playing-title {
+  display: inline;
+  white-space: nowrap;
+}
+
+.now-playing[data-layout='prefix-split'] .now-playing-artist-line {
+  display: block;
+  white-space: normal;
+}
+
 .now-playing[data-layout='stacked'] .now-playing-label {
   display: block;
 }
@@ -71,6 +89,11 @@
   pointer-events: none;
   visibility: hidden;
   font-synthesis: none;
+}
+
+.now-playing-prefix-row-measure .now-playing-label,
+.now-playing-prefix-row-measure .now-playing-slot {
+  display: inline;
 }
 
 .now-playing-slot,

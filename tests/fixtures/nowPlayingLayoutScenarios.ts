@@ -1,5 +1,9 @@
 import type { NowPlayingTrackLayout } from '@/lib/nowPlayingTrackLayout'
-import { formatFullTrackLine } from '@/lib/nowPlayingTrackLayout'
+import {
+  formatByArtistLineWithPeriod,
+  formatFullTrackLine,
+  formatLabelTitleLine,
+} from '@/lib/nowPlayingTrackLayout'
 
 export const NOW_PLAYING_LABEL = 'Recently listened to'
 
@@ -19,6 +23,8 @@ export type NowPlayingLayoutScenario = {
   containerWidth: number
   labelWidth: number
   titleWidth: number
+  labelTitleWidth: number
+  /** Width of `by ${artist}.` including the trailing period. */
   byArtistWidth: number
   trackLineWidth: number
   fullLineWidth: number
@@ -36,7 +42,8 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
     containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.desktop,
     labelWidth: 168,
     titleWidth: 118,
-    byArtistWidth: 108,
+    labelTitleWidth: 290,
+    byArtistWidth: 112,
     trackLineWidth: 236,
     fullLineWidth: 416,
     expected: 'inline',
@@ -51,7 +58,8 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
     containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.desktop,
     labelWidth: 168,
     titleWidth: 102,
-    byArtistWidth: 72,
+    labelTitleWidth: 274,
+    byArtistWidth: 76,
     trackLineWidth: 186,
     fullLineWidth: 366,
     expected: 'inline',
@@ -66,7 +74,8 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
     containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.desktop,
     labelWidth: 168,
     titleWidth: 188,
-    byArtistWidth: 92,
+    labelTitleWidth: 360,
+    byArtistWidth: 96,
     trackLineWidth: 290,
     fullLineWidth: 470,
     expected: 'inline',
@@ -81,7 +90,8 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
     containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.tablet,
     labelWidth: 168,
     titleWidth: 72,
-    byArtistWidth: 142,
+    labelTitleWidth: 244,
+    byArtistWidth: 146,
     trackLineWidth: 224,
     fullLineWidth: 404,
     expected: 'inline',
@@ -96,11 +106,28 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
     containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.mobile,
     labelWidth: 168,
     titleWidth: 72,
-    byArtistWidth: 142,
+    labelTitleWidth: 244,
+    byArtistWidth: 146,
     trackLineWidth: 224,
     fullLineWidth: 404,
-    expected: 'split',
-    reason: 'track fits on mobile but the label must move to its own row',
+    expected: 'prefix-split',
+    reason: 'mobile prefers label and title together when both two-line options fit',
+  },
+  {
+    id: 'mobile-olivia-rodrigo-track',
+    viewport: 'mobile',
+    label: NOW_PLAYING_LABEL,
+    title: "what's wrong with me",
+    artist: 'Olivia Rodrigo, Robert Smith',
+    containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.mobile,
+    labelWidth: 168,
+    titleWidth: 156,
+    labelTitleWidth: 328,
+    byArtistWidth: 240,
+    trackLineWidth: 404,
+    fullLineWidth: 584,
+    expected: 'prefix-split',
+    reason: 'featured-artist track fits as label+title then by-artist on mobile',
   },
   {
     id: 'mobile-ariana-long-title',
@@ -111,7 +138,8 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
     containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.mobile,
     labelWidth: 168,
     titleWidth: 332,
-    byArtistWidth: 128,
+    labelTitleWidth: 504,
+    byArtistWidth: 132,
     trackLineWidth: 472,
     fullLineWidth: 652,
     expected: 'stacked',
@@ -126,7 +154,8 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
     containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.mobile,
     labelWidth: 168,
     titleWidth: 372,
-    byArtistWidth: 128,
+    labelTitleWidth: 544,
+    byArtistWidth: 132,
     trackLineWidth: 512,
     fullLineWidth: 692,
     expected: 'stacked',
@@ -141,11 +170,28 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
     containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.mobile,
     labelWidth: 168,
     titleWidth: 118,
-    byArtistWidth: 248,
+    labelTitleWidth: 290,
+    byArtistWidth: 252,
     trackLineWidth: 378,
     fullLineWidth: 558,
-    expected: 'stacked',
-    reason: 'by-artist segment is wider than mobile and must sit on its own row',
+    expected: 'prefix-split',
+    reason: 'long artist list still fits when label and title share the first row',
+  },
+  {
+    id: 'mobile-long-title-split',
+    viewport: 'mobile',
+    label: NOW_PLAYING_LABEL,
+    title: 'A Song Title That Is Too Long For Label Plus Title',
+    artist: 'Short Name',
+    containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.mobile,
+    labelWidth: 168,
+    titleWidth: 192,
+    labelTitleWidth: 364,
+    byArtistWidth: 96,
+    trackLineWidth: 292,
+    fullLineWidth: 472,
+    expected: 'split',
+    reason: 'label and title cannot share a row, but title and artist can',
   },
   {
     id: 'mobile-boundary-exact-fit',
@@ -156,11 +202,12 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
     containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.mobile,
     labelWidth: 168,
     titleWidth: 118,
-    byArtistWidth: 108,
+    labelTitleWidth: 290,
+    byArtistWidth: 112,
     trackLineWidth: 358,
     fullLineWidth: 538,
-    expected: 'split',
-    reason: 'track that exactly matches container width still splits the label',
+    expected: 'prefix-split',
+    reason: 'track that exactly matches container width still uses prefix-split',
   },
   {
     id: 'mobile-boundary-one-pixel-over',
@@ -171,11 +218,28 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
     containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.mobile,
     labelWidth: 168,
     titleWidth: 118,
-    byArtistWidth: 108,
+    labelTitleWidth: 290,
+    byArtistWidth: 112,
+    trackLineWidth: 359,
+    fullLineWidth: 539,
+    expected: 'prefix-split',
+    reason: 'track one pixel wider than container still fits as prefix-split',
+  },
+  {
+    id: 'mobile-artist-period-boundary',
+    viewport: 'mobile',
+    label: NOW_PLAYING_LABEL,
+    title: 'Instant Crush',
+    artist: 'Daft Punk',
+    containerWidth: NOW_PLAYING_CONTAINER_WIDTHS.mobile,
+    labelWidth: 168,
+    titleWidth: 118,
+    labelTitleWidth: 290,
+    byArtistWidth: 359,
     trackLineWidth: 359,
     fullLineWidth: 539,
     expected: 'stacked',
-    reason: 'track one pixel wider than container must stack',
+    reason: 'artist row including trailing period exceeds mobile width',
   },
 ]
 
@@ -184,6 +248,14 @@ export function labelWidthsForScenario(
 ): Record<string, number> {
   return {
     [scenario.label]: scenario.labelWidth,
+  }
+}
+
+export function prefixRowWidthsForScenario(
+  scenario: Pick<NowPlayingLayoutScenario, 'label' | 'title' | 'labelTitleWidth'>,
+): Record<string, number> {
+  return {
+    [formatLabelTitleLine(scenario.label, scenario.title)]: scenario.labelTitleWidth,
   }
 }
 
@@ -198,7 +270,7 @@ export function trackWidthsForScenario(
 
   return {
     [scenario.title]: scenario.titleWidth,
-    [`by ${scenario.artist}`]: scenario.byArtistWidth,
+    [formatByArtistLineWithPeriod(scenario.artist)]: scenario.byArtistWidth,
     [trackLine]: scenario.trackLineWidth,
     [trackSuffix]: scenario.fullLineWidth - scenario.labelWidth,
   }

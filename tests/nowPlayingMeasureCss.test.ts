@@ -26,6 +26,23 @@ describe('now-playing production measure CSS', () => {
     expect(nowPlayingCss).toContain('display: block')
   })
 
+  it('keeps label and title together with artist on the next row for prefix-split', () => {
+    expect(nowPlayingCss).toContain(".now-playing[data-layout='prefix-split']")
+    expect(nowPlayingCss).toContain(".now-playing[data-layout='prefix-split'] {")
+    expect(nowPlayingCss).toMatch(/\.now-playing\[data-layout='prefix-split'\][^{]*\{[^}]*white-space:\s*nowrap/s)
+    expect(nowPlayingCss).toContain(".now-playing[data-layout='prefix-split'] .now-playing-title")
+    expect(nowPlayingCss).toMatch(
+      /\.now-playing\[data-layout='prefix-split'\] \.now-playing-title[^{]*\{[^}]*white-space:\s*nowrap/s,
+    )
+    expect(nowPlayingCss).toContain(".now-playing[data-layout='prefix-split'] .now-playing-artist-line")
+    expect(nowPlayingCss).toContain('display: block')
+  })
+
+  it('mirrors prefix-split row typography in the hidden prefix-row measure', () => {
+    expect(nowPlayingCss).toContain('.now-playing-prefix-row-measure .now-playing-label')
+    expect(nowPlayingCss).toContain('.now-playing-prefix-row-measure .now-playing-slot')
+  })
+
   it('forces stacked title and artist onto separate rows', () => {
     expect(nowPlayingCss).toContain(".now-playing[data-layout='stacked']")
     expect(nowPlayingCss).toContain('flex-direction: column')

@@ -6,12 +6,21 @@ import { useRef } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import useNowPlayingTrackLayout from '@/hooks/useNowPlayingTrackLayout'
-import { formatByArtistLine, formatFullTrackLine } from '@/lib/nowPlayingTrackLayout'
-import { attachMockTextMeasure } from '@/tests/fixtures/mockTextMeasure'
+import {
+  formatByArtistLineWithPeriod,
+  formatFullTrackLine,
+  formatLabelTitleLine,
+} from '@/lib/nowPlayingTrackLayout'
+import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlayingPresentation'
+import {
+  attachMockPrefixRowMeasure,
+  attachMockTextMeasure,
+} from '@/tests/fixtures/mockTextMeasure'
 import {
   NOW_PLAYING_LABEL,
   NOW_PLAYING_LAYOUT_SCENARIOS,
   labelWidthsForScenario,
+  prefixRowWidthsForScenario,
   trackWidthsForScenario,
 } from '@/tests/fixtures/nowPlayingLayoutScenarios'
 
@@ -44,6 +53,7 @@ function TrackLayoutProbe({
   containerWidth,
   labelWidthsByText,
   trackWidthsByText,
+  prefixRowWidthsByText,
 }: {
   label: string
   title: string
@@ -51,14 +61,11 @@ function TrackLayoutProbe({
   containerWidth: number
   labelWidthsByText: Record<string, number>
   trackWidthsByText: Record<string, number>
+  prefixRowWidthsByText: Record<string, number>
 }) {
   const containerRef = useRef<HTMLSpanElement>(null)
-  const { layout, labelMeasureRef, trackMeasureRef } = useNowPlayingTrackLayout(
-    label,
-    title,
-    artist,
-    containerRef,
-  )
+  const { layout, labelMeasureRef, trackMeasureRef, prefixRowMeasureRef } =
+    useNowPlayingTrackLayout(label, title, artist, containerRef)
 
   return (
     <span
@@ -85,6 +92,19 @@ function TrackLayoutProbe({
           }
         }}
       />
+      <span
+        ref={(node) => {
+          prefixRowMeasureRef.current = node
+          if (node) {
+            attachMockPrefixRowMeasure(node, prefixRowWidthsByText)
+          }
+        }}
+        className="now-playing-prefix-row-measure"
+      >
+        <span className="now-playing-label" />
+        {' '}
+        <span className={NOW_PLAYING_SLOT_CLASS} />
+      </span>
       <span data-testid="layout">{layout}</span>
     </span>
   )
@@ -108,6 +128,7 @@ describe('useNowPlayingTrackLayout', () => {
           containerWidth={scenario.containerWidth}
           labelWidthsByText={labelWidthsForScenario(scenario)}
           trackWidthsByText={trackWidthsForScenario(scenario)}
+          prefixRowWidthsByText={prefixRowWidthsForScenario(scenario)}
         />,
       )
 
@@ -126,9 +147,12 @@ describe('useNowPlayingTrackLayout', () => {
     const trackSuffix = ` ${trackLine}.`
     const trackWidthsByText = {
       [title]: 118,
-      [formatByArtistLine(artist)]: 108,
+      [formatByArtistLineWithPeriod(artist)]: 112,
       [trackLine]: 236,
       [trackSuffix]: 248,
+    }
+    const prefixRowWidthsByText = {
+      [formatLabelTitleLine(label, title)]: 290,
     }
 
     let containerWidth = 864
@@ -151,12 +175,8 @@ describe('useNowPlayingTrackLayout', () => {
 
     function ResizableProbe() {
       const containerRef = useRef<HTMLSpanElement>(null)
-      const { layout, labelMeasureRef, trackMeasureRef } = useNowPlayingTrackLayout(
-        label,
-        title,
-        artist,
-        containerRef,
-      )
+      const { layout, labelMeasureRef, trackMeasureRef, prefixRowMeasureRef } =
+        useNowPlayingTrackLayout(label, title, artist, containerRef)
 
       return (
         <span
@@ -183,6 +203,19 @@ describe('useNowPlayingTrackLayout', () => {
               }
             }}
           />
+          <span
+            ref={(node) => {
+              prefixRowMeasureRef.current = node
+              if (node) {
+                attachMockPrefixRowMeasure(node, prefixRowWidthsByText)
+              }
+            }}
+            className="now-playing-prefix-row-measure"
+          >
+            <span className="now-playing-label" />
+            {' '}
+            <span className={NOW_PLAYING_SLOT_CLASS} />
+          </span>
           <span data-testid="layout">{layout}</span>
         </span>
       )
