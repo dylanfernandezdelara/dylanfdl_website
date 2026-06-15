@@ -7,8 +7,8 @@ export function isLogSuppressedError(error: unknown): error is LogSuppressedErro
 export class SanitizedInfrastructureError extends Error implements LogSuppressedError {
   readonly logSuppressed = true as const
 
-  constructor(context: string) {
-    super(`Failed to ${context}`)
+  constructor(context: string, options?: { cause?: unknown }) {
+    super(`Failed to ${context}`, options)
     this.name = 'SanitizedInfrastructureError'
   }
 }

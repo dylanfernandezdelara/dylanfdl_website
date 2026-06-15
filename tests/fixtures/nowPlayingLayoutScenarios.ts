@@ -185,12 +185,41 @@ export function widthsForScenario(
     'label' | 'title' | 'artist' | 'labelWidth' | 'titleWidth' | 'byArtistWidth' | 'trackLineWidth' | 'fullLineWidth'
   >,
 ): Record<string, number> {
+  const trackLine = formatFullTrackLine(scenario.title, scenario.artist)
+  const trackSuffix = ` ${trackLine}.`
+
   return {
     [scenario.label]: scenario.labelWidth,
     [scenario.title]: scenario.titleWidth,
     [`by ${scenario.artist}`]: scenario.byArtistWidth,
-    [formatFullTrackLine(scenario.title, scenario.artist)]: scenario.trackLineWidth,
+    [trackLine]: scenario.trackLineWidth,
+    [trackSuffix]: scenario.fullLineWidth - scenario.labelWidth,
     [formatFullNowPlayingLine(scenario.label, scenario.title, scenario.artist)]:
       scenario.fullLineWidth,
+  }
+}
+
+export function labelWidthsForScenario(
+  scenario: Pick<NowPlayingLayoutScenario, 'label' | 'labelWidth'>,
+): Record<string, number> {
+  return {
+    [scenario.label]: scenario.labelWidth,
+  }
+}
+
+export function trackWidthsForScenario(
+  scenario: Pick<
+    NowPlayingLayoutScenario,
+    'title' | 'artist' | 'titleWidth' | 'byArtistWidth' | 'trackLineWidth' | 'fullLineWidth' | 'labelWidth'
+  >,
+): Record<string, number> {
+  const trackLine = formatFullTrackLine(scenario.title, scenario.artist)
+  const trackSuffix = ` ${trackLine}.`
+
+  return {
+    [scenario.title]: scenario.titleWidth,
+    [`by ${scenario.artist}`]: scenario.byArtistWidth,
+    [trackLine]: scenario.trackLineWidth,
+    [trackSuffix]: scenario.fullLineWidth - scenario.labelWidth,
   }
 }

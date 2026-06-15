@@ -6,17 +6,24 @@ export type BootstrapApplyStep = {
   forceRoll: boolean
 }
 
-export type LiveBootstrapMode = 'defer' | 'apply-immediately' | 'none'
+export type LiveBootstrapAction =
+  | { kind: 'none' }
+  | { kind: 'defer'; step: BootstrapApplyStep }
+  | { kind: 'apply-immediately'; step: BootstrapApplyStep }
 
-export function liveBootstrapMode(
+export function planLiveBootstrapAction(
   cacheApplied: boolean,
-  hasLiveStep: boolean,
-): LiveBootstrapMode {
-  if (!hasLiveStep) {
-    return 'none'
+  liveStep: BootstrapApplyStep | null,
+): LiveBootstrapAction {
+  if (!liveStep) {
+    return { kind: 'none' }
   }
 
-  return cacheApplied ? 'defer' : 'apply-immediately'
+  if (cacheApplied) {
+    return { kind: 'defer', step: liveStep }
+  }
+
+  return { kind: 'apply-immediately', step: liveStep }
 }
 
 export async function fetchBootstrapCacheStep(
@@ -43,7 +50,6 @@ export async function fetchBootstrapLiveStep(
   }
 }
 
-/** Returns cache then live steps in order. Used by tests; production applies cache before awaiting live. */
 export async function planBootstrapNowPlaying(
   fetchNowPlaying: (live: boolean) => Promise<NowPlayingResponse>,
 ): Promise<BootstrapApplyStep[]> {

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { computeTrackUpdate, getNowPlayingLabel } from '@/lib/nowPlaying/applyTrackUpdate'
-import { liveBootstrapMode, planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
+import { planBootstrapNowPlaying, planLiveBootstrapAction } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import * as logNowPlaying from '@/lib/nowPlaying/logNowPlaying'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
@@ -126,17 +126,22 @@ describe('planBootstrapNowPlaying', () => {
   })
 })
 
-describe('liveBootstrapMode', () => {
+describe('planLiveBootstrapAction', () => {
+  const liveStep = { payload: trackPayload, forceRoll: true }
+
   it('defers live bootstrap only when cache already displayed a track', () => {
-    expect(liveBootstrapMode(true, true)).toBe('defer')
+    expect(planLiveBootstrapAction(true, liveStep)).toEqual({ kind: 'defer', step: liveStep })
   })
 
   it('applies live immediately when cache did not display a track', () => {
-    expect(liveBootstrapMode(false, true)).toBe('apply-immediately')
+    expect(planLiveBootstrapAction(false, liveStep)).toEqual({
+      kind: 'apply-immediately',
+      step: liveStep,
+    })
   })
 
   it('skips live handling when there is no live step', () => {
-    expect(liveBootstrapMode(true, false)).toBe('none')
-    expect(liveBootstrapMode(false, false)).toBe('none')
+    expect(planLiveBootstrapAction(true, null)).toEqual({ kind: 'none' })
+    expect(planLiveBootstrapAction(false, null)).toEqual({ kind: 'none' })
   })
 })

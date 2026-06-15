@@ -28,8 +28,8 @@ async function redisGet<T>(key: string, context: string): Promise<T | null> {
   const redis = getRedis()
   try {
     return await redis.get<T>(key)
-  } catch {
-    throw new SanitizedInfrastructureError(context)
+  } catch (error) {
+    throw new SanitizedInfrastructureError(context, { cause: error })
   }
 }
 
@@ -37,8 +37,8 @@ async function redisSet(key: string, value: unknown, context: string): Promise<v
   const redis = getRedis()
   try {
     await redis.set(key, value)
-  } catch {
-    throw new SanitizedInfrastructureError(context)
+  } catch (error) {
+    throw new SanitizedInfrastructureError(context, { cause: error })
   }
 }
 

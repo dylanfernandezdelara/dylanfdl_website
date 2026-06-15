@@ -53,19 +53,24 @@ export function measureTextWidth(measure: TextWidthMeasureElement, text: string)
 }
 
 export function resolveNowPlayingTrackLayout(
-  measure: TextWidthMeasureElement,
+  labelMeasure: TextWidthMeasureElement,
+  trackMeasure: TextWidthMeasureElement,
   containerWidth: number,
   label: string,
   title: string,
   artist: string,
 ): NowPlayingTrackLayout {
+  const labelWidth = measureTextWidth(labelMeasure, label)
+  const trackLineWidth = measureTextWidth(trackMeasure, formatFullTrackLine(title, artist))
+  const trackSuffix = ` ${formatFullTrackLine(title, artist)}.`
+
   return pickNowPlayingTrackLayout({
     containerWidth,
-    labelWidth: measureTextWidth(measure, label),
-    titleWidth: measureTextWidth(measure, title),
-    byArtistWidth: measureTextWidth(measure, formatByArtistLine(artist)),
-    trackLineWidth: measureTextWidth(measure, formatFullTrackLine(title, artist)),
-    fullLineWidth: measureTextWidth(measure, formatFullNowPlayingLine(label, title, artist)),
+    labelWidth,
+    titleWidth: measureTextWidth(trackMeasure, title),
+    byArtistWidth: measureTextWidth(trackMeasure, formatByArtistLine(artist)),
+    trackLineWidth,
+    fullLineWidth: labelWidth + measureTextWidth(trackMeasure, trackSuffix),
   })
 }
 

@@ -11,6 +11,7 @@ import {
 import {
   fetchBootstrapCacheStep,
   fetchBootstrapLiveStep,
+  planLiveBootstrapAction,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
@@ -200,15 +201,18 @@ export default function useNowPlaying(): UseNowPlayingResult {
       const liveStep = await fetchBootstrapLiveStep(fetchNowPlaying)
       if (cancelled) return
 
-      if (liveStep) {
-        if (cacheApplied) {
-          setPendingLivePayload(liveStep.payload)
-        } else {
-          applyPayload(liveStep.payload, { forceRoll: liveStep.forceRoll })
+      const action = planLiveBootstrapAction(cacheApplied, liveStep)
+      switch (action.kind) {
+        case 'defer':
+          setPendingLivePayload(action.step.payload)
+          break
+        case 'apply-immediately':
+          applyPayload(action.step.payload, { forceRoll: action.step.forceRoll })
           schedulePoll()
-        }
-      } else if (!cancelled) {
-        schedulePoll()
+          break
+        case 'none':
+          if (!cancelled) schedulePoll()
+          break
       }
     })()
 
