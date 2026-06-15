@@ -9,6 +9,7 @@ import {
   formatFullNowPlayingLine,
   formatFullTrackLine,
   fitsTrackOnOneLine,
+  measureTextWidth,
   pickNowPlayingTrackLayout,
   resolveNowPlayingTrackLayout,
 } from '@/lib/nowPlayingTrackLayout'
@@ -21,6 +22,28 @@ import {
 } from '@/tests/fixtures/nowPlayingLayoutScenarios'
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
+
+describe('measureTextWidth', () => {
+  it('prefers scrollWidth when getBoundingClientRect width is zero', () => {
+    let text = ''
+    const measure = {
+      get textContent() {
+        return text
+      },
+      set textContent(value) {
+        text = value ?? ''
+      },
+      get scrollWidth() {
+        return 248
+      },
+      getBoundingClientRect() {
+        return { width: 0 } as DOMRect
+      },
+    }
+
+    expect(measureTextWidth(measure, 'Liv Likë Dis')).toBe(248)
+  })
+})
 
 describe('nowPlayingTrackLayout formatting', () => {
   it('formats label, track, and full now-playing lines', () => {

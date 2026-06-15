@@ -27,9 +27,17 @@ export async function getNowPlayingCache(): Promise<NowPlayingCache | null> {
   return redis.get<NowPlayingCache>(NOW_PLAYING_CACHE_KEY)
 }
 
+function sanitizeRedisSetError(context: string): Error {
+  return new Error(`Failed to ${context}`)
+}
+
 export async function setNowPlayingCache(cache: NowPlayingCache): Promise<void> {
   const redis = getRedis()
-  await redis.set(NOW_PLAYING_CACHE_KEY, cache)
+  try {
+    await redis.set(NOW_PLAYING_CACHE_KEY, cache)
+  } catch {
+    throw sanitizeRedisSetError('cache now-playing track')
+  }
 }
 
 type AccessTokenCache = {
@@ -55,7 +63,7 @@ export async function setCachedAccessToken(token: string, expiresInSeconds: numb
   } catch {
     // Upstash embeds the SET command body (which includes the access token) in its
     // error message; rethrow a sanitized error so the token can never reach logs.
-    throw new Error('Failed to cache Spotify access token')
+    throw sanitizeRedisSetError('cache Spotify access token')
   }
 }
 
@@ -68,5 +76,9 @@ export async function shouldSkipLiveRefresh(): Promise<boolean> {
 
 export async function markLiveRefresh(): Promise<void> {
   const redis = getRedis()
-  await redis.set(LIVE_DEBOUNCE_KEY, Date.now())
+  try {
+    await redis.set(LIVE_DEBOUNCE_KEY, Date.now())
+  } catch {
+    throw sanitizeRedisSetError('mark live refresh debounce')
+  }
 }

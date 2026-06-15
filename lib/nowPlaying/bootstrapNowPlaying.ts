@@ -1,4 +1,5 @@
 import type { NowPlayingResponse } from '@/lib/spotify/types'
+import { toLogErrorMessage } from '@/lib/sanitizeLogError'
 
 export type BootstrapApplyStep = {
   payload: NowPlayingResponse
@@ -24,7 +25,8 @@ export async function fetchBootstrapCacheStep(
   try {
     const cached = await fetchNowPlaying(false)
     return { payload: cached, forceRoll: true }
-  } catch {
+  } catch (error) {
+    console.warn('[now-playing] cache bootstrap failed:', toLogErrorMessage(error))
     return null
   }
 }
@@ -35,7 +37,8 @@ export async function fetchBootstrapLiveStep(
   try {
     const live = await fetchNowPlaying(true)
     return { payload: live, forceRoll: true }
-  } catch {
+  } catch (error) {
+    console.warn('[now-playing] live bootstrap failed:', toLogErrorMessage(error))
     return null
   }
 }

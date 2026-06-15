@@ -13,7 +13,7 @@ import {
   fetchBootstrapLiveStep,
   liveBootstrapMode,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
-import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
+import { toLogErrorMessage } from '@/lib/sanitizeLogError'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
 import { parseNowPlayingResponse } from '@/lib/spotify/parseNowPlayingResponse'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
@@ -169,7 +169,9 @@ export default function useNowPlaying(): UseNowPlayingResult {
       if (document.visibilityState !== 'visible') return
 
       pollTimer = window.setInterval(() => {
-        void refreshNowPlaying({ forceRoll: false, live: true }).catch(() => undefined)
+        void refreshNowPlaying({ forceRoll: false, live: true }).catch((error) => {
+          console.warn('[now-playing] poll refresh failed:', toLogErrorMessage(error))
+        })
       }, POLL_INTERVAL_MS)
     }
 
@@ -177,7 +179,9 @@ export default function useNowPlaying(): UseNowPlayingResult {
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        void refreshNowPlaying({ forceRoll: false, live: true }).catch(() => undefined)
+        void refreshNowPlaying({ forceRoll: false, live: true }).catch((error) => {
+          console.warn('[now-playing] visibility refresh failed:', toLogErrorMessage(error))
+        })
         schedulePoll()
         return
       }
@@ -197,7 +201,8 @@ export default function useNowPlaying(): UseNowPlayingResult {
       if (cancelled) return
 
       if (liveStep) {
-        switch (liveBootstrapMode(cacheApplied, true)) {
+        const mode = liveBootstrapMode(cacheApplied, true)
+        switch (mode) {
           case 'defer':
             setPendingLivePayload(liveStep.payload)
             break
@@ -207,6 +212,11 @@ export default function useNowPlaying(): UseNowPlayingResult {
             break
           case 'none':
             break
+          default: {
+            const _exhaustive: never = mode
+            void _exhaustive
+            break
+          }
         }
       } else if (!cancelled) {
         schedulePoll()

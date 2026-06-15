@@ -181,7 +181,7 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
 
 export function createMockTextMeasure(
   widthsByText: Record<string, number>,
-): Pick<HTMLElement, 'textContent' | 'getBoundingClientRect'> {
+): Pick<HTMLElement, 'textContent' | 'scrollWidth' | 'getBoundingClientRect'> {
   let text = ''
 
   return {
@@ -190,6 +190,14 @@ export function createMockTextMeasure(
     },
     set textContent(value) {
       text = value ?? ''
+    },
+    get scrollWidth() {
+      const width = widthsByText[text]
+      if (width === undefined) {
+        throw new Error(`Missing mocked width for text: ${text}`)
+      }
+
+      return width
     },
     getBoundingClientRect() {
       const width = widthsByText[text]

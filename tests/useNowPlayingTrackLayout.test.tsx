@@ -72,6 +72,17 @@ function TrackLayoutProbe({
               }
               return mockRect(width)
             }
+            Object.defineProperty(node, 'scrollWidth', {
+              configurable: true,
+              get(this: HTMLSpanElement) {
+                const text = this.textContent ?? ''
+                const width = widthsByText[text]
+                if (width === undefined) {
+                  throw new Error(`Missing mocked width for text: ${text}`)
+                }
+                return width
+              },
+            })
           }
         }}
       />
@@ -157,6 +168,13 @@ describe('useNowPlayingTrackLayout', () => {
                   const text = this.textContent ?? ''
                   return mockRect(widthsByText[text as keyof typeof widthsByText] ?? 0)
                 }
+                Object.defineProperty(node, 'scrollWidth', {
+                  configurable: true,
+                  get(this: HTMLSpanElement) {
+                    const text = this.textContent ?? ''
+                    return widthsByText[text as keyof typeof widthsByText] ?? 0
+                  },
+                })
               }
             }}
           />

@@ -5,6 +5,7 @@
 .now-playing {
   display: block;
   max-width: 100%;
+  position: relative;
 }
 
 .now-playing-label {
@@ -61,9 +62,11 @@
 
 .now-playing-measure {
   position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
+  top: 0;
+  left: 0;
+  width: max-content;
+  height: auto;
+  overflow: visible;
   white-space: nowrap;
   pointer-events: none;
   visibility: hidden;

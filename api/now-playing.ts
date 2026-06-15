@@ -1,4 +1,5 @@
 import { isSameOriginRequest } from '../lib/api/origin.js'
+import { toLogErrorMessage } from '../lib/sanitizeLogError.js'
 import { refreshSpotifyAccessToken } from '../lib/spotify/auth.js'
 import {
   getCachedAccessToken,
@@ -63,11 +64,11 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
 
       res.status(200).json(toNowPlayingResponse('live', cached, playback.isPlaying))
     } catch (error) {
-      console.warn('[now-playing] live refresh failed', error)
+      console.warn('[now-playing] live refresh failed:', toLogErrorMessage(error))
       res.status(200).json(toNowPlayingResponse('cache', cached, null))
     }
   } catch (error) {
-    console.error('[now-playing] request failed', error)
+    console.error('[now-playing] request failed:', toLogErrorMessage(error))
     res.status(200).json(toNowPlayingResponse(live ? 'live' : 'cache', null, null))
   }
 }

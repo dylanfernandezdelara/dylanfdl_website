@@ -42,11 +42,17 @@ export function fitsTrackOnOneLine(
   )
 }
 
-export function measureTextWidth(
-  measure: Pick<HTMLElement, 'textContent' | 'getBoundingClientRect'>,
-  text: string,
-): number {
+export type TextWidthMeasureElement = Pick<
+  HTMLElement,
+  'textContent' | 'scrollWidth' | 'getBoundingClientRect'
+>
+
+export function measureTextWidth(measure: TextWidthMeasureElement, text: string): number {
   measure.textContent = text
+  const scrollWidth = measure.scrollWidth
+  if (scrollWidth > 0) {
+    return scrollWidth
+  }
   return measure.getBoundingClientRect().width
 }
 
