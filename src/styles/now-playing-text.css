@@ -40,6 +40,10 @@
   white-space: nowrap;
 }
 
+.now-playing[data-layout='prefix-split'] {
+  white-space: nowrap;
+}
+
 .now-playing[data-layout='prefix-split'] .now-playing-track {
   display: inline;
 }
@@ -51,6 +55,7 @@
 
 .now-playing[data-layout='prefix-split'] .now-playing-artist-line {
   display: block;
+  white-space: normal;
 }
 
 .now-playing[data-layout='stacked'] .now-playing-label {

@@ -28,6 +28,8 @@ describe('now-playing production measure CSS', () => {
 
   it('keeps label and title together with artist on the next row for prefix-split', () => {
     expect(nowPlayingCss).toContain(".now-playing[data-layout='prefix-split']")
+    expect(nowPlayingCss).toContain(".now-playing[data-layout='prefix-split'] {")
+    expect(nowPlayingCss).toMatch(/\.now-playing\[data-layout='prefix-split'\][^{]*\{[^}]*white-space:\s*nowrap/s)
     expect(nowPlayingCss).toContain(".now-playing[data-layout='prefix-split'] .now-playing-artist-line")
     expect(nowPlayingCss).toContain('display: block')
   })
