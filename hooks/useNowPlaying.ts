@@ -11,10 +11,10 @@ import {
 import {
   fetchBootstrapCacheStep,
   fetchBootstrapLiveStep,
-  liveBootstrapMode,
+  activeLiveBootstrapMode,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
-import { logNowPlayingWarn } from '@/lib/nowPlaying/logWarning'
+import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
 import { parseNowPlayingResponse } from '@/lib/spotify/parseNowPlayingResponse'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
@@ -202,7 +202,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
       if (cancelled) return
 
       if (liveStep) {
-        const mode = liveBootstrapMode(cacheApplied, true)
+        const mode = activeLiveBootstrapMode(cacheApplied)
         switch (mode) {
           case 'defer':
             setPendingLivePayload(liveStep.payload)
@@ -210,8 +210,6 @@ export default function useNowPlaying(): UseNowPlayingResult {
           case 'apply-immediately':
             applyPayload(liveStep.payload, { forceRoll: liveStep.forceRoll })
             schedulePoll()
-            break
-          case 'none':
             break
           default: {
             const _exhaustive: never = mode

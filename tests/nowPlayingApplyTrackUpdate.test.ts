@@ -4,6 +4,11 @@ import { computeTrackUpdate, getNowPlayingLabel } from '@/lib/nowPlaying/applyTr
 import { liveBootstrapMode, planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
+vi.mock('@/lib/nowPlaying/logNowPlaying', () => ({
+  logNowPlayingWarn: vi.fn(),
+  logNowPlayingError: vi.fn(),
+}))
+
 const trackPayload: NowPlayingResponse = {
   source: 'live',
   track: {

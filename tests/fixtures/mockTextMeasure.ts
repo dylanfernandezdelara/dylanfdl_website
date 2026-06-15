@@ -15,6 +15,7 @@ function resolveMockTextWidth(
 
 export function createMockTextMeasure(
   widthsByText: Record<string, number>,
+  options?: { fallbackWidth?: number },
 ): TextWidthMeasureElement {
   let text = ''
 
@@ -26,10 +27,10 @@ export function createMockTextMeasure(
       text = value ?? ''
     },
     get scrollWidth() {
-      return resolveMockTextWidth(text, widthsByText)
+      return resolveMockTextWidth(text, widthsByText, options?.fallbackWidth)
     },
     getBoundingClientRect() {
-      const width = resolveMockTextWidth(text, widthsByText)
+      const width = resolveMockTextWidth(text, widthsByText, options?.fallbackWidth)
       return { width } as DOMRect
     },
   }

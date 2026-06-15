@@ -1,5 +1,5 @@
 import { isSameOriginRequest } from '../lib/api/origin.js'
-import { logNowPlayingError, logNowPlayingWarn } from '../lib/nowPlaying/logWarning.js'
+import { logNowPlayingError, logNowPlayingWarn } from '../lib/nowPlaying/logNowPlaying.js'
 import { refreshSpotifyAccessToken } from '../lib/spotify/auth.js'
 import {
   getCachedAccessToken,

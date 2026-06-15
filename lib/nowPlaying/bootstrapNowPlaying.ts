@@ -1,5 +1,5 @@
 import type { NowPlayingResponse } from '@/lib/spotify/types'
-import { logNowPlayingWarn } from '@/lib/nowPlaying/logWarning'
+import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
 
 export type BootstrapApplyStep = {
   payload: NowPlayingResponse
@@ -7,6 +7,8 @@ export type BootstrapApplyStep = {
 }
 
 export type LiveBootstrapMode = 'defer' | 'apply-immediately' | 'none'
+
+export type ActiveLiveBootstrapMode = Exclude<LiveBootstrapMode, 'none'>
 
 export function liveBootstrapMode(
   cacheApplied: boolean,
@@ -16,6 +18,10 @@ export function liveBootstrapMode(
     return 'none'
   }
 
+  return activeLiveBootstrapMode(cacheApplied)
+}
+
+export function activeLiveBootstrapMode(cacheApplied: boolean): ActiveLiveBootstrapMode {
   return cacheApplied ? 'defer' : 'apply-immediately'
 }
 
