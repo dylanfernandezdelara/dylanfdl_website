@@ -91,6 +91,11 @@
   font-synthesis: none;
 }
 
+.now-playing-prefix-row-measure .now-playing-label,
+.now-playing-prefix-row-measure .now-playing-slot {
+  display: inline;
+}
+
 .now-playing-slot,
 .now-playing-slot.slot-text {
   display: inline-flex;

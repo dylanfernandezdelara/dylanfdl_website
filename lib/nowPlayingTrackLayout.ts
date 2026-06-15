@@ -14,6 +14,14 @@ export function formatByArtistLine(artist: string): string {
   return `by ${artist}`
 }
 
+export function formatByArtistLineWithPeriod(artist: string): string {
+  return `by ${artist}.`
+}
+
+export function formatLabelTitleLine(label: string, title: string): string {
+  return `${label} ${title}`
+}
+
 export function formatFullTrackLine(title: string, artist: string): string {
   return `${title} by ${artist}`
 }
@@ -48,14 +56,34 @@ export type TextWidthMeasureElement = Pick<
   'textContent' | 'scrollWidth' | 'getBoundingClientRect'
 >
 
+export type PrefixRowMeasureElement = {
+  root: Pick<HTMLElement, 'scrollWidth' | 'getBoundingClientRect'>
+  labelSpan: TextWidthMeasureElement
+  titleSpan: TextWidthMeasureElement
+}
+
 export function measureTextWidth(measure: TextWidthMeasureElement, text: string): number {
   measure.textContent = text
   return Math.max(measure.scrollWidth, measure.getBoundingClientRect().width)
 }
 
+export function measurePrefixRowWidth(
+  prefixRowMeasure: PrefixRowMeasureElement,
+  label: string,
+  title: string,
+): number {
+  prefixRowMeasure.labelSpan.textContent = label
+  prefixRowMeasure.titleSpan.textContent = title
+  return Math.max(
+    prefixRowMeasure.root.scrollWidth,
+    prefixRowMeasure.root.getBoundingClientRect().width,
+  )
+}
+
 export function resolveNowPlayingTrackLayout(
   labelMeasure: TextWidthMeasureElement,
   trackMeasure: TextWidthMeasureElement,
+  prefixRowMeasure: PrefixRowMeasureElement,
   containerWidth: number,
   label: string,
   title: string,
@@ -64,16 +92,14 @@ export function resolveNowPlayingTrackLayout(
   const labelWidth = measureTextWidth(labelMeasure, label)
   const trackLineWidth = measureTextWidth(trackMeasure, formatFullTrackLine(title, artist))
   const trackSuffix = ` ${formatFullTrackLine(title, artist)}.`
-
   const titleWidth = measureTextWidth(trackMeasure, title)
-  const titleSuffixWidth = measureTextWidth(trackMeasure, ` ${title}`)
 
   return pickNowPlayingTrackLayout({
     containerWidth,
     labelWidth,
     titleWidth,
-    byArtistWidth: measureTextWidth(trackMeasure, formatByArtistLine(artist)),
-    labelTitleWidth: labelWidth + titleSuffixWidth,
+    byArtistWidth: measureTextWidth(trackMeasure, formatByArtistLineWithPeriod(artist)),
+    labelTitleWidth: measurePrefixRowWidth(prefixRowMeasure, label, title),
     trackLineWidth,
     fullLineWidth: labelWidth + measureTextWidth(trackMeasure, trackSuffix),
   })

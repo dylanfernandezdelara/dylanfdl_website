@@ -14,12 +14,8 @@ import '@/src/styles/now-playing-text.css'
 export default function CurrentlyListeningText() {
   const { visible, label, trackUrl, title, artist, titleSlotRef, artistSlotRef } = useNowPlaying()
   const containerRef = useRef<HTMLSpanElement>(null)
-  const { layout, labelMeasureRef, trackMeasureRef } = useNowPlayingTrackLayout(
-    label,
-    title,
-    artist,
-    containerRef,
-  )
+  const { layout, labelMeasureRef, trackMeasureRef, prefixRowMeasureRef } =
+    useNowPlayingTrackLayout(label, title, artist, containerRef)
 
   if (!visible || !trackUrl || title.length === 0) {
     return null
@@ -58,6 +54,15 @@ export default function CurrentlyListeningText() {
         className={`now-playing-measure ${NOW_PLAYING_SLOT_CLASS}`}
         aria-hidden="true"
       />
+      <span
+        ref={prefixRowMeasureRef}
+        className="now-playing-measure now-playing-prefix-row-measure"
+        aria-hidden="true"
+      >
+        <span className="now-playing-label" />
+        {' '}
+        <span className={NOW_PLAYING_SLOT_CLASS} />
+      </span>
     </span>
   )
 }
