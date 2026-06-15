@@ -1,13 +1,8 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { computeTrackUpdate, getNowPlayingLabel } from '@/lib/nowPlaying/applyTrackUpdate'
 import { liveBootstrapMode, planBootstrapNowPlaying } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
-
-vi.mock('@/lib/nowPlaying/logNowPlaying', () => ({
-  logNowPlayingWarn: vi.fn(),
-  logNowPlayingError: vi.fn(),
-}))
 
 const trackPayload: NowPlayingResponse = {
   source: 'live',
@@ -83,6 +78,10 @@ describe('computeTrackUpdate', () => {
 })
 
 describe('planBootstrapNowPlaying', () => {
+  beforeEach(() => {
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+  })
+
   it('applies cache first and then live with a forced update roll', async () => {
     const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
     const live: NowPlayingResponse = { ...trackPayload, source: 'live', isPlaying: true }

@@ -1,25 +1,24 @@
 import { extractErrorMessage } from '@/lib/extractErrorMessage'
+import { isSanitizedRedisError } from '@/lib/sanitizedRedisError'
 
-function isSanitizedRedisFailureMessage(message: string): boolean {
-  return message.startsWith('Failed to ')
+function logNowPlaying(
+  scope: string,
+  error: unknown,
+  log: (message: string, ...details: unknown[]) => void,
+): void {
+  const message = extractErrorMessage(error)
+  if (error instanceof Error && !isSanitizedRedisError(error)) {
+    log(`[now-playing] ${scope}:`, message, error)
+    return
+  }
+
+  log(`[now-playing] ${scope}:`, message)
 }
 
 export function logNowPlayingWarn(scope: string, error: unknown): void {
-  const message = extractErrorMessage(error)
-  if (error instanceof Error && !isSanitizedRedisFailureMessage(message)) {
-    console.warn(`[now-playing] ${scope}:`, message, error)
-    return
-  }
-
-  console.warn(`[now-playing] ${scope}:`, message)
+  logNowPlaying(scope, error, console.warn)
 }
 
 export function logNowPlayingError(scope: string, error: unknown): void {
-  const message = extractErrorMessage(error)
-  if (error instanceof Error && !isSanitizedRedisFailureMessage(message)) {
-    console.error(`[now-playing] ${scope}:`, message, error)
-    return
-  }
-
-  console.error(`[now-playing] ${scope}:`, message)
+  logNowPlaying(scope, error, console.error)
 }
