@@ -12,5 +12,8 @@ describe('extractErrorMessage', () => {
     expect(extractErrorMessage(404)).toBe('404')
     expect(extractErrorMessage(false)).toBe('false')
     expect(extractErrorMessage(null)).toBe('Unknown error')
+    expect(extractErrorMessage(undefined)).toBe('Unknown error')
+    expect(extractErrorMessage({ reason: 'offline' })).toBe('Unknown error')
+    expect(extractErrorMessage(Symbol('offline'))).toBe('Unknown error')
   })
 })

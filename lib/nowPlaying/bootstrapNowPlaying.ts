@@ -1,5 +1,4 @@
 import type { NowPlayingResponse } from '@/lib/spotify/types'
-import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
 
 export type BootstrapApplyStep = {
   payload: NowPlayingResponse
@@ -10,6 +9,11 @@ export type LiveBootstrapAction =
   | { kind: 'none' }
   | { kind: 'defer'; step: BootstrapApplyStep }
   | { kind: 'apply-immediately'; step: BootstrapApplyStep }
+
+export type LiveBootstrapEffects =
+  | { kind: 'defer-live'; payload: NowPlayingResponse }
+  | { kind: 'apply-live-immediately'; payload: NowPlayingResponse; forceRoll: boolean }
+  | { kind: 'schedule-poll' }
 
 export function planLiveBootstrapAction(
   cacheApplied: boolean,
@@ -26,48 +30,40 @@ export function planLiveBootstrapAction(
   return { kind: 'apply-immediately', step: liveStep }
 }
 
+export function resolveLiveBootstrapEffects(
+  cacheApplied: boolean,
+  liveStep: BootstrapApplyStep | null,
+): LiveBootstrapEffects {
+  const action = planLiveBootstrapAction(cacheApplied, liveStep)
+
+  switch (action.kind) {
+    case 'defer':
+      return { kind: 'defer-live', payload: action.step.payload }
+    case 'apply-immediately':
+      return {
+        kind: 'apply-live-immediately',
+        payload: action.step.payload,
+        forceRoll: action.step.forceRoll,
+      }
+    case 'none':
+      return { kind: 'schedule-poll' }
+    default: {
+      const exhaustive: never = action
+      return exhaustive
+    }
+  }
+}
+
 export async function fetchBootstrapCacheStep(
   fetchNowPlaying: (live: boolean) => Promise<NowPlayingResponse>,
-): Promise<BootstrapApplyStep | null> {
-  try {
-    const cached = await fetchNowPlaying(false)
-    return { payload: cached, forceRoll: true }
-  } catch (error) {
-    logNowPlayingWarn('cache bootstrap failed', error)
-    return null
-  }
+): Promise<BootstrapApplyStep> {
+  const cached = await fetchNowPlaying(false)
+  return { payload: cached, forceRoll: true }
 }
 
 export async function fetchBootstrapLiveStep(
   fetchNowPlaying: (live: boolean) => Promise<NowPlayingResponse>,
-): Promise<BootstrapApplyStep | null> {
-  try {
-    const live = await fetchNowPlaying(true)
-    return { payload: live, forceRoll: true }
-  } catch (error) {
-    logNowPlayingWarn('live bootstrap failed', error)
-    return null
-  }
-}
-
-export async function planBootstrapNowPlaying(
-  fetchNowPlaying: (live: boolean) => Promise<NowPlayingResponse>,
-): Promise<BootstrapApplyStep[]> {
-  const steps: BootstrapApplyStep[] = []
-
-  const cacheStep = await fetchBootstrapCacheStep(fetchNowPlaying)
-  if (cacheStep) {
-    steps.push(cacheStep)
-    const liveStep = await fetchBootstrapLiveStep(fetchNowPlaying)
-    if (liveStep) {
-      steps.push(liveStep)
-    }
-    return steps
-  }
-
-  const liveStep = await fetchBootstrapLiveStep(fetchNowPlaying)
-  if (liveStep) {
-    steps.push(liveStep)
-  }
-  return steps
+): Promise<BootstrapApplyStep> {
+  const live = await fetchNowPlaying(true)
+  return { payload: live, forceRoll: true }
 }

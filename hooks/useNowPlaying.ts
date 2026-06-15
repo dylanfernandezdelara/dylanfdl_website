@@ -11,7 +11,7 @@ import {
 import {
   fetchBootstrapCacheStep,
   fetchBootstrapLiveStep,
-  planLiveBootstrapAction,
+  resolveLiveBootstrapEffects,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
@@ -190,29 +190,40 @@ export default function useNowPlaying(): UseNowPlayingResult {
     }
 
     void (async () => {
-      const cacheStep = await fetchBootstrapCacheStep(fetchNowPlaying)
-      if (cancelled) return
-
       let cacheApplied = false
-      if (cacheStep) {
+
+      try {
+        const cacheStep = await fetchBootstrapCacheStep(fetchNowPlaying)
+        if (cancelled) return
         cacheApplied = applyPayload(cacheStep.payload, { forceRoll: cacheStep.forceRoll })
+      } catch (error) {
+        logNowPlayingWarn('cache bootstrap failed', error)
       }
 
-      const liveStep = await fetchBootstrapLiveStep(fetchNowPlaying)
+      let liveStep: Awaited<ReturnType<typeof fetchBootstrapLiveStep>> | null = null
+      try {
+        liveStep = await fetchBootstrapLiveStep(fetchNowPlaying)
+      } catch (error) {
+        logNowPlayingWarn('live bootstrap failed', error)
+      }
       if (cancelled) return
 
-      const action = planLiveBootstrapAction(cacheApplied, liveStep)
-      switch (action.kind) {
-        case 'defer':
-          setPendingLivePayload(action.step.payload)
+      const effects = resolveLiveBootstrapEffects(cacheApplied, liveStep)
+      switch (effects.kind) {
+        case 'defer-live':
+          setPendingLivePayload(effects.payload)
           break
-        case 'apply-immediately':
-          applyPayload(action.step.payload, { forceRoll: action.step.forceRoll })
+        case 'apply-live-immediately':
+          applyPayload(effects.payload, { forceRoll: effects.forceRoll })
           schedulePoll()
           break
-        case 'none':
+        case 'schedule-poll':
           if (!cancelled) schedulePoll()
           break
+        default: {
+          const exhaustive: never = effects
+          return exhaustive
+        }
       }
     })()
 

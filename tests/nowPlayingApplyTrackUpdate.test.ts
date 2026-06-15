@@ -1,9 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { computeTrackUpdate, getNowPlayingLabel } from '@/lib/nowPlaying/applyTrackUpdate'
-import { planBootstrapNowPlaying, planLiveBootstrapAction } from '@/lib/nowPlaying/bootstrapNowPlaying'
+import {
+  planLiveBootstrapAction,
+  resolveLiveBootstrapEffects,
+} from '@/lib/nowPlaying/bootstrapNowPlaying'
 import * as logNowPlaying from '@/lib/nowPlaying/logNowPlaying'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
+import { planBootstrapNowPlaying } from '@/tests/fixtures/planBootstrapTestSteps'
 
 const trackPayload: NowPlayingResponse = {
   source: 'live',
@@ -99,30 +103,26 @@ describe('planBootstrapNowPlaying', () => {
 
   it('falls back to live-only bootstrap when cache fetch fails', async () => {
     const live: NowPlayingResponse = { ...trackPayload, source: 'live' }
-    const cacheError = new Error('cache miss')
     const fetchNowPlaying = vi
       .fn()
-      .mockRejectedValueOnce(cacheError)
+      .mockRejectedValueOnce(new Error('cache miss'))
       .mockResolvedValueOnce(live)
 
     await expect(planBootstrapNowPlaying(fetchNowPlaying)).resolves.toEqual([
       { payload: live, forceRoll: true },
     ])
-    expect(logNowPlaying.logNowPlayingWarn).toHaveBeenCalledWith('cache bootstrap failed', cacheError)
   })
 
-  it('logs and skips live bootstrap when live fetch fails after cache succeeds', async () => {
+  it('returns cache only when live fetch fails after cache succeeds', async () => {
     const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
-    const liveError = new Error('live miss')
     const fetchNowPlaying = vi
       .fn()
       .mockResolvedValueOnce(cached)
-      .mockRejectedValueOnce(liveError)
+      .mockRejectedValueOnce(new Error('live miss'))
 
     await expect(planBootstrapNowPlaying(fetchNowPlaying)).resolves.toEqual([
       { payload: cached, forceRoll: true },
     ])
-    expect(logNowPlaying.logNowPlayingWarn).toHaveBeenCalledWith('live bootstrap failed', liveError)
   })
 })
 
@@ -143,5 +143,29 @@ describe('planLiveBootstrapAction', () => {
   it('skips live handling when there is no live step', () => {
     expect(planLiveBootstrapAction(true, null)).toEqual({ kind: 'none' })
     expect(planLiveBootstrapAction(false, null)).toEqual({ kind: 'none' })
+  })
+})
+
+describe('resolveLiveBootstrapEffects', () => {
+  const liveStep = { payload: trackPayload, forceRoll: true }
+
+  it('defers live payload when cache was applied so slots can mount first', () => {
+    expect(resolveLiveBootstrapEffects(true, liveStep)).toEqual({
+      kind: 'defer-live',
+      payload: trackPayload,
+    })
+  })
+
+  it('applies live immediately and starts polling when cache did not apply', () => {
+    expect(resolveLiveBootstrapEffects(false, liveStep)).toEqual({
+      kind: 'apply-live-immediately',
+      payload: trackPayload,
+      forceRoll: true,
+    })
+  })
+
+  it('schedules polling when live bootstrap is unavailable', () => {
+    expect(resolveLiveBootstrapEffects(true, null)).toEqual({ kind: 'schedule-poll' })
+    expect(resolveLiveBootstrapEffects(false, null)).toEqual({ kind: 'schedule-poll' })
   })
 })

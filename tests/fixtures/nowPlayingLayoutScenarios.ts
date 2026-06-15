@@ -1,5 +1,5 @@
 import type { NowPlayingTrackLayout } from '@/lib/nowPlayingTrackLayout'
-import { formatFullNowPlayingLine, formatFullTrackLine } from '@/lib/nowPlayingTrackLayout'
+import { formatFullTrackLine } from '@/lib/nowPlayingTrackLayout'
 
 export const NOW_PLAYING_LABEL = 'Recently listened to'
 
@@ -178,26 +178,6 @@ export const NOW_PLAYING_LAYOUT_SCENARIOS: NowPlayingLayoutScenario[] = [
     reason: 'track one pixel wider than container must stack',
   },
 ]
-
-export function widthsForScenario(
-  scenario: Pick<
-    NowPlayingLayoutScenario,
-    'label' | 'title' | 'artist' | 'labelWidth' | 'titleWidth' | 'byArtistWidth' | 'trackLineWidth' | 'fullLineWidth'
-  >,
-): Record<string, number> {
-  const trackLine = formatFullTrackLine(scenario.title, scenario.artist)
-  const trackSuffix = ` ${trackLine}.`
-
-  return {
-    [scenario.label]: scenario.labelWidth,
-    [scenario.title]: scenario.titleWidth,
-    [`by ${scenario.artist}`]: scenario.byArtistWidth,
-    [trackLine]: scenario.trackLineWidth,
-    [trackSuffix]: scenario.fullLineWidth - scenario.labelWidth,
-    [formatFullNowPlayingLine(scenario.label, scenario.title, scenario.artist)]:
-      scenario.fullLineWidth,
-  }
-}
 
 export function labelWidthsForScenario(
   scenario: Pick<NowPlayingLayoutScenario, 'label' | 'labelWidth'>,

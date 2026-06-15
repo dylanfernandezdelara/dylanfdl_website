@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest'
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 
 describe('now-playing production measure CSS', () => {
+  // Contract tests: guard layout-critical CSS that layout measurement depends on.
   const nowPlayingCss = readFileSync(join(repoRoot, 'src/styles/now-playing-text.css'), 'utf8')
 
   it('sizes the hidden measure element for accurate scrollWidth reads', () => {
