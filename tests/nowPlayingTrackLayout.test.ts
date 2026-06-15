@@ -43,6 +43,26 @@ describe('measureTextWidth', () => {
 
     expect(measureTextWidth(measure, 'Liv Likë Dis')).toBe(248)
   })
+
+  it('uses the larger of scrollWidth and bounding rect width', () => {
+    let text = ''
+    const measure = {
+      get textContent() {
+        return text
+      },
+      set textContent(value) {
+        text = value ?? ''
+      },
+      get scrollWidth() {
+        return 120
+      },
+      getBoundingClientRect() {
+        return { width: 180 } as DOMRect
+      },
+    }
+
+    expect(measureTextWidth(measure, 'Instant Crush')).toBe(180)
+  })
 })
 
 describe('nowPlayingTrackLayout formatting', () => {

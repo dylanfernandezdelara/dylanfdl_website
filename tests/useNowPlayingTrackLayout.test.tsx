@@ -10,6 +10,7 @@ import { formatByArtistLine, formatFullNowPlayingLine, formatFullTrackLine } fro
 import {
   NOW_PLAYING_LABEL,
   NOW_PLAYING_LAYOUT_SCENARIOS,
+  attachMockTextMeasure,
   widthsForScenario,
 } from '@/tests/fixtures/nowPlayingLayoutScenarios'
 
@@ -64,25 +65,7 @@ function TrackLayoutProbe({
         ref={(node) => {
           measureRef.current = node
           if (node) {
-            node.getBoundingClientRect = function getBoundingClientRect(this: HTMLSpanElement) {
-              const text = this.textContent ?? ''
-              const width = widthsByText[text]
-              if (width === undefined) {
-                throw new Error(`Missing mocked width for text: ${text}`)
-              }
-              return mockRect(width)
-            }
-            Object.defineProperty(node, 'scrollWidth', {
-              configurable: true,
-              get(this: HTMLSpanElement) {
-                const text = this.textContent ?? ''
-                const width = widthsByText[text]
-                if (width === undefined) {
-                  throw new Error(`Missing mocked width for text: ${text}`)
-                }
-                return width
-              },
-            })
+            attachMockTextMeasure(node, widthsByText)
           }
         }}
       />
@@ -164,17 +147,7 @@ describe('useNowPlayingTrackLayout', () => {
             ref={(node) => {
               measureRef.current = node
               if (node) {
-                node.getBoundingClientRect = function getBoundingClientRect(this: HTMLSpanElement) {
-                  const text = this.textContent ?? ''
-                  return mockRect(widthsByText[text as keyof typeof widthsByText] ?? 0)
-                }
-                Object.defineProperty(node, 'scrollWidth', {
-                  configurable: true,
-                  get(this: HTMLSpanElement) {
-                    const text = this.textContent ?? ''
-                    return widthsByText[text as keyof typeof widthsByText] ?? 0
-                  },
-                })
+                attachMockTextMeasure(node, widthsByText, { fallbackWidth: 0 })
               }
             }}
           />

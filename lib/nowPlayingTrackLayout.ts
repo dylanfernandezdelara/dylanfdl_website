@@ -49,15 +49,11 @@ export type TextWidthMeasureElement = Pick<
 
 export function measureTextWidth(measure: TextWidthMeasureElement, text: string): number {
   measure.textContent = text
-  const scrollWidth = measure.scrollWidth
-  if (scrollWidth > 0) {
-    return scrollWidth
-  }
-  return measure.getBoundingClientRect().width
+  return Math.max(measure.scrollWidth, measure.getBoundingClientRect().width)
 }
 
 export function resolveNowPlayingTrackLayout(
-  measure: Pick<HTMLElement, 'textContent' | 'getBoundingClientRect'>,
+  measure: TextWidthMeasureElement,
   containerWidth: number,
   label: string,
   title: string,
