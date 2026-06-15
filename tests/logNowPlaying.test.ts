@@ -9,21 +9,21 @@ describe('logNowPlaying', () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined)
   })
 
-  it('logs message and error object for ordinary failures', () => {
+  it('logs message and error object for ordinary warn failures', () => {
     const error = new TypeError('Failed to fetch')
     logNowPlayingWarn('poll refresh failed', error)
 
     expect(console.warn).toHaveBeenCalledWith('[now-playing] poll refresh failed:', 'Failed to fetch', error)
   })
 
-  it('logs message and error object for ordinary error-level failures', () => {
+  it('logs message and error object for ordinary error failures', () => {
     const error = new TypeError('Failed to fetch')
     logNowPlayingError('request failed', error)
 
     expect(console.error).toHaveBeenCalledWith('[now-playing] request failed:', 'Failed to fetch', error)
   })
 
-  it('logs only the message for sanitized infrastructure failures', () => {
+  it('logs only the message for sanitized warn failures', () => {
     const error = new SanitizedInfrastructureError('read now-playing cache')
     logNowPlayingWarn('live refresh failed', error)
 
@@ -38,7 +38,28 @@ describe('logNowPlaying', () => {
     )
   })
 
-  it('logs only the message for non-Error values', () => {
+  it('logs only the message for sanitized error failures', () => {
+    const error = new SanitizedInfrastructureError('read now-playing cache')
+    logNowPlayingError('request failed', error)
+
+    expect(console.error).toHaveBeenCalledWith(
+      '[now-playing] request failed:',
+      'Failed to read now-playing cache',
+    )
+    expect(console.error).not.toHaveBeenCalledWith(
+      '[now-playing] request failed:',
+      'Failed to read now-playing cache',
+      error,
+    )
+  })
+
+  it('logs only the message for non-Error warn values', () => {
+    logNowPlayingWarn('cache bootstrap failed', 'offline')
+
+    expect(console.warn).toHaveBeenCalledWith('[now-playing] cache bootstrap failed:', 'Unknown error')
+  })
+
+  it('logs only the message for non-Error error values', () => {
     logNowPlayingError('request failed', 'offline')
 
     expect(console.error).toHaveBeenCalledWith('[now-playing] request failed:', 'Unknown error')

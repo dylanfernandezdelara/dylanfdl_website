@@ -29,7 +29,7 @@ const {
 const SECRET_TOKEN = 'SECRET_TOKEN_VALUE'
 const TOKEN_LEAK_ERROR = new Error(`limit exceeded, command was: {"token":"${SECRET_TOKEN}"}`)
 
-async function expectSanitizedRedisFailure(
+async function expectSanitizedInfrastructureFailure(
   operation: () => Promise<unknown>,
   expectedMessage: string,
 ): Promise<void> {
@@ -48,7 +48,7 @@ describe('spotify cache redis error sanitization', () => {
   it('sanitizes getNowPlayingCache failures', async () => {
     mockGet.mockRejectedValueOnce(TOKEN_LEAK_ERROR)
 
-    await expectSanitizedRedisFailure(
+    await expectSanitizedInfrastructureFailure(
       () => getNowPlayingCache(),
       'Failed to read now-playing cache',
     )
@@ -57,7 +57,7 @@ describe('spotify cache redis error sanitization', () => {
   it('sanitizes getCachedAccessToken failures', async () => {
     mockGet.mockRejectedValueOnce(TOKEN_LEAK_ERROR)
 
-    await expectSanitizedRedisFailure(
+    await expectSanitizedInfrastructureFailure(
       () => getCachedAccessToken(),
       'Failed to read Spotify access token cache',
     )
@@ -66,7 +66,7 @@ describe('spotify cache redis error sanitization', () => {
   it('sanitizes shouldSkipLiveRefresh failures', async () => {
     mockGet.mockRejectedValueOnce(TOKEN_LEAK_ERROR)
 
-    await expectSanitizedRedisFailure(
+    await expectSanitizedInfrastructureFailure(
       () => shouldSkipLiveRefresh(),
       'Failed to read live refresh debounce',
     )
@@ -75,7 +75,7 @@ describe('spotify cache redis error sanitization', () => {
   it('sanitizes setCachedAccessToken failures', async () => {
     mockSet.mockRejectedValueOnce(TOKEN_LEAK_ERROR)
 
-    await expectSanitizedRedisFailure(
+    await expectSanitizedInfrastructureFailure(
       () => setCachedAccessToken(SECRET_TOKEN, 3600),
       'Failed to cache Spotify access token',
     )
@@ -84,7 +84,7 @@ describe('spotify cache redis error sanitization', () => {
   it('sanitizes setNowPlayingCache failures', async () => {
     mockSet.mockRejectedValueOnce(TOKEN_LEAK_ERROR)
 
-    await expectSanitizedRedisFailure(
+    await expectSanitizedInfrastructureFailure(
       () =>
         setNowPlayingCache({
           track: {
@@ -102,7 +102,7 @@ describe('spotify cache redis error sanitization', () => {
   it('sanitizes markLiveRefresh failures', async () => {
     mockSet.mockRejectedValueOnce(TOKEN_LEAK_ERROR)
 
-    await expectSanitizedRedisFailure(
+    await expectSanitizedInfrastructureFailure(
       () => markLiveRefresh(),
       'Failed to mark live refresh debounce',
     )
