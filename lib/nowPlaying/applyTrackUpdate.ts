@@ -1,5 +1,15 @@
-import { formatNowPlayingArtists, getNowPlayingLabel } from '@/lib/nowPlaying/labels'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
+
+function formatNowPlayingArtists(artists: string[]): string {
+  return artists.join(', ')
+}
+
+export function getNowPlayingLabel(isPlaying: boolean | null): string {
+  if (isPlaying === true) {
+    return 'Currently listening to'
+  }
+  return 'Recently listened to'
+}
 
 export type TrackRollState = {
   trackId: string | null
@@ -50,6 +60,8 @@ export function applyTrackUpdate(
     setArtist: (artist: string) => void
     rollTitle: (title: string) => void
     rollArtist: (artist: string) => void
+    setInstantTitle: (title: string) => void
+    setInstantArtist: (artist: string) => void
   },
 ): TrackRollState {
   if (update.label !== null) {
@@ -63,6 +75,9 @@ export function applyTrackUpdate(
   if (update.shouldRoll) {
     actions.rollTitle(update.title)
     actions.rollArtist(update.artist)
+  } else {
+    actions.setInstantTitle(update.title)
+    actions.setInstantArtist(update.artist)
   }
 
   return update.nextRollState

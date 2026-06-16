@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest'
 import {
   applyTrackUpdate,
   computeTrackUpdate,
+  getNowPlayingLabel,
 } from '@/lib/nowPlaying/applyTrackUpdate'
-import { getNowPlayingLabel } from '@/lib/nowPlaying/labels'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 const trackPayload: NowPlayingResponse = {

@@ -13,7 +13,6 @@ import {
   resolveLiveBootstrapEffects,
   runBootstrapFetches,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
-import { isNowPlayingDevPreview } from '@/hooks/isNowPlayingDevPreview'
 import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
@@ -49,7 +48,7 @@ export type UseNowPlayingResult = {
 export default function useNowPlaying(
   options: UseNowPlayingOptions = {},
 ): UseNowPlayingResult {
-  const isDevPreview = isNowPlayingDevPreview()
+  const isDevPreview = import.meta.env.DEV
   const initialStateRef = useRef(deriveInitialNowPlayingState(options.initialPayload))
 
   const [visible, setVisible] = useState(initialStateRef.current.visible)
@@ -85,8 +84,12 @@ export default function useNowPlaying(
 
   const rollTitleRef = useRef(rollTitleTo)
   const rollArtistRef = useRef(rollArtistTo)
+  const setTitleInstantRef = useRef(setTitleInstant)
+  const setArtistInstantRef = useRef(setArtistInstant)
   rollTitleRef.current = rollTitleTo
   rollArtistRef.current = rollArtistTo
+  setTitleInstantRef.current = setTitleInstant
+  setArtistInstantRef.current = setArtistInstant
 
   useLayoutEffect(() => {
     if (!shouldSeedInitialTextRef.current || !titleSlotMounted || !artistSlotMounted) {
@@ -113,7 +116,10 @@ export default function useNowPlaying(
       setArtist,
       rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
       rollArtist: (nextArtist) => rollArtistRef.current(nextArtist),
+      setInstantTitle: (nextTitle) => setTitleInstantRef.current(nextTitle),
+      setInstantArtist: (nextArtist) => setArtistInstantRef.current(nextArtist),
     })
+    setSlotTextOwnsDom(true)
     return true
   }
 

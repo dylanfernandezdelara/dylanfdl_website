@@ -17,14 +17,6 @@ export type UseNowPlayingTrackLayoutResult = {
   prefixTitleMeasureRef: RefObject<HTMLSpanElement | null>
 }
 
-function getPrefixRowMeasure(
-  root: HTMLSpanElement,
-  labelSpan: HTMLSpanElement,
-  titleSpan: HTMLSpanElement,
-): PrefixRowMeasureElement {
-  return { root, labelSpan, titleSpan }
-}
-
 export default function useNowPlayingTrackLayout(
   label: string,
   title: string,
@@ -58,11 +50,11 @@ export default function useNowPlayingTrackLayout(
       return undefined
     }
 
-    const prefixRowMeasure = getPrefixRowMeasure(
-      prefixRowRoot,
-      prefixLabelMeasure,
-      prefixTitleMeasure,
-    )
+    const prefixRowMeasure: PrefixRowMeasureElement = {
+      root: prefixRowRoot,
+      labelSpan: prefixLabelMeasure,
+      titleSpan: prefixTitleMeasure,
+    }
 
     const updateLayout = () => {
       const containerWidth = container.getBoundingClientRect().width
