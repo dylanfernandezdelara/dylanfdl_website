@@ -23,7 +23,7 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
     trackUrl,
     title,
     artist,
-    slotTextOwnsDom,
+    slotTextActive,
     titleSlotRef,
     artistSlotRef,
   } = useNowPlaying({
@@ -59,14 +59,14 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
           className="now-playing-title"
         >
           <span ref={titleSlotRef} className={NOW_PLAYING_SLOT_CLASS}>
-            {!slotTextOwnsDom ? title : null}
+            {slotTextActive ? null : title}
           </span>
         </ExternalLink>
         {isInline || isSplit ? ' ' : null}
         <span className="now-playing-artist-line">
           <span className="now-playing-by">by </span>
           <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS}>
-            {!slotTextOwnsDom ? artist : null}
+            {slotTextActive ? null : artist}
           </span>
           .
         </span>

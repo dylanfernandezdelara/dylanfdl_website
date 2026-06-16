@@ -31,31 +31,14 @@ const livePayload: NowPlayingResponse = {
 
 const rollTitleTo = vi.fn()
 const rollArtistTo = vi.fn()
-const setTitleInstant = vi.fn()
-const setArtistInstant = vi.fn()
 
 vi.mock('@/hooks/useSlotTextRoll', () => ({
-  default: vi.fn(
-    ({
-      direction,
-      onDisplayed,
-    }: {
-      direction: 'up' | 'down'
-      onDisplayed?: () => void
-    }) => ({
-      slotRef: { current: document.createElement('span') },
-      slotMounted: true,
-      rollTo: direction === 'up' ? rollTitleTo : rollArtistTo,
-      setInstant: (text: string) => {
-        if (direction === 'up') {
-          setTitleInstant(text)
-        } else {
-          setArtistInstant(text)
-        }
-        onDisplayed?.()
-      },
-    }),
-  ),
+  default: vi.fn(({ direction }: { direction: 'up' | 'down' }) => ({
+    slotRef: { current: document.createElement('span') },
+    slotMounted: true,
+    active: true,
+    rollTo: direction === 'up' ? rollTitleTo : rollArtistTo,
+  })),
 }))
 
 describe('useNowPlaying bootstrap', () => {
@@ -91,8 +74,8 @@ describe('useNowPlaying bootstrap', () => {
     expect(fetchMock).toHaveBeenCalledWith('/api/now-playing?live=1')
     expect(rollTitleTo).toHaveBeenCalledTimes(1)
     expect(rollArtistTo).toHaveBeenCalledTimes(1)
-    expect(setTitleInstant).not.toHaveBeenCalled()
-    expect(setArtistInstant).not.toHaveBeenCalled()
+    expect(rollTitleTo).toHaveBeenLastCalledWith('Instant Crush')
+    expect(rollArtistTo).toHaveBeenLastCalledWith('Daft Punk')
   })
 
   it('uses SSR initial payload without bootstrap re-roll', async () => {
@@ -113,9 +96,9 @@ describe('useNowPlaying bootstrap', () => {
     expect(result.current.label).toBe('Recently listened to')
 
     await waitFor(() => {
-      expect(setTitleInstant).toHaveBeenCalledWith('Instant Crush')
-      expect(setArtistInstant).toHaveBeenCalledWith('Daft Punk')
-      expect(result.current.slotTextOwnsDom).toBe(true)
+      expect(rollTitleTo).toHaveBeenCalledWith('Instant Crush')
+      expect(rollArtistTo).toHaveBeenCalledWith('Daft Punk')
+      expect(result.current.slotTextActive).toBe(true)
     })
 
     await waitFor(() => {
@@ -124,8 +107,8 @@ describe('useNowPlaying bootstrap', () => {
 
     expect(fetchMock).not.toHaveBeenCalledWith('/api/now-playing')
 
-    expect(rollTitleTo).not.toHaveBeenCalled()
-    expect(rollArtistTo).not.toHaveBeenCalled()
+    expect(rollTitleTo).toHaveBeenCalledTimes(1)
+    expect(rollArtistTo).toHaveBeenCalledTimes(1)
   })
 
   it('applies live immediately when cache bootstrap fails', async () => {

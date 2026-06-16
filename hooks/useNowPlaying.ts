@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type Ref } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type Ref } from 'react'
 
 import useSlotTextRoll from '@/hooks/useSlotTextRoll'
 import {
@@ -40,7 +40,8 @@ export type UseNowPlayingResult = {
   trackUrl: string | null
   title: string
   artist: string
-  slotTextOwnsDom: boolean
+  /** True once slot-text owns the slots; callers render `null` slot children then. */
+  slotTextActive: boolean
   titleSlotRef: Ref<HTMLSpanElement>
   artistSlotRef: Ref<HTMLSpanElement>
 }
@@ -59,57 +60,46 @@ export default function useNowPlaying(
 
   const rollStateRef = useRef<TrackRollState>(initialStateRef.current.rollState)
   const shouldSeedInitialTextRef = useRef(initialStateRef.current.visible)
-  const [slotTextOwnsDom, setSlotTextOwnsDom] = useState(!initialStateRef.current.visible)
-  const slotTextOwnsDomRef = useRef(slotTextOwnsDom)
-  slotTextOwnsDomRef.current = slotTextOwnsDom
   const [pendingLivePayload, setPendingLivePayload] = useState<NowPlayingResponse | null>(null)
   const beginPollingRef = useRef<(() => void) | null>(null)
-
-  const markSlotTextOwnsDom = useCallback(() => {
-    setSlotTextOwnsDom(true)
-  }, [])
 
   const {
     slotRef: titleSlotRef,
     slotMounted: titleSlotMounted,
+    active: titleActive,
     rollTo: rollTitleTo,
-    setInstant: setTitleInstant,
   } = useSlotTextRoll({
     direction: 'up',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
-    onDisplayed: markSlotTextOwnsDom,
   })
   const {
     slotRef: artistSlotRef,
     slotMounted: artistSlotMounted,
+    active: artistActive,
     rollTo: rollArtistTo,
-    setInstant: setArtistInstant,
   } = useSlotTextRoll({
     direction: 'down',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
-    onDisplayed: markSlotTextOwnsDom,
   })
+
+  const slotTextActive = titleActive && artistActive
 
   const rollTitleRef = useRef(rollTitleTo)
   const rollArtistRef = useRef(rollArtistTo)
-  const setTitleInstantRef = useRef(setTitleInstant)
-  const setArtistInstantRef = useRef(setArtistInstant)
   rollTitleRef.current = rollTitleTo
   rollArtistRef.current = rollArtistTo
-  setTitleInstantRef.current = setTitleInstant
-  setArtistInstantRef.current = setArtistInstant
 
   useLayoutEffect(() => {
-    if (!shouldSeedInitialTextRef.current || !titleSlotMounted || !artistSlotMounted) {
+    if (!shouldSeedInitialTextRef.current) {
       return undefined
     }
 
     shouldSeedInitialTextRef.current = false
-    setTitleInstant(title)
-    setArtistInstant(artist)
+    rollTitleRef.current(title)
+    rollArtistRef.current(artist)
 
     return undefined
-  }, [artist, artistSlotMounted, setArtistInstant, setTitleInstant, title, titleSlotMounted])
+  }, [artist, title])
 
   const applyPayload = (payload: NowPlayingResponse, options: { forceRoll: boolean }): boolean => {
     const update = computeTrackUpdate(payload, rollStateRef.current, options)
@@ -124,16 +114,6 @@ export default function useNowPlaying(
       rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
       rollArtist: (nextArtist) => rollArtistRef.current(nextArtist),
     })
-
-    if (
-      !update.shouldRoll &&
-      titleSlotMounted &&
-      artistSlotMounted &&
-      !slotTextOwnsDomRef.current
-    ) {
-      setTitleInstantRef.current(update.title)
-      setArtistInstantRef.current(update.artist)
-    }
 
     return true
   }
@@ -269,12 +249,12 @@ export default function useNowPlaying(
       return undefined
     }
 
-    applyPayload(pendingLivePayload, { forceRoll: !slotTextOwnsDomRef.current })
+    applyPayload(pendingLivePayload, { forceRoll: false })
     setPendingLivePayload(null)
     beginPollingRef.current?.()
 
     return undefined
-  }, [artistSlotMounted, isDevPreview, pendingLivePayload, slotTextOwnsDom, titleSlotMounted, visible])
+  }, [artistSlotMounted, isDevPreview, pendingLivePayload, titleSlotMounted, visible])
 
   return {
     visible,
@@ -282,7 +262,7 @@ export default function useNowPlaying(
     trackUrl,
     title,
     artist,
-    slotTextOwnsDom,
+    slotTextActive,
     titleSlotRef,
     artistSlotRef,
   }
