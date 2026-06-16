@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest'
 import {
   applyTrackUpdate,
   computeTrackUpdate,
+  getNowPlayingLabel,
 } from '@/lib/nowPlaying/applyTrackUpdate'
-import { getNowPlayingLabel } from '@/lib/nowPlaying/labels'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 const trackPayload: NowPlayingResponse = {
@@ -120,7 +120,7 @@ describe('applyTrackUpdate', () => {
     expect(nextState).toEqual({ trackId: 'track-1', hasRolled: true })
   })
 
-  it('skips label and roll updates when not requested', () => {
+  it('skips slot updates when roll is not requested', () => {
     const setLabel = vi.fn()
     const rollTitle = vi.fn()
     const rollArtist = vi.fn()

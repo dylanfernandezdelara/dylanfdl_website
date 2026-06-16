@@ -4,12 +4,12 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+vi.hoisted(() => {
+  vi.stubEnv('DEV', '')
+})
+
 import useNowPlaying from '@/hooks/useNowPlaying'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
-
-vi.mock('@/hooks/isNowPlayingDevPreview', () => ({
-  isNowPlayingDevPreview: () => false,
-}))
 
 const cachedPayload: NowPlayingResponse = {
   source: 'cache',
@@ -36,8 +36,8 @@ vi.mock('@/hooks/useSlotTextRoll', () => ({
   default: vi.fn(({ direction }: { direction: 'up' | 'down' }) => ({
     slotRef: { current: document.createElement('span') },
     slotMounted: true,
+    active: true,
     rollTo: direction === 'up' ? rollTitleTo : rollArtistTo,
-    setInstant: vi.fn(),
   })),
 }))
 
@@ -72,6 +72,41 @@ describe('useNowPlaying bootstrap', () => {
 
     expect(fetchMock).toHaveBeenCalledWith('/api/now-playing')
     expect(fetchMock).toHaveBeenCalledWith('/api/now-playing?live=1')
+    expect(rollTitleTo).toHaveBeenCalledTimes(1)
+    expect(rollArtistTo).toHaveBeenCalledTimes(1)
+    expect(rollTitleTo).toHaveBeenLastCalledWith('Instant Crush')
+    expect(rollArtistTo).toHaveBeenLastCalledWith('Daft Punk')
+  })
+
+  it('uses SSR initial payload without bootstrap re-roll', async () => {
+    const fetchMock = vi.mocked(fetch)
+    fetchMock.mockImplementation(async (input) => {
+      const url = String(input)
+      const payload = url.includes('live=1') ? livePayload : cachedPayload
+      return {
+        ok: true,
+        json: async () => payload,
+      } as Response
+    })
+
+    const { result } = renderHook(() => useNowPlaying({ initialPayload: cachedPayload }))
+
+    expect(result.current.visible).toBe(true)
+    expect(result.current.title).toBe('Instant Crush')
+    expect(result.current.label).toBe('Recently listened to')
+
+    await waitFor(() => {
+      expect(rollTitleTo).toHaveBeenCalledWith('Instant Crush')
+      expect(rollArtistTo).toHaveBeenCalledWith('Daft Punk')
+      expect(result.current.slotTextActive).toBe(true)
+    })
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith('/api/now-playing?live=1')
+    })
+
+    expect(fetchMock).not.toHaveBeenCalledWith('/api/now-playing')
+
     expect(rollTitleTo).toHaveBeenCalledTimes(1)
     expect(rollArtistTo).toHaveBeenCalledTimes(1)
   })

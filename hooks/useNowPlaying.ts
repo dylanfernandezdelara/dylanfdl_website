@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, type Ref } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type Ref } from 'react'
 
 import useSlotTextRoll from '@/hooks/useSlotTextRoll'
 import {
@@ -8,11 +8,11 @@ import {
   computeTrackUpdate,
   type TrackRollState,
 } from '@/lib/nowPlaying/applyTrackUpdate'
+import { deriveInitialNowPlayingState } from '@/lib/nowPlaying/deriveInitialNowPlayingState'
 import {
   resolveLiveBootstrapEffects,
   runBootstrapFetches,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
-import { isNowPlayingDevPreview } from '@/hooks/isNowPlayingDevPreview'
 import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
@@ -30,32 +30,43 @@ async function fetchNowPlaying(live: boolean): Promise<NowPlayingResponse> {
   return parseNowPlayingResponse(await response.json())
 }
 
+export type UseNowPlayingOptions = {
+  initialPayload?: NowPlayingResponse | null
+}
+
 export type UseNowPlayingResult = {
   visible: boolean
   label: string
   trackUrl: string | null
   title: string
   artist: string
+  /** True once slot-text owns the slots; callers render `null` slot children then. */
+  slotTextActive: boolean
   titleSlotRef: Ref<HTMLSpanElement>
   artistSlotRef: Ref<HTMLSpanElement>
 }
 
-export default function useNowPlaying(): UseNowPlayingResult {
-  const isDevPreview = isNowPlayingDevPreview()
+export default function useNowPlaying(
+  options: UseNowPlayingOptions = {},
+): UseNowPlayingResult {
+  const isDevPreview = import.meta.env.DEV
+  const initialStateRef = useRef(deriveInitialNowPlayingState(options.initialPayload))
 
-  const [visible, setVisible] = useState(false)
-  const [label, setLabel] = useState('Currently listening to')
-  const [trackUrl, setTrackUrl] = useState<string | null>(null)
-  const [title, setTitle] = useState('')
-  const [artist, setArtist] = useState('')
+  const [visible, setVisible] = useState(initialStateRef.current.visible)
+  const [label, setLabel] = useState(initialStateRef.current.label)
+  const [trackUrl, setTrackUrl] = useState<string | null>(initialStateRef.current.trackUrl)
+  const [title, setTitle] = useState(initialStateRef.current.title)
+  const [artist, setArtist] = useState(initialStateRef.current.artist)
 
-  const rollStateRef = useRef<TrackRollState>({ trackId: null, hasRolled: false })
+  const rollStateRef = useRef<TrackRollState>(initialStateRef.current.rollState)
+  const shouldSeedInitialTextRef = useRef(initialStateRef.current.visible)
   const [pendingLivePayload, setPendingLivePayload] = useState<NowPlayingResponse | null>(null)
   const beginPollingRef = useRef<(() => void) | null>(null)
 
   const {
     slotRef: titleSlotRef,
     slotMounted: titleSlotMounted,
+    active: titleActive,
     rollTo: rollTitleTo,
   } = useSlotTextRoll({
     direction: 'up',
@@ -64,16 +75,31 @@ export default function useNowPlaying(): UseNowPlayingResult {
   const {
     slotRef: artistSlotRef,
     slotMounted: artistSlotMounted,
+    active: artistActive,
     rollTo: rollArtistTo,
   } = useSlotTextRoll({
     direction: 'down',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
   })
 
+  const slotTextActive = titleActive && artistActive
+
   const rollTitleRef = useRef(rollTitleTo)
   const rollArtistRef = useRef(rollArtistTo)
   rollTitleRef.current = rollTitleTo
   rollArtistRef.current = rollArtistTo
+
+  useLayoutEffect(() => {
+    if (!shouldSeedInitialTextRef.current) {
+      return undefined
+    }
+
+    shouldSeedInitialTextRef.current = false
+    rollTitleRef.current(title)
+    rollArtistRef.current(artist)
+
+    return undefined
+  }, [artist, title])
 
   const applyPayload = (payload: NowPlayingResponse, options: { forceRoll: boolean }): boolean => {
     const update = computeTrackUpdate(payload, rollStateRef.current, options)
@@ -88,6 +114,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
       rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
       rollArtist: (nextArtist) => rollArtistRef.current(nextArtist),
     })
+
     return true
   }
 
@@ -162,17 +189,22 @@ export default function useNowPlaying(): UseNowPlayingResult {
     }
 
     void (async () => {
-      const { cacheStep, liveStep } = await runBootstrapFetches(fetchNowPlaying, {
-        onCacheError: (error) => logNowPlayingWarn('cache bootstrap failed', error),
-        onLiveError: (error) => logNowPlayingWarn('live bootstrap failed', error),
-      })
+      const skipCacheBootstrap = initialStateRef.current.visible
+      const { cacheStep, liveStep } = await runBootstrapFetches(
+        fetchNowPlaying,
+        {
+          onCacheError: (error) => logNowPlayingWarn('cache bootstrap failed', error),
+          onLiveError: (error) => logNowPlayingWarn('live bootstrap failed', error),
+        },
+        { skipCache: skipCacheBootstrap },
+      )
       if (cancelled) return
 
-      if (cancelled) return
-
-      let cacheApplied = false
+      let cacheApplied = skipCacheBootstrap
       if (cacheStep) {
-        cacheApplied = applyPayload(cacheStep.payload, { forceRoll: cacheStep.forceRoll })
+        cacheApplied = applyPayload(cacheStep.payload, {
+          forceRoll: cacheStep.forceRoll && !rollStateRef.current.hasRolled,
+        })
       }
 
       if (cancelled) return
@@ -184,7 +216,9 @@ export default function useNowPlaying(): UseNowPlayingResult {
           break
         case 'apply-live-immediately':
           if (!cancelled) {
-            applyPayload(effects.payload, { forceRoll: effects.forceRoll })
+            applyPayload(effects.payload, {
+              forceRoll: effects.forceRoll && !rollStateRef.current.hasRolled,
+            })
             schedulePoll()
           }
           break
@@ -228,6 +262,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
     trackUrl,
     title,
     artist,
+    slotTextActive,
     titleSlotRef,
     artistSlotRef,
   }

@@ -7,7 +7,7 @@ function logNowPlaying(
   log: (message: string, ...details: unknown[]) => void,
 ): void {
   const message = extractErrorMessage(error)
-    if (isLogSuppressedError(error)) {
+  if (isLogSuppressedError(error)) {
     log(`[now-playing] ${scope}:`, message)
     const isDev = typeof process !== 'undefined' && process.env.NODE_ENV !== 'production'
     if (isDev && error instanceof Error && error.cause !== undefined) {
