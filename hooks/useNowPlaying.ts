@@ -56,6 +56,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
     slotRef: titleSlotRef,
     slotMounted: titleSlotMounted,
     rollTo: rollTitleTo,
+    setInstant: setInstantTitle,
   } = useSlotTextRoll({
     direction: 'up',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
@@ -64,6 +65,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
     slotRef: artistSlotRef,
     slotMounted: artistSlotMounted,
     rollTo: rollArtistTo,
+    setInstant: setInstantArtist,
   } = useSlotTextRoll({
     direction: 'down',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
@@ -71,8 +73,12 @@ export default function useNowPlaying(): UseNowPlayingResult {
 
   const rollTitleRef = useRef(rollTitleTo)
   const rollArtistRef = useRef(rollArtistTo)
+  const setInstantTitleRef = useRef(setInstantTitle)
+  const setInstantArtistRef = useRef(setInstantArtist)
   rollTitleRef.current = rollTitleTo
   rollArtistRef.current = rollArtistTo
+  setInstantTitleRef.current = setInstantTitle
+  setInstantArtistRef.current = setInstantArtist
 
   const applyPayload = (payload: NowPlayingResponse, options: { forceRoll: boolean }): boolean => {
     const update = computeTrackUpdate(payload, rollStateRef.current, options)
@@ -86,6 +92,8 @@ export default function useNowPlaying(): UseNowPlayingResult {
       setArtist,
       rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
       rollArtist: (nextArtist) => rollArtistRef.current(nextArtist),
+      setInstantTitle: (nextTitle) => setInstantTitleRef.current(nextTitle),
+      setInstantArtist: (nextArtist) => setInstantArtistRef.current(nextArtist),
     })
     return true
   }

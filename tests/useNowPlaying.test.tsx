@@ -32,12 +32,15 @@ const livePayload: NowPlayingResponse = {
 const rollTitleTo = vi.fn()
 const rollArtistTo = vi.fn()
 
+const setInstantTitle = vi.fn()
+const setInstantArtist = vi.fn()
+
 vi.mock('@/hooks/useSlotTextRoll', () => ({
   default: vi.fn(({ direction }: { direction: 'up' | 'down' }) => ({
     slotRef: { current: document.createElement('span') },
     slotMounted: true,
     rollTo: direction === 'up' ? rollTitleTo : rollArtistTo,
-    setInstant: vi.fn(),
+    setInstant: direction === 'up' ? setInstantTitle : setInstantArtist,
   })),
 }))
 
@@ -74,6 +77,8 @@ describe('useNowPlaying bootstrap', () => {
     expect(fetchMock).toHaveBeenCalledWith('/api/now-playing?live=1')
     expect(rollTitleTo).toHaveBeenCalledTimes(1)
     expect(rollArtistTo).toHaveBeenCalledTimes(1)
+    expect(setInstantTitle).toHaveBeenCalledWith('Instant Crush')
+    expect(setInstantArtist).toHaveBeenCalledWith('Daft Punk')
   })
 
   it('applies live immediately when cache bootstrap fails', async () => {
