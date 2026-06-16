@@ -4,12 +4,12 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+vi.hoisted(() => {
+  vi.stubEnv('DEV', '')
+})
+
 import useNowPlaying from '@/hooks/useNowPlaying'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
-
-vi.mock('@/hooks/isNowPlayingDevPreview', () => ({
-  isNowPlayingDevPreview: () => false,
-}))
 
 const cachedPayload: NowPlayingResponse = {
   source: 'cache',

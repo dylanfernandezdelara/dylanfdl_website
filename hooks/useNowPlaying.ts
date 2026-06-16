@@ -12,7 +12,6 @@ import {
   resolveLiveBootstrapEffects,
   runBootstrapFetches,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
-import { isNowPlayingDevPreview } from '@/hooks/isNowPlayingDevPreview'
 import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
@@ -41,7 +40,7 @@ export type UseNowPlayingResult = {
 }
 
 export default function useNowPlaying(): UseNowPlayingResult {
-  const isDevPreview = isNowPlayingDevPreview()
+  const isDevPreview = import.meta.env.DEV
 
   const [visible, setVisible] = useState(false)
   const [label, setLabel] = useState('Currently listening to')
@@ -166,8 +165,6 @@ export default function useNowPlaying(): UseNowPlayingResult {
         onCacheError: (error) => logNowPlayingWarn('cache bootstrap failed', error),
         onLiveError: (error) => logNowPlayingWarn('live bootstrap failed', error),
       })
-      if (cancelled) return
-
       if (cancelled) return
 
       let cacheApplied = false
