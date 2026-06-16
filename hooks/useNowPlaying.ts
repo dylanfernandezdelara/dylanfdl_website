@@ -114,12 +114,19 @@ export default function useNowPlaying(
       setVisible,
       setTitle,
       setArtist,
-      rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
-      rollArtist: (nextArtist) => rollArtistRef.current(nextArtist),
-      setInstantTitle: (nextTitle) => setTitleInstantRef.current(nextTitle),
-      setInstantArtist: (nextArtist) => setArtistInstantRef.current(nextArtist),
+      rollTitle: (nextTitle) => {
+        rollTitleRef.current(nextTitle)
+        if (titleSlotMounted && artistSlotMounted) {
+          setSlotTextOwnsDom(true)
+        }
+      },
+      rollArtist: (nextArtist) => {
+        rollArtistRef.current(nextArtist)
+        if (titleSlotMounted && artistSlotMounted) {
+          setSlotTextOwnsDom(true)
+        }
+      },
     })
-    setSlotTextOwnsDom(true)
     return true
   }
 
@@ -254,12 +261,12 @@ export default function useNowPlaying(
       return undefined
     }
 
-    applyPayload(pendingLivePayload, { forceRoll: false })
+    applyPayload(pendingLivePayload, { forceRoll: !slotTextOwnsDom })
     setPendingLivePayload(null)
     beginPollingRef.current?.()
 
     return undefined
-  }, [artistSlotMounted, isDevPreview, pendingLivePayload, titleSlotMounted, visible])
+  }, [artistSlotMounted, isDevPreview, pendingLivePayload, slotTextOwnsDom, titleSlotMounted, visible])
 
   return {
     visible,

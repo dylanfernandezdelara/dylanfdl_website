@@ -60,8 +60,6 @@ export function applyTrackUpdate(
     setArtist: (artist: string) => void
     rollTitle: (title: string) => void
     rollArtist: (artist: string) => void
-    setInstantTitle: (title: string) => void
-    setInstantArtist: (artist: string) => void
   },
 ): TrackRollState {
   if (update.label !== null) {
@@ -75,9 +73,6 @@ export function applyTrackUpdate(
   if (update.shouldRoll) {
     actions.rollTitle(update.title)
     actions.rollArtist(update.artist)
-  } else {
-    actions.setInstantTitle(update.title)
-    actions.setInstantArtist(update.artist)
   }
 
   return update.nextRollState

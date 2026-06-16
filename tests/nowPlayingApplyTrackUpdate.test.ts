@@ -89,8 +89,6 @@ describe('applyTrackUpdate', () => {
     const setArtist = vi.fn()
     const rollTitle = vi.fn()
     const rollArtist = vi.fn()
-    const setInstantTitle = vi.fn()
-    const setInstantArtist = vi.fn()
 
     const nextState = applyTrackUpdate(
       {
@@ -109,8 +107,6 @@ describe('applyTrackUpdate', () => {
         setArtist,
         rollTitle,
         rollArtist,
-        setInstantTitle,
-        setInstantArtist,
       },
     )
 
@@ -124,12 +120,10 @@ describe('applyTrackUpdate', () => {
     expect(nextState).toEqual({ trackId: 'track-1', hasRolled: true })
   })
 
-  it('syncs slot text instantly when roll is skipped', () => {
+  it('skips slot updates when roll is not requested', () => {
     const setLabel = vi.fn()
     const rollTitle = vi.fn()
     const rollArtist = vi.fn()
-    const setInstantTitle = vi.fn()
-    const setInstantArtist = vi.fn()
 
     applyTrackUpdate(
       {
@@ -148,15 +142,11 @@ describe('applyTrackUpdate', () => {
         setArtist: vi.fn(),
         rollTitle,
         rollArtist,
-        setInstantTitle,
-        setInstantArtist,
       },
     )
 
     expect(setLabel).not.toHaveBeenCalled()
     expect(rollTitle).not.toHaveBeenCalled()
     expect(rollArtist).not.toHaveBeenCalled()
-    expect(setInstantTitle).toHaveBeenCalledWith('Instant Crush')
-    expect(setInstantArtist).toHaveBeenCalledWith('Daft Punk')
   })
 })

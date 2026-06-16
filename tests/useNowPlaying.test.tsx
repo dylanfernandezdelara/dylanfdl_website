@@ -76,8 +76,8 @@ describe('useNowPlaying bootstrap', () => {
     expect(fetchMock).toHaveBeenCalledWith('/api/now-playing?live=1')
     expect(rollTitleTo).toHaveBeenCalledTimes(1)
     expect(rollArtistTo).toHaveBeenCalledTimes(1)
-    expect(setTitleInstant).toHaveBeenCalledWith('Instant Crush')
-    expect(setArtistInstant).toHaveBeenCalledWith('Daft Punk')
+    expect(setTitleInstant).not.toHaveBeenCalled()
+    expect(setArtistInstant).not.toHaveBeenCalled()
   })
 
   it('uses SSR initial payload without bootstrap re-roll', async () => {
