@@ -1,3 +1,4 @@
+/* eslint-env node */
 import { mkdir, readdir, rename, rm } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -30,9 +31,7 @@ async function recordLoad({ name, viewport, userAgent, isMobile }) {
   await page.goto(`${baseUrl}/`, { waitUntil: 'domcontentloaded' })
   await page.waitForSelector('.about-intro-blurb', { timeout: 15_000 })
   await page.waitForFunction(
-    () =>
-      document.body.innerText.includes('Recently listened to') ||
-      document.body.innerText.includes('Currently listening to'),
+    "document.body.innerText.includes('Recently listened to') || document.body.innerText.includes('Currently listening to')",
     { timeout: 15_000 },
   )
   await page.waitForTimeout(1_000)
