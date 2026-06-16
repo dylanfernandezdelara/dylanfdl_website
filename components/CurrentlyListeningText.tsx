@@ -8,11 +8,27 @@ import ExternalLink from '@/components/ExternalLink'
 import useNowPlaying from '@/hooks/useNowPlaying'
 import useNowPlayingTrackLayout from '@/hooks/useNowPlayingTrackLayout'
 import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlayingPresentation'
+import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 import '@/src/styles/now-playing-text.css'
 
-export default function CurrentlyListeningText() {
-  const { visible, label, trackUrl, title, artist, titleSlotRef, artistSlotRef } = useNowPlaying()
+type Props = {
+  initialPayload?: NowPlayingResponse | null
+}
+
+export default function CurrentlyListeningText({ initialPayload = null }: Props) {
+  const {
+    visible,
+    label,
+    trackUrl,
+    title,
+    artist,
+    slotTextOwnsDom,
+    titleSlotRef,
+    artistSlotRef,
+  } = useNowPlaying({
+    initialPayload,
+  })
   const containerRef = useRef<HTMLSpanElement>(null)
   const {
     layout,
@@ -42,12 +58,17 @@ export default function CurrentlyListeningText() {
           allowWrap={!isInline && !isSplit && !isPrefixSplit}
           className="now-playing-title"
         >
-          <span ref={titleSlotRef} className={NOW_PLAYING_SLOT_CLASS} />
+          <span ref={titleSlotRef} className={NOW_PLAYING_SLOT_CLASS}>
+            {!slotTextOwnsDom ? title : null}
+          </span>
         </ExternalLink>
         {isInline || isSplit ? ' ' : null}
         <span className="now-playing-artist-line">
           <span className="now-playing-by">by </span>
-          <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS} />.
+          <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS}>
+            {!slotTextOwnsDom ? artist : null}
+          </span>
+          .
         </span>
       </span>
       <span

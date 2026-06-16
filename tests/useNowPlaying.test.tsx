@@ -31,13 +31,15 @@ const livePayload: NowPlayingResponse = {
 
 const rollTitleTo = vi.fn()
 const rollArtistTo = vi.fn()
+const setTitleInstant = vi.fn()
+const setArtistInstant = vi.fn()
 
 vi.mock('@/hooks/useSlotTextRoll', () => ({
   default: vi.fn(({ direction }: { direction: 'up' | 'down' }) => ({
     slotRef: { current: document.createElement('span') },
     slotMounted: true,
     rollTo: direction === 'up' ? rollTitleTo : rollArtistTo,
-    setInstant: vi.fn(),
+    setInstant: direction === 'up' ? setTitleInstant : setArtistInstant,
   })),
 }))
 
@@ -74,6 +76,39 @@ describe('useNowPlaying bootstrap', () => {
     expect(fetchMock).toHaveBeenCalledWith('/api/now-playing?live=1')
     expect(rollTitleTo).toHaveBeenCalledTimes(1)
     expect(rollArtistTo).toHaveBeenCalledTimes(1)
+  })
+
+  it('uses SSR initial payload without bootstrap re-roll', async () => {
+    const fetchMock = vi.mocked(fetch)
+    fetchMock.mockImplementation(async (input) => {
+      const url = String(input)
+      const payload = url.includes('live=1') ? livePayload : cachedPayload
+      return {
+        ok: true,
+        json: async () => payload,
+      } as Response
+    })
+
+    const { result } = renderHook(() => useNowPlaying({ initialPayload: cachedPayload }))
+
+    expect(result.current.visible).toBe(true)
+    expect(result.current.title).toBe('Instant Crush')
+    expect(result.current.label).toBe('Recently listened to')
+
+    await waitFor(() => {
+      expect(setTitleInstant).toHaveBeenCalledWith('Instant Crush')
+      expect(setArtistInstant).toHaveBeenCalledWith('Daft Punk')
+      expect(result.current.slotTextOwnsDom).toBe(true)
+    })
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith('/api/now-playing?live=1')
+    })
+
+    expect(fetchMock).not.toHaveBeenCalledWith('/api/now-playing')
+
+    expect(rollTitleTo).not.toHaveBeenCalled()
+    expect(rollArtistTo).not.toHaveBeenCalled()
   })
 
   it('applies live immediately when cache bootstrap fails', async () => {

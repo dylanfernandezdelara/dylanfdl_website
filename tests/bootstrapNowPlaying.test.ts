@@ -39,6 +39,23 @@ describe('runBootstrapFetches', () => {
     expect(fetchNowPlaying).toHaveBeenCalledWith(true)
   })
 
+  it('skips cache fetch when skipCache is true', async () => {
+    const live: NowPlayingResponse = { ...trackPayload, source: 'live', isPlaying: true }
+    const fetchNowPlaying = vi.fn(async (liveRequest: boolean) => {
+      if (!liveRequest) throw new Error('cache should not run')
+      return live
+    })
+
+    await expect(
+      runBootstrapFetches(fetchNowPlaying, {}, { skipCache: true }),
+    ).resolves.toEqual({
+      cacheStep: null,
+      liveStep: { payload: live, forceRoll: true },
+    })
+    expect(fetchNowPlaying).toHaveBeenCalledTimes(1)
+    expect(fetchNowPlaying).toHaveBeenCalledWith(true)
+  })
+
   it('falls back to live-only bootstrap when cache fetch fails', async () => {
     const live: NowPlayingResponse = { ...trackPayload, source: 'live' }
     const cacheError = new Error('cache miss')

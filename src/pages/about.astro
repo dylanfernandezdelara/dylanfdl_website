@@ -6,9 +6,11 @@ import PageSearchPalette from '@/components/PageSearchPalette'
 import OptimistText from '@/components/OptimistText'
 import CurrentlyListeningText from '@/components/CurrentlyListeningText'
 import { buildCardGridItems } from '@/lib/buildCardGridItems'
+import { getInitialNowPlayingPayload } from '@/lib/nowPlaying/getInitialNowPlaying'
 import { CONTACT_LINKS, DEFAULT_DESCRIPTION } from '@/lib/site'
 
 const cardGridItems = buildCardGridItems()
+const initialNowPlaying = await getInitialNowPlayingPayload()
 
 const CONTACT_LINK_STYLES =
   'text-fg2 no-underline transition-colors duration-150 hover:text-fg1 hover:underline hover:decoration-[color:color-mix(in_oklab,var(--fg2),transparent_35%)] focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-3'
@@ -41,7 +43,7 @@ const CONTACT_LINK_STYLES =
       </p>
 
       <p class="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
-        <CurrentlyListeningText client:load />
+        <CurrentlyListeningText client:load initialPayload={initialNowPlaying} />
       </p>
     </div>
 
