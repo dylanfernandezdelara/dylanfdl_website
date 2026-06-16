@@ -51,16 +51,18 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
     try {
       const accessToken = await getSpotifyAccessToken()
       const playback = await fetchCurrentlyPlaying(accessToken)
-      await markLiveRefresh()
 
       if (playback.track) {
         const nextCache = toNowPlayingCache(playback.track)
         await setNowPlayingCache(nextCache)
+        await markLiveRefresh()
         res.status(200).json(
           toLiveTrackResponse(nextCache.track, playback.isPlaying, nextCache.updatedAt),
         )
         return
       }
+
+      await markLiveRefresh()
 
       res.status(200).json(toNowPlayingResponse('live', cached, playback.isPlaying))
     } catch (error) {

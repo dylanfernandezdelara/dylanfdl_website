@@ -2,6 +2,7 @@ import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 export type BootstrapApplyStep = {
   payload: NowPlayingResponse
+  /** Always true for cache; live defers roll when cache already displayed. */
   forceRoll: boolean
 }
 
@@ -43,21 +44,24 @@ export async function runBootstrapFetches(
   fetchNowPlaying: (live: boolean) => Promise<NowPlayingResponse>,
   handlers: BootstrapFetchHandlers = {},
 ): Promise<BootstrapFetchOutcome> {
+  const [cacheResult, liveResult] = await Promise.allSettled([
+    fetchNowPlaying(false),
+    fetchNowPlaying(true),
+  ])
+
   let cacheStep: BootstrapApplyStep | null = null
   let liveStep: BootstrapApplyStep | null = null
 
-  try {
-    const cached = await fetchNowPlaying(false)
-    cacheStep = { payload: cached, forceRoll: true }
-  } catch (error) {
-    handlers.onCacheError?.(error)
+  if (cacheResult.status === 'fulfilled') {
+    cacheStep = { payload: cacheResult.value, forceRoll: true }
+  } else {
+    handlers.onCacheError?.(cacheResult.reason)
   }
 
-  try {
-    const live = await fetchNowPlaying(true)
-    liveStep = { payload: live, forceRoll: true }
-  } catch (error) {
-    handlers.onLiveError?.(error)
+  if (liveResult.status === 'fulfilled') {
+    liveStep = { payload: liveResult.value, forceRoll: true }
+  } else {
+    handlers.onLiveError?.(liveResult.reason)
   }
 
   return { cacheStep, liveStep }

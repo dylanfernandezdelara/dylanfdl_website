@@ -10,10 +10,6 @@ export type NowPlayingTrackMeasurements = {
   fullLineWidth: number
 }
 
-export function formatByArtistLine(artist: string): string {
-  return `by ${artist}`
-}
-
 export function formatByArtistLineWithPeriod(artist: string): string {
   return `by ${artist}.`
 }
@@ -26,12 +22,8 @@ export function formatFullTrackLine(title: string, artist: string): string {
   return `${title} by ${artist}`
 }
 
-export function formatFullNowPlayingLine(
-  label: string,
-  title: string,
-  artist: string,
-): string {
-  return `${label} ${formatFullTrackLine(title, artist)}.`
+export function formatFullTrackLineWithPeriod(title: string, artist: string): string {
+  return `${formatFullTrackLine(title, artist)}.`
 }
 
 export function fitsTrackOnOneLine(
@@ -80,17 +72,30 @@ export function measurePrefixRowWidth(
   )
 }
 
-export function resolveNowPlayingTrackLayout(
-  labelMeasure: TextWidthMeasureElement,
-  trackMeasure: TextWidthMeasureElement,
-  prefixRowMeasure: PrefixRowMeasureElement,
-  containerWidth: number,
-  label: string,
-  title: string,
-  artist: string,
-): NowPlayingTrackLayout {
+export type ResolveNowPlayingTrackLayoutInput = {
+  labelMeasure: TextWidthMeasureElement
+  trackMeasure: TextWidthMeasureElement
+  prefixRowMeasure: PrefixRowMeasureElement
+  containerWidth: number
+  label: string
+  title: string
+  artist: string
+}
+
+export function resolveNowPlayingTrackLayout({
+  labelMeasure,
+  trackMeasure,
+  prefixRowMeasure,
+  containerWidth,
+  label,
+  title,
+  artist,
+}: ResolveNowPlayingTrackLayoutInput): NowPlayingTrackLayout {
   const labelWidth = measureTextWidth(labelMeasure, label)
-  const trackLineWidth = measureTextWidth(trackMeasure, formatFullTrackLine(title, artist))
+  const trackLineWidth = measureTextWidth(
+    trackMeasure,
+    formatFullTrackLineWithPeriod(title, artist),
+  )
   const trackSuffix = ` ${formatFullTrackLine(title, artist)}.`
   const titleWidth = measureTextWidth(trackMeasure, title)
 
@@ -107,10 +112,10 @@ export function resolveNowPlayingTrackLayout(
 
 /**
  * Pick how the now-playing line should break:
- * - inline: "label title by artist" fits on one line
- * - prefix-split: "label title" on one row, then "by artist" on the next
- * - split: label on its own row, then "title by artist" on the next
- * - stacked: label on its own row, title on the next, then "by artist"
+ * - inline: "label title by artist." fits on one line
+ * - prefix-split: "label title" on one row, then "by artist." on the next
+ * - split: label on its own row, then "title by artist." on the next
+ * - stacked: label on its own row, title on the next, then "by artist."
  */
 export function pickNowPlayingTrackLayout(
   measurements: NowPlayingTrackMeasurements,

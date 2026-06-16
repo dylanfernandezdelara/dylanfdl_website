@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { SanitizedInfrastructureError } from '@/lib/sanitizedInfrastructureError'
-import { exchangeSpotifyCode, refreshSpotifyAccessToken } from '@/lib/spotify/auth'
+import {
+  buildSpotifyAuthorizeUrl,
+  exchangeSpotifyCode,
+  refreshSpotifyAccessToken,
+} from '@/lib/spotify/auth'
 
 const SECRET_BODY = '{"access_token":"SECRET_TOKEN_VALUE"}'
 
@@ -30,6 +34,14 @@ describe('spotify auth error sanitization', () => {
     expect(error).toBeInstanceOf(SanitizedInfrastructureError)
     expect((error as Error).message).toBe('Failed to exchange Spotify access token (400)')
     expect((error as Error).message).not.toContain('SECRET_TOKEN_VALUE')
+  })
+
+  it('sanitizes missing configuration errors', () => {
+    vi.stubEnv('SPOTIFY_CLIENT_ID', '')
+
+    expect(() => buildSpotifyAuthorizeUrl('https://example.com/callback', 'state')).toThrow(
+      SanitizedInfrastructureError,
+    )
   })
 
   it('sanitizes token refresh failures', async () => {

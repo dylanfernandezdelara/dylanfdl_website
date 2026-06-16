@@ -6,27 +6,23 @@ import {
   resolveNowPlayingTrackLayout,
   type NowPlayingTrackLayout,
   type PrefixRowMeasureElement,
-} from '@/lib/nowPlayingTrackLayout'
+} from '@/lib/nowPlaying/trackLayout'
 
 export type UseNowPlayingTrackLayoutResult = {
   layout: NowPlayingTrackLayout
   labelMeasureRef: RefObject<HTMLSpanElement | null>
   trackMeasureRef: RefObject<HTMLSpanElement | null>
-  prefixRowMeasureRef: RefObject<HTMLSpanElement | null>
+  prefixRowRootRef: RefObject<HTMLSpanElement | null>
+  prefixLabelMeasureRef: RefObject<HTMLSpanElement | null>
+  prefixTitleMeasureRef: RefObject<HTMLSpanElement | null>
 }
 
-function getPrefixRowMeasure(root: HTMLSpanElement): PrefixRowMeasureElement | null {
-  const labelSpan = root.querySelector<HTMLSpanElement>('.now-playing-label')
-  const titleSpan = root.querySelector<HTMLSpanElement>('.now-playing-slot')
-  if (!labelSpan || !titleSpan) {
-    return null
-  }
-
-  return {
-    root,
-    labelSpan,
-    titleSpan,
-  }
+function getPrefixRowMeasure(
+  root: HTMLSpanElement,
+  labelSpan: HTMLSpanElement,
+  titleSpan: HTMLSpanElement,
+): PrefixRowMeasureElement {
+  return { root, labelSpan, titleSpan }
 }
 
 export default function useNowPlayingTrackLayout(
@@ -37,30 +33,41 @@ export default function useNowPlayingTrackLayout(
 ): UseNowPlayingTrackLayoutResult {
   const labelMeasureRef = useRef<HTMLSpanElement>(null)
   const trackMeasureRef = useRef<HTMLSpanElement>(null)
-  const prefixRowMeasureRef = useRef<HTMLSpanElement>(null)
-  const [layout, setLayout] = useState<NowPlayingTrackLayout>('stacked')
+  const prefixRowRootRef = useRef<HTMLSpanElement>(null)
+  const prefixLabelMeasureRef = useRef<HTMLSpanElement>(null)
+  const prefixTitleMeasureRef = useRef<HTMLSpanElement>(null)
+  const [layout, setLayout] = useState<NowPlayingTrackLayout>('inline')
 
   useLayoutEffect(() => {
     const container = containerRef.current
     const labelMeasure = labelMeasureRef.current
     const trackMeasure = trackMeasureRef.current
-    const prefixRowRoot = prefixRowMeasureRef.current
-    const prefixRowMeasure = prefixRowRoot ? getPrefixRowMeasure(prefixRowRoot) : null
+    const prefixRowRoot = prefixRowRootRef.current
+    const prefixLabelMeasure = prefixLabelMeasureRef.current
+    const prefixTitleMeasure = prefixTitleMeasureRef.current
     if (
       !container ||
       !labelMeasure ||
       !trackMeasure ||
-      !prefixRowMeasure ||
+      !prefixRowRoot ||
+      !prefixLabelMeasure ||
+      !prefixTitleMeasure ||
       title.length === 0 ||
       label.length === 0
     ) {
       return undefined
     }
 
+    const prefixRowMeasure = getPrefixRowMeasure(
+      prefixRowRoot,
+      prefixLabelMeasure,
+      prefixTitleMeasure,
+    )
+
     const updateLayout = () => {
       const containerWidth = container.getBoundingClientRect().width
       setLayout(
-        resolveNowPlayingTrackLayout(
+        resolveNowPlayingTrackLayout({
           labelMeasure,
           trackMeasure,
           prefixRowMeasure,
@@ -68,7 +75,7 @@ export default function useNowPlayingTrackLayout(
           label,
           title,
           artist,
-        ),
+        }),
       )
     }
 
@@ -82,5 +89,12 @@ export default function useNowPlayingTrackLayout(
     }
   }, [artist, containerRef, label, title])
 
-  return { layout, labelMeasureRef, trackMeasureRef, prefixRowMeasureRef }
+  return {
+    layout,
+    labelMeasureRef,
+    trackMeasureRef,
+    prefixRowRootRef,
+    prefixLabelMeasureRef,
+    prefixTitleMeasureRef,
+  }
 }

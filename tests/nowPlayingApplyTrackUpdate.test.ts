@@ -1,11 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import { computeTrackUpdate, getNowPlayingLabel } from '@/lib/nowPlaying/applyTrackUpdate'
 import {
-  resolveLiveBootstrapEffects,
-  runBootstrapFetches,
-} from '@/lib/nowPlaying/bootstrapNowPlaying'
-import * as logNowPlaying from '@/lib/nowPlaying/logNowPlaying'
+  applyTrackUpdate,
+  computeTrackUpdate,
+} from '@/lib/nowPlaying/applyTrackUpdate'
+import { getNowPlayingLabel } from '@/lib/nowPlaying/labels'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 const trackPayload: NowPlayingResponse = {
@@ -81,82 +80,73 @@ describe('computeTrackUpdate', () => {
   })
 })
 
-describe('runBootstrapFetches', () => {
-  beforeEach(() => {
-    vi.spyOn(logNowPlaying, 'logNowPlayingWarn').mockImplementation(() => undefined)
+describe('applyTrackUpdate', () => {
+  it('applies all fields and rolls when requested', () => {
+    const setLabel = vi.fn()
+    const setTrackUrl = vi.fn()
+    const setVisible = vi.fn()
+    const setTitle = vi.fn()
+    const setArtist = vi.fn()
+    const rollTitle = vi.fn()
+    const rollArtist = vi.fn()
+
+    const nextState = applyTrackUpdate(
+      {
+        label: 'Currently listening to',
+        trackUrl: 'https://open.spotify.com/track/track-1',
+        title: 'Instant Crush',
+        artist: 'Daft Punk',
+        shouldRoll: true,
+        nextRollState: { trackId: 'track-1', hasRolled: true },
+      },
+      {
+        setLabel,
+        setTrackUrl,
+        setVisible,
+        setTitle,
+        setArtist,
+        rollTitle,
+        rollArtist,
+      },
+    )
+
+    expect(setLabel).toHaveBeenCalledWith('Currently listening to')
+    expect(setTrackUrl).toHaveBeenCalledWith('https://open.spotify.com/track/track-1')
+    expect(setVisible).toHaveBeenCalledWith(true)
+    expect(setTitle).toHaveBeenCalledWith('Instant Crush')
+    expect(setArtist).toHaveBeenCalledWith('Daft Punk')
+    expect(rollTitle).toHaveBeenCalledWith('Instant Crush')
+    expect(rollArtist).toHaveBeenCalledWith('Daft Punk')
+    expect(nextState).toEqual({ trackId: 'track-1', hasRolled: true })
   })
 
-  it('returns cache and live steps when both fetches succeed', async () => {
-    const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
-    const live: NowPlayingResponse = { ...trackPayload, source: 'live', isPlaying: true }
-    const fetchNowPlaying = vi
-      .fn()
-      .mockResolvedValueOnce(cached)
-      .mockResolvedValueOnce(live)
+  it('skips label and roll updates when not requested', () => {
+    const setLabel = vi.fn()
+    const rollTitle = vi.fn()
+    const rollArtist = vi.fn()
 
-    await expect(runBootstrapFetches(fetchNowPlaying)).resolves.toEqual({
-      cacheStep: { payload: cached, forceRoll: true },
-      liveStep: { payload: live, forceRoll: true },
-    })
-  })
+    applyTrackUpdate(
+      {
+        label: null,
+        trackUrl: 'https://open.spotify.com/track/track-1',
+        title: 'Instant Crush',
+        artist: 'Daft Punk',
+        shouldRoll: false,
+        nextRollState: { trackId: 'track-1', hasRolled: true },
+      },
+      {
+        setLabel,
+        setTrackUrl: vi.fn(),
+        setVisible: vi.fn(),
+        setTitle: vi.fn(),
+        setArtist: vi.fn(),
+        rollTitle,
+        rollArtist,
+      },
+    )
 
-  it('falls back to live-only bootstrap when cache fetch fails', async () => {
-    const live: NowPlayingResponse = { ...trackPayload, source: 'live' }
-    const cacheError = new Error('cache miss')
-    const fetchNowPlaying = vi
-      .fn()
-      .mockRejectedValueOnce(cacheError)
-      .mockResolvedValueOnce(live)
-
-    const onCacheError = vi.fn()
-    await expect(
-      runBootstrapFetches(fetchNowPlaying, { onCacheError }),
-    ).resolves.toEqual({
-      cacheStep: null,
-      liveStep: { payload: live, forceRoll: true },
-    })
-    expect(onCacheError).toHaveBeenCalledWith(cacheError)
-  })
-
-  it('returns cache only when live fetch fails after cache succeeds', async () => {
-    const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
-    const liveError = new Error('live miss')
-    const fetchNowPlaying = vi
-      .fn()
-      .mockResolvedValueOnce(cached)
-      .mockRejectedValueOnce(liveError)
-
-    const onLiveError = vi.fn()
-    await expect(
-      runBootstrapFetches(fetchNowPlaying, { onLiveError }),
-    ).resolves.toEqual({
-      cacheStep: { payload: cached, forceRoll: true },
-      liveStep: null,
-    })
-    expect(onLiveError).toHaveBeenCalledWith(liveError)
-  })
-})
-
-describe('resolveLiveBootstrapEffects', () => {
-  const liveStep = { payload: trackPayload, forceRoll: true }
-
-  it('defers live payload when cache was applied so slots can mount first', () => {
-    expect(resolveLiveBootstrapEffects(true, liveStep)).toEqual({
-      kind: 'defer-live',
-      payload: trackPayload,
-    })
-  })
-
-  it('applies live immediately and starts polling when cache did not apply', () => {
-    expect(resolveLiveBootstrapEffects(false, liveStep)).toEqual({
-      kind: 'apply-live-immediately',
-      payload: trackPayload,
-      forceRoll: true,
-    })
-  })
-
-  it('schedules polling when live bootstrap is unavailable', () => {
-    expect(resolveLiveBootstrapEffects(true, null)).toEqual({ kind: 'schedule-poll' })
-    expect(resolveLiveBootstrapEffects(false, null)).toEqual({ kind: 'schedule-poll' })
+    expect(setLabel).not.toHaveBeenCalled()
+    expect(rollTitle).not.toHaveBeenCalled()
+    expect(rollArtist).not.toHaveBeenCalled()
   })
 })

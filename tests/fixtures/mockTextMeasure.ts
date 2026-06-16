@@ -1,8 +1,8 @@
 import type {
   PrefixRowMeasureElement,
   TextWidthMeasureElement,
-} from '@/lib/nowPlayingTrackLayout'
-import { formatLabelTitleLine } from '@/lib/nowPlayingTrackLayout'
+} from '@/lib/nowPlaying/trackLayout'
+import { formatLabelTitleLine } from '@/lib/nowPlaying/trackLayout'
 
 function resolveMockTextWidth(
   text: string,
@@ -126,7 +126,9 @@ export function attachMockPrefixRowMeasure(
   root: HTMLSpanElement,
   widthsByLabelTitle: Record<string, number>,
 ): void {
-  const labelSpan = root.querySelector<HTMLSpanElement>('.now-playing-label')
+  const labelSpan = root.querySelector<HTMLSpanElement>(
+    '.now-playing-measure-label, .now-playing-label',
+  )
   const titleSpan = root.querySelector<HTMLSpanElement>('.now-playing-slot')
   if (!labelSpan || !titleSpan) {
     throw new Error('prefix row measure requires label and slot spans')

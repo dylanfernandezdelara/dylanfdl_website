@@ -3,6 +3,7 @@ import {
   getSpotifyRedirectUri,
 } from '../../lib/spotify/auth.js'
 import { buildClearCookie, getCookie } from '../../lib/api/cookies.js'
+import { extractErrorMessage } from '../../lib/extractErrorMessage.js'
 import {
   getQueryParam,
   getRequestHost,
@@ -93,7 +94,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
   </body>
 </html>`)
   } catch (caught) {
-    const message = caught instanceof Error ? caught.message : 'Unknown error'
+    const message = extractErrorMessage(caught)
     res.status(500).send(`OAuth callback failed: ${escapeHtml(message)}`)
   }
 }

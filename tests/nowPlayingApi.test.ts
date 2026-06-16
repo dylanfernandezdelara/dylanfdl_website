@@ -184,11 +184,34 @@ describe('api/now-playing handler', () => {
 
     expect(mockSetNowPlayingCache).toHaveBeenCalled()
     expect(mockMarkLiveRefresh).toHaveBeenCalled()
+    expect(mockSetNowPlayingCache.mock.invocationCallOrder[0]).toBeLessThan(
+      mockMarkLiveRefresh.mock.invocationCallOrder[0]!,
+    )
     expect(res.statusCode).toBe(200)
     expect(res.body).toMatchObject({
       source: 'live',
       track: cache.track,
       isPlaying: true,
+    })
+  })
+
+  it('does not mark live refresh when cache write fails', async () => {
+    const { default: handler } = await import('../api/now-playing')
+    const res = makeResponse()
+    const cacheError = new Error('cache write failed')
+    mockFetchCurrentlyPlaying.mockResolvedValue({
+      track: cache.track,
+      isPlaying: true,
+    })
+    mockSetNowPlayingCache.mockRejectedValue(cacheError)
+
+    await handler(makeRequest({ query: { live: '1' } }), res)
+
+    expect(mockMarkLiveRefresh).not.toHaveBeenCalled()
+    expect(logNowPlaying.logNowPlayingWarn).toHaveBeenCalledWith('live refresh failed', cacheError)
+    expect(res.body).toMatchObject({
+      source: 'cache',
+      track: cache.track,
     })
   })
 

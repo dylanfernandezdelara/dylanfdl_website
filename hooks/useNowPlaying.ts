@@ -12,8 +12,9 @@ import {
   resolveLiveBootstrapEffects,
   runBootstrapFetches,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
-import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
+import { isNowPlayingDevPreview } from '@/hooks/isNowPlayingDevPreview'
 import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
+import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
 import { parseNowPlayingResponse } from '@/lib/spotify/parseNowPlayingResponse'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
@@ -40,7 +41,7 @@ export type UseNowPlayingResult = {
 }
 
 export default function useNowPlaying(): UseNowPlayingResult {
-  const isDevPreview = import.meta.env.DEV
+  const isDevPreview = isNowPlayingDevPreview()
 
   const [visible, setVisible] = useState(false)
   const [label, setLabel] = useState('Currently listening to')
@@ -167,19 +168,25 @@ export default function useNowPlaying(): UseNowPlayingResult {
       })
       if (cancelled) return
 
+      if (cancelled) return
+
       let cacheApplied = false
       if (cacheStep) {
         cacheApplied = applyPayload(cacheStep.payload, { forceRoll: cacheStep.forceRoll })
       }
 
+      if (cancelled) return
+
       const effects = resolveLiveBootstrapEffects(cacheApplied, liveStep)
       switch (effects.kind) {
         case 'defer-live':
-          setPendingLivePayload(effects.payload)
+          if (!cancelled) setPendingLivePayload(effects.payload)
           break
         case 'apply-live-immediately':
-          applyPayload(effects.payload, { forceRoll: effects.forceRoll })
-          schedulePoll()
+          if (!cancelled) {
+            applyPayload(effects.payload, { forceRoll: effects.forceRoll })
+            schedulePoll()
+          }
           break
         case 'schedule-poll':
           if (!cancelled) schedulePoll()

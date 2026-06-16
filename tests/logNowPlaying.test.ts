@@ -65,11 +65,10 @@ describe('logNowPlaying', () => {
     expect(console.error).toHaveBeenCalledWith('[now-playing] request failed:', 'offline')
   })
 
-  it('logs only the message for suppressed Error objects', () => {
+  it('logs the full error object for manually tagged non-sanitized errors', () => {
     const error = Object.assign(new Error('safe failure'), { logSuppressed: true as const })
     logNowPlayingWarn('live refresh failed', error)
 
-    expect(console.warn).toHaveBeenCalledWith('[now-playing] live refresh failed:', 'safe failure')
-    expect(console.warn).not.toHaveBeenCalledWith('[now-playing] live refresh failed:', 'safe failure', error)
+    expect(console.warn).toHaveBeenCalledWith('[now-playing] live refresh failed:', 'safe failure', error)
   })
 })

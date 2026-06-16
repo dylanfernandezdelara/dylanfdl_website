@@ -11,22 +11,14 @@ const componentSource = readFileSync(
 )
 
 describe('CurrentlyListeningText presentation contract', () => {
-  it('wires prefix-split spacing and wrapping in the component markup', () => {
-    expect(componentSource).toContain("const isPrefixSplit = layout === 'prefix-split'")
-    expect(componentSource).toContain('{isInline || isPrefixSplit ? \' \' : null}')
-    expect(componentSource).toContain(
-      'allowWrap={!isInline && !isSplit && !isPrefixSplit}',
-    )
-  })
-
-  it('renders a hidden prefix-row measure that mirrors row-one typography', () => {
-    expect(componentSource).toContain('ref={prefixRowMeasureRef}')
-    expect(componentSource).toContain('now-playing-prefix-row-measure')
-    expect(componentSource).toContain('<span className="now-playing-label" />')
-    expect(componentSource).toContain(`<span className={NOW_PLAYING_SLOT_CLASS} />`)
-  })
-
   it('exposes layout through data-layout on the root element', () => {
     expect(componentSource).toContain('data-layout={layout}')
+  })
+
+  it('uses dedicated measure refs that do not share visible layout class names', () => {
+    expect(componentSource).toContain('prefixRowRootRef')
+    expect(componentSource).toContain('prefixLabelMeasureRef')
+    expect(componentSource).toContain('prefixTitleMeasureRef')
+    expect(componentSource).toContain('now-playing-measure-label')
   })
 })

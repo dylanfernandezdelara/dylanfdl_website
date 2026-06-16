@@ -1,13 +1,18 @@
-import type { NowPlayingTrackLayout } from '@/lib/nowPlayingTrackLayout'
+import type { NowPlayingTrackLayout } from '@/lib/nowPlaying/trackLayout'
 import {
   formatByArtistLineWithPeriod,
   formatFullTrackLine,
+  formatFullTrackLineWithPeriod,
   formatLabelTitleLine,
-} from '@/lib/nowPlayingTrackLayout'
+} from '@/lib/nowPlaying/trackLayout'
 
 export const NOW_PLAYING_LABEL = 'Recently listened to'
 
-/** Content width inside the about intro column after horizontal padding. */
+/**
+ * Scenario pixel widths were captured from Inter 500 Italic (@fontsource/inter/500-italic)
+ * in the about intro column at mobile (358px), tablet (848px), and desktop (864px) content widths.
+ * Regenerate by measuring rendered `.now-playing-measure` spans in the target viewport.
+ */
 export const NOW_PLAYING_CONTAINER_WIDTHS = {
   mobile: 358,
   tablet: 848,
@@ -26,6 +31,7 @@ export type NowPlayingLayoutScenario = {
   labelTitleWidth: number
   /** Width of `by ${artist}.` including the trailing period. */
   byArtistWidth: number
+  /** Width of `${title} by ${artist}.` including the trailing period. */
   trackLineWidth: number
   fullLineWidth: number
   expected: NowPlayingTrackLayout
@@ -266,11 +272,13 @@ export function trackWidthsForScenario(
   >,
 ): Record<string, number> {
   const trackLine = formatFullTrackLine(scenario.title, scenario.artist)
+  const trackLineWithPeriod = formatFullTrackLineWithPeriod(scenario.title, scenario.artist)
   const trackSuffix = ` ${trackLine}.`
 
   return {
     [scenario.title]: scenario.titleWidth,
     [formatByArtistLineWithPeriod(scenario.artist)]: scenario.byArtistWidth,
+    [trackLineWithPeriod]: scenario.trackLineWidth,
     [trackLine]: scenario.trackLineWidth,
     [trackSuffix]: scenario.fullLineWidth - scenario.labelWidth,
   }

@@ -10,9 +10,9 @@ describe('isLogSuppressedError', () => {
     expect(isLogSuppressedError(new SanitizedInfrastructureError('read cache'))).toBe(true)
   })
 
-  it('returns true for Error objects with logSuppressed set', () => {
+  it('returns false for plain errors even when logSuppressed is set manually', () => {
     const error = Object.assign(new Error('safe failure'), { logSuppressed: true as const })
-    expect(isLogSuppressedError(error)).toBe(true)
+    expect(isLogSuppressedError(error)).toBe(false)
   })
 
   it('returns false for plain objects with logSuppressed', () => {
