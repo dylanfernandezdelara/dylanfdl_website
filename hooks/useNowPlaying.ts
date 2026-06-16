@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useRef, useState, type Ref } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type Ref } from 'react'
 
 import useSlotTextRoll from '@/hooks/useSlotTextRoll'
 import {
@@ -60,8 +60,14 @@ export default function useNowPlaying(
   const rollStateRef = useRef<TrackRollState>(initialStateRef.current.rollState)
   const shouldSeedInitialTextRef = useRef(initialStateRef.current.visible)
   const [slotTextOwnsDom, setSlotTextOwnsDom] = useState(!initialStateRef.current.visible)
+  const slotTextOwnsDomRef = useRef(slotTextOwnsDom)
+  slotTextOwnsDomRef.current = slotTextOwnsDom
   const [pendingLivePayload, setPendingLivePayload] = useState<NowPlayingResponse | null>(null)
   const beginPollingRef = useRef<(() => void) | null>(null)
+
+  const markSlotTextOwnsDom = useCallback(() => {
+    setSlotTextOwnsDom(true)
+  }, [])
 
   const {
     slotRef: titleSlotRef,
@@ -71,6 +77,7 @@ export default function useNowPlaying(
   } = useSlotTextRoll({
     direction: 'up',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
+    onDisplayed: markSlotTextOwnsDom,
   })
   const {
     slotRef: artistSlotRef,
@@ -80,6 +87,7 @@ export default function useNowPlaying(
   } = useSlotTextRoll({
     direction: 'down',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
+    onDisplayed: markSlotTextOwnsDom,
   })
 
   const rollTitleRef = useRef(rollTitleTo)
@@ -99,7 +107,6 @@ export default function useNowPlaying(
     shouldSeedInitialTextRef.current = false
     setTitleInstant(title)
     setArtistInstant(artist)
-    setSlotTextOwnsDom(true)
 
     return undefined
   }, [artist, artistSlotMounted, setArtistInstant, setTitleInstant, title, titleSlotMounted])
@@ -114,19 +121,20 @@ export default function useNowPlaying(
       setVisible,
       setTitle,
       setArtist,
-      rollTitle: (nextTitle) => {
-        rollTitleRef.current(nextTitle)
-        if (titleSlotMounted && artistSlotMounted) {
-          setSlotTextOwnsDom(true)
-        }
-      },
-      rollArtist: (nextArtist) => {
-        rollArtistRef.current(nextArtist)
-        if (titleSlotMounted && artistSlotMounted) {
-          setSlotTextOwnsDom(true)
-        }
-      },
+      rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
+      rollArtist: (nextArtist) => rollArtistRef.current(nextArtist),
     })
+
+    if (
+      !update.shouldRoll &&
+      titleSlotMounted &&
+      artistSlotMounted &&
+      !slotTextOwnsDomRef.current
+    ) {
+      setTitleInstantRef.current(update.title)
+      setArtistInstantRef.current(update.artist)
+    }
+
     return true
   }
 
@@ -261,7 +269,7 @@ export default function useNowPlaying(
       return undefined
     }
 
-    applyPayload(pendingLivePayload, { forceRoll: !slotTextOwnsDom })
+    applyPayload(pendingLivePayload, { forceRoll: !slotTextOwnsDomRef.current })
     setPendingLivePayload(null)
     beginPollingRef.current?.()
 

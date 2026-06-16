@@ -9,6 +9,7 @@ import { seedEmptyBaseline } from '@/lib/slotTextSeed'
 export type UseSlotTextRollOptions = {
   direction: 'up' | 'down'
   slotOptions?: Omit<SlotOptions, 'direction'>
+  onDisplayed?: () => void
 }
 
 export type UseSlotTextRollResult = {
@@ -21,6 +22,7 @@ export type UseSlotTextRollResult = {
 export default function useSlotTextRoll({
   direction,
   slotOptions,
+  onDisplayed,
 }: UseSlotTextRollOptions): UseSlotTextRollResult {
   const { reduced: prefersReducedMotion, ready: motionReady } = usePrefersReducedMotion()
   const slotRef = useRef<HTMLSpanElement>(null)
@@ -28,8 +30,15 @@ export default function useSlotTextRoll({
   const currentTextRef = useRef('')
   const pendingTextRef = useRef<string | null>(null)
   const [slotMounted, setSlotMounted] = useState(false)
+  const onDisplayedRef = useRef(onDisplayed)
+  onDisplayedRef.current = onDisplayed
 
   const canAnimate = motionReady && slotMounted && !prefersReducedMotion
+
+  const notifyDisplayed = useCallback((text: string) => {
+    if (text.length === 0) return
+    onDisplayedRef.current?.()
+  }, [])
 
   const setInstant = useCallback((text: string) => {
     const slot = slotRef.current
@@ -40,7 +49,8 @@ export default function useSlotTextRoll({
     controllerRef.current?.destroy()
     controllerRef.current = null
     slot.textContent = text
-  }, [])
+    notifyDisplayed(text)
+  }, [notifyDisplayed])
 
   const animateTo = useCallback(
     (text: string) => {
@@ -49,6 +59,7 @@ export default function useSlotTextRoll({
 
       if (text === currentTextRef.current) {
         pendingTextRef.current = null
+        notifyDisplayed(text)
         return
       }
 
@@ -71,8 +82,9 @@ export default function useSlotTextRoll({
       })
       currentTextRef.current = text
       pendingTextRef.current = null
+      notifyDisplayed(text)
     },
-    [direction, prefersReducedMotion, setInstant, slotOptions],
+    [direction, notifyDisplayed, prefersReducedMotion, setInstant, slotOptions],
   )
 
   const rollTo = useCallback(

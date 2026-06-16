@@ -35,12 +35,27 @@ const setTitleInstant = vi.fn()
 const setArtistInstant = vi.fn()
 
 vi.mock('@/hooks/useSlotTextRoll', () => ({
-  default: vi.fn(({ direction }: { direction: 'up' | 'down' }) => ({
-    slotRef: { current: document.createElement('span') },
-    slotMounted: true,
-    rollTo: direction === 'up' ? rollTitleTo : rollArtistTo,
-    setInstant: direction === 'up' ? setTitleInstant : setArtistInstant,
-  })),
+  default: vi.fn(
+    ({
+      direction,
+      onDisplayed,
+    }: {
+      direction: 'up' | 'down'
+      onDisplayed?: () => void
+    }) => ({
+      slotRef: { current: document.createElement('span') },
+      slotMounted: true,
+      rollTo: direction === 'up' ? rollTitleTo : rollArtistTo,
+      setInstant: (text: string) => {
+        if (direction === 'up') {
+          setTitleInstant(text)
+        } else {
+          setArtistInstant(text)
+        }
+        onDisplayed?.()
+      },
+    }),
+  ),
 }))
 
 describe('useNowPlaying bootstrap', () => {
