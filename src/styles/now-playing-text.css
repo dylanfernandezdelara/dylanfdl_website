@@ -49,12 +49,12 @@
   display: inline;
 }
 
-.now-playing[data-layout='prefix-split'] > .now-playing-title {
+.now-playing[data-layout='prefix-split'] > .now-playing-track .now-playing-title {
   display: inline;
   white-space: nowrap;
 }
 
-.now-playing[data-layout='prefix-split'] > .now-playing-artist-line {
+.now-playing[data-layout='prefix-split'] > .now-playing-track .now-playing-artist-line {
   display: block;
   white-space: normal;
 }
@@ -69,13 +69,13 @@
   align-items: flex-start;
 }
 
-.now-playing[data-layout='stacked'] > .now-playing-title {
+.now-playing[data-layout='stacked'] > .now-playing-track .now-playing-title {
   display: block;
   white-space: normal;
   max-width: 100%;
 }
 
-.now-playing[data-layout='stacked'] > .now-playing-artist-line {
+.now-playing[data-layout='stacked'] > .now-playing-track .now-playing-artist-line {
   display: block;
 }
 

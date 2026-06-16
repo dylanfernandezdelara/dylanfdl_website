@@ -35,9 +35,11 @@ describe('now-playing production measure CSS', () => {
 
   it('keeps label and title together with artist on the next row for prefix-split', () => {
     expect(nowPlayingCss).toContain(".now-playing[data-layout='prefix-split']")
-    expect(nowPlayingCss).toContain(".now-playing[data-layout='prefix-split'] > .now-playing-title")
     expect(nowPlayingCss).toContain(
-      ".now-playing[data-layout='prefix-split'] > .now-playing-artist-line",
+      ".now-playing[data-layout='prefix-split'] > .now-playing-track .now-playing-title",
+    )
+    expect(nowPlayingCss).toContain(
+      ".now-playing[data-layout='prefix-split'] > .now-playing-track .now-playing-artist-line",
     )
   })
 
@@ -50,7 +52,7 @@ describe('now-playing production measure CSS', () => {
     expect(nowPlayingCss).toContain(".now-playing[data-layout='stacked'] > .now-playing-track")
     expect(nowPlayingCss).toContain('flex-direction: column')
     expect(nowPlayingCss).toContain(
-      ".now-playing[data-layout='stacked'] > .now-playing-artist-line",
+      ".now-playing[data-layout='stacked'] > .now-playing-track .now-playing-artist-line",
     )
   })
 })

@@ -12,7 +12,6 @@ import {
   resolveLiveBootstrapEffects,
   runBootstrapFetches,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
-import { isNowPlayingDevPreview } from '@/hooks/isNowPlayingDevPreview'
 import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
@@ -41,7 +40,7 @@ export type UseNowPlayingResult = {
 }
 
 export default function useNowPlaying(): UseNowPlayingResult {
-  const isDevPreview = isNowPlayingDevPreview()
+  const isDevPreview = import.meta.env.DEV
 
   const [visible, setVisible] = useState(false)
   const [label, setLabel] = useState('Currently listening to')
@@ -57,6 +56,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
     slotRef: titleSlotRef,
     slotMounted: titleSlotMounted,
     rollTo: rollTitleTo,
+    setInstant: setInstantTitle,
   } = useSlotTextRoll({
     direction: 'up',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
@@ -65,6 +65,7 @@ export default function useNowPlaying(): UseNowPlayingResult {
     slotRef: artistSlotRef,
     slotMounted: artistSlotMounted,
     rollTo: rollArtistTo,
+    setInstant: setInstantArtist,
   } = useSlotTextRoll({
     direction: 'down',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
@@ -72,8 +73,12 @@ export default function useNowPlaying(): UseNowPlayingResult {
 
   const rollTitleRef = useRef(rollTitleTo)
   const rollArtistRef = useRef(rollArtistTo)
+  const setInstantTitleRef = useRef(setInstantTitle)
+  const setInstantArtistRef = useRef(setInstantArtist)
   rollTitleRef.current = rollTitleTo
   rollArtistRef.current = rollArtistTo
+  setInstantTitleRef.current = setInstantTitle
+  setInstantArtistRef.current = setInstantArtist
 
   const applyPayload = (payload: NowPlayingResponse, options: { forceRoll: boolean }): boolean => {
     const update = computeTrackUpdate(payload, rollStateRef.current, options)
@@ -87,6 +92,8 @@ export default function useNowPlaying(): UseNowPlayingResult {
       setArtist,
       rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
       rollArtist: (nextArtist) => rollArtistRef.current(nextArtist),
+      setInstantTitle: (nextTitle) => setInstantTitleRef.current(nextTitle),
+      setInstantArtist: (nextArtist) => setInstantArtistRef.current(nextArtist),
     })
     return true
   }
@@ -166,8 +173,6 @@ export default function useNowPlaying(): UseNowPlayingResult {
         onCacheError: (error) => logNowPlayingWarn('cache bootstrap failed', error),
         onLiveError: (error) => logNowPlayingWarn('live bootstrap failed', error),
       })
-      if (cancelled) return
-
       if (cancelled) return
 
       let cacheApplied = false
