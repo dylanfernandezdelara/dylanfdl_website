@@ -1,8 +1,8 @@
 import {
   computeTrackUpdate,
+  getNowPlayingLabel,
   type TrackRollState,
 } from '@/lib/nowPlaying/applyTrackUpdate'
-import { getNowPlayingLabel } from '@/lib/nowPlaying/labels'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 export type InitialNowPlayingState = {
