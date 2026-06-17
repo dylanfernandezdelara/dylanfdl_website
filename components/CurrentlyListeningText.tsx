@@ -7,7 +7,6 @@ import 'slot-text/style.css'
 import ExternalLink from '@/components/ExternalLink'
 import useNowPlaying from '@/hooks/useNowPlaying'
 import useNowPlayingTrackLayout from '@/hooks/useNowPlayingTrackLayout'
-import { formatArtistWithTrailingPeriod } from '@/lib/nowPlaying/trackLayout'
 import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlayingPresentation'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
@@ -24,6 +23,7 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
     trackUrl,
     title,
     artist,
+    artistSlotDisplayText,
     slotTextActive,
     titleSlotRef,
     artistSlotRef,
@@ -67,7 +67,7 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
         <span className="now-playing-artist-line">
           <span className="now-playing-by">by </span>
           <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS}>
-            {slotTextActive ? null : formatArtistWithTrailingPeriod(artist)}
+            {slotTextActive ? null : artistSlotDisplayText}
           </span>
         </span>
       </span>

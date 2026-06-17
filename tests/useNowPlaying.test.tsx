@@ -78,6 +78,7 @@ describe('useNowPlaying bootstrap', () => {
     // The trailing sentence period is glued onto the artist slot text so it can
     // never be stranded on its own line when a long artist name wraps.
     expect(rollArtistTo).toHaveBeenLastCalledWith('Daft Punk.')
+    expect(result.current.artistSlotDisplayText).toBe('Daft Punk.')
   })
 
   it('uses SSR initial payload without bootstrap re-roll', async () => {

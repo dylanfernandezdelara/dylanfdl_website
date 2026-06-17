@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   formatArtistWithTrailingPeriod,
   formatByArtistLineWithPeriod,
+  formatFullTrackLineWithPeriod,
   formatLabelTitleLine,
   fitsTrackOnOneLine,
   measurePrefixRowWidth,
@@ -59,6 +60,16 @@ describe('formatArtistWithTrailingPeriod', () => {
   it('is the suffix the by-artist line is built from, so measurement matches render', () => {
     const artist = 'Olivia Rodrigo, Robert Smith'
     expect(formatByArtistLineWithPeriod(artist)).toBe(`by ${formatArtistWithTrailingPeriod(artist)}`)
+  })
+})
+
+describe('formatFullTrackLineWithPeriod', () => {
+  it('reuses the artist trailing period helper for the full track line', () => {
+    const title = 'Instant Crush'
+    const artist = 'Daft Punk'
+    expect(formatFullTrackLineWithPeriod(title, artist)).toBe(
+      `${title} by ${formatArtistWithTrailingPeriod(artist)}`,
+    )
   })
 })
 

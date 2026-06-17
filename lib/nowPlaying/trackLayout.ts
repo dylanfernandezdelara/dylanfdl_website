@@ -33,7 +33,7 @@ export function formatFullTrackLine(title: string, artist: string): string {
 }
 
 export function formatFullTrackLineWithPeriod(title: string, artist: string): string {
-  return `${formatFullTrackLine(title, artist)}.`
+  return `${title} by ${formatArtistWithTrailingPeriod(artist)}`
 }
 
 export function fitsTrackOnOneLine(

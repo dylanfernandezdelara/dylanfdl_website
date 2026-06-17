@@ -22,8 +22,9 @@ describe('CurrentlyListeningText presentation contract', () => {
     expect(componentSource).toContain('now-playing-measure-label')
   })
 
-  it('glues the trailing period into the artist slot text', () => {
-    expect(componentSource).toContain('formatArtistWithTrailingPeriod(artist)')
+  it('glues the trailing period into the artist slot text via the hook', () => {
+    expect(componentSource).toContain('artistSlotDisplayText')
+    expect(componentSource).not.toContain('formatArtistWithTrailingPeriod')
   })
 
   it('no longer renders a bare period text node as a sibling after the artist slot', () => {

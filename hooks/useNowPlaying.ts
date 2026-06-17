@@ -41,6 +41,8 @@ export type UseNowPlayingResult = {
   trackUrl: string | null
   title: string
   artist: string
+  /** Artist slot text including the trailing sentence period (SSR/hydration fallback). */
+  artistSlotDisplayText: string
   /** True once slot-text owns the slots; callers render `null` slot children then. */
   slotTextActive: boolean
   titleSlotRef: Ref<HTMLSpanElement>
@@ -88,9 +90,9 @@ export default function useNowPlaying(
   const rollTitleRef = useRef(rollTitleTo)
   const rollArtistRef = useRef<(artistText: string) => void>(rollArtistTo)
   rollTitleRef.current = rollTitleTo
-  // Single boundary for every artist roll: glue the trailing sentence period
-  // onto the slot text here so it shares the artist's wrapping context (and can
-  // never be stranded on its own line), without each caller having to remember.
+  // Artist rolls apply formatArtistWithTrailingPeriod here so the sentence period
+  // shares the artist's wrapping context. Before slot-text activates, callers
+  // render artistSlotDisplayText from this hook's return value (same formatter).
   rollArtistRef.current = (artistText: string) =>
     rollArtistTo(formatArtistWithTrailingPeriod(artistText))
 
@@ -267,6 +269,7 @@ export default function useNowPlaying(
     trackUrl,
     title,
     artist,
+    artistSlotDisplayText: formatArtistWithTrailingPeriod(artist),
     slotTextActive,
     titleSlotRef,
     artistSlotRef,
