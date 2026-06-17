@@ -9,6 +9,7 @@ import {
   setNowPlayingCache,
   shouldSkipLiveRefresh,
 } from '../lib/spotify/cache.js'
+import { getFreshNowPlayingCache } from '../lib/spotify/cacheFreshness.js'
 import { fetchCurrentlyPlaying, toNowPlayingCache } from '../lib/spotify/currentlyPlaying.js'
 import { toLiveTrackResponse, toNowPlayingResponse } from '../lib/spotify/response.js'
 import { getQueryParam, type ApiRequest, type ApiResponse } from '../lib/api/vercel.js'
@@ -36,7 +37,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
   }
 
   try {
-    const cached = await getNowPlayingCache()
+    const cached = getFreshNowPlayingCache(await getNowPlayingCache())
 
     if (!live) {
       res.status(200).json(toNowPlayingResponse('cache', cached, null))

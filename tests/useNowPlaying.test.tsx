@@ -81,7 +81,7 @@ describe('useNowPlaying bootstrap', () => {
     expect(result.current.artistSlotDisplayText).toBe('Daft Punk.')
   })
 
-  it('uses SSR initial payload without bootstrap re-roll', async () => {
+  it('uses SSR initial payload without rolling stale cache before live refresh', async () => {
     const fetchMock = vi.mocked(fetch)
     fetchMock.mockImplementation(async (input) => {
       const url = String(input)
@@ -99,18 +99,50 @@ describe('useNowPlaying bootstrap', () => {
     expect(result.current.label).toBe('Recently listened to')
 
     await waitFor(() => {
-      expect(rollTitleTo).toHaveBeenCalledWith('Instant Crush')
-      expect(rollArtistTo).toHaveBeenCalledWith('Daft Punk.')
-      expect(result.current.slotTextActive).toBe(true)
-    })
-
-    await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith('/api/now-playing?live=1')
     })
 
     expect(fetchMock).not.toHaveBeenCalledWith('/api/now-playing')
+    expect(rollTitleTo).not.toHaveBeenCalled()
+    expect(rollArtistTo).not.toHaveBeenCalled()
+    expect(result.current.label).toBe('Currently listening to')
+  })
+
+  it('rolls once when SSR cache differs from live playback', async () => {
+    const stalePayload: NowPlayingResponse = {
+      ...cachedPayload,
+      track: {
+        id: 'stale-track',
+        name: 'Symphony No. 5 in C-Sharp Minor: IV. Adagietto. Sehr langsam',
+        artists: ['Gustav Mahler'],
+        url: 'https://open.spotify.com/track/stale-track',
+      },
+    }
+    const fetchMock = vi.mocked(fetch)
+    fetchMock.mockImplementation(async (input) => {
+      const url = String(input)
+      if (!url.includes('live=1')) {
+        throw new Error('cache bootstrap should be skipped')
+      }
+      return {
+        ok: true,
+        json: async () => livePayload,
+      } as Response
+    })
+
+    const { result } = renderHook(() => useNowPlaying({ initialPayload: stalePayload }))
+
+    expect(result.current.title).toBe(
+      'Symphony No. 5 in C-Sharp Minor: IV. Adagietto. Sehr langsam',
+    )
+
+    await waitFor(() => {
+      expect(result.current.title).toBe('Instant Crush')
+      expect(result.current.label).toBe('Currently listening to')
+    })
 
     expect(rollTitleTo).toHaveBeenCalledTimes(1)
+    expect(rollTitleTo).toHaveBeenCalledWith('Instant Crush')
     expect(rollArtistTo).toHaveBeenCalledTimes(1)
   })
 

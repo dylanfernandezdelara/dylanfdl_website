@@ -11,7 +11,7 @@ const cache: NowPlayingCache = {
     artists: ['Daft Punk'],
     url: 'https://open.spotify.com/track/track-1',
   },
-  updatedAt: '2026-06-13T12:00:00.000Z',
+  updatedAt: new Date().toISOString(),
 }
 
 const {

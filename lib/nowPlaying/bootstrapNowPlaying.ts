@@ -19,12 +19,26 @@ export type BootstrapFetchOutcome = {
 export function resolveLiveBootstrapEffects(
   cacheApplied: boolean,
   liveStep: BootstrapApplyStep | null,
+  cachedTrackId: string | null = null,
 ): LiveBootstrapEffects {
   if (!liveStep) {
     return { kind: 'schedule-poll' }
   }
 
   if (cacheApplied) {
+    const liveTrackId = liveStep.payload.track?.id ?? null
+    if (
+      liveTrackId !== null &&
+      cachedTrackId !== null &&
+      liveTrackId !== cachedTrackId
+    ) {
+      return {
+        kind: 'apply-live-immediately',
+        payload: liveStep.payload,
+        forceRoll: false,
+      }
+    }
+
     return { kind: 'defer-live', payload: liveStep.payload }
   }
 

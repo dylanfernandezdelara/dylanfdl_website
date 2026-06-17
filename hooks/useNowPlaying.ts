@@ -62,7 +62,9 @@ export default function useNowPlaying(
   const [artist, setArtist] = useState(initialStateRef.current.artist)
 
   const rollStateRef = useRef<TrackRollState>(initialStateRef.current.rollState)
-  const shouldSeedInitialTextRef = useRef(initialStateRef.current.visible)
+  const shouldSeedInitialTextRef = useRef(
+    initialStateRef.current.visible && options.initialPayload?.source !== 'cache',
+  )
   const [pendingLivePayload, setPendingLivePayload] = useState<NowPlayingResponse | null>(null)
   const beginPollingRef = useRef<(() => void) | null>(null)
 
@@ -216,7 +218,11 @@ export default function useNowPlaying(
 
       if (cancelled) return
 
-      const effects = resolveLiveBootstrapEffects(cacheApplied, liveStep)
+      const effects = resolveLiveBootstrapEffects(
+        cacheApplied,
+        liveStep,
+        rollStateRef.current.trackId,
+      )
       switch (effects.kind) {
         case 'defer-live':
           if (!cancelled) setPendingLivePayload(effects.payload)

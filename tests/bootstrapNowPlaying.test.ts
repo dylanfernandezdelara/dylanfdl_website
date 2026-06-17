@@ -116,9 +116,17 @@ describe('resolveLiveBootstrapEffects', () => {
   const liveStep = { payload: trackPayload, forceRoll: true }
 
   it('defers live payload when cache was applied so slots can mount first', () => {
-    expect(resolveLiveBootstrapEffects(true, liveStep)).toEqual({
+    expect(resolveLiveBootstrapEffects(true, liveStep, 'track-1')).toEqual({
       kind: 'defer-live',
       payload: trackPayload,
+    })
+  })
+
+  it('applies live immediately when cached and live track ids differ', () => {
+    expect(resolveLiveBootstrapEffects(true, liveStep, 'stale-track-id')).toEqual({
+      kind: 'apply-live-immediately',
+      payload: trackPayload,
+      forceRoll: false,
     })
   })
 
@@ -131,7 +139,7 @@ describe('resolveLiveBootstrapEffects', () => {
   })
 
   it('schedules polling when live bootstrap is unavailable', () => {
-    expect(resolveLiveBootstrapEffects(true, null)).toEqual({ kind: 'schedule-poll' })
+    expect(resolveLiveBootstrapEffects(true, null, 'track-1')).toEqual({ kind: 'schedule-poll' })
     expect(resolveLiveBootstrapEffects(false, null)).toEqual({ kind: 'schedule-poll' })
   })
 })
