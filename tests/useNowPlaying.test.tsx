@@ -75,7 +75,10 @@ describe('useNowPlaying bootstrap', () => {
     expect(rollTitleTo).toHaveBeenCalledTimes(1)
     expect(rollArtistTo).toHaveBeenCalledTimes(1)
     expect(rollTitleTo).toHaveBeenLastCalledWith('Instant Crush')
-    expect(rollArtistTo).toHaveBeenLastCalledWith('Daft Punk')
+    // The trailing sentence period is glued onto the artist slot text so it can
+    // never be stranded on its own line when a long artist name wraps.
+    expect(rollArtistTo).toHaveBeenLastCalledWith('Daft Punk.')
+    expect(result.current.artistSlotDisplayText).toBe('Daft Punk.')
   })
 
   it('uses SSR initial payload without bootstrap re-roll', async () => {
@@ -97,7 +100,7 @@ describe('useNowPlaying bootstrap', () => {
 
     await waitFor(() => {
       expect(rollTitleTo).toHaveBeenCalledWith('Instant Crush')
-      expect(rollArtistTo).toHaveBeenCalledWith('Daft Punk')
+      expect(rollArtistTo).toHaveBeenCalledWith('Daft Punk.')
       expect(result.current.slotTextActive).toBe(true)
     })
 

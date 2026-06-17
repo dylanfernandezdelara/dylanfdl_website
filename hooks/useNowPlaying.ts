@@ -9,6 +9,7 @@ import {
   type TrackRollState,
 } from '@/lib/nowPlaying/applyTrackUpdate'
 import { deriveInitialNowPlayingState } from '@/lib/nowPlaying/deriveInitialNowPlayingState'
+import { formatArtistWithTrailingPeriod } from '@/lib/nowPlaying/trackLayout'
 import {
   resolveLiveBootstrapEffects,
   runBootstrapFetches,
@@ -40,6 +41,8 @@ export type UseNowPlayingResult = {
   trackUrl: string | null
   title: string
   artist: string
+  /** Artist slot text including the trailing sentence period (SSR/hydration fallback). */
+  artistSlotDisplayText: string
   /** True once slot-text owns the slots; callers render `null` slot children then. */
   slotTextActive: boolean
   titleSlotRef: Ref<HTMLSpanElement>
@@ -85,9 +88,13 @@ export default function useNowPlaying(
   const slotTextActive = titleActive && artistActive
 
   const rollTitleRef = useRef(rollTitleTo)
-  const rollArtistRef = useRef(rollArtistTo)
+  const rollArtistRef = useRef<(artistText: string) => void>(rollArtistTo)
   rollTitleRef.current = rollTitleTo
-  rollArtistRef.current = rollArtistTo
+  // Artist rolls apply formatArtistWithTrailingPeriod here so the sentence period
+  // shares the artist's wrapping context. Before slot-text activates, callers
+  // render artistSlotDisplayText from this hook's return value (same formatter).
+  rollArtistRef.current = (artistText: string) =>
+    rollArtistTo(formatArtistWithTrailingPeriod(artistText))
 
   useLayoutEffect(() => {
     if (!shouldSeedInitialTextRef.current) {
@@ -262,6 +269,7 @@ export default function useNowPlaying(
     trackUrl,
     title,
     artist,
+    artistSlotDisplayText: formatArtistWithTrailingPeriod(artist),
     slotTextActive,
     titleSlotRef,
     artistSlotRef,

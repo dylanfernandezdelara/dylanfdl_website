@@ -23,6 +23,7 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
     trackUrl,
     title,
     artist,
+    artistSlotDisplayText,
     slotTextActive,
     titleSlotRef,
     artistSlotRef,
@@ -66,9 +67,8 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
         <span className="now-playing-artist-line">
           <span className="now-playing-by">by </span>
           <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS}>
-            {slotTextActive ? null : artist}
+            {slotTextActive ? null : artistSlotDisplayText}
           </span>
-          .
         </span>
       </span>
       <span
