@@ -106,7 +106,7 @@ export function resolveNowPlayingTrackLayout({
     trackMeasure,
     formatFullTrackLineWithPeriod(title, artist),
   )
-  const trackSuffix = ` ${formatFullTrackLine(title, artist)}.`
+  const trackSuffix = ` ${formatFullTrackLineWithPeriod(title, artist)}`
   const titleWidth = measureTextWidth(trackMeasure, title)
 
   return pickNowPlayingTrackLayout({
