@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  formatArtistWithTrailingPeriod,
+  formatByArtistLineWithPeriod,
   formatLabelTitleLine,
   fitsTrackOnOneLine,
   measurePrefixRowWidth,
@@ -40,6 +42,23 @@ describe('measurePrefixRowWidth', () => {
     expect(
       measurePrefixRowWidth(prefixRowMeasure, NOW_PLAYING_LABEL, 'Motion'),
     ).toBe(244)
+  })
+})
+
+describe('formatArtistWithTrailingPeriod', () => {
+  it('glues the sentence period directly onto the artist slot text', () => {
+    expect(formatArtistWithTrailingPeriod('Daft Punk')).toBe('Daft Punk.')
+  })
+
+  it('keeps the period attached for long, multi-artist names', () => {
+    expect(
+      formatArtistWithTrailingPeriod('Daft Punk, Julian Casablancas, Some Very Long Featured Artist Name'),
+    ).toBe('Daft Punk, Julian Casablancas, Some Very Long Featured Artist Name.')
+  })
+
+  it('is the suffix the by-artist line is built from, so measurement matches render', () => {
+    const artist = 'Olivia Rodrigo, Robert Smith'
+    expect(formatByArtistLineWithPeriod(artist)).toBe(`by ${formatArtistWithTrailingPeriod(artist)}`)
   })
 })
 

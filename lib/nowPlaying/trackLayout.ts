@@ -10,8 +10,18 @@ export type NowPlayingTrackMeasurements = {
   fullLineWidth: number
 }
 
+/**
+ * Artist text rendered inside the roll slot. The trailing sentence period is
+ * glued on here (rather than rendered as a separate sibling node) so it shares
+ * the artist's wrapping context and can never be stranded on its own line when
+ * a long artist name wraps.
+ */
+export function formatArtistWithTrailingPeriod(artist: string): string {
+  return `${artist}.`
+}
+
 export function formatByArtistLineWithPeriod(artist: string): string {
-  return `by ${artist}.`
+  return `by ${formatArtistWithTrailingPeriod(artist)}`
 }
 
 export function formatLabelTitleLine(label: string, title: string): string {

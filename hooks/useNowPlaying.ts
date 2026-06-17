@@ -9,6 +9,7 @@ import {
   type TrackRollState,
 } from '@/lib/nowPlaying/applyTrackUpdate'
 import { deriveInitialNowPlayingState } from '@/lib/nowPlaying/deriveInitialNowPlayingState'
+import { formatArtistWithTrailingPeriod } from '@/lib/nowPlaying/trackLayout'
 import {
   resolveLiveBootstrapEffects,
   runBootstrapFetches,
@@ -96,7 +97,7 @@ export default function useNowPlaying(
 
     shouldSeedInitialTextRef.current = false
     rollTitleRef.current(title)
-    rollArtistRef.current(artist)
+    rollArtistRef.current(formatArtistWithTrailingPeriod(artist))
 
     return undefined
   }, [artist, title])
@@ -112,7 +113,8 @@ export default function useNowPlaying(
       setTitle,
       setArtist,
       rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
-      rollArtist: (nextArtist) => rollArtistRef.current(nextArtist),
+      rollArtist: (nextArtist) =>
+        rollArtistRef.current(formatArtistWithTrailingPeriod(nextArtist)),
     })
 
     return true

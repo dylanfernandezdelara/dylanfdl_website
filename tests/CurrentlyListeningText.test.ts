@@ -21,4 +21,16 @@ describe('CurrentlyListeningText presentation contract', () => {
     expect(componentSource).toContain('prefixTitleMeasureRef')
     expect(componentSource).toContain('now-playing-measure-label')
   })
+
+  it('glues the trailing period into the artist slot text', () => {
+    expect(componentSource).toContain('formatArtistWithTrailingPeriod(artist)')
+  })
+
+  it('no longer renders a bare period text node as a sibling after the artist slot', () => {
+    // The old markup placed a lone "." between the slot close tag and the
+    // artist-line close tag; at narrow widths that period could wrap onto its
+    // own line. The period now lives inside the slot, so this pattern must not
+    // reappear.
+    expect(componentSource).not.toMatch(/<\/span>\s*\.\s*<\/span>/)
+  })
 })
