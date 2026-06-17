@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useLayoutEffect, useRef, useState, type Ref } from 'react'
-import { slotText, type SlotOptions, type SlotTextController } from 'slot-text'
+import { buildSlotText, slotText, type SlotOptions, type SlotTextController } from 'slot-text'
 
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
 import { seedEmptyBaseline } from '@/lib/slotTextSeed'
@@ -20,7 +20,7 @@ export type UseSlotTextRollResult = {
    * motion users still see the text.
    */
   active: boolean
-  rollTo: (text: string) => void
+  rollTo: (text: string, options?: { instant?: boolean }) => void
 }
 
 export default function useSlotTextRoll({
@@ -32,16 +32,26 @@ export default function useSlotTextRoll({
   const controllerRef = useRef<SlotTextController | null>(null)
   const displayedTextRef = useRef('')
   const desiredTextRef = useRef('')
+  const desiredInstantRef = useRef(false)
   const [slotMounted, setSlotMounted] = useState(false)
 
   const active = motionReady && slotMounted && !prefersReducedMotion
 
   const animateTo = useCallback(
-    (text: string) => {
+    (text: string, instant = false) => {
       const slot = slotRef.current
       if (!slot) return
 
       if (text === displayedTextRef.current && slot.querySelector('.char-slot')) {
+        return
+      }
+
+      if (instant) {
+        buildSlotText(slot, text)
+        displayedTextRef.current = text
+        if (!controllerRef.current) {
+          controllerRef.current = slotText(slot, text)
+        }
         return
       }
 
@@ -66,10 +76,11 @@ export default function useSlotTextRoll({
   animateToRef.current = animateTo
 
   const rollTo = useCallback(
-    (text: string) => {
+    (text: string, options?: { instant?: boolean }) => {
       desiredTextRef.current = text
+      desiredInstantRef.current = options?.instant ?? false
       if (!active) return
-      animateToRef.current(text)
+      animateToRef.current(text, desiredInstantRef.current)
     },
     [active],
   )
@@ -89,7 +100,7 @@ export default function useSlotTextRoll({
 
     const text = desiredTextRef.current
     if (text.length > 0) {
-      animateToRef.current(text)
+      animateToRef.current(text, desiredInstantRef.current)
     }
 
     return () => {

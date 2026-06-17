@@ -74,11 +74,11 @@ describe('useNowPlaying bootstrap', () => {
     expect(fetchMock).toHaveBeenCalledWith('/api/now-playing?live=1')
     expect(rollTitleTo).toHaveBeenCalledTimes(1)
     expect(rollArtistTo).toHaveBeenCalledTimes(1)
-    expect(rollTitleTo).toHaveBeenLastCalledWith('Instant Crush')
-    // The trailing sentence period is glued onto the artist slot text so it can
-    // never be stranded on its own line when a long artist name wraps.
-    expect(rollArtistTo).toHaveBeenLastCalledWith('Daft Punk.')
-    expect(result.current.artistSlotDisplayText).toBe('Daft Punk.')
+    expect(rollTitleTo).toHaveBeenLastCalledWith('Instant Crush', { instant: true })
+    // The full by-artist line rolls as one string so "by", the name, and the period
+    // share the same wrapping context.
+    expect(rollArtistTo).toHaveBeenLastCalledWith('by Daft Punk.', { instant: true })
+    expect(result.current.artistSlotDisplayText).toBe('by Daft Punk.')
   })
 
   it('uses SSR initial payload without bootstrap re-roll', async () => {
@@ -99,8 +99,8 @@ describe('useNowPlaying bootstrap', () => {
     expect(result.current.label).toBe('Recently listened to')
 
     await waitFor(() => {
-      expect(rollTitleTo).toHaveBeenCalledWith('Instant Crush')
-      expect(rollArtistTo).toHaveBeenCalledWith('Daft Punk.')
+      expect(rollTitleTo).toHaveBeenCalledWith('Instant Crush', { instant: true })
+      expect(rollArtistTo).toHaveBeenCalledWith('by Daft Punk.', { instant: true })
       expect(result.current.slotTextActive).toBe(true)
     })
 

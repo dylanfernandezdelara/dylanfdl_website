@@ -28,7 +28,7 @@ export default function useNowPlayingTrackLayout(
   const prefixRowRootRef = useRef<HTMLSpanElement>(null)
   const prefixLabelMeasureRef = useRef<HTMLSpanElement>(null)
   const prefixTitleMeasureRef = useRef<HTMLSpanElement>(null)
-  const [layout, setLayout] = useState<NowPlayingTrackLayout>('inline')
+  const [layout, setLayout] = useState<NowPlayingTrackLayout>('stacked')
 
   useLayoutEffect(() => {
     const container = containerRef.current

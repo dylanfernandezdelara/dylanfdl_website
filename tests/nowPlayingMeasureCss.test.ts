@@ -54,5 +54,8 @@ describe('now-playing production measure CSS', () => {
     expect(nowPlayingCss).toContain(
       ".now-playing[data-layout='stacked'] > .now-playing-track .now-playing-artist-line",
     )
+    expect(nowPlayingCss).toMatch(
+      /\.now-playing\[data-layout='stacked'\][^{]*\.now-playing-artist-line[^}]*width:\s*100%/s,
+    )
   })
 })

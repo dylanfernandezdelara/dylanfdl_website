@@ -5,7 +5,7 @@ import { cleanup, render } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import ExternalLink from '@/components/ExternalLink'
-import { formatArtistWithTrailingPeriod } from '@/lib/nowPlaying/trackLayout'
+import { formatByArtistLineWithPeriod } from '@/lib/nowPlaying/trackLayout'
 import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlayingPresentation'
 import { NOW_PLAYING_LAYOUT_SCENARIOS } from '@/tests/fixtures/nowPlayingLayoutScenarios'
 
@@ -53,7 +53,6 @@ function StackedArtistLineProbe({
           <span className={NOW_PLAYING_SLOT_CLASS}>{title}</span>
         </ExternalLink>
         <span className="now-playing-artist-line">
-          <span className="now-playing-by">by </span>
           <span className={NOW_PLAYING_SLOT_CLASS}>{artistSlotDisplayText}</span>
         </span>
       </span>
@@ -76,7 +75,7 @@ describe('CurrentlyListeningText stacked layout DOM', () => {
       reason: 'long mobile title forces title and artist onto separate rows',
     },
   ])('keeps the trailing period inside the artist slot ($scenario.id)', ({ scenario }) => {
-    const artistSlotDisplayText = formatArtistWithTrailingPeriod(scenario.artist)
+    const artistSlotDisplayText = formatByArtistLineWithPeriod(scenario.artist)
 
     const { container } = render(
       <StackedArtistLineProbe

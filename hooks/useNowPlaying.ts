@@ -9,7 +9,7 @@ import {
   type TrackRollState,
 } from '@/lib/nowPlaying/applyTrackUpdate'
 import { deriveInitialNowPlayingState } from '@/lib/nowPlaying/deriveInitialNowPlayingState'
-import { formatArtistWithTrailingPeriod } from '@/lib/nowPlaying/trackLayout'
+import { formatByArtistLineWithPeriod } from '@/lib/nowPlaying/trackLayout'
 import {
   resolveLiveBootstrapEffects,
   runBootstrapFetches,
@@ -41,7 +41,7 @@ export type UseNowPlayingResult = {
   trackUrl: string | null
   title: string
   artist: string
-  /** Artist slot text including the trailing sentence period (SSR/hydration fallback). */
+  /** Full "by artist." line for the artist slot (SSR/hydration fallback). */
   artistSlotDisplayText: string
   /** True once slot-text owns the slots; callers render `null` slot children then. */
   slotTextActive: boolean
@@ -87,14 +87,14 @@ export default function useNowPlaying(
 
   const slotTextActive = titleActive && artistActive
 
-  const rollTitleRef = useRef(rollTitleTo)
-  const rollArtistRef = useRef<(artistText: string) => void>(rollArtistTo)
+  const rollTitleRef = useRef<(title: string, options?: { instant?: boolean }) => void>(rollTitleTo)
+  const rollArtistRef = useRef<(artistText: string, options?: { instant?: boolean }) => void>(rollArtistTo)
   rollTitleRef.current = rollTitleTo
-  // Artist rolls apply formatArtistWithTrailingPeriod here so the sentence period
-  // shares the artist's wrapping context. Before slot-text activates, callers
+  // Artist rolls apply formatByArtistLineWithPeriod here so "by", the name, and the
+  // trailing period share one wrapping context. Before slot-text activates, callers
   // render artistSlotDisplayText from this hook's return value (same formatter).
-  rollArtistRef.current = (artistText: string) =>
-    rollArtistTo(formatArtistWithTrailingPeriod(artistText))
+  rollArtistRef.current = (artistText: string, options?: { instant?: boolean }) =>
+    rollArtistTo(formatByArtistLineWithPeriod(artistText), options)
 
   useLayoutEffect(() => {
     if (!shouldSeedInitialTextRef.current) {
@@ -102,8 +102,8 @@ export default function useNowPlaying(
     }
 
     shouldSeedInitialTextRef.current = false
-    rollTitleRef.current(title)
-    rollArtistRef.current(artist)
+    rollTitleRef.current(title, { instant: true })
+    rollArtistRef.current(artist, { instant: true })
 
     return undefined
   }, [artist, title])
@@ -112,14 +112,18 @@ export default function useNowPlaying(
     const update = computeTrackUpdate(payload, rollStateRef.current, options)
     if (!update) return false
 
+    const instant = !rollStateRef.current.hasRolled
+
     rollStateRef.current = applyTrackUpdate(update, {
       setLabel,
       setTrackUrl,
       setVisible,
       setTitle,
       setArtist,
-      rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
-      rollArtist: (nextArtist) => rollArtistRef.current(nextArtist),
+      rollTitle: (nextTitle) =>
+        rollTitleRef.current(nextTitle, instant ? { instant: true } : undefined),
+      rollArtist: (nextArtist) =>
+        rollArtistRef.current(nextArtist, instant ? { instant: true } : undefined),
     })
 
     return true
@@ -269,7 +273,7 @@ export default function useNowPlaying(
     trackUrl,
     title,
     artist,
-    artistSlotDisplayText: formatArtistWithTrailingPeriod(artist),
+    artistSlotDisplayText: formatByArtistLineWithPeriod(artist),
     slotTextActive,
     titleSlotRef,
     artistSlotRef,

@@ -65,7 +65,6 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
         </ExternalLink>
         {isInline || isSplit ? ' ' : null}
         <span className="now-playing-artist-line">
-          <span className="now-playing-by">by </span>
           <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS}>
             {slotTextActive ? null : artistSlotDisplayText}
           </span>
