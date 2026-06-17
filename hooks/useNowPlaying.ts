@@ -86,9 +86,13 @@ export default function useNowPlaying(
   const slotTextActive = titleActive && artistActive
 
   const rollTitleRef = useRef(rollTitleTo)
-  const rollArtistRef = useRef(rollArtistTo)
+  const rollArtistRef = useRef<(artistText: string) => void>(rollArtistTo)
   rollTitleRef.current = rollTitleTo
-  rollArtistRef.current = rollArtistTo
+  // Single boundary for every artist roll: glue the trailing sentence period
+  // onto the slot text here so it shares the artist's wrapping context (and can
+  // never be stranded on its own line), without each caller having to remember.
+  rollArtistRef.current = (artistText: string) =>
+    rollArtistTo(formatArtistWithTrailingPeriod(artistText))
 
   useLayoutEffect(() => {
     if (!shouldSeedInitialTextRef.current) {
@@ -97,7 +101,7 @@ export default function useNowPlaying(
 
     shouldSeedInitialTextRef.current = false
     rollTitleRef.current(title)
-    rollArtistRef.current(formatArtistWithTrailingPeriod(artist))
+    rollArtistRef.current(artist)
 
     return undefined
   }, [artist, title])
@@ -113,8 +117,7 @@ export default function useNowPlaying(
       setTitle,
       setArtist,
       rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
-      rollArtist: (nextArtist) =>
-        rollArtistRef.current(formatArtistWithTrailingPeriod(nextArtist)),
+      rollArtist: (nextArtist) => rollArtistRef.current(nextArtist),
     })
 
     return true
