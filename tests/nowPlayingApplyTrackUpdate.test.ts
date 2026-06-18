@@ -56,6 +56,19 @@ describe('computeTrackUpdate', () => {
     })
   })
 
+  it('labels cache payloads as recently listened when playback is unknown', () => {
+    const update = computeTrackUpdate(
+      { ...trackPayload, source: 'cache', isPlaying: null },
+      { trackId: null, hasRolled: false },
+      { forceRoll: false },
+    )
+
+    expect(update).toMatchObject({
+      label: 'Recently listened to',
+      shouldRoll: true,
+    })
+  })
+
   it('skips roll when the same track is already displayed', () => {
     const update = computeTrackUpdate(trackPayload, { trackId: 'track-1', hasRolled: true }, {
       forceRoll: false,
