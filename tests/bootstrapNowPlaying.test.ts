@@ -35,8 +35,7 @@ describe('runBootstrapFetches', () => {
       cacheStep: { payload: cached, forceRoll: true },
       liveStep: { payload: live, forceRoll: true },
     })
-    expect(fetchNowPlaying).toHaveBeenCalledWith(false)
-    expect(fetchNowPlaying).toHaveBeenCalledWith(true)
+    expect(fetchNowPlaying.mock.calls).toEqual([[false], [true]])
   })
 
   it('skips cache fetch when skipCache is true', async () => {
