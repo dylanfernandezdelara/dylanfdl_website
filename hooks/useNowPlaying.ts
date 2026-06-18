@@ -12,7 +12,7 @@ import { deriveInitialNowPlayingState } from '@/lib/nowPlaying/deriveInitialNowP
 import { formatArtistWithTrailingPeriod } from '@/lib/nowPlaying/trackLayout'
 import {
   resolveLiveBootstrapEffects,
-  runBootstrapFetches,
+  type BootstrapApplyStep,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
 import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
@@ -197,21 +197,28 @@ export default function useNowPlaying(
 
     void (async () => {
       const skipCacheBootstrap = initialStateRef.current.visible
-      const { cacheStep, liveStep } = await runBootstrapFetches(
-        fetchNowPlaying,
-        {
-          onCacheError: (error) => logNowPlayingWarn('cache bootstrap failed', error),
-          onLiveError: (error) => logNowPlayingWarn('live bootstrap failed', error),
-        },
-        { skipCache: skipCacheBootstrap },
-      )
+      let cacheApplied = skipCacheBootstrap
+
+      if (!skipCacheBootstrap) {
+        try {
+          const cachePayload = await fetchNowPlaying(false)
+          if (cancelled) return
+
+          cacheApplied = applyPayload(cachePayload, {
+            forceRoll: !rollStateRef.current.hasRolled,
+          })
+        } catch (error) {
+          logNowPlayingWarn('cache bootstrap failed', error)
+        }
+      }
+
       if (cancelled) return
 
-      let cacheApplied = skipCacheBootstrap
-      if (cacheStep) {
-        cacheApplied = applyPayload(cacheStep.payload, {
-          forceRoll: cacheStep.forceRoll && !rollStateRef.current.hasRolled,
-        })
+      let liveStep: BootstrapApplyStep | null = null
+      try {
+        liveStep = { payload: await fetchNowPlaying(true), forceRoll: true }
+      } catch (error) {
+        logNowPlayingWarn('live bootstrap failed', error)
       }
 
       if (cancelled) return

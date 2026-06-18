@@ -32,6 +32,14 @@ const livePayload: NowPlayingResponse = {
 const rollTitleTo = vi.fn()
 const rollArtistTo = vi.fn()
 
+function createDeferred<T>() {
+  let resolvePromise: (value: T | PromiseLike<T>) => void = () => undefined
+  const promise = new Promise<T>((resolve) => {
+    resolvePromise = resolve
+  })
+  return { promise, resolve: resolvePromise }
+}
+
 vi.mock('@/hooks/useSlotTextRoll', () => ({
   default: vi.fn(({ direction }: { direction: 'up' | 'down' }) => ({
     slotRef: { current: document.createElement('span') },
@@ -53,12 +61,16 @@ describe('useNowPlaying bootstrap', () => {
 
   it('applies cache first, defers live without re-roll, then starts polling', async () => {
     const fetchMock = vi.mocked(fetch)
+    const liveResponse = createDeferred<Response>()
     fetchMock.mockImplementation(async (input) => {
       const url = String(input)
-      const payload = url.includes('live=1') ? livePayload : cachedPayload
+      if (url.includes('live=1')) {
+        return await liveResponse.promise
+      }
+
       return {
         ok: true,
-        json: async () => payload,
+        json: async () => cachedPayload,
       } as Response
     })
 
@@ -67,11 +79,23 @@ describe('useNowPlaying bootstrap', () => {
     await waitFor(() => {
       expect(result.current.visible).toBe(true)
       expect(result.current.title).toBe('Instant Crush')
+      expect(result.current.label).toBe('Recently listened to')
+    })
+
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
+      '/api/now-playing',
+      '/api/now-playing?live=1',
+    ])
+
+    liveResponse.resolve({
+      ok: true,
+      json: async () => livePayload,
+    } as Response)
+
+    await waitFor(() => {
       expect(result.current.label).toBe('Currently listening to')
     })
 
-    expect(fetchMock).toHaveBeenCalledWith('/api/now-playing')
-    expect(fetchMock).toHaveBeenCalledWith('/api/now-playing?live=1')
     expect(rollTitleTo).toHaveBeenCalledTimes(1)
     expect(rollArtistTo).toHaveBeenCalledTimes(1)
     expect(rollTitleTo).toHaveBeenLastCalledWith('Instant Crush')

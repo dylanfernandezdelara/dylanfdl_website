@@ -49,26 +49,21 @@ export async function runBootstrapFetches(
   handlers: BootstrapFetchHandlers = {},
   options: BootstrapFetchOptions = {},
 ): Promise<BootstrapFetchOutcome> {
-  const liveResult = (await Promise.allSettled([fetchNowPlaying(true)]))[0]!
-  const cacheResult = options.skipCache
-    ? null
-    : (await Promise.allSettled([fetchNowPlaying(false)]))[0]!
-
   let cacheStep: BootstrapApplyStep | null = null
   let liveStep: BootstrapApplyStep | null = null
 
-  if (cacheResult !== null) {
-    if (cacheResult.status === 'fulfilled') {
-      cacheStep = { payload: cacheResult.value, forceRoll: true }
-    } else {
-      handlers.onCacheError?.(cacheResult.reason)
+  if (!options.skipCache) {
+    try {
+      cacheStep = { payload: await fetchNowPlaying(false), forceRoll: true }
+    } catch (error) {
+      handlers.onCacheError?.(error)
     }
   }
 
-  if (liveResult.status === 'fulfilled') {
-    liveStep = { payload: liveResult.value, forceRoll: true }
-  } else {
-    handlers.onLiveError?.(liveResult.reason)
+  try {
+    liveStep = { payload: await fetchNowPlaying(true), forceRoll: true }
+  } catch (error) {
+    handlers.onLiveError?.(error)
   }
 
   return { cacheStep, liveStep }
