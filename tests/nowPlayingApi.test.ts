@@ -19,6 +19,7 @@ const {
   mockShouldSkipLiveRefresh,
   mockMarkLiveRefresh,
   mockSetNowPlayingCache,
+  mockClearNowPlayingCache,
   mockGetCachedAccessToken,
   mockSetCachedAccessToken,
   mockRefreshSpotifyAccessToken,
@@ -29,6 +30,7 @@ const {
   mockShouldSkipLiveRefresh: vi.fn(),
   mockMarkLiveRefresh: vi.fn(),
   mockSetNowPlayingCache: vi.fn(),
+  mockClearNowPlayingCache: vi.fn(),
   mockGetCachedAccessToken: vi.fn(),
   mockSetCachedAccessToken: vi.fn(),
   mockRefreshSpotifyAccessToken: vi.fn(),
@@ -41,6 +43,7 @@ vi.mock('../lib/spotify/cache.js', () => ({
   shouldSkipLiveRefresh: mockShouldSkipLiveRefresh,
   markLiveRefresh: mockMarkLiveRefresh,
   setNowPlayingCache: mockSetNowPlayingCache,
+  clearNowPlayingCache: mockClearNowPlayingCache,
   getCachedAccessToken: mockGetCachedAccessToken,
   setCachedAccessToken: mockSetCachedAccessToken,
 }))
@@ -230,7 +233,7 @@ describe('api/now-playing handler', () => {
     })
   })
 
-  it('returns live playback state without a track when Spotify has nothing playing', async () => {
+  it('clears cache and returns empty live payload when Spotify has nothing playing', async () => {
     const { default: handler } = await import('../api/now-playing')
     const res = makeResponse()
     mockFetchCurrentlyPlaying.mockResolvedValue({
@@ -240,11 +243,36 @@ describe('api/now-playing handler', () => {
 
     await handler(makeRequest({ query: { live: '1' } }), res)
 
+    expect(mockClearNowPlayingCache).toHaveBeenCalled()
+    expect(mockMarkLiveRefresh).toHaveBeenCalled()
+    expect(mockClearNowPlayingCache.mock.invocationCallOrder[0]).toBeLessThan(
+      mockMarkLiveRefresh.mock.invocationCallOrder[0]!,
+    )
     expect(res.statusCode).toBe(200)
     expect(res.body).toMatchObject({
       source: 'live',
-      track: cache.track,
+      track: null,
       isPlaying: false,
+    })
+  })
+
+  it('does not mark live refresh when cache clear fails after empty playback', async () => {
+    const { default: handler } = await import('../api/now-playing')
+    const res = makeResponse()
+    const clearError = new Error('cache clear failed')
+    mockFetchCurrentlyPlaying.mockResolvedValue({
+      track: null,
+      isPlaying: false,
+    })
+    mockClearNowPlayingCache.mockRejectedValue(clearError)
+
+    await handler(makeRequest({ query: { live: '1' } }), res)
+
+    expect(mockMarkLiveRefresh).not.toHaveBeenCalled()
+    expect(logNowPlaying.logNowPlayingWarn).toHaveBeenCalledWith('live refresh failed', clearError)
+    expect(res.body).toMatchObject({
+      source: 'cache',
+      track: cache.track,
     })
   })
 })

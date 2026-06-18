@@ -42,12 +42,25 @@ async function redisSet(key: string, value: unknown, context: string): Promise<v
   }
 }
 
+async function redisDel(key: string, context: string): Promise<void> {
+  const redis = getRedis()
+  try {
+    await redis.del(key)
+  } catch (error) {
+    throw new SanitizedInfrastructureError(context, { cause: error })
+  }
+}
+
 export async function getNowPlayingCache(): Promise<NowPlayingCache | null> {
   return redisGet<NowPlayingCache>(NOW_PLAYING_CACHE_KEY, 'read now-playing cache')
 }
 
 export async function setNowPlayingCache(cache: NowPlayingCache): Promise<void> {
   await redisSet(NOW_PLAYING_CACHE_KEY, cache, 'cache now-playing track')
+}
+
+export async function clearNowPlayingCache(): Promise<void> {
+  await redisDel(NOW_PLAYING_CACHE_KEY, 'clear now-playing cache')
 }
 
 type AccessTokenCache = {

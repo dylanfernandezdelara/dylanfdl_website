@@ -4,6 +4,7 @@ import {
   applyTrackUpdate,
   computeTrackUpdate,
   getNowPlayingLabel,
+  isLiveEmptyPlayback,
 } from '@/lib/nowPlaying/applyTrackUpdate'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
@@ -27,6 +28,18 @@ describe('getNowPlayingLabel', () => {
   it('returns recently listened when playback is inactive or unknown', () => {
     expect(getNowPlayingLabel(false)).toBe('Recently listened to')
     expect(getNowPlayingLabel(null)).toBe('Recently listened to')
+  })
+})
+
+describe('isLiveEmptyPlayback', () => {
+  it('returns true only for live responses without a track', () => {
+    expect(
+      isLiveEmptyPlayback({ source: 'live', track: null, isPlaying: false, updatedAt: null }),
+    ).toBe(true)
+    expect(
+      isLiveEmptyPlayback({ source: 'cache', track: null, isPlaying: null, updatedAt: null }),
+    ).toBe(false)
+    expect(isLiveEmptyPlayback(trackPayload)).toBe(false)
   })
 })
 

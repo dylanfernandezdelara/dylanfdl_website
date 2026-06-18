@@ -2,6 +2,7 @@ import { isSameOriginRequest } from '../lib/api/origin.js'
 import { logNowPlayingError, logNowPlayingWarn } from '../lib/nowPlaying/logNowPlaying.js'
 import { refreshSpotifyAccessToken } from '../lib/spotify/auth.js'
 import {
+  clearNowPlayingCache,
   getCachedAccessToken,
   getNowPlayingCache,
   markLiveRefresh,
@@ -62,9 +63,10 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
         return
       }
 
+      await clearNowPlayingCache()
       await markLiveRefresh()
 
-      res.status(200).json(toNowPlayingResponse('live', cached, playback.isPlaying))
+      res.status(200).json(toNowPlayingResponse('live', null, playback.isPlaying))
     } catch (error) {
       logNowPlayingWarn('live refresh failed', error)
       res.status(200).json(toNowPlayingResponse('cache', cached, null))

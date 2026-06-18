@@ -6,6 +6,7 @@ import useSlotTextRoll from '@/hooks/useSlotTextRoll'
 import {
   applyTrackUpdate,
   computeTrackUpdate,
+  isLiveEmptyPlayback,
   type TrackRollState,
 } from '@/lib/nowPlaying/applyTrackUpdate'
 import { deriveInitialNowPlayingState } from '@/lib/nowPlaying/deriveInitialNowPlayingState'
@@ -109,6 +110,15 @@ export default function useNowPlaying(
   }, [artist, title])
 
   const applyPayload = (payload: NowPlayingResponse, options: { forceRoll: boolean }): boolean => {
+    if (isLiveEmptyPlayback(payload)) {
+      rollStateRef.current = { trackId: null, hasRolled: false }
+      setVisible(false)
+      setTrackUrl(null)
+      setTitle('')
+      setArtist('')
+      return true
+    }
+
     const update = computeTrackUpdate(payload, rollStateRef.current, options)
     if (!update) return false
 

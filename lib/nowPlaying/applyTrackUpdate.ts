@@ -25,6 +25,10 @@ export type TrackUpdate = {
   nextRollState: TrackRollState
 }
 
+export function isLiveEmptyPlayback(payload: NowPlayingResponse): boolean {
+  return payload.source === 'live' && payload.track === null
+}
+
 export function computeTrackUpdate(
   payload: NowPlayingResponse,
   rollState: TrackRollState,

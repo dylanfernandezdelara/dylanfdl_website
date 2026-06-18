@@ -2,15 +2,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { SanitizedInfrastructureError } from '@/lib/sanitizedInfrastructureError'
 
-const { mockGet, mockSet } = vi.hoisted(() => ({
+const { mockGet, mockSet, mockDel } = vi.hoisted(() => ({
   mockGet: vi.fn(),
   mockSet: vi.fn(),
+  mockDel: vi.fn(),
 }))
 
 vi.mock('@upstash/redis', () => ({
   Redis: class MockRedis {
     get = mockGet
     set = mockSet
+    del = mockDel
   },
 }))
 
@@ -23,6 +25,7 @@ const {
   markLiveRefresh,
   setCachedAccessToken,
   setNowPlayingCache,
+  clearNowPlayingCache,
   shouldSkipLiveRefresh,
 } = await import('@/lib/spotify/cache')
 
@@ -44,6 +47,7 @@ describe('spotify cache redis error sanitization', () => {
   beforeEach(() => {
     mockGet.mockReset()
     mockSet.mockReset()
+    mockDel.mockReset()
   })
 
   it('sanitizes getNowPlayingCache failures', async () => {
@@ -97,6 +101,15 @@ describe('spotify cache redis error sanitization', () => {
           updatedAt: new Date().toISOString(),
         }),
       'Failed to cache now-playing track',
+    )
+  })
+
+  it('sanitizes clearNowPlayingCache failures', async () => {
+    mockDel.mockRejectedValueOnce(TOKEN_LEAK_ERROR)
+
+    await expectSanitizedInfrastructureFailure(
+      () => clearNowPlayingCache(),
+      'Failed to clear now-playing cache',
     )
   })
 
