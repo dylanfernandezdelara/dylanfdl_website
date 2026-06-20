@@ -42,6 +42,8 @@ type BootstrapFetchHandlers = {
 
 type BootstrapFetchOptions = {
   skipCache?: boolean
+  /** Called after cache fetch succeeds, before the live fetch starts. */
+  onCacheStep?: (step: BootstrapApplyStep) => void
 }
 
 export async function runBootstrapFetches(
@@ -55,6 +57,7 @@ export async function runBootstrapFetches(
   if (!options.skipCache) {
     try {
       cacheStep = { payload: await fetchNowPlaying(false), forceRoll: true }
+      options.onCacheStep?.(cacheStep)
     } catch (error) {
       handlers.onCacheError?.(error)
     }

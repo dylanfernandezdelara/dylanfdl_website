@@ -12,8 +12,9 @@ import { deriveInitialNowPlayingState } from '@/lib/nowPlaying/deriveInitialNowP
 import { formatArtistWithTrailingPeriod } from '@/lib/nowPlaying/trackLayout'
 import {
   resolveLiveBootstrapEffects,
-  type BootstrapApplyStep,
+  runBootstrapFetches,
 } from '@/lib/nowPlaying/bootstrapNowPlaying'
+import { createNowPlayingPollController } from '@/lib/nowPlaying/createNowPlayingPollController'
 import { logNowPlayingWarn } from '@/lib/nowPlaying/logNowPlaying'
 import { NOW_PLAYING_ROLL_OPTIONS } from '@/lib/nowPlayingRollDefaults'
 import { DEV_MOCK_CYCLE_MS, DEV_MOCK_TRACKS } from '@/lib/spotify/devFixtures'
@@ -153,7 +154,6 @@ export default function useNowPlaying(
     if (isDevPreview) return undefined
 
     let cancelled = false
-    let pollTimer: number | null = null
 
     const refreshNowPlaying = async (options: {
       forceRoll: boolean
@@ -164,62 +164,36 @@ export default function useNowPlaying(
       return applyPayload(payload, { forceRoll: options.forceRoll })
     }
 
-    const clearPoll = () => {
-      if (pollTimer !== null) {
-        window.clearInterval(pollTimer)
-        pollTimer = null
-      }
-    }
+    const pollController = createNowPlayingPollController({
+      pollIntervalMs: POLL_INTERVAL_MS,
+      refresh: () => refreshNowPlaying({ forceRoll: false, live: true }),
+      onPollRefreshError: (error) => logNowPlayingWarn('poll refresh failed', error),
+      onVisibilityRefreshError: (error) =>
+        logNowPlayingWarn('visibility refresh failed', error),
+    })
 
-    const schedulePoll = () => {
-      clearPoll()
-      if (document.visibilityState !== 'visible') return
-
-      pollTimer = window.setInterval(() => {
-        void refreshNowPlaying({ forceRoll: false, live: true }).catch((error) => {
-          logNowPlayingWarn('poll refresh failed', error)
-        })
-      }, POLL_INTERVAL_MS)
-    }
-
-    beginPollingRef.current = schedulePoll
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        void refreshNowPlaying({ forceRoll: false, live: true }).catch((error) => {
-          logNowPlayingWarn('visibility refresh failed', error)
-        })
-        schedulePoll()
-        return
-      }
-      clearPoll()
-    }
+    beginPollingRef.current = pollController.schedule
 
     void (async () => {
       const skipCacheBootstrap = initialStateRef.current.visible
       let cacheApplied = skipCacheBootstrap
 
-      if (!skipCacheBootstrap) {
-        try {
-          const cachePayload = await fetchNowPlaying(false)
-          if (cancelled) return
-
-          cacheApplied = applyPayload(cachePayload, {
-            forceRoll: !rollStateRef.current.hasRolled,
-          })
-        } catch (error) {
-          logNowPlayingWarn('cache bootstrap failed', error)
-        }
-      }
-
-      if (cancelled) return
-
-      let liveStep: BootstrapApplyStep | null = null
-      try {
-        liveStep = { payload: await fetchNowPlaying(true), forceRoll: true }
-      } catch (error) {
-        logNowPlayingWarn('live bootstrap failed', error)
-      }
+      const { liveStep } = await runBootstrapFetches(
+        fetchNowPlaying,
+        {
+          onCacheError: (error) => logNowPlayingWarn('cache bootstrap failed', error),
+          onLiveError: (error) => logNowPlayingWarn('live bootstrap failed', error),
+        },
+        {
+          skipCache: skipCacheBootstrap,
+          onCacheStep: (cacheStep) => {
+            if (cancelled) return
+            cacheApplied = applyPayload(cacheStep.payload, {
+              forceRoll: !rollStateRef.current.hasRolled,
+            })
+          },
+        },
+      )
 
       if (cancelled) return
 
@@ -233,11 +207,11 @@ export default function useNowPlaying(
             applyPayload(effects.payload, {
               forceRoll: effects.forceRoll && !rollStateRef.current.hasRolled,
             })
-            schedulePoll()
+            pollController.schedule()
           }
           break
         case 'schedule-poll':
-          if (!cancelled) schedulePoll()
+          if (!cancelled) pollController.schedule()
           break
         default: {
           const exhaustive: never = effects
@@ -246,13 +220,13 @@ export default function useNowPlaying(
       }
     })()
 
-    document.addEventListener('visibilitychange', handleVisibilityChange)
+    document.addEventListener('visibilitychange', pollController.handleVisibilityChange)
 
     return () => {
       cancelled = true
       beginPollingRef.current = null
-      clearPoll()
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      pollController.destroy()
+      document.removeEventListener('visibilitychange', pollController.handleVisibilityChange)
     }
   }, [isDevPreview])
 

@@ -108,6 +108,9 @@ export function resolveNowPlayingTrackLayout({
   )
   const trackSuffix = ` ${formatFullTrackLineWithPeriod(title, artist)}`
   const titleWidth = measureTextWidth(trackMeasure, title)
+  // Sum label width with a space-prefixed track measurement so kerning at the
+  // label/track boundary matches the inline "label title by artist." layout.
+  const fullLineWidth = labelWidth + measureTextWidth(trackMeasure, trackSuffix)
 
   return pickNowPlayingTrackLayout({
     containerWidth,
@@ -116,7 +119,7 @@ export function resolveNowPlayingTrackLayout({
     byArtistWidth: measureTextWidth(trackMeasure, formatByArtistLineWithPeriod(artist)),
     labelTitleWidth: measurePrefixRowWidth(prefixRowMeasure, label, title),
     trackLineWidth,
-    fullLineWidth: labelWidth + measureTextWidth(trackMeasure, trackSuffix),
+    fullLineWidth,
   })
 }
 

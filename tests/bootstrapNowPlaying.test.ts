@@ -24,6 +24,33 @@ describe('runBootstrapFetches', () => {
     vi.spyOn(logNowPlaying, 'logNowPlayingWarn').mockImplementation(() => undefined)
   })
 
+  it('invokes onCacheStep before the live fetch resolves', async () => {
+    const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
+    const live: NowPlayingResponse = { ...trackPayload, source: 'live', isPlaying: true }
+    const onCacheStep = vi.fn()
+    let resolveLive: (value: NowPlayingResponse) => void = () => undefined
+    const livePromise = new Promise<NowPlayingResponse>((resolve) => {
+      resolveLive = resolve
+    })
+    const fetchNowPlaying = vi.fn(async (liveRequest: boolean) => {
+      if (liveRequest) return await livePromise
+      return cached
+    })
+
+    const outcomePromise = runBootstrapFetches(fetchNowPlaying, {}, { onCacheStep })
+
+    await vi.waitFor(() => {
+      expect(onCacheStep).toHaveBeenCalledWith({ payload: cached, forceRoll: true })
+    })
+    expect(fetchNowPlaying).toHaveBeenCalledTimes(2)
+
+    resolveLive(live)
+    await expect(outcomePromise).resolves.toEqual({
+      cacheStep: { payload: cached, forceRoll: true },
+      liveStep: { payload: live, forceRoll: true },
+    })
+  })
+
   it('returns cache and live steps when both fetches succeed', async () => {
     const cached: NowPlayingResponse = { ...trackPayload, source: 'cache', isPlaying: null }
     const live: NowPlayingResponse = { ...trackPayload, source: 'live', isPlaying: true }
