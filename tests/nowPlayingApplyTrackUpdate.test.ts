@@ -95,7 +95,7 @@ describe('computeTrackUpdate', () => {
 
 describe('applyTrackUpdate', () => {
   it('applies all fields and rolls when requested', () => {
-    const setLabel = vi.fn()
+    const applyLabel = vi.fn()
     const setTrackUrl = vi.fn()
     const setTitle = vi.fn()
     const setArtist = vi.fn()
@@ -112,7 +112,7 @@ describe('applyTrackUpdate', () => {
         nextRollState: { trackId: 'track-1', hasRolled: true },
       },
       {
-        setLabel,
+        applyLabel,
         setTrackUrl,
         setTitle,
         setArtist,
@@ -121,7 +121,7 @@ describe('applyTrackUpdate', () => {
       },
     )
 
-    expect(setLabel).toHaveBeenCalledWith('Currently listening to')
+    expect(applyLabel).toHaveBeenCalledWith('Currently listening to')
     expect(setTrackUrl).toHaveBeenCalledWith('https://open.spotify.com/track/track-1')
     expect(setTitle).toHaveBeenCalledWith('Instant Crush')
     expect(setArtist).toHaveBeenCalledWith('Daft Punk')
@@ -131,7 +131,7 @@ describe('applyTrackUpdate', () => {
   })
 
   it('skips slot updates when roll is not requested', () => {
-    const setLabel = vi.fn()
+    const applyLabel = vi.fn()
     const rollTitle = vi.fn()
     const rollArtist = vi.fn()
 
@@ -145,7 +145,7 @@ describe('applyTrackUpdate', () => {
         nextRollState: { trackId: 'track-1', hasRolled: true },
       },
       {
-        setLabel,
+        applyLabel,
         setTrackUrl: vi.fn(),
         setTitle: vi.fn(),
         setArtist: vi.fn(),
@@ -154,7 +154,36 @@ describe('applyTrackUpdate', () => {
       },
     )
 
-    expect(setLabel).not.toHaveBeenCalled()
+    expect(applyLabel).not.toHaveBeenCalled()
+    expect(rollTitle).not.toHaveBeenCalled()
+    expect(rollArtist).not.toHaveBeenCalled()
+  })
+
+  it('rolls the label when playback state changes without re-rolling the track', () => {
+    const applyLabel = vi.fn()
+    const rollTitle = vi.fn()
+    const rollArtist = vi.fn()
+
+    applyTrackUpdate(
+      {
+        label: 'Currently listening to',
+        trackUrl: 'https://open.spotify.com/track/track-1',
+        title: 'Instant Crush',
+        artist: 'Daft Punk',
+        shouldRoll: false,
+        nextRollState: { trackId: 'track-1', hasRolled: true },
+      },
+      {
+        applyLabel,
+        setTrackUrl: vi.fn(),
+        setTitle: vi.fn(),
+        setArtist: vi.fn(),
+        rollTitle,
+        rollArtist,
+      },
+    )
+
+    expect(applyLabel).toHaveBeenCalledWith('Currently listening to')
     expect(rollTitle).not.toHaveBeenCalled()
     expect(rollArtist).not.toHaveBeenCalled()
   })

@@ -29,6 +29,7 @@ const livePayload: NowPlayingResponse = {
   isPlaying: true,
 }
 
+const rollLabelFromTo = vi.fn()
 const rollTitleTo = vi.fn()
 const rollArtistTo = vi.fn()
 
@@ -41,11 +42,17 @@ function createDeferred<T>() {
 }
 
 vi.mock('@/hooks/useSlotTextRoll', () => ({
-  default: vi.fn(({ direction }: { direction: 'up' | 'down' }) => ({
+  default: vi.fn(({ name }: { name?: 'label' | 'title' | 'artist' }) => ({
     slotRef: { current: document.createElement('span') },
     slotMounted: true,
     active: true,
-    rollTo: direction === 'up' ? rollTitleTo : rollArtistTo,
+    rollTo:
+      name === 'label'
+        ? vi.fn()
+        : name === 'title'
+          ? rollTitleTo
+          : rollArtistTo,
+    rollFromTo: name === 'label' ? rollLabelFromTo : vi.fn(),
   })),
 }))
 
@@ -115,6 +122,10 @@ describe('useNowPlaying bootstrap', () => {
       expect(result.current.label).toBe('Currently listening to')
     })
 
+    expect(rollLabelFromTo).toHaveBeenCalledWith(
+      'Recently listened to',
+      'Currently listening to',
+    )
     expect(rollTitleTo).toHaveBeenCalledTimes(1)
     expect(rollArtistTo).toHaveBeenCalledTimes(1)
     expect(rollTitleTo).toHaveBeenLastCalledWith('Instant Crush')

@@ -63,7 +63,7 @@ export function computeTrackUpdate(
 export function applyTrackUpdate(
   update: TrackUpdate,
   actions: {
-    setLabel: (label: string) => void
+    applyLabel: (label: string) => void
     setTrackUrl: (url: string) => void
     setTitle: (title: string) => void
     setArtist: (artist: string) => void
@@ -72,7 +72,7 @@ export function applyTrackUpdate(
   },
 ): TrackRollState {
   if (update.label !== null) {
-    actions.setLabel(update.label)
+    actions.applyLabel(update.label)
   }
   actions.setTrackUrl(update.trackUrl)
   actions.setTitle(update.title)

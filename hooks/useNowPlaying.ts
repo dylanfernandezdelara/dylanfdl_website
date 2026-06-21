@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type Ref } from 'react'
 
 import useSlotTextRoll from '@/hooks/useSlotTextRoll'
+import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
 import {
   applyTrackUpdate,
   computeTrackUpdate,
@@ -47,6 +48,9 @@ export type UseNowPlayingResult = {
   artistSlotDisplayText: string
   /** True once slot-text owns the slots; callers render `null` slot children then. */
   slotTextActive: boolean
+  /** True once slot-text owns the label slot; callers render `null` slot children then. */
+  labelSlotTextActive: boolean
+  labelSlotRef: Ref<HTMLSpanElement>
   titleSlotRef: Ref<HTMLSpanElement>
   artistSlotRef: Ref<HTMLSpanElement>
 }
@@ -55,9 +59,13 @@ export default function useNowPlaying(
   options: UseNowPlayingOptions = {},
 ): UseNowPlayingResult {
   const isDevPreview = import.meta.env.DEV
+  const { reduced: prefersReducedMotion } = usePrefersReducedMotion()
   const initialStateRef = useRef(deriveInitialNowPlayingState(options.initialPayload))
 
   const [label, setLabel] = useState(initialStateRef.current.label)
+  const labelRef = useRef(initialStateRef.current.label)
+  const [labelSlotOwnsDom, setLabelSlotOwnsDom] = useState(false)
+  const pendingLabelRollRef = useRef<{ from: string; to: string } | null>(null)
   const [trackUrl, setTrackUrl] = useState<string | null>(initialStateRef.current.trackUrl)
   const [title, setTitle] = useState(initialStateRef.current.title)
   const [artist, setArtist] = useState(initialStateRef.current.artist)
@@ -68,11 +76,22 @@ export default function useNowPlaying(
   const beginPollingRef = useRef<(() => void) | null>(null)
 
   const {
+    slotRef: labelSlotRef,
+    slotMounted: labelSlotMounted,
+    active: labelActive,
+    rollFromTo: rollLabelFromTo,
+  } = useSlotTextRoll({
+    name: 'label',
+    direction: 'up',
+    slotOptions: NOW_PLAYING_ROLL_OPTIONS,
+  })
+  const {
     slotRef: titleSlotRef,
     slotMounted: titleSlotMounted,
     active: titleActive,
     rollTo: rollTitleTo,
   } = useSlotTextRoll({
+    name: 'title',
     direction: 'up',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
   })
@@ -82,14 +101,17 @@ export default function useNowPlaying(
     active: artistActive,
     rollTo: rollArtistTo,
   } = useSlotTextRoll({
+    name: 'artist',
     direction: 'down',
     slotOptions: NOW_PLAYING_ROLL_OPTIONS,
   })
 
   const slotTextActive = titleActive && artistActive
 
+  const rollLabelFromToRef = useRef(rollLabelFromTo)
   const rollTitleRef = useRef(rollTitleTo)
   const rollArtistRef = useRef<(artistText: string) => void>(rollArtistTo)
+  rollLabelFromToRef.current = rollLabelFromTo
   rollTitleRef.current = rollTitleTo
   // Artist rolls apply formatArtistWithTrailingPeriod here so the sentence period
   // shares the artist's wrapping context. Before slot-text activates, callers
@@ -109,12 +131,40 @@ export default function useNowPlaying(
     return undefined
   }, [artist, title])
 
+  /*
+   * Label rolls use a two-phase layout pass: clear the React fallback first, then
+   * roll from the saved previous label so slot-text is not torn down mid-animation.
+   */
+  useLayoutEffect(() => {
+    const pending = pendingLabelRollRef.current
+    if (!pending || !labelActive) {
+      return undefined
+    }
+
+    if (!labelSlotOwnsDom) {
+      setLabelSlotOwnsDom(true)
+      return undefined
+    }
+
+    pendingLabelRollRef.current = null
+    rollLabelFromToRef.current(pending.from, pending.to)
+    return undefined
+  }, [label, labelActive, labelSlotOwnsDom])
+
   const applyPayload = (payload: NowPlayingResponse, options: { forceRoll: boolean }): boolean => {
     const update = computeTrackUpdate(payload, rollStateRef.current, options)
     if (!update) return false
 
     rollStateRef.current = applyTrackUpdate(update, {
-      setLabel,
+      applyLabel: (nextLabel) => {
+        if (nextLabel !== labelRef.current) {
+          if (!prefersReducedMotion) {
+            pendingLabelRollRef.current = { from: labelRef.current, to: nextLabel }
+          }
+        }
+        labelRef.current = nextLabel
+        setLabel(nextLabel)
+      },
       setTrackUrl,
       setTitle,
       setArtist,
@@ -235,6 +285,7 @@ export default function useNowPlaying(
     if (
       !pendingLivePayload ||
       !nowPlayingHasTrack(trackUrl, title) ||
+      !labelSlotMounted ||
       !titleSlotMounted ||
       !artistSlotMounted
     ) {
@@ -246,9 +297,18 @@ export default function useNowPlaying(
     beginPollingRef.current?.()
 
     return undefined
-  }, [artistSlotMounted, isDevPreview, pendingLivePayload, titleSlotMounted, title, trackUrl])
+  }, [
+    artistSlotMounted,
+    isDevPreview,
+    labelSlotMounted,
+    pendingLivePayload,
+    titleSlotMounted,
+    title,
+    trackUrl,
+  ])
 
   const hasTrack = nowPlayingHasTrack(trackUrl, title)
+  const labelSlotTextActive = labelActive && labelSlotOwnsDom
 
   return {
     hasTrack,
@@ -258,6 +318,8 @@ export default function useNowPlaying(
     artist,
     artistSlotDisplayText: formatArtistWithTrailingPeriod(artist),
     slotTextActive,
+    labelSlotTextActive,
+    labelSlotRef,
     titleSlotRef,
     artistSlotRef,
   }

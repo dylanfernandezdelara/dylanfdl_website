@@ -9,6 +9,8 @@ import { seedEmptyBaseline } from '@/lib/slotTextSeed'
 export type UseSlotTextRollOptions = {
   direction: 'up' | 'down'
   slotOptions?: Omit<SlotOptions, 'direction'>
+  /** Identifies the slot for tests and debugging. */
+  name?: 'label' | 'title' | 'artist'
 }
 
 export type UseSlotTextRollResult = {
@@ -21,6 +23,8 @@ export type UseSlotTextRollResult = {
    */
   active: boolean
   rollTo: (text: string) => void
+  /** Rolls from an explicit source string; use when React fallback will clear before animate. */
+  rollFromTo: (from: string, to: string) => void
 }
 
 export default function useSlotTextRoll({
@@ -36,6 +40,40 @@ export default function useSlotTextRoll({
 
   const active = motionReady && slotMounted && !prefersReducedMotion
 
+  const animateFromTo = useCallback(
+    (from: string, to: string) => {
+      const slot = slotRef.current
+      if (!slot) return
+
+      if (to === from) {
+        displayedTextRef.current = to
+        slot.textContent = to
+        return
+      }
+
+      controllerRef.current?.destroy()
+      controllerRef.current = null
+
+      if (from.length > 0) {
+        displayedTextRef.current = from
+        controllerRef.current = slotText(slot, from)
+      } else {
+        displayedTextRef.current = seedEmptyBaseline(slot, to.length)
+        controllerRef.current = slotText(slot, displayedTextRef.current)
+      }
+
+      controllerRef.current.set(to, {
+        direction,
+        ...slotOptions,
+      })
+      displayedTextRef.current = to
+    },
+    [direction, slotOptions],
+  )
+
+  const animateFromToRef = useRef(animateFromTo)
+  animateFromToRef.current = animateFromTo
+
   const animateTo = useCallback(
     (text: string) => {
       const slot = slotRef.current
@@ -46,7 +84,15 @@ export default function useSlotTextRoll({
       }
 
       if (!slot.querySelector('.char-slot') && text.length > 0) {
-        displayedTextRef.current = seedEmptyBaseline(slot, text.length)
+        const existing = (slot.textContent ?? '').replace(/\u00A0/g, ' ')
+        if (existing.length > 0) {
+          displayedTextRef.current = existing
+          if (!controllerRef.current) {
+            controllerRef.current = slotText(slot, existing)
+          }
+        } else {
+          displayedTextRef.current = seedEmptyBaseline(slot, text.length)
+        }
       }
 
       if (!controllerRef.current) {
@@ -70,6 +116,15 @@ export default function useSlotTextRoll({
       desiredTextRef.current = text
       if (!active) return
       animateToRef.current(text)
+    },
+    [active],
+  )
+
+  const rollFromTo = useCallback(
+    (from: string, to: string) => {
+      desiredTextRef.current = to
+      if (!active) return
+      animateFromToRef.current(from, to)
     },
     [active],
   )
@@ -104,5 +159,6 @@ export default function useSlotTextRoll({
     slotMounted,
     active,
     rollTo,
+    rollFromTo,
   }
 }

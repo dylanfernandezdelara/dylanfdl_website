@@ -25,6 +25,8 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
     artist,
     artistSlotDisplayText,
     slotTextActive,
+    labelSlotTextActive,
+    labelSlotRef,
     titleSlotRef,
     artistSlotRef,
   } = useNowPlaying({
@@ -46,7 +48,9 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
 
   return (
     <span ref={containerRef} className="now-playing" data-layout={layout}>
-      <span className="now-playing-label">{label}</span>
+      <span ref={labelSlotRef} className="now-playing-label slot-text-cell-clip">
+        {labelSlotTextActive ? null : label}
+      </span>
       {hasTrack ? (
         <>
           {isInline || isPrefixSplit ? ' ' : null}
