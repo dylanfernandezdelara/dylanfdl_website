@@ -59,6 +59,25 @@ describe('useNowPlaying bootstrap', () => {
     })
   })
 
+  it('shows the intro label before bootstrap resolves', () => {
+    const fetchMock = vi.mocked(fetch)
+    const cacheResponse = createDeferred<Response>()
+    const liveResponse = createDeferred<Response>()
+    fetchMock.mockImplementation(async (input) => {
+      const url = String(input)
+      if (url.includes('live=1')) {
+        return await liveResponse.promise
+      }
+      return await cacheResponse.promise
+    })
+
+    const { result } = renderHook(() => useNowPlaying())
+
+    expect(result.current.hasTrack).toBe(false)
+    expect(result.current.label).toBe('Recently listened to')
+    expect(result.current.title).toBe('')
+  })
+
   it('applies cache first, defers live without re-roll, then starts polling', async () => {
     const fetchMock = vi.mocked(fetch)
     const liveResponse = createDeferred<Response>()
@@ -77,7 +96,7 @@ describe('useNowPlaying bootstrap', () => {
     const { result } = renderHook(() => useNowPlaying())
 
     await waitFor(() => {
-      expect(result.current.visible).toBe(true)
+      expect(result.current.hasTrack).toBe(true)
       expect(result.current.title).toBe('Instant Crush')
       expect(result.current.label).toBe('Recently listened to')
     })
@@ -118,7 +137,7 @@ describe('useNowPlaying bootstrap', () => {
 
     const { result } = renderHook(() => useNowPlaying({ initialPayload: cachedPayload }))
 
-    expect(result.current.visible).toBe(true)
+    expect(result.current.hasTrack).toBe(true)
     expect(result.current.title).toBe('Instant Crush')
     expect(result.current.label).toBe('Recently listened to')
 
@@ -154,7 +173,7 @@ describe('useNowPlaying bootstrap', () => {
     const { result } = renderHook(() => useNowPlaying())
 
     await waitFor(() => {
-      expect(result.current.visible).toBe(true)
+      expect(result.current.hasTrack).toBe(true)
       expect(result.current.label).toBe('Currently listening to')
     })
 

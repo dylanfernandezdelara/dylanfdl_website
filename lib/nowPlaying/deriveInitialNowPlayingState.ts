@@ -1,12 +1,12 @@
 import {
   computeTrackUpdate,
   getNowPlayingLabel,
+  nowPlayingHasTrack,
   type TrackRollState,
 } from '@/lib/nowPlaying/applyTrackUpdate'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 export type InitialNowPlayingState = {
-  visible: boolean
   label: string
   trackUrl: string | null
   title: string
@@ -14,33 +14,35 @@ export type InitialNowPlayingState = {
   rollState: TrackRollState
 }
 
-const EMPTY_STATE: InitialNowPlayingState = {
-  visible: false,
-  label: 'Currently listening to',
+const INTRO_STATE: InitialNowPlayingState = {
+  label: getNowPlayingLabel(null),
   trackUrl: null,
   title: '',
   artist: '',
   rollState: { trackId: null, hasRolled: false },
 }
 
+export function initialStateHasTrack(state: InitialNowPlayingState): boolean {
+  return nowPlayingHasTrack(state.trackUrl, state.title)
+}
+
 export function deriveInitialNowPlayingState(
   initialPayload?: NowPlayingResponse | null,
 ): InitialNowPlayingState {
   if (!initialPayload?.track) {
-    return EMPTY_STATE
+    return INTRO_STATE
   }
 
   const update = computeTrackUpdate(
     initialPayload,
-    EMPTY_STATE.rollState,
+    INTRO_STATE.rollState,
     { forceRoll: false },
   )
   if (!update) {
-    return EMPTY_STATE
+    return INTRO_STATE
   }
 
   return {
-    visible: true,
     label: update.label ?? getNowPlayingLabel(null),
     trackUrl: update.trackUrl,
     title: update.title,
