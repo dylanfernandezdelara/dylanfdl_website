@@ -29,9 +29,15 @@ const livePayload: NowPlayingResponse = {
   isPlaying: true,
 }
 
-const rollLabelFromTo = vi.fn()
-const rollTitleTo = vi.fn()
-const rollArtistTo = vi.fn()
+const {
+  queueLabelRollFromTo,
+  rollTitleTo,
+  rollArtistTo,
+} = vi.hoisted(() => ({
+  queueLabelRollFromTo: vi.fn(),
+  rollTitleTo: vi.fn(),
+  rollArtistTo: vi.fn(),
+}))
 
 function createDeferred<T>() {
   let resolvePromise: (value: T | PromiseLike<T>) => void = () => undefined
@@ -42,18 +48,47 @@ function createDeferred<T>() {
 }
 
 vi.mock('@/hooks/useSlotTextRoll', () => ({
-  default: vi.fn(({ name }: { name?: 'label' | 'title' | 'artist' }) => ({
-    slotRef: { current: document.createElement('span') },
-    slotMounted: true,
-    active: true,
-    rollTo:
-      name === 'label'
-        ? vi.fn()
-        : name === 'title'
-          ? rollTitleTo
-          : rollArtistTo,
-    rollFromTo: name === 'label' ? rollLabelFromTo : vi.fn(),
-  })),
+  default: vi.fn(
+    ({
+      twoPhaseFromToRoll,
+      direction,
+    }: {
+      twoPhaseFromToRoll?: boolean
+      direction: 'up' | 'down'
+    }) => {
+      if (twoPhaseFromToRoll) {
+        return {
+          slotRef: { current: document.createElement('span') },
+          slotMounted: true,
+          active: true,
+          slotTextActive: true,
+          rollTo: vi.fn(),
+          rollFromTo: vi.fn(),
+          queueRollFromTo: queueLabelRollFromTo,
+        }
+      }
+      if (direction === 'down') {
+        return {
+          slotRef: { current: document.createElement('span') },
+          slotMounted: true,
+          active: true,
+          slotTextActive: true,
+          rollTo: rollArtistTo,
+          rollFromTo: vi.fn(),
+          queueRollFromTo: vi.fn(),
+        }
+      }
+      return {
+        slotRef: { current: document.createElement('span') },
+        slotMounted: true,
+        active: true,
+        slotTextActive: true,
+        rollTo: rollTitleTo,
+        rollFromTo: vi.fn(),
+        queueRollFromTo: vi.fn(),
+      }
+    },
+  ),
 }))
 
 describe('useNowPlaying bootstrap', () => {
@@ -122,7 +157,7 @@ describe('useNowPlaying bootstrap', () => {
       expect(result.current.label).toBe('Currently listening to')
     })
 
-    expect(rollLabelFromTo).toHaveBeenCalledWith(
+    expect(queueLabelRollFromTo).toHaveBeenCalledWith(
       'Recently listened to',
       'Currently listening to',
     )

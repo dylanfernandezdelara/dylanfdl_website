@@ -9,8 +9,11 @@ import { seedEmptyBaseline } from '@/lib/slotTextSeed'
 export type UseSlotTextRollOptions = {
   direction: 'up' | 'down'
   slotOptions?: Omit<SlotOptions, 'direction'>
-  /** Identifies the slot for tests and debugging. */
-  name?: 'label' | 'title' | 'artist'
+  /**
+   * When true, `queueRollFromTo` clears the React fallback in a layout pass before
+   * rolling so imperative slot-text is not torn down mid-animation.
+   */
+  twoPhaseFromToRoll?: boolean
 }
 
 export type UseSlotTextRollResult = {
@@ -22,28 +25,67 @@ export type UseSlotTextRollResult = {
    * motion users still see the text.
    */
   active: boolean
+  /**
+   * When `twoPhaseFromToRoll` is enabled, true once the React fallback has cleared.
+   * Otherwise identical to `active`.
+   */
+  slotTextActive: boolean
   rollTo: (text: string) => void
-  /** Rolls from an explicit source string; use when React fallback will clear before animate. */
   rollFromTo: (from: string, to: string) => void
+  /** Queue a from→to roll once slot-text is active. */
+  queueRollFromTo: (from: string, to: string) => void
+}
+
+function readFallbackBaseline(slot: HTMLSpanElement): string {
+  if (slot.querySelector('.char-slot')) {
+    return ''
+  }
+  return (slot.textContent ?? '').replace(/\u00A0/g, ' ')
 }
 
 export default function useSlotTextRoll({
   direction,
   slotOptions,
+  twoPhaseFromToRoll = false,
 }: UseSlotTextRollOptions): UseSlotTextRollResult {
   const { reduced: prefersReducedMotion, ready: motionReady } = usePrefersReducedMotion()
   const slotRef = useRef<HTMLSpanElement>(null)
   const controllerRef = useRef<SlotTextController | null>(null)
   const displayedTextRef = useRef('')
   const desiredTextRef = useRef('')
+  const pendingFromToRollRef = useRef<{ from: string; to: string } | null>(null)
   const [slotMounted, setSlotMounted] = useState(false)
+  const [slotOwnsDom, setSlotOwnsDom] = useState(false)
+  const [pendingRollVersion, setPendingRollVersion] = useState(0)
 
   const active = motionReady && slotMounted && !prefersReducedMotion
+  const slotTextActive = twoPhaseFromToRoll ? active && slotOwnsDom : active
 
-  const animateFromTo = useCallback(
-    (from: string, to: string) => {
+  const animate = useCallback(
+    (to: string, explicitFrom?: string) => {
       const slot = slotRef.current
       if (!slot) return
+
+      if (
+        explicitFrom === undefined &&
+        to === displayedTextRef.current &&
+        slot.querySelector('.char-slot')
+      ) {
+        return
+      }
+
+      if (explicitFrom === undefined && controllerRef.current && slot.querySelector('.char-slot')) {
+        controllerRef.current.set(to, {
+          direction,
+          ...slotOptions,
+        })
+        displayedTextRef.current = to
+        desiredTextRef.current = to
+        return
+      }
+
+      const baseline = readFallbackBaseline(slot)
+      const from = explicitFrom ?? (baseline.length > 0 ? baseline : '')
 
       if (to === from) {
         displayedTextRef.current = to
@@ -71,51 +113,14 @@ export default function useSlotTextRoll({
     [direction, slotOptions],
   )
 
-  const animateFromToRef = useRef(animateFromTo)
-  animateFromToRef.current = animateFromTo
-
-  const animateTo = useCallback(
-    (text: string) => {
-      const slot = slotRef.current
-      if (!slot) return
-
-      if (text === displayedTextRef.current && slot.querySelector('.char-slot')) {
-        return
-      }
-
-      if (!slot.querySelector('.char-slot') && text.length > 0) {
-        const existing = (slot.textContent ?? '').replace(/\u00A0/g, ' ')
-        if (existing.length > 0) {
-          displayedTextRef.current = existing
-          if (!controllerRef.current) {
-            controllerRef.current = slotText(slot, existing)
-          }
-        } else {
-          displayedTextRef.current = seedEmptyBaseline(slot, text.length)
-        }
-      }
-
-      if (!controllerRef.current) {
-        controllerRef.current = slotText(slot, displayedTextRef.current)
-      }
-
-      controllerRef.current.set(text, {
-        direction,
-        ...slotOptions,
-      })
-      displayedTextRef.current = text
-    },
-    [direction, slotOptions],
-  )
-
-  const animateToRef = useRef(animateTo)
-  animateToRef.current = animateTo
+  const animateRef = useRef(animate)
+  animateRef.current = animate
 
   const rollTo = useCallback(
     (text: string) => {
       desiredTextRef.current = text
       if (!active) return
-      animateToRef.current(text)
+      animateRef.current(text)
     },
     [active],
   )
@@ -124,27 +129,57 @@ export default function useSlotTextRoll({
     (from: string, to: string) => {
       desiredTextRef.current = to
       if (!active) return
-      animateFromToRef.current(from, to)
+      animateRef.current(to, from)
     },
     [active],
   )
+
+  const queueRollFromTo = useCallback((from: string, to: string) => {
+    if (from === to) return
+    desiredTextRef.current = to
+    pendingFromToRollRef.current = { from, to }
+    setPendingRollVersion((version) => version + 1)
+  }, [])
 
   const assignSlotRef = useCallback((node: HTMLSpanElement | null) => {
     slotRef.current = node
     setSlotMounted(node !== null)
   }, [])
 
+  useLayoutEffect(() => {
+    if (!twoPhaseFromToRoll) return undefined
+
+    const pending = pendingFromToRollRef.current
+    if (!pending || !active) {
+      return undefined
+    }
+
+    if (!slotOwnsDom) {
+      setSlotOwnsDom(true)
+      return undefined
+    }
+
+    pendingFromToRollRef.current = null
+    animateRef.current(pending.to, pending.from)
+    return undefined
+  }, [active, pendingRollVersion, slotOwnsDom, twoPhaseFromToRoll])
+
   /*
    * When slot-text becomes active, React has just cleared its fallback text from
-   * the slot (the caller renders `null` children once `active` is true). Take over
-   * the now-empty slot and roll the desired text in from a blank baseline.
+   * the slot (the caller renders `null` children once `slotTextActive` is true).
+   * Take over the now-empty slot and roll the desired text in from a blank baseline.
    */
   useLayoutEffect(() => {
     if (!active) return undefined
 
+    const pending = pendingFromToRollRef.current
+    if (twoPhaseFromToRoll && pending) {
+      return undefined
+    }
+
     const text = desiredTextRef.current
     if (text.length > 0) {
-      animateToRef.current(text)
+      animateRef.current(text)
     }
 
     return () => {
@@ -152,13 +187,15 @@ export default function useSlotTextRoll({
       controllerRef.current = null
       displayedTextRef.current = ''
     }
-  }, [active])
+  }, [active, twoPhaseFromToRoll])
 
   return {
     slotRef: assignSlotRef,
     slotMounted,
     active,
+    slotTextActive,
     rollTo,
     rollFromTo,
+    queueRollFromTo,
   }
 }
