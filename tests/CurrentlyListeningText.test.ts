@@ -22,6 +22,14 @@ describe('CurrentlyListeningText presentation contract', () => {
     expect(componentSource).toContain('now-playing-measure-label')
   })
 
+  it('always renders the intro label instead of returning null without track data', () => {
+    expect(componentSource).not.toMatch(
+      /if\s*\(\s*!visible\s*\|\|\s*!trackUrl\s*\|\|\s*title\.length\s*===\s*0\s*\)\s*\{\s*return null/,
+    )
+    expect(componentSource).toContain('now-playing-label')
+    expect(componentSource).toContain('hasTrack')
+  })
+
   it('glues the trailing period into the artist slot text via the hook', () => {
     expect(componentSource).toContain('artistSlotDisplayText')
     expect(componentSource).not.toContain('formatArtistWithTrailingPeriod')

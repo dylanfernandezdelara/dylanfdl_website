@@ -6,9 +6,10 @@ import useSlotTextRoll from '@/hooks/useSlotTextRoll'
 import {
   applyTrackUpdate,
   computeTrackUpdate,
+  nowPlayingHasTrack,
   type TrackRollState,
 } from '@/lib/nowPlaying/applyTrackUpdate'
-import { deriveInitialNowPlayingState } from '@/lib/nowPlaying/deriveInitialNowPlayingState'
+import { deriveInitialNowPlayingState, initialStateHasTrack } from '@/lib/nowPlaying/deriveInitialNowPlayingState'
 import { formatArtistWithTrailingPeriod } from '@/lib/nowPlaying/trackLayout'
 import {
   resolveLiveBootstrapEffects,
@@ -37,7 +38,7 @@ export type UseNowPlayingOptions = {
 }
 
 export type UseNowPlayingResult = {
-  visible: boolean
+  hasTrack: boolean
   label: string
   trackUrl: string | null
   title: string
@@ -56,14 +57,13 @@ export default function useNowPlaying(
   const isDevPreview = import.meta.env.DEV
   const initialStateRef = useRef(deriveInitialNowPlayingState(options.initialPayload))
 
-  const [visible, setVisible] = useState(initialStateRef.current.visible)
   const [label, setLabel] = useState(initialStateRef.current.label)
   const [trackUrl, setTrackUrl] = useState<string | null>(initialStateRef.current.trackUrl)
   const [title, setTitle] = useState(initialStateRef.current.title)
   const [artist, setArtist] = useState(initialStateRef.current.artist)
 
   const rollStateRef = useRef<TrackRollState>(initialStateRef.current.rollState)
-  const shouldSeedInitialTextRef = useRef(initialStateRef.current.visible)
+  const shouldSeedInitialTextRef = useRef(initialStateHasTrack(initialStateRef.current))
   const [pendingLivePayload, setPendingLivePayload] = useState<NowPlayingResponse | null>(null)
   const beginPollingRef = useRef<(() => void) | null>(null)
 
@@ -116,7 +116,6 @@ export default function useNowPlaying(
     rollStateRef.current = applyTrackUpdate(update, {
       setLabel,
       setTrackUrl,
-      setVisible,
       setTitle,
       setArtist,
       rollTitle: (nextTitle) => rollTitleRef.current(nextTitle),
@@ -175,7 +174,7 @@ export default function useNowPlaying(
     beginPollingRef.current = pollController.schedule
 
     void (async () => {
-      const skipCacheBootstrap = initialStateRef.current.visible
+      const skipCacheBootstrap = initialStateHasTrack(initialStateRef.current)
       let cacheApplied = skipCacheBootstrap
 
       const { liveStep } = await runBootstrapFetches(
@@ -233,7 +232,12 @@ export default function useNowPlaying(
   useEffect(() => {
     if (isDevPreview) return undefined
 
-    if (!pendingLivePayload || !visible || !titleSlotMounted || !artistSlotMounted) {
+    if (
+      !pendingLivePayload ||
+      !nowPlayingHasTrack(trackUrl, title) ||
+      !titleSlotMounted ||
+      !artistSlotMounted
+    ) {
       return undefined
     }
 
@@ -242,10 +246,12 @@ export default function useNowPlaying(
     beginPollingRef.current?.()
 
     return undefined
-  }, [artistSlotMounted, isDevPreview, pendingLivePayload, titleSlotMounted, visible])
+  }, [artistSlotMounted, isDevPreview, pendingLivePayload, titleSlotMounted, title, trackUrl])
+
+  const hasTrack = nowPlayingHasTrack(trackUrl, title)
 
   return {
-    visible,
+    hasTrack,
     label,
     trackUrl,
     title,

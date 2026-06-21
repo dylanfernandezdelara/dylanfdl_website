@@ -16,10 +16,9 @@ const cachedPayload: NowPlayingResponse = {
 }
 
 describe('deriveInitialNowPlayingState', () => {
-  it('returns empty state when payload is missing or has no track', () => {
+  it('returns intro state when payload is missing or has no track', () => {
     expect(deriveInitialNowPlayingState(null)).toEqual({
-      visible: false,
-      label: 'Currently listening to',
+      label: 'Recently listened to',
       trackUrl: null,
       title: '',
       artist: '',
@@ -32,8 +31,7 @@ describe('deriveInitialNowPlayingState', () => {
         track: null,
       }),
     ).toEqual({
-      visible: false,
-      label: 'Currently listening to',
+      label: 'Recently listened to',
       trackUrl: null,
       title: '',
       artist: '',
@@ -41,9 +39,8 @@ describe('deriveInitialNowPlayingState', () => {
     })
   })
 
-  it('derives visible state from cached payload', () => {
+  it('derives track state from cached payload', () => {
     expect(deriveInitialNowPlayingState(cachedPayload)).toEqual({
-      visible: true,
       label: 'Recently listened to',
       trackUrl: 'https://open.spotify.com/track/track-1',
       title: 'Instant Crush',

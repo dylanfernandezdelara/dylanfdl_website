@@ -97,7 +97,6 @@ describe('applyTrackUpdate', () => {
   it('applies all fields and rolls when requested', () => {
     const setLabel = vi.fn()
     const setTrackUrl = vi.fn()
-    const setVisible = vi.fn()
     const setTitle = vi.fn()
     const setArtist = vi.fn()
     const rollTitle = vi.fn()
@@ -115,7 +114,6 @@ describe('applyTrackUpdate', () => {
       {
         setLabel,
         setTrackUrl,
-        setVisible,
         setTitle,
         setArtist,
         rollTitle,
@@ -125,7 +123,6 @@ describe('applyTrackUpdate', () => {
 
     expect(setLabel).toHaveBeenCalledWith('Currently listening to')
     expect(setTrackUrl).toHaveBeenCalledWith('https://open.spotify.com/track/track-1')
-    expect(setVisible).toHaveBeenCalledWith(true)
     expect(setTitle).toHaveBeenCalledWith('Instant Crush')
     expect(setArtist).toHaveBeenCalledWith('Daft Punk')
     expect(rollTitle).toHaveBeenCalledWith('Instant Crush')
@@ -150,7 +147,6 @@ describe('applyTrackUpdate', () => {
       {
         setLabel,
         setTrackUrl: vi.fn(),
-        setVisible: vi.fn(),
         setTitle: vi.fn(),
         setArtist: vi.fn(),
         rollTitle,

@@ -16,6 +16,13 @@ export type TrackRollState = {
   hasRolled: boolean
 }
 
+export function nowPlayingHasTrack(
+  trackUrl: string | null,
+  title: string,
+): boolean {
+  return Boolean(trackUrl && title.length > 0)
+}
+
 export type TrackUpdate = {
   label: string | null
   trackUrl: string
@@ -58,7 +65,6 @@ export function applyTrackUpdate(
   actions: {
     setLabel: (label: string) => void
     setTrackUrl: (url: string) => void
-    setVisible: (visible: boolean) => void
     setTitle: (title: string) => void
     setArtist: (artist: string) => void
     rollTitle: (title: string) => void
@@ -71,7 +77,6 @@ export function applyTrackUpdate(
   actions.setTrackUrl(update.trackUrl)
   actions.setTitle(update.title)
   actions.setArtist(update.artist)
-  actions.setVisible(true)
 
   if (update.shouldRoll) {
     actions.rollTitle(update.title)
