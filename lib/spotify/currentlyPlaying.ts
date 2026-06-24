@@ -47,10 +47,14 @@ function parseSpotifyItem(item: SpotifyTrackItem | SpotifyEpisodeItem): CachedTr
   return parseSpotifyEpisode(item)
 }
 
-export function toNowPlayingCache(track: CachedTrack): NowPlayingCache {
+export function toNowPlayingCache(
+  track: CachedTrack,
+  isPlaying: boolean | null = null,
+): NowPlayingCache {
   return {
     track,
     updatedAt: new Date().toISOString(),
+    isPlaying,
   }
 }
 

@@ -186,6 +186,9 @@ export default function useSlotTextRoll({
       controllerRef.current?.destroy()
       controllerRef.current = null
       displayedTextRef.current = ''
+      if (twoPhaseFromToRoll) {
+        setSlotOwnsDom(false)
+      }
     }
   }, [active, twoPhaseFromToRoll])
 

@@ -55,5 +55,20 @@ describe('toNowPlayingCache', () => {
 
     expect(cache.track.name).toBe('Instant Crush')
     expect(cache.updatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/)
+    expect(cache.isPlaying).toBeNull()
+  })
+
+  it('persists playback state when provided', () => {
+    const cache = toNowPlayingCache(
+      {
+        id: 'track-1',
+        name: 'Instant Crush',
+        artists: ['Daft Punk'],
+        url: 'https://open.spotify.com/track/track-1',
+      },
+      true,
+    )
+
+    expect(cache.isPlaying).toBe(true)
   })
 })

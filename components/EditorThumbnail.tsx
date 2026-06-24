@@ -4,121 +4,22 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
 import {
-  EDITOR_THUMBNAIL_HOLD_EMPTY_MS,
+  EDITOR_THUMBNAIL_FULL_TEXT,
   EDITOR_THUMBNAIL_HOLD_FULL_MS,
   getVisibleLengthAt,
+  rollEditorThumbnailCycleTiming,
   type EditorThumbnailCycleTiming,
 } from '@/lib/editorThumbnailCycle'
 
-const FULL_TEXT = 'I hope to clarify my own ideas and'
-const TEXT_LENGTH = FULL_TEXT.length
+const TEXT_LENGTH = EDITOR_THUMBNAIL_FULL_TEXT.length
 const BASE_FONT_SIZE_PX = 15.2
-
-const HOLD_FULL_MS = EDITOR_THUMBNAIL_HOLD_FULL_MS
-const HOLD_EMPTY_MS = EDITOR_THUMBNAIL_HOLD_EMPTY_MS
-
-/** Uniform float in [min, max] */
-function randomBetween(min: number, max: number): number {
-  return min + Math.random() * (max - min)
-}
-
-type CycleTiming = EditorThumbnailCycleTiming
-
-function buildHumanTypeThresholds(): Pick<CycleTiming, 'typeThresholds' | 'typeTotalMs'> {
-  const thresholds: number[] = []
-  let total = 0
-
-  for (let nextVisibleLength = 1; nextVisibleLength <= TEXT_LENGTH; nextVisibleLength += 1) {
-    const char = FULL_TEXT[nextVisibleLength - 1]
-    let delay = randomBetween(95, 340)
-
-    if (char === ' ') {
-      delay *= randomBetween(0.72, 0.95)
-    }
-
-    if (nextVisibleLength >= 2 && FULL_TEXT[nextVisibleLength - 2] === ' ') {
-      delay += randomBetween(35, 220)
-    }
-
-    if (Math.random() < 0.07) {
-      delay += randomBetween(100, 420)
-    }
-
-    delay *= randomBetween(0.88, 1.12)
-
-    total += Math.round(delay)
-    thresholds.push(total)
-  }
-
-  return { typeThresholds: thresholds, typeTotalMs: total }
-}
-
-function buildHumanDeleteThresholds(): Pick<CycleTiming, 'deleteThresholds' | 'deleteTotalMs'> {
-  const thresholds: number[] = []
-  let total = 0
-  let burstLeft = 0
-
-  for (let visibleLength = TEXT_LENGTH; visibleLength > 0; visibleLength -= 1) {
-    const charRemoved = FULL_TEXT[visibleLength - 1]
-    let delay: number
-
-    if (burstLeft > 0) {
-      burstLeft -= 1
-      delay = randomBetween(24, 78)
-    } else {
-      const progress = visibleLength / TEXT_LENGTH
-      delay =
-        randomBetween(68, 175) + progress * randomBetween(25, 110) + randomBetween(-18, 38)
-      if (Math.random() < 0.44) {
-        burstLeft = Math.floor(randomBetween(1, 3))
-      }
-    }
-
-    if (charRemoved === ' ') {
-      burstLeft = 0
-      delay += randomBetween(65, 240)
-    }
-
-    if (visibleLength >= 3 && FULL_TEXT[visibleLength - 2] === ' ') {
-      burstLeft = 0
-      delay += randomBetween(40, 130)
-    }
-
-    if (Math.random() < 0.095) {
-      burstLeft = 0
-      delay += randomBetween(130, 420)
-    }
-
-    delay *= randomBetween(0.8, 1.22)
-    delay = Math.max(18, delay)
-
-    total += Math.round(delay)
-    thresholds.push(total)
-  }
-
-  return { deleteThresholds: thresholds, deleteTotalMs: total }
-}
-
-function rollCycleTiming(): CycleTiming {
-  const typing = buildHumanTypeThresholds()
-  const deleting = buildHumanDeleteThresholds()
-
-  return {
-    typeThresholds: typing.typeThresholds,
-    typeTotalMs: typing.typeTotalMs,
-    deleteThresholds: deleting.deleteThresholds,
-    deleteTotalMs: deleting.deleteTotalMs,
-    cycleDurationMs:
-      typing.typeTotalMs + HOLD_FULL_MS + deleting.deleteTotalMs + HOLD_EMPTY_MS,
-  }
-}
 
 export default function EditorThumbnail() {
   const [visibleLength, setVisibleLength] = useState(TEXT_LENGTH)
   const [textSizePx, setTextSizePx] = useState(BASE_FONT_SIZE_PX)
   const { reduced: prefersReducedMotion, ready } = usePrefersReducedMotion()
   const cycleAnchorRef = useRef<number | null>(null)
-  const timingRef = useRef<CycleTiming | null>(null)
+  const timingRef = useRef<EditorThumbnailCycleTiming | null>(null)
   const lastVisibleLengthRef = useRef(0)
   const textShellRef = useRef<HTMLDivElement | null>(null)
   const textMeasureRef = useRef<HTMLSpanElement | null>(null)
@@ -139,14 +40,14 @@ export default function EditorThumbnail() {
       return undefined
     }
 
-    timingRef.current = rollCycleTiming()
+    timingRef.current = rollEditorThumbnailCycleTiming()
     cycleAnchorRef.current = null
 
     const tick = (timestamp: number) => {
       if (cycleAnchorRef.current === null) {
         const timing = timingRef.current
         cycleAnchorRef.current =
-          timing === null ? timestamp : timestamp - (timing.typeTotalMs + HOLD_FULL_MS)
+          timing === null ? timestamp : timestamp - (timing.typeTotalMs + EDITOR_THUMBNAIL_HOLD_FULL_MS)
       }
 
       let activeTiming = timingRef.current
@@ -158,7 +59,7 @@ export default function EditorThumbnail() {
       let elapsed = timestamp - cycleAnchorRef.current
 
       if (elapsed >= activeTiming.cycleDurationMs) {
-        timingRef.current = rollCycleTiming()
+        timingRef.current = rollEditorThumbnailCycleTiming()
         cycleAnchorRef.current = timestamp
         activeTiming = timingRef.current
         elapsed = 0
@@ -248,7 +149,7 @@ export default function EditorThumbnail() {
                 className="font-mono leading-[1.2] text-fg2"
                 style={{ fontSize: `${textSizePx}px` }}
               >
-                {FULL_TEXT.slice(0, visibleLength)}
+                {EDITOR_THUMBNAIL_FULL_TEXT.slice(0, visibleLength)}
               </span>
               <span
                 className="editor-cursor-blink ml-px w-px shrink-0 bg-fg3"
@@ -261,7 +162,7 @@ export default function EditorThumbnail() {
               className="pointer-events-none absolute opacity-0 whitespace-nowrap font-mono leading-[1.2]"
               style={{ fontSize: `${BASE_FONT_SIZE_PX}px` }}
             >
-              {FULL_TEXT}
+              {EDITOR_THUMBNAIL_FULL_TEXT}
             </span>
           </div>
         </div>
