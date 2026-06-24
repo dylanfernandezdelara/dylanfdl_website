@@ -121,9 +121,14 @@
   }
 }
 
-.page-search-input:focus,
-.page-search-input:focus-visible {
+.page-search-input:focus:not(:focus-visible) {
   outline: none !important;
+  box-shadow: none !important;
+}
+
+.page-search-input:focus-visible {
+  outline: 2px solid var(--blue) !important;
+  outline-offset: 2px;
   box-shadow: none !important;
 }
 

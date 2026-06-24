@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
-import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlayingPresentation'
+import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlaying/trackLayout'
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 

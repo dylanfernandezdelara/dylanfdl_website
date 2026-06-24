@@ -12,6 +12,7 @@ const cache: NowPlayingCache = {
     url: 'https://open.spotify.com/track/track-1',
   },
   updatedAt: '2026-06-13T12:00:00.000Z',
+  isPlaying: true,
 }
 
 const {
@@ -51,9 +52,10 @@ vi.mock('../lib/spotify/auth.js', () => ({
 
 vi.mock('../lib/spotify/currentlyPlaying.js', () => ({
   fetchCurrentlyPlaying: mockFetchCurrentlyPlaying,
-  toNowPlayingCache: (track: NowPlayingCache['track']) => ({
+  toNowPlayingCache: (track: NowPlayingCache['track'], isPlaying: boolean | null = null) => ({
     track,
     updatedAt: cache.updatedAt,
+    isPlaying,
   }),
 }))
 
@@ -106,6 +108,8 @@ describe('api/now-playing handler', () => {
     mockShouldSkipLiveRefresh.mockResolvedValue(false)
     mockGetCachedAccessToken.mockResolvedValue('cached-token')
     mockIsSameOriginRequest.mockReturnValue(true)
+    mockSetNowPlayingCache.mockResolvedValue(undefined)
+    mockMarkLiveRefresh.mockResolvedValue(undefined)
   })
 
   it('returns cached payload for canonical requests', async () => {
@@ -153,6 +157,7 @@ describe('api/now-playing handler', () => {
     expect(res.body).toMatchObject({
       source: 'cache',
       track: cache.track,
+      isPlaying: true,
     })
   })
 
@@ -227,6 +232,7 @@ describe('api/now-playing handler', () => {
     expect(res.body).toMatchObject({
       source: 'live',
       track: cache.track,
+      isPlaying: true,
     })
   })
 
@@ -240,11 +246,41 @@ describe('api/now-playing handler', () => {
 
     await handler(makeRequest({ query: { live: '1' } }), res)
 
+    expect(mockSetNowPlayingCache).toHaveBeenCalledWith(
+      expect.objectContaining({
+        track: cache.track,
+        isPlaying: false,
+      }),
+    )
+    expect(mockMarkLiveRefresh).toHaveBeenCalled()
+    expect(mockSetNowPlayingCache.mock.invocationCallOrder[0]).toBeLessThan(
+      mockMarkLiveRefresh.mock.invocationCallOrder[0]!,
+    )
     expect(res.statusCode).toBe(200)
     expect(res.body).toMatchObject({
       source: 'live',
       track: cache.track,
       isPlaying: false,
+    })
+  })
+
+  it('does not mark live refresh when no-track cache write fails', async () => {
+    const { default: handler } = await import('../api/now-playing')
+    const res = makeResponse()
+    const cacheError = new Error('cache write failed')
+    mockFetchCurrentlyPlaying.mockResolvedValue({
+      track: null,
+      isPlaying: false,
+    })
+    mockSetNowPlayingCache.mockRejectedValue(cacheError)
+
+    await handler(makeRequest({ query: { live: '1' } }), res)
+
+    expect(mockMarkLiveRefresh).not.toHaveBeenCalled()
+    expect(logNowPlaying.logNowPlayingWarn).toHaveBeenCalledWith('live refresh failed', cacheError)
+    expect(res.body).toMatchObject({
+      source: 'cache',
+      track: cache.track,
     })
   })
 })

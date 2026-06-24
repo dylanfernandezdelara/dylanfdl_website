@@ -29,6 +29,16 @@ describe('isSpotifyOAuthLoginAuthorized', () => {
 
     vi.unstubAllEnvs()
   })
+
+  it('rejects login when setup is enabled without a configured secret', () => {
+    vi.stubEnv('SPOTIFY_OAUTH_SETUP_ENABLED', 'true')
+    vi.stubEnv('SPOTIFY_OAUTH_SETUP_SECRET', '')
+
+    expect(isSpotifyOAuthLoginAuthorized(makeRequest())).toBe(false)
+    expect(isSpotifyOAuthLoginAuthorized(makeRequest({ secret: 'anything' }))).toBe(false)
+
+    vi.unstubAllEnvs()
+  })
 })
 
 describe('isSpotifyOAuthCallbackAuthorized', () => {

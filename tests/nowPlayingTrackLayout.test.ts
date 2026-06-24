@@ -6,6 +6,7 @@ import {
   formatFullTrackLineWithPeriod,
   formatLabelTitleLine,
   fitsTrackOnOneLine,
+  getNowPlayingLayoutPresentation,
   measurePrefixRowWidth,
   measureTextWidth,
   resolveNowPlayingTrackLayout,
@@ -113,5 +114,30 @@ describe('now playing viewport coverage', () => {
     const layouts = new Set(NOW_PLAYING_LAYOUT_SCENARIOS.map((scenario) => scenario.expected))
 
     expect(layouts).toEqual(new Set(['inline', 'prefix-split', 'split', 'stacked']))
+  })
+})
+
+describe('getNowPlayingLayoutPresentation', () => {
+  it('maps layout modes to spacing and wrapping rules', () => {
+    expect(getNowPlayingLayoutPresentation('inline')).toEqual({
+      labelTrackSeparator: true,
+      titleArtistSeparator: true,
+      allowTitleWrap: false,
+    })
+    expect(getNowPlayingLayoutPresentation('prefix-split')).toEqual({
+      labelTrackSeparator: true,
+      titleArtistSeparator: false,
+      allowTitleWrap: false,
+    })
+    expect(getNowPlayingLayoutPresentation('split')).toEqual({
+      labelTrackSeparator: false,
+      titleArtistSeparator: true,
+      allowTitleWrap: false,
+    })
+    expect(getNowPlayingLayoutPresentation('stacked')).toEqual({
+      labelTrackSeparator: false,
+      titleArtistSeparator: false,
+      allowTitleWrap: true,
+    })
   })
 })

@@ -39,12 +39,12 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
     const cached = await getNowPlayingCache()
 
     if (!live) {
-      res.status(200).json(toNowPlayingResponse('cache', cached, null))
+      res.status(200).json(toNowPlayingResponse('cache', cached, cached?.isPlaying ?? null))
       return
     }
 
     if (await shouldSkipLiveRefresh()) {
-      res.status(200).json(toNowPlayingResponse('live', cached, null))
+      res.status(200).json(toNowPlayingResponse('live', cached, cached?.isPlaying ?? null))
       return
     }
 
@@ -53,7 +53,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
       const playback = await fetchCurrentlyPlaying(accessToken)
 
       if (playback.track) {
-        const nextCache = toNowPlayingCache(playback.track)
+        const nextCache = toNowPlayingCache(playback.track, playback.isPlaying)
         await setNowPlayingCache(nextCache)
         await markLiveRefresh()
         res.status(200).json(
@@ -62,12 +62,23 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
         return
       }
 
-      await markLiveRefresh()
+      if (cached) {
+        const nextCache = {
+          ...cached,
+          isPlaying: playback.isPlaying,
+          updatedAt: new Date().toISOString(),
+        }
+        await setNowPlayingCache(nextCache)
+        await markLiveRefresh()
+        res.status(200).json(toNowPlayingResponse('live', nextCache, playback.isPlaying))
+        return
+      }
 
+      await markLiveRefresh()
       res.status(200).json(toNowPlayingResponse('live', cached, playback.isPlaying))
     } catch (error) {
       logNowPlayingWarn('live refresh failed', error)
-      res.status(200).json(toNowPlayingResponse('cache', cached, null))
+      res.status(200).json(toNowPlayingResponse('cache', cached, cached?.isPlaying ?? null))
     }
   } catch (error) {
     logNowPlayingError('request failed', error)

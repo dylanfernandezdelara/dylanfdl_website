@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 
 import ExternalLink from '@/components/ExternalLink'
 import { formatArtistWithTrailingPeriod } from '@/lib/nowPlaying/trackLayout'
-import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlayingPresentation'
+import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlaying/trackLayout'
 import { NOW_PLAYING_LAYOUT_SCENARIOS } from '@/tests/fixtures/nowPlayingLayoutScenarios'
 
 const stackedPeriodScenario = NOW_PLAYING_LAYOUT_SCENARIOS.find(

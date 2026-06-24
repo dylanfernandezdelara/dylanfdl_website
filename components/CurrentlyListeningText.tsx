@@ -7,7 +7,10 @@ import 'slot-text/style.css'
 import ExternalLink from '@/components/ExternalLink'
 import useNowPlaying from '@/hooks/useNowPlaying'
 import useNowPlayingTrackLayout from '@/hooks/useNowPlayingTrackLayout'
-import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlayingPresentation'
+import {
+  getNowPlayingLayoutPresentation,
+  NOW_PLAYING_SLOT_CLASS,
+} from '@/lib/nowPlaying/trackLayout'
 import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 import '@/src/styles/now-playing-text.css'
@@ -42,9 +45,8 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
     prefixTitleMeasureRef,
   } = useNowPlayingTrackLayout(label, title, artist, containerRef)
 
-  const isInline = layout === 'inline'
-  const isSplit = layout === 'split'
-  const isPrefixSplit = layout === 'prefix-split'
+  const { labelTrackSeparator, titleArtistSeparator, allowTitleWrap } =
+    getNowPlayingLayoutPresentation(layout)
 
   return (
     <span ref={containerRef} className="now-playing" data-layout={layout}>
@@ -53,19 +55,19 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
       </span>
       {hasTrack ? (
         <>
-          {isInline || isPrefixSplit ? ' ' : null}
+          {labelTrackSeparator ? ' ' : null}
           <span className="now-playing-track">
             <ExternalLink
               href={trackUrl}
               noUnderline
-              allowWrap={!isInline && !isSplit && !isPrefixSplit}
+              allowWrap={allowTitleWrap}
               className="now-playing-title"
             >
               <span ref={titleSlotRef} className={NOW_PLAYING_SLOT_CLASS}>
                 {slotTextActive ? null : title}
               </span>
             </ExternalLink>
-            {isInline || isSplit ? ' ' : null}
+            {titleArtistSeparator ? ' ' : null}
             <span className="now-playing-artist-line">
               <span className="now-playing-by">by </span>
               <span ref={artistSlotRef} className={NOW_PLAYING_SLOT_CLASS}>

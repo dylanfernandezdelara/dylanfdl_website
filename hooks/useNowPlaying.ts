@@ -139,9 +139,10 @@ export default function useNowPlaying(
 
     rollStateRef.current = applyTrackUpdate(update, {
       applyLabel: (nextLabel) => {
-        if (nextLabel !== labelRef.current) {
-          queueLabelRollFromToRef.current(labelRef.current, nextLabel)
+        if (nextLabel === labelRef.current) {
+          return
         }
+        queueLabelRollFromToRef.current(labelRef.current, nextLabel)
         labelRef.current = nextLabel
         setLabel(nextLabel)
       },

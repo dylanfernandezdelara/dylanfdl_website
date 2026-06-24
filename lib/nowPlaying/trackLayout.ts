@@ -1,5 +1,25 @@
 export type NowPlayingTrackLayout = 'inline' | 'prefix-split' | 'split' | 'stacked'
 
+/** Root class for title/artist slot spans; must match `.now-playing-slot` in now-playing-text.css. */
+export const NOW_PLAYING_SLOT_CLASS =
+  'now-playing-slot slot-text-cell-clip italic max-w-full flex-wrap'
+
+export type NowPlayingLayoutPresentation = {
+  labelTrackSeparator: boolean
+  titleArtistSeparator: boolean
+  allowTitleWrap: boolean
+}
+
+export function getNowPlayingLayoutPresentation(
+  layout: NowPlayingTrackLayout,
+): NowPlayingLayoutPresentation {
+  return {
+    labelTrackSeparator: layout === 'inline' || layout === 'prefix-split',
+    titleArtistSeparator: layout === 'inline' || layout === 'split',
+    allowTitleWrap: layout === 'stacked',
+  }
+}
+
 export type NowPlayingTrackMeasurements = {
   containerWidth: number
   labelWidth: number

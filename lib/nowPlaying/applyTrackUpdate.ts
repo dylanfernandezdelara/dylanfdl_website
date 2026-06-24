@@ -46,10 +46,7 @@ export function computeTrackUpdate(
     options.forceRoll || !rollState.hasRolled || rollState.trackId !== nextTrackId
 
   return {
-    label:
-      payload.isPlaying !== null || payload.source === 'cache'
-        ? getNowPlayingLabel(payload.isPlaying)
-        : null,
+    label: getNowPlayingLabel(payload.isPlaying),
     trackUrl: payload.track.url,
     title: payload.track.name,
     artist: formatNowPlayingArtists(payload.track.artists),

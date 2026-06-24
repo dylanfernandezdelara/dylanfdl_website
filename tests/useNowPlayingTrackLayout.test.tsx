@@ -11,7 +11,7 @@ import {
   formatFullTrackLine,
   formatLabelTitleLine,
 } from '@/lib/nowPlaying/trackLayout'
-import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlayingPresentation'
+import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlaying/trackLayout'
 import {
   attachMockPrefixRowMeasure,
   attachMockTextMeasure,
