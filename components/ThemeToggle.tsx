@@ -67,7 +67,13 @@ export default function ThemeToggle() {
       className={cn(
         'fixed bottom-5 right-5 z-[100] flex h-11 w-11 items-center justify-center rounded-full border border-bg3 bg-bg1 text-fg0 shadow-[var(--elevated-shadow)] transition-none hover:border-fg4/35 hover:bg-bg2 focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2',
       )}
-      aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+      aria-label={
+        !mounted
+          ? 'Toggle theme'
+          : isDark
+            ? 'Switch to light theme'
+            : 'Switch to dark theme'
+      }
       suppressHydrationWarning
     >
       {!mounted ? (

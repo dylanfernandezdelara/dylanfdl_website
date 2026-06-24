@@ -3,15 +3,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
-import {
-  EDITOR_THUMBNAIL_FULL_TEXT,
-  EDITOR_THUMBNAIL_HOLD_FULL_MS,
-  getVisibleLengthAt,
-  rollEditorThumbnailCycleTiming,
-  type EditorThumbnailCycleTiming,
-} from '@/lib/editorThumbnailCycle'
+import * as editorThumbnailCycle from '@/lib/editorThumbnailCycle'
+import type { EditorThumbnailCycleTiming } from '@/lib/editorThumbnailCycle'
 
-const TEXT_LENGTH = EDITOR_THUMBNAIL_FULL_TEXT.length
+const TEXT_LENGTH = editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT.length
 const BASE_FONT_SIZE_PX = 15.2
 
 export default function EditorThumbnail() {
@@ -34,20 +29,26 @@ export default function EditorThumbnail() {
   }, [ready])
 
   useEffect(() => {
-    let animationFrameId = 0
-
-    if (!ready || prefersReducedMotion) {
+    if (!ready) {
       return undefined
     }
 
-    timingRef.current = rollEditorThumbnailCycleTiming()
+    if (prefersReducedMotion) {
+      lastVisibleLengthRef.current = TEXT_LENGTH
+      setVisibleLength(TEXT_LENGTH)
+      return undefined
+    }
+
+    let animationFrameId = 0
+
+    timingRef.current = editorThumbnailCycle.rollEditorThumbnailCycleTiming()
     cycleAnchorRef.current = null
 
     const tick = (timestamp: number) => {
       if (cycleAnchorRef.current === null) {
         const timing = timingRef.current
         cycleAnchorRef.current =
-          timing === null ? timestamp : timestamp - (timing.typeTotalMs + EDITOR_THUMBNAIL_HOLD_FULL_MS)
+          timing === null ? timestamp : timestamp - (timing.typeTotalMs + editorThumbnailCycle.EDITOR_THUMBNAIL_HOLD_FULL_MS)
       }
 
       let activeTiming = timingRef.current
@@ -59,13 +60,17 @@ export default function EditorThumbnail() {
       let elapsed = timestamp - cycleAnchorRef.current
 
       if (elapsed >= activeTiming.cycleDurationMs) {
-        timingRef.current = rollEditorThumbnailCycleTiming()
+        timingRef.current = editorThumbnailCycle.rollEditorThumbnailCycleTiming()
         cycleAnchorRef.current = timestamp
         activeTiming = timingRef.current
         elapsed = 0
       }
 
-      const nextVisibleLength = getVisibleLengthAt(elapsed, activeTiming, TEXT_LENGTH)
+      const nextVisibleLength = editorThumbnailCycle.getVisibleLengthAt(
+        elapsed,
+        activeTiming,
+        TEXT_LENGTH,
+      )
 
       if (nextVisibleLength !== lastVisibleLengthRef.current) {
         lastVisibleLengthRef.current = nextVisibleLength
@@ -149,7 +154,7 @@ export default function EditorThumbnail() {
                 className="font-mono leading-[1.2] text-fg2"
                 style={{ fontSize: `${textSizePx}px` }}
               >
-                {EDITOR_THUMBNAIL_FULL_TEXT.slice(0, visibleLength)}
+                {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT.slice(0, visibleLength)}
               </span>
               <span
                 className="editor-cursor-blink ml-px w-px shrink-0 bg-fg3"
@@ -162,7 +167,7 @@ export default function EditorThumbnail() {
               className="pointer-events-none absolute opacity-0 whitespace-nowrap font-mono leading-[1.2]"
               style={{ fontSize: `${BASE_FONT_SIZE_PX}px` }}
             >
-              {EDITOR_THUMBNAIL_FULL_TEXT}
+              {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT}
             </span>
           </div>
         </div>

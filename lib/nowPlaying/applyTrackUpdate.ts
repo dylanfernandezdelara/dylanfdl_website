@@ -47,7 +47,9 @@ export function computeTrackUpdate(
 
   return {
     label:
-      payload.isPlaying !== null || payload.source === 'cache'
+      payload.isPlaying !== null ||
+      payload.source === 'cache' ||
+      payload.source === 'live'
         ? getNowPlayingLabel(payload.isPlaying)
         : null,
     trackUrl: payload.track.url,

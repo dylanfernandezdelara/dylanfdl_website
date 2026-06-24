@@ -79,7 +79,7 @@ export default function PageSearchPalette() {
               enterKeyHint="search"
               data-1p-ignore="true"
               data-lpignore="true"
-              className="page-search-input h-12 py-0 text-[0.95rem] text-fg0 placeholder:text-fg3 focus:!outline-none focus-visible:!outline-none focus:!ring-0 focus-visible:!ring-0"
+              className="page-search-input h-12 py-0 text-[0.95rem] text-fg0 placeholder:text-fg3"
             />
           </div>
 

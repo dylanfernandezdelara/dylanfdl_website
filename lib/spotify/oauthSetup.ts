@@ -17,7 +17,7 @@ export function isSpotifyOAuthLoginAuthorized(req: ApiRequest): boolean {
 
   const setupSecret = process.env.SPOTIFY_OAUTH_SETUP_SECRET
   if (!setupSecret) {
-    return true
+    return false
   }
 
   const query = req.query.secret

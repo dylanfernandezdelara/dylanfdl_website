@@ -41,7 +41,7 @@ describe('computeTrackUpdate', () => {
     ).toBeNull()
   })
 
-  it('rolls on first track and preserves label when isPlaying is null', () => {
+  it('rolls on first track and updates label for live payloads when isPlaying is null', () => {
     const update = computeTrackUpdate(
       { ...trackPayload, isPlaying: null },
       { trackId: null, hasRolled: false },
@@ -49,7 +49,7 @@ describe('computeTrackUpdate', () => {
     )
 
     expect(update).toMatchObject({
-      label: null,
+      label: 'Recently listened to',
       shouldRoll: true,
       title: 'Instant Crush',
       artist: 'Daft Punk, Julian Casablancas',

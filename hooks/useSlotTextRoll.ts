@@ -147,6 +147,13 @@ export default function useSlotTextRoll({
   }, [])
 
   useLayoutEffect(() => {
+    if (active) return undefined
+
+    pendingFromToRollRef.current = null
+    return undefined
+  }, [active])
+
+  useLayoutEffect(() => {
     if (!twoPhaseFromToRoll) return undefined
 
     const pending = pendingFromToRollRef.current

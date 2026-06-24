@@ -62,8 +62,6 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
         return
       }
 
-      await markLiveRefresh()
-
       if (cached) {
         const nextCache = {
           ...cached,
@@ -71,10 +69,12 @@ export default async function handler(req: ApiRequest, res: ApiResponse): Promis
           updatedAt: new Date().toISOString(),
         }
         await setNowPlayingCache(nextCache)
+        await markLiveRefresh()
         res.status(200).json(toNowPlayingResponse('live', nextCache, playback.isPlaying))
         return
       }
 
+      await markLiveRefresh()
       res.status(200).json(toNowPlayingResponse('live', cached, playback.isPlaying))
     } catch (error) {
       logNowPlayingWarn('live refresh failed', error)

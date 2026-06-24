@@ -103,4 +103,31 @@ describe('useSlotTextRoll', () => {
     expect(result.current.slotTextActive).toBe(false)
     expect(slotTextSet).not.toHaveBeenCalled()
   })
+
+  it('clears a queued two-phase roll when motion becomes inactive', async () => {
+    const { result, rerender } = renderHook(() =>
+      useSlotTextRoll({ direction: 'up', twoPhaseFromToRoll: true }),
+    )
+
+    mountSpan(result)
+
+    act(() => {
+      result.current.queueRollFromTo('Recently listened to', 'Currently listening to')
+    })
+
+    await waitFor(() => {
+      expect(result.current.slotTextActive).toBe(true)
+    })
+
+    slotTextSet.mockClear()
+
+    vi.mocked(usePrefersReducedMotion).mockReturnValue({ reduced: true, ready: true })
+
+    act(() => {
+      result.current.queueRollFromTo('Currently listening to', 'Recently listened to')
+      rerender()
+    })
+
+    expect(slotTextSet).not.toHaveBeenCalled()
+  })
 })
