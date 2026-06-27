@@ -44,6 +44,9 @@ export const PERSON_NAME_ALTERNATES = [
 export const DEFAULT_DESCRIPTION =
   'Dylan Fernandez de Lara (Dylan Fernandez, Dylan Lara, dylanfdl) is an engineer at Meta working on Applied AI. Portfolio, projects, essays, and music.'
 
+/** Temporarily hide the Spotify now-playing line on the about page. */
+export const NOW_PLAYING_VISIBLE = false
+
 export const NOT_FOUND_DESCRIPTION = 'Page not found on dylanfdl.com.'
 
 /** Title for the main profile page — full name first for name-based searches. */

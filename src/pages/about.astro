@@ -6,7 +6,7 @@ import PageSearchPalette from '@/components/PageSearchPalette'
 import OptimistText from '@/components/OptimistText'
 import CurrentlyListeningText from '@/components/CurrentlyListeningText'
 import { buildCardGridItems } from '@/lib/buildCardGridItems'
-import { CONTACT_LINKS, DEFAULT_DESCRIPTION } from '@/lib/site'
+import { CONTACT_LINKS, DEFAULT_DESCRIPTION, NOW_PLAYING_VISIBLE } from '@/lib/site'
 
 const cardGridItems = buildCardGridItems()
 
@@ -40,9 +40,13 @@ const CONTACT_LINK_STYLES =
         > and built agents to improve stability across our hardware fleet.
       </p>
 
-      <p class="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
-        <CurrentlyListeningText client:load />
-      </p>
+      {
+        NOW_PLAYING_VISIBLE ? (
+          <p class="mb-3 text-fg1 min-[481px]:mb-4 md:mb-6">
+            <CurrentlyListeningText client:load />
+          </p>
+        ) : null
+      }
     </div>
 
     <CardGridClient items={cardGridItems} client:load>
