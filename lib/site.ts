@@ -10,6 +10,8 @@ export const PERSON_GIVEN_NAME = 'Dylan'
 
 export const PERSON_FAMILY_NAME = 'Fernandez de Lara'
 
+export const PERSON_ROLE = 'Engineer'
+
 export const PERSON_TAGLINE = 'Engineer at Meta · Applied AI'
 
 export const PERSON_PAGE_PATH = '/about'
@@ -46,8 +48,8 @@ export const DEFAULT_DESCRIPTION =
 
 export const NOT_FOUND_DESCRIPTION = 'Page not found on dylanfdl.com.'
 
-/** Title for the main profile page — full name first for name-based searches. */
-export const HOME_PAGE_TITLE = `${PERSON_NAME} — ${PERSON_TAGLINE}`
+/** Title for the main profile page — short enough to read cleanly in browser tabs. */
+export const HOME_PAGE_TITLE = `${PERSON_NAME} | ${PERSON_ROLE}`
 
 type ContactLink = {
   label: string
@@ -128,7 +130,7 @@ export function toIsoDateTime(date: string): string {
 /** Document title: profile pages lead with the full name; inner pages lead with content. */
 export function buildPageTitle(options: { title?: string; profilePage?: boolean }): string {
   if (options.profilePage || !options.title) {
-    return `${HOME_PAGE_TITLE} (${SITE_NAME})`
+    return HOME_PAGE_TITLE
   }
 
   return `${options.title} — ${PERSON_NAME}`

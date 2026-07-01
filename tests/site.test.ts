@@ -9,6 +9,7 @@ import {
   OG_IMAGE_WIDTH,
   PERSON_NAME,
   PERSON_NAME_ALTERNATES,
+  PERSON_ROLE,
   PERSON_URL,
   REL_ME_URLS,
   SAME_AS,
@@ -54,10 +55,9 @@ describe('site', () => {
     }
   })
 
-  it('leads profile page titles with the full name', () => {
-    expect(HOME_PAGE_TITLE.startsWith(PERSON_NAME)).toBe(true)
-    expect(buildPageTitle({ profilePage: true })).toContain(PERSON_NAME)
-    expect(buildPageTitle({ profilePage: true }).indexOf(PERSON_NAME)).toBe(0)
+  it('uses the short profile page title', () => {
+    expect(HOME_PAGE_TITLE).toBe(`${PERSON_NAME} | ${PERSON_ROLE}`)
+    expect(buildPageTitle({ profilePage: true })).toBe(HOME_PAGE_TITLE)
   })
 
   it('includes the full name on content page titles', () => {

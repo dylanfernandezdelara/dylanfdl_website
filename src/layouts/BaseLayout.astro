@@ -12,6 +12,7 @@ import {
   PERSON_GIVEN_NAME,
   PERSON_NAME,
   PERSON_NAME_ALTERNATES,
+  PERSON_ROLE,
   PERSON_URL,
   REL_ME_URLS,
   SAME_AS,
@@ -76,7 +77,7 @@ const personJsonLd = {
   alternateName: [...PERSON_NAME_ALTERNATES],
   url: PERSON_URL,
   sameAs: [...SAME_AS],
-  jobTitle: 'Engineer',
+  jobTitle: PERSON_ROLE,
   worksFor: {
     '@type': 'Organization',
     name: EMPLOYER_NAME,
