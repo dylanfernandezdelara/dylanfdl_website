@@ -24,8 +24,8 @@ html {
   overflow-x: clip;
   overflow-y: scroll;
   /* When filtered content is shorter than the viewport, scrollability can flip off and the layout
-     viewport widens — max-width text (e.g. about intro) reflows. Nudge past 100dvh so the root
-     always has overflow without affecting normal page layout meaningfully. */
+     viewport widens — ch-width constrained text (e.g. max-w-reading footer, essays) reflows. Nudge
+     past 100dvh so the root always has overflow without affecting normal page layout meaningfully. */
   min-height: calc(100dvh + 1px);
 }
 
@@ -76,26 +76,6 @@ main {
   /* Default min-width:auto uses grid min-content; card transforms can nudge intrinsic overflow between filters. */
   min-width: 0;
   overflow-x: clip;
-}
-
-/* About intro: width from dynamic viewport minus horizontal padding (matches mx-auto shell), not % of main —
-   main/body clientWidth could shift ~2px when grid filter animations changed min-content (reflowed 65ch text). */
-.about-intro-blurb {
-  box-sizing: border-box;
-  max-width: 65ch;
-  width: min(65ch, calc(100dvw - 2rem));
-}
-
-@media (min-width: 481px) {
-  .about-intro-blurb {
-    width: min(65ch, calc(100dvw - 3rem));
-  }
-}
-
-@media (min-width: 768px) {
-  .about-intro-blurb {
-    width: min(65ch, calc(100dvw - 4rem));
-  }
 }
 
 h1,
