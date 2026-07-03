@@ -149,17 +149,26 @@ export default function EditorThumbnail() {
         </div>
         <div className="flex flex-1 items-center justify-center px-[8%]">
           <div ref={textShellRef} className="relative flex w-full justify-center overflow-hidden">
-            <div className="flex items-end whitespace-nowrap">
+            <div className="relative flex items-end whitespace-nowrap">
               <span
-                className="font-mono leading-[1.2] text-fg2"
+                aria-hidden
+                className="invisible font-mono leading-[1.2]"
                 style={{ fontSize: `${textSizePx}px` }}
               >
-                {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT.slice(0, visibleLength)}
+                {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT}
               </span>
-              <span
-                className="editor-cursor-blink ml-px w-px shrink-0 bg-fg3"
-                style={{ height: `${textSizePx * 1.05}px` }}
-              />
+              <span className="absolute inset-y-0 left-0 flex items-end">
+                <span
+                  className="font-mono leading-[1.2] text-fg2"
+                  style={{ fontSize: `${textSizePx}px` }}
+                >
+                  {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT.slice(0, visibleLength)}
+                </span>
+                <span
+                  className="editor-cursor-blink ml-px w-px shrink-0 bg-fg3"
+                  style={{ height: `${textSizePx * 1.05}px` }}
+                />
+              </span>
             </div>
             <span
               ref={textMeasureRef}
