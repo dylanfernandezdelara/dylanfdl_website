@@ -1,5 +1,3 @@
-'use client'
-
 import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 
 import CardGridColumns from '@/components/card-grid/CardGridColumns'

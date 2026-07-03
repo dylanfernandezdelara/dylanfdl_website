@@ -1,5 +1,3 @@
-'use client'
-
 import type { CSSProperties, KeyboardEvent, MutableRefObject, RefObject } from 'react'
 
 import { TAB_OPTIONS } from '@/components/card-grid/constants'

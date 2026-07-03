@@ -1,5 +1,3 @@
-'use client'
-
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'

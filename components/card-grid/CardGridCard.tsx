@@ -1,5 +1,3 @@
-'use client'
-
 import type { AnimationEvent } from 'react'
 
 import Card from '@/components/Card'

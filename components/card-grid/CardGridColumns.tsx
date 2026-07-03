@@ -1,5 +1,3 @@
-'use client'
-
 import CardGridCard from '@/components/card-grid/CardGridCard'
 import { itemKey, type GridRow } from '@/components/card-grid/model'
 

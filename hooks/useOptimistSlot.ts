@@ -1,5 +1,3 @@
-'use client'
-
 import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react'
 import { slotText, type SlotOptions, type SlotTextController } from 'slot-text'
 

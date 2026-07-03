@@ -18,9 +18,7 @@ export default defineConfig({
     react(),
     sitemap({
       filter: (page) =>
-        page !== `${SITE_URL}/` &&
-        !page.endsWith('/404') &&
-        !page.includes('/prototype/'),
+        page !== `${SITE_URL}/` && !page.endsWith('/404'),
     }),
     tailwind({
       applyBaseStyles: false,
