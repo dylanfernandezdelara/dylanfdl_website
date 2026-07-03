@@ -136,6 +136,9 @@ export default function EditorThumbnail() {
     }
   }, [])
 
+  const scaledTextClassName = 'font-mono leading-[1.2]'
+  const scaledTextStyle = { fontSize: `${textSizePx}px` }
+
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-bg2">
       <div
@@ -148,23 +151,34 @@ export default function EditorThumbnail() {
           <span className="ml-1.5 h-2 w-2 rounded-full bg-[#28c840]" />
         </div>
         <div className="flex flex-1 items-center justify-center px-[8%]">
+          {/*
+            The text block is centered in the card. To keep the caret advancing
+            left-to-right instead of the whole line re-centering on every keystroke,
+            an invisible in-flow copy of the full sentence reserves the final width,
+            and the visible (sliced) text + caret are overlaid left-aligned within
+            that fixed-width box. `textMeasureRef` is a separate out-of-flow copy held
+            at the base font size solely to measure the intrinsic width for auto-scaling
+            (kept distinct from the live-sized reserve span to avoid a scaling feedback loop).
+          */}
           <div ref={textShellRef} className="relative flex w-full justify-center overflow-hidden">
-            <div className="flex items-end whitespace-nowrap">
-              <span
-                className="font-mono leading-[1.2] text-fg2"
-                style={{ fontSize: `${textSizePx}px` }}
-              >
-                {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT.slice(0, visibleLength)}
+            <div className="relative flex items-end whitespace-nowrap">
+              <span aria-hidden className={`invisible ${scaledTextClassName}`} style={scaledTextStyle}>
+                {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT}
               </span>
-              <span
-                className="editor-cursor-blink ml-px w-px shrink-0 bg-fg3"
-                style={{ height: `${textSizePx * 1.05}px` }}
-              />
+              <span className="absolute inset-y-0 left-0 flex items-end">
+                <span className={`${scaledTextClassName} text-fg2`} style={scaledTextStyle}>
+                  {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT.slice(0, visibleLength)}
+                </span>
+                <span
+                  className="editor-cursor-blink ml-px w-px shrink-0 bg-fg3"
+                  style={{ height: `${textSizePx * 1.05}px` }}
+                />
+              </span>
             </div>
             <span
               ref={textMeasureRef}
               aria-hidden
-              className="pointer-events-none absolute opacity-0 whitespace-nowrap font-mono leading-[1.2]"
+              className={`pointer-events-none absolute opacity-0 whitespace-nowrap ${scaledTextClassName}`}
               style={{ fontSize: `${BASE_FONT_SIZE_PX}px` }}
             >
               {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT}
