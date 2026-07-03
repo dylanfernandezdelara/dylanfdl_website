@@ -2,7 +2,6 @@ import type { NowPlayingResponse } from '@/lib/spotify/types'
 
 export type BootstrapApplyStep = {
   payload: NowPlayingResponse
-  /** Always true for cache; live defers roll when cache already displayed. */
   forceRoll: boolean
 }
 
@@ -42,7 +41,6 @@ type BootstrapFetchHandlers = {
 
 type BootstrapFetchOptions = {
   skipCache?: boolean
-  /** Called after cache fetch succeeds, before the live fetch starts. */
   onCacheStep?: (step: BootstrapApplyStep) => void
 }
 

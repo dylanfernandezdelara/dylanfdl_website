@@ -6,8 +6,41 @@ import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
 import * as editorThumbnailCycle from '@/lib/editorThumbnailCycle'
 import type { EditorThumbnailCycleTiming } from '@/lib/editorThumbnailCycle'
 
-const TEXT_LENGTH = editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT.length
+const FULL_TEXT = editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT
+const TEXT_LENGTH = FULL_TEXT.length
 const BASE_FONT_SIZE_PX = 15.2
+
+type EditorTextLayerProps = {
+  className: string
+  style: { fontSize: string }
+}
+
+function ReservedFullSentenceWidth({ className, style }: EditorTextLayerProps) {
+  return (
+    <span aria-hidden className={`invisible ${className}`} style={style}>
+      {FULL_TEXT}
+    </span>
+  )
+}
+
+function VisibleTypingLayer({
+  className,
+  style,
+  visibleLength,
+  cursorHeightPx,
+}: EditorTextLayerProps & { visibleLength: number; cursorHeightPx: number }) {
+  return (
+    <span className="absolute inset-y-0 left-0 flex items-end">
+      <span className={`${className} text-fg2`} style={style}>
+        {FULL_TEXT.slice(0, visibleLength)}
+      </span>
+      <span
+        className="editor-cursor-blink ml-px w-px shrink-0 bg-fg3"
+        style={{ height: `${cursorHeightPx}px` }}
+      />
+    </span>
+  )
+}
 
 export default function EditorThumbnail() {
   const [visibleLength, setVisibleLength] = useState(TEXT_LENGTH)
@@ -151,29 +184,15 @@ export default function EditorThumbnail() {
           <span className="ml-1.5 h-2 w-2 rounded-full bg-[#28c840]" />
         </div>
         <div className="flex flex-1 items-center justify-center px-[8%]">
-          {/*
-            The text block is centered in the card. To keep the caret advancing
-            left-to-right instead of the whole line re-centering on every keystroke,
-            an invisible in-flow copy of the full sentence reserves the final width,
-            and the visible (sliced) text + caret are overlaid left-aligned within
-            that fixed-width box. `textMeasureRef` is a separate out-of-flow copy held
-            at the base font size solely to measure the intrinsic width for auto-scaling
-            (kept distinct from the live-sized reserve span to avoid a scaling feedback loop).
-          */}
           <div ref={textShellRef} className="relative flex w-full justify-center overflow-hidden">
             <div className="relative flex items-end whitespace-nowrap">
-              <span aria-hidden className={`invisible ${scaledTextClassName}`} style={scaledTextStyle}>
-                {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT}
-              </span>
-              <span className="absolute inset-y-0 left-0 flex items-end">
-                <span className={`${scaledTextClassName} text-fg2`} style={scaledTextStyle}>
-                  {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT.slice(0, visibleLength)}
-                </span>
-                <span
-                  className="editor-cursor-blink ml-px w-px shrink-0 bg-fg3"
-                  style={{ height: `${textSizePx * 1.05}px` }}
-                />
-              </span>
+              <ReservedFullSentenceWidth className={scaledTextClassName} style={scaledTextStyle} />
+              <VisibleTypingLayer
+                className={scaledTextClassName}
+                style={scaledTextStyle}
+                visibleLength={visibleLength}
+                cursorHeightPx={textSizePx * 1.05}
+              />
             </div>
             <span
               ref={textMeasureRef}
@@ -181,7 +200,7 @@ export default function EditorThumbnail() {
               className={`pointer-events-none absolute opacity-0 whitespace-nowrap ${scaledTextClassName}`}
               style={{ fontSize: `${BASE_FONT_SIZE_PX}px` }}
             >
-              {editorThumbnailCycle.EDITOR_THUMBNAIL_FULL_TEXT}
+              {FULL_TEXT}
             </span>
           </div>
         </div>

@@ -9,30 +9,16 @@ import { seedEmptyBaseline } from '@/lib/slotTextSeed'
 export type UseSlotTextRollOptions = {
   direction: 'up' | 'down'
   slotOptions?: Omit<SlotOptions, 'direction'>
-  /**
-   * When true, `queueRollFromTo` clears the React fallback in a layout pass before
-   * rolling so imperative slot-text is not torn down mid-animation.
-   */
   twoPhaseFromToRoll?: boolean
 }
 
 export type UseSlotTextRollResult = {
   slotRef: Ref<HTMLSpanElement>
   slotMounted: boolean
-  /**
-   * True once slot-text controls the slot DOM. Until then the caller must keep
-   * rendering the React text fallback so SSR markup hydrates cleanly and reduced
-   * motion users still see the text.
-   */
   active: boolean
-  /**
-   * When `twoPhaseFromToRoll` is enabled, true once the React fallback has cleared.
-   * Otherwise identical to `active`.
-   */
   slotTextActive: boolean
   rollTo: (text: string) => void
   rollFromTo: (from: string, to: string) => void
-  /** Queue a from→to roll once slot-text is active. */
   queueRollFromTo: (from: string, to: string) => void
 }
 
@@ -41,6 +27,12 @@ function readFallbackBaseline(slot: HTMLSpanElement): string {
     return ''
   }
   return (slot.textContent ?? '').replace(/\u00A0/g, ' ')
+}
+
+function rollTextIntoEmptySlot(animate: (text: string) => void, text: string): void {
+  if (text.length > 0) {
+    animate(text)
+  }
 }
 
 export default function useSlotTextRoll({
@@ -171,23 +163,15 @@ export default function useSlotTextRoll({
     return undefined
   }, [active, pendingRollVersion, slotOwnsDom, twoPhaseFromToRoll])
 
-  /*
-   * When slot-text becomes active, React has just cleared its fallback text from
-   * the slot (the caller renders `null` children once `slotTextActive` is true).
-   * Take over the now-empty slot and roll the desired text in from a blank baseline.
-   */
   useLayoutEffect(() => {
     if (!active) return undefined
 
-    const pending = pendingFromToRollRef.current
-    if (twoPhaseFromToRoll && pending) {
+    const pendingFromToRoll = pendingFromToRollRef.current
+    if (twoPhaseFromToRoll && pendingFromToRoll) {
       return undefined
     }
 
-    const text = desiredTextRef.current
-    if (text.length > 0) {
-      animateRef.current(text)
-    }
+    rollTextIntoEmptySlot(animateRef.current, desiredTextRef.current)
 
     return () => {
       controllerRef.current?.destroy()

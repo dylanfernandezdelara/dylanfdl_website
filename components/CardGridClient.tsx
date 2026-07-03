@@ -52,8 +52,7 @@ export default function CardGridClient({ items, children }: Props) {
       setIndicatorReady(true)
     }
 
-    /** Coalesce rapid window resize events so the pill doesn’t thrash. */
-    function scheduleMeasure() {
+    function scheduleCoalescedTabIndicatorMeasure() {
       if (measureRafRef.current !== null) {
         cancelAnimationFrame(measureRafRef.current)
       }
@@ -65,13 +64,13 @@ export default function CardGridClient({ items, children }: Props) {
 
     measureNow()
 
-    window.addEventListener('resize', scheduleMeasure)
+    window.addEventListener('resize', scheduleCoalescedTabIndicatorMeasure)
     return () => {
       if (measureRafRef.current !== null) {
         cancelAnimationFrame(measureRafRef.current)
         measureRafRef.current = null
       }
-      window.removeEventListener('resize', scheduleMeasure)
+      window.removeEventListener('resize', scheduleCoalescedTabIndicatorMeasure)
     }
   }, [filter])
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 
 type CardVideoProps = {
   src: string
@@ -8,13 +8,12 @@ type CardVideoProps = {
   className?: string
 }
 
-/**
- * A <video> that only loads and plays when it is visible in the viewport.
- * Keeps the About page from synchronously fetching and decoding every
- * artifact .mp4 on initial load.
- */
-export default function CardVideo({ src, poster, className }: CardVideoProps) {
-  const videoRef = useRef<HTMLVideoElement | null>(null)
+function ignoreAutoplayBlockedError(): void {}
+
+function useAttachAndPlayVideoWhenVisible(
+  videoRef: RefObject<HTMLVideoElement | null>,
+  src: string,
+): boolean {
   const sourceAttachedRef = useRef(false)
   const [sourceAttached, setSourceAttached] = useState(false)
 
@@ -31,9 +30,7 @@ export default function CardVideo({ src, poster, className }: CardVideoProps) {
     }
 
     const play = () => {
-      video.play().catch(() => {
-        /* autoplay may be blocked; ignore */
-      })
+      video.play().catch(ignoreAutoplayBlockedError)
     }
 
     const playWhenReady = () => {
@@ -61,14 +58,21 @@ export default function CardVideo({ src, poster, className }: CardVideoProps) {
           }
         }
       },
-      { rootMargin: '200px 0px', threshold: 0.01 }
+      { rootMargin: '200px 0px', threshold: 0.01 },
     )
 
     observer.observe(video)
     return () => {
       observer.disconnect()
     }
-  }, [src])
+  }, [src, videoRef])
+
+  return sourceAttached
+}
+
+export default function CardVideo({ src, poster, className }: CardVideoProps) {
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  const sourceAttached = useAttachAndPlayVideoWhenVisible(videoRef, src)
 
   return (
     <video

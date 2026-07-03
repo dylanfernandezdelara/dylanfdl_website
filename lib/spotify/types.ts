@@ -8,7 +8,6 @@ export type CachedTrack = {
 export type NowPlayingCache = {
   track: CachedTrack
   updatedAt: string
-  /** Last-known playback state from a live Spotify refresh. */
   isPlaying?: boolean | null
 }
 

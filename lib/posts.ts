@@ -129,20 +129,10 @@ export function formatPostDate(date: string, locale: string = 'en-US'): string {
   return formatParsedPostDate(date, locale, 'full', [3], false)
 }
 
-/**
- * Formats a date string for compact card labels: abbreviated month and year (e.g. "Dec 2025").
- * Accepts YYYY-MM-DD, YYYY-MM (first of month), or YYYY (January 1). Invalid input is returned unchanged.
- */
 export function formatPostDateCardGrid(date: string, locale: string = 'en-US'): string {
   return formatParsedPostDate(date, locale, 'card', [1, 2, 3])
 }
 
-/**
- * Retrieves all post slugs by reading markdown files from the posts directory.
- * Returns an empty array if the directory doesn't exist.
- *
- * @returns Array of post slugs (filenames without .md extension)
- */
 export function getPostSlugs(): string[] {
   if (!fs.existsSync(postsDirectory)) {
     return []
@@ -152,14 +142,6 @@ export function getPostSlugs(): string[] {
   return markdownFiles.map((file) => file.replace(/\.md$/, ''))
 }
 
-/**
- * Retrieves a single post by its slug.
- * Reads the markdown file, parses front matter, and returns post data.
- * Returns null if the file doesn't exist. Invalid frontmatter throws so the static build fails.
- *
- * @param slug - Post slug (filename without extension)
- * @returns Post object or null if not found
- */
 export function getPostBySlug(slug: string): Post | null {
   const filePath = path.join(postsDirectory, `${slug}.md`)
 
@@ -178,12 +160,6 @@ export function getPostBySlug(slug: string): Post | null {
   }
 }
 
-/**
- * Retrieves all posts, sorted by date in descending order (newest first).
- * Filters out any missing posts (null values).
- *
- * @returns Array of Post objects sorted by date
- */
 export function getAllPosts(): Post[] {
   const slugs = getPostSlugs()
 

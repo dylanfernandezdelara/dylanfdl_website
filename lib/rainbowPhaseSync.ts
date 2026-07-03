@@ -43,7 +43,6 @@ export function readRainbowPhaseMs(container: HTMLElement, durationMs: number): 
   return 0
 }
 
-/** Stagger per-letter rainbow phase; delayMultiplier is in seconds. */
 export function syncRainbowFaces(
   container: HTMLElement,
   delayMultiplierSeconds: number,

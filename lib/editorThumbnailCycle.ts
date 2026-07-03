@@ -61,13 +61,11 @@ export function getVisibleLengthAt(
   return 0
 }
 
-/** Elapsed ms that lands in hold-full so a handoff from the placeholder stays full. */
 export function editorThumbnailHandoffElapsedMs(timing: EditorThumbnailCycleTiming): number {
   return timing.typeTotalMs + EDITOR_THUMBNAIL_HOLD_FULL_MS / 2
 }
 
-/** Uniform float in [min, max] */
-function randomBetween(min: number, max: number): number {
+function uniformRandomInRange(min: number, max: number): number {
   return min + Math.random() * (max - min)
 }
 
@@ -81,21 +79,21 @@ export function buildEditorThumbnailTypeThresholds(): Pick<
 
   for (let nextVisibleLength = 1; nextVisibleLength <= textLength; nextVisibleLength += 1) {
     const char = EDITOR_THUMBNAIL_FULL_TEXT[nextVisibleLength - 1]
-    let delay = randomBetween(95, 340)
+    let delay = uniformRandomInRange(95, 340)
 
     if (char === ' ') {
-      delay *= randomBetween(0.72, 0.95)
+      delay *= uniformRandomInRange(0.72, 0.95)
     }
 
     if (nextVisibleLength >= 2 && EDITOR_THUMBNAIL_FULL_TEXT[nextVisibleLength - 2] === ' ') {
-      delay += randomBetween(35, 220)
+      delay += uniformRandomInRange(35, 220)
     }
 
     if (Math.random() < 0.07) {
-      delay += randomBetween(100, 420)
+      delay += uniformRandomInRange(100, 420)
     }
 
-    delay *= randomBetween(0.88, 1.12)
+    delay *= uniformRandomInRange(0.88, 1.12)
 
     total += Math.round(delay)
     thresholds.push(total)
@@ -119,32 +117,32 @@ export function buildEditorThumbnailDeleteThresholds(): Pick<
 
     if (burstLeft > 0) {
       burstLeft -= 1
-      delay = randomBetween(24, 78)
+      delay = uniformRandomInRange(24, 78)
     } else {
       const progress = visibleLength / textLength
       delay =
-        randomBetween(68, 175) + progress * randomBetween(25, 110) + randomBetween(-18, 38)
+        uniformRandomInRange(68, 175) + progress * uniformRandomInRange(25, 110) + uniformRandomInRange(-18, 38)
       if (Math.random() < 0.44) {
-        burstLeft = Math.floor(randomBetween(1, 3))
+        burstLeft = Math.floor(uniformRandomInRange(1, 3))
       }
     }
 
     if (charRemoved === ' ') {
       burstLeft = 0
-      delay += randomBetween(65, 240)
+      delay += uniformRandomInRange(65, 240)
     }
 
     if (visibleLength >= 3 && EDITOR_THUMBNAIL_FULL_TEXT[visibleLength - 2] === ' ') {
       burstLeft = 0
-      delay += randomBetween(40, 130)
+      delay += uniformRandomInRange(40, 130)
     }
 
     if (Math.random() < 0.095) {
       burstLeft = 0
-      delay += randomBetween(130, 420)
+      delay += uniformRandomInRange(130, 420)
     }
 
-    delay *= randomBetween(0.8, 1.22)
+    delay *= uniformRandomInRange(0.8, 1.22)
     delay = Math.max(18, delay)
 
     total += Math.round(delay)

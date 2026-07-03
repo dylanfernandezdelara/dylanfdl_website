@@ -54,8 +54,10 @@ export function dedupeStructuralTargets<T>(
         continue
       }
 
-      // Keep the nearest unique block (the deeper descendant node) for equal text.
-      if (existingContainsCandidate && !candidateContainsExisting) {
+      const preferCandidateAsDeeperDuplicate =
+        existingContainsCandidate && !candidateContainsExisting
+
+      if (preferCandidateAsDeeperDuplicate) {
         deduped[index] = candidate
       }
 

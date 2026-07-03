@@ -1,6 +1,5 @@
 export type NowPlayingTrackLayout = 'inline' | 'prefix-split' | 'split' | 'stacked'
 
-/** Root class for title/artist slot spans; must match `.now-playing-slot` in now-playing-text.css. */
 export const NOW_PLAYING_SLOT_CLASS =
   'now-playing-slot slot-text-cell-clip italic max-w-full flex-wrap'
 
@@ -30,12 +29,6 @@ export type NowPlayingTrackMeasurements = {
   fullLineWidth: number
 }
 
-/**
- * Artist text rendered inside the roll slot. The trailing sentence period is
- * glued on here (rather than rendered as a separate sibling node) so it shares
- * the artist's wrapping context and can never be stranded on its own line when
- * a long artist name wraps.
- */
 export function formatArtistWithTrailingPeriod(artist: string): string {
   return `${artist}.`
 }
@@ -128,8 +121,6 @@ export function resolveNowPlayingTrackLayout({
   )
   const trackSuffix = ` ${formatFullTrackLineWithPeriod(title, artist)}`
   const titleWidth = measureTextWidth(trackMeasure, title)
-  // Sum label width with a space-prefixed track measurement so kerning at the
-  // label/track boundary matches the inline "label title by artist." layout.
   const fullLineWidth = labelWidth + measureTextWidth(trackMeasure, trackSuffix)
 
   return pickNowPlayingTrackLayout({
@@ -143,13 +134,6 @@ export function resolveNowPlayingTrackLayout({
   })
 }
 
-/**
- * Pick how the now-playing line should break:
- * - inline: "label title by artist." fits on one line
- * - prefix-split: "label title" on one row, then "by artist." on the next
- * - split: label on its own row, then "title by artist." on the next
- * - stacked: label on its own row, title on the next, then "by artist."
- */
 export function pickNowPlayingTrackLayout(
   measurements: NowPlayingTrackMeasurements,
 ): NowPlayingTrackLayout {

@@ -1,9 +1,5 @@
 import { chromatic, type SlotOptions } from 'slot-text'
 
-/**
- * slot-text roll timing for the Spotify now-playing line.
- * Tune `duration` (ms per letter) and `stagger` (ms between letters) here.
- */
 export const NOW_PLAYING_ROLL_TIMING = {
   stagger: 110,
   duration: 850,

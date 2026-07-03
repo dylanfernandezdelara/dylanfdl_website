@@ -1,13 +1,12 @@
 import type { SlotOptions } from 'slot-text'
 
-import { OPTIMIST_ROLL_DEFAULTS } from './optimistRollDefaults'
+import { OPTIMIST_ROLL_DEFAULTS, SLOT_TEXT_INTERNAL_REBUILD_BUFFER_MS } from './optimistRollDefaults'
 
 function wobble(index: number, salt: number): number {
   const n = Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453
   return (n - Math.floor(n)) * 2 - 1
 }
 
-/** Match slot-text@0.2.2 internal maxEnd + safety-net buffer for OptimistText rolls. */
 export function estimateOptimistRollDuration(
   text: string,
   options: Pick<SlotOptions, keyof typeof OPTIMIST_ROLL_DEFAULTS> = {},
@@ -22,5 +21,5 @@ export function estimateOptimistRollDuration(
     maxEnd = Math.max(maxEnd, base + exitOffset + letterDuration)
   }
 
-  return maxEnd + 80
+  return maxEnd + SLOT_TEXT_INTERNAL_REBUILD_BUFFER_MS
 }

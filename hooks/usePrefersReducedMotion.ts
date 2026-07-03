@@ -2,7 +2,6 @@
 
 import { useLayoutEffect, useState } from 'react'
 
-/** `ready` is false until the first client layout read. Callers must gate on `ready` before trusting `reduced`. */
 export type PrefersReducedMotionState = {
   reduced: boolean
   ready: boolean

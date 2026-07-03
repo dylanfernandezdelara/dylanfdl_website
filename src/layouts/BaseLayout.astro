@@ -1,5 +1,4 @@
 ---
-import ThemeToggle from '@/components/ThemeToggle'
 import {
   DEFAULT_DESCRIPTION,
   EMPLOYER_NAME,
@@ -32,14 +31,9 @@ import '@/src/styles/effects.css'
 interface Props {
   title?: string
   description?: string
-  /** Canonical path (e.g. `/about`). Defaults to the current pathname. */
-  path?: string
-  /** Use name-first title and ProfilePage structured data (for `/about`). */
+  canonicalPath?: string
   profilePage?: boolean
-  /** Omit rich SEO metadata (for error pages). */
-  minimalSeo?: boolean
-  /** Ask crawlers not to index this page. */
-  noindex?: boolean
+  errorPage?: boolean
   ogType?: 'website' | 'article'
   articlePublishedTime?: string
 }
@@ -47,26 +41,22 @@ interface Props {
 const {
   title,
   description = DEFAULT_DESCRIPTION,
-  path,
+  canonicalPath,
   profilePage = false,
-  minimalSeo = false,
-  noindex = false,
+  errorPage = false,
   ogType = 'website',
   articlePublishedTime,
 } = Astro.props
 
-const canonicalPath = path ?? Astro.url.pathname
-const canonicalUrl = absoluteUrl(canonicalPath)
+const resolvedCanonicalPath = canonicalPath ?? Astro.url.pathname
+const canonicalUrl = absoluteUrl(resolvedCanonicalPath)
 const personId = `${SITE_URL}/#person`
 const publisherId = `${SITE_URL}/#publisher`
 
 const pageTitle = buildPageTitle({ title, profilePage })
 const articlePublishedIso = articlePublishedTime ? toIsoDateTime(articlePublishedTime) : undefined
 
-// Indexable pages emit canonical/author; rich head tags omit JSON-LD/OG/rel=me when minimalSeo.
-// Error pages should pass minimalSeo + noindex together.
-const showIndexableHead = !noindex
-const showRichHead = !minimalSeo
+const emitFullHeadMetadata = !errorPage
 
 const personJsonLd = {
   '@type': 'Person',
@@ -131,7 +121,7 @@ const articleJsonLd =
       }
     : null
 
-const graph = minimalSeo
+const graph = errorPage
   ? null
   : [websiteJsonLd, publisherJsonLd, personJsonLd, profilePageJsonLd, articleJsonLd].filter(Boolean)
 
@@ -149,22 +139,22 @@ const jsonLd = graph
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
-    {showIndexableHead && (
+    {errorPage && <meta name="robots" content="noindex, nofollow" />}
+    {emitFullHeadMetadata && (
       <>
         <meta name="author" content={PERSON_NAME} />
         <link rel="canonical" href={canonicalUrl} />
       </>
     )}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    {showRichHead && REL_ME_URLS.map((profileUrl) => <link rel="me" href={profileUrl} />)}
-    {showRichHead && (
+    {emitFullHeadMetadata && REL_ME_URLS.map((profileUrl) => <link rel="me" href={profileUrl} />)}
+    {emitFullHeadMetadata && (
       <>
         <meta property="og:type" content={ogType} />
         <meta property="og:site_name" content={PERSON_NAME} />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={description} />
-        {showIndexableHead && <meta property="og:url" content={canonicalUrl} />}
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:locale" content="en_US" />
         <meta property="og:image" content={OG_IMAGE_URL} />
         <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
@@ -191,7 +181,7 @@ const jsonLd = graph
           if (t === 'dark') document.documentElement.classList.add('dark')
           else if (t === 'light') document.documentElement.classList.add('light')
         } catch {
-          /* ignore */
+          void 0
         }
       })()
     </script>
@@ -200,6 +190,5 @@ const jsonLd = graph
     <main class="pb-16 min-[481px]:pb-14 md:pb-12 md:pt-8">
       <slot />
     </main>
-    <ThemeToggle client:load />
   </body>
 </html>

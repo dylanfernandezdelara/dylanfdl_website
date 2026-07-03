@@ -20,13 +20,15 @@ export function shouldRestartEnterSequence(prev: GridRow[], wantedSorted: CardGr
   return !hasOverlap || (activeStillWanted && wantedKeys.size > activeKeys.size)
 }
 
+function enterRowsWithoutStaggerCap(wantedSorted: CardGridSerializableItem[]): GridRow[] {
+  return rowsForItems(wantedSorted, 'enter', (index) => ({
+    enterDelayMs: index * cardStaggerMs,
+  }))
+}
+
 export function mergeRowsForFilter(prev: GridRow[], wantedSorted: CardGridSerializableItem[]): GridRow[] {
   if (shouldRestartEnterSequence(prev, wantedSorted)) {
-    // Uncapped stagger: a full filter swap may reveal many new rows at once.
-    // Initial page enter caps at 12 in useCardGridRows to shorten first paint.
-    return rowsForItems(wantedSorted, 'enter', (index) => ({
-      enterDelayMs: index * cardStaggerMs,
-    }))
+    return enterRowsWithoutStaggerCap(wantedSorted)
   }
 
   const wantedByKey = new Map(wantedSorted.map((item) => [itemKey(item), item]))

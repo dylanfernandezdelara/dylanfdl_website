@@ -4,18 +4,22 @@ export function getSiteOrigin(req: ApiRequest): string {
   return `${getRequestProto(req)}://${getRequestHost(req)}`
 }
 
-/** Browser-initiated fetches include Origin; same-tab navigation may send Referer. */
+function requestOriginMatchesSite(req: ApiRequest, siteOrigin: string): boolean {
+  const origin = req.headers.origin
+  return typeof origin === 'string' && origin.length > 0 && origin === siteOrigin
+}
+
+function requestRefererMatchesSite(req: ApiRequest, siteOrigin: string): boolean {
+  const referer = req.headers.referer
+  return typeof referer === 'string' && referer.length > 0 && referer.startsWith(`${siteOrigin}/`)
+}
+
 export function isSameOriginRequest(req: ApiRequest): boolean {
   const siteOrigin = getSiteOrigin(req)
-  const origin = req.headers.origin
-  if (typeof origin === 'string' && origin.length > 0) {
-    return origin === siteOrigin
+
+  if (requestOriginMatchesSite(req, siteOrigin)) {
+    return true
   }
 
-  const referer = req.headers.referer
-  if (typeof referer === 'string' && referer.length > 0) {
-    return referer.startsWith(`${siteOrigin}/`)
-  }
-
-  return false
+  return requestRefererMatchesSite(req, siteOrigin)
 }
