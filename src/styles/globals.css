@@ -182,3 +182,9 @@ a {
     scroll-behavior: smooth;
   }
 }
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
+}
