@@ -97,7 +97,7 @@ export default function CardGridTabs({
               type="button"
               role="tab"
               aria-selected={selected}
-              aria-controls={selected ? `tabpanel-${id}` : undefined}
+              aria-controls={selected ? 'tabpanel-work' : undefined}
               tabIndex={selected ? 0 : -1}
               className={cn(tabButtonBase, selected ? 'text-fg0' : 'text-fg3 hover:text-fg1')}
               onClick={() => onSelect(id)}

@@ -100,7 +100,7 @@ export default function CardGridClient({ items, children }: Props) {
       <div
         className="relative"
         role="tabpanel"
-        id={`tabpanel-${filter}`}
+        id="tabpanel-work"
         aria-labelledby={`tab-${filter}`}
       >
         <div className="relative z-20">

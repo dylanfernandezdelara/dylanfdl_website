@@ -66,6 +66,7 @@ export default function Card({
         className={cn(cardClassName, 'text-inherit')}
       >
         {inner}
+        <span className="sr-only"> (opens in new tab)</span>
       </a>
     )
   }

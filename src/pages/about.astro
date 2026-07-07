@@ -6,12 +6,10 @@ import PageSearchPalette from '@/components/PageSearchPalette'
 import OptimistText from '@/components/OptimistText'
 import ThemeToggle from '@/components/ThemeToggle'
 import { buildCardGridItems } from '@/lib/buildCardGridItems'
+import { CONTACT_LINK_STYLES, SECONDARY_LINK_SEPARATOR } from '@/lib/linkStyles'
 import { CONTACT_LINKS, DEFAULT_DESCRIPTION } from '@/lib/site'
 
 const cardGridItems = buildCardGridItems()
-
-const CONTACT_LINK_STYLES =
-  'text-fg2 no-underline transition-colors duration-150 hover:text-fg1 hover:underline hover:decoration-[color:color-mix(in_oklab,var(--fg2),transparent_35%)] focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-3'
 ---
 
 <BaseLayout description={DEFAULT_DESCRIPTION} canonicalPath="/about" profilePage>
@@ -51,7 +49,7 @@ const CONTACT_LINK_STYLES =
               <>
                 {index > 0 && (
                   <span
-                    class="select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]"
+                    class={SECONDARY_LINK_SEPARATOR}
                     aria-hidden="true"
                   >
                     ·

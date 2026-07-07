@@ -1,5 +1,14 @@
+/**
+ * @vitest-environment happy-dom
+ */
 import { describe, expect, it } from 'vitest'
-import { computeSearchResults, dedupeStructuralTargets, type SearchTarget } from '../lib/page-search'
+import {
+  SEARCHABLE_SELECTOR,
+  computeSearchResults,
+  dedupeStructuralTargets,
+  getSearchableElementText,
+  type SearchTarget,
+} from '../lib/page-search'
 
 type MockNode = {
   id: string
@@ -33,11 +42,49 @@ const mockTargets: SearchTarget<MockNode>[] = [
 const isAncestor = (possibleAncestor: MockNode, possibleDescendant: MockNode) =>
   possibleDescendant.ancestors.includes(possibleAncestor.id)
 
+describe('SEARCHABLE_SELECTOR', () => {
+  it('includes anchor links for card titles and contact links', () => {
+    expect(SEARCHABLE_SELECTOR).toContain('main a[href]')
+  })
+})
+
+describe('getSearchableElementText', () => {
+  it('excludes sr-only accessibility hints from indexed text', () => {
+    const element = document.createElement('a')
+    element.href = 'https://example.com'
+    element.append('Applied AI', Object.assign(document.createElement('span'), { className: 'sr-only', textContent: ' (opens in new tab)' }))
+
+    expect(getSearchableElementText(element)).toBe('Applied AI')
+  })
+})
+
 describe('dedupeStructuralTargets', () => {
   it('keeps the deeper descendant node for identical parent/child text', () => {
     const deduped = dedupeStructuralTargets(mockTargets, isAncestor)
 
     expect(deduped.map((target) => target.id)).toEqual(['child', 'other'])
+  })
+
+  it('dedupes anchor hits nested inside paragraphs with identical text', () => {
+    const targets: SearchTarget<MockNode>[] = [
+      {
+        id: 'paragraph',
+        text: 'GitHub',
+        textLower: 'github',
+        element: { id: 'paragraph', ancestors: [] },
+        order: 0,
+      },
+      {
+        id: 'anchor',
+        text: 'GitHub',
+        textLower: 'github',
+        element: { id: 'anchor', ancestors: ['paragraph'] },
+        order: 1,
+      },
+    ]
+
+    const deduped = dedupeStructuralTargets(targets, isAncestor)
+    expect(deduped.map((target) => target.id)).toEqual(['anchor'])
   })
 })
 

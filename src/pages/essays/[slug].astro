@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/src/layouts/BaseLayout.astro'
+import { BACK_LINK_CLASSES } from '@/lib/linkStyles'
 import { formatPostDate, getPostBySlug, getPostSlugs } from '@/lib/posts'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
@@ -20,9 +21,6 @@ const contentHtml = processedContent.toString()
 
 const wordCount = post.content.split(/\s+/).filter((word) => word.length > 0).length
 const showExcerpt = post.excerpt && wordCount > 500
-
-const BACK_LINK_CLASSES =
-  'inline-flex items-center gap-[0.4rem] text-[0.9375rem] font-semibold tracking-[0.01em] text-fg2 no-underline transition-colors duration-150 hover:text-fg1 hover:underline hover:decoration-[color:color-mix(in_oklab,var(--fg2),transparent_40%)] focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-3'
 ---
 
 <BaseLayout

@@ -1,7 +1,7 @@
 import {
   SEARCHABLE_SELECTOR,
   dedupeStructuralTargets,
-  normalizeText,
+  getSearchableElementText,
   type SearchResult,
   type SearchTarget,
 } from '@/lib/page-search'
@@ -10,7 +10,7 @@ export function collectPageSearchTargets(): SearchTarget<HTMLElement>[] {
   const targets = Array.from(document.querySelectorAll<HTMLElement>(SEARCHABLE_SELECTOR))
     .filter((element) => !element.closest('[data-search-overlay="true"]'))
     .map((element, index) => {
-      const text = normalizeText(element.textContent || '')
+      const text = getSearchableElementText(element)
 
       return {
         id: `search-target-${index}`,

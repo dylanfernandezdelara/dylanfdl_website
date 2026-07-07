@@ -10,7 +10,7 @@ export const PERSON_GIVEN_NAME = 'Dylan'
 
 export const PERSON_FAMILY_NAME = 'Fernandez de Lara'
 
-export const PERSON_ROLE = 'Engineer'
+export const PERSON_ROLE = 'Applied AI Engineer'
 
 export const PERSON_TAGLINE = 'Engineer at Meta · Applied AI'
 

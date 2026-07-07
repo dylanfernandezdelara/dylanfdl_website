@@ -1,5 +1,5 @@
 export const SEARCHABLE_SELECTOR =
-  'main p, main li, main h1, main h2, main h3, main h4, main h5, main h6, main blockquote'
+  'main p, main li, main h1, main h2, main h3, main h4, main h5, main h6, main blockquote, main a[href]'
 
 export type SearchTarget<T = HTMLElement> = {
   id: string
@@ -28,6 +28,12 @@ export function createSnippet(text: string, index: number, queryLength: number):
   const suffix = end < text.length ? '…' : ''
 
   return `${prefix}${text.slice(start, end)}${suffix}`
+}
+
+export function getSearchableElementText(element: HTMLElement): string {
+  const clone = element.cloneNode(true) as HTMLElement
+  clone.querySelectorAll('.sr-only').forEach((node) => node.remove())
+  return normalizeText(clone.textContent || '')
 }
 
 export function dedupeStructuralTargets<T>(
