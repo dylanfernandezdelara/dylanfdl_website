@@ -42,10 +42,9 @@ describe('site', () => {
     expect(OG_IMAGE_URL).toBe('https://dylanfdl.com/og-image.png')
   })
 
-  it('includes the full name and handle in the default description', () => {
+  it('uses the full name as the default description', () => {
     expect(SITE_NAME).toBe('dylanfdl')
-    expect(DEFAULT_DESCRIPTION).toContain('Dylan Fernandez de Lara')
-    expect(DEFAULT_DESCRIPTION).toContain('dylanfdl')
+    expect(DEFAULT_DESCRIPTION).toBe(PERSON_NAME)
   })
 
   it('lists all requested name variants for structured data', () => {
@@ -93,7 +92,7 @@ describe('site', () => {
   it('defines OG image dimensions and alt text', () => {
     expect(OG_IMAGE_WIDTH).toBe(1200)
     expect(OG_IMAGE_HEIGHT).toBe(630)
-    expect(OG_IMAGE_ALT).toContain(PERSON_NAME)
+    expect(OG_IMAGE_ALT).toBe(PERSON_NAME)
   })
 
   it('derives the sitemap index URL from SITE_URL', () => {

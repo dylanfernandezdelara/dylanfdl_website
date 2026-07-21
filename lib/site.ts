@@ -22,7 +22,7 @@ export const OG_IMAGE_WIDTH = 1200
 
 export const OG_IMAGE_HEIGHT = 630
 
-export const OG_IMAGE_ALT = `${PERSON_NAME} — ${PERSON_TAGLINE}`
+export const OG_IMAGE_ALT = PERSON_NAME
 
 export const EMPLOYER_NAME = 'Meta'
 
@@ -39,8 +39,7 @@ export const PERSON_NAME_ALTERNATES = [
   'dylanfernandezdelara',
 ] as const
 
-export const DEFAULT_DESCRIPTION =
-  'Dylan Fernandez de Lara (Dylan Fernandez, Dylan Lara, dylanfdl) is an engineer at Meta working on Applied AI. Portfolio, projects, essays, and music.'
+export const DEFAULT_DESCRIPTION = PERSON_NAME
 
 export const NOT_FOUND_DESCRIPTION = 'Page not found on dylanfdl.com.'
 
