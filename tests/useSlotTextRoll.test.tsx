@@ -21,7 +21,7 @@ vi.mock('@/hooks/usePrefersReducedMotion', () => ({
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
 import useSlotTextRoll from '@/hooks/useSlotTextRoll'
 
-function mountSpan(result: ReturnType<typeof renderHook<ReturnType<typeof useSlotTextRoll>>>['result']) {
+function mountSpan(result: { current: ReturnType<typeof useSlotTextRoll> }) {
   const span = document.createElement('span')
   span.textContent = 'Recently listened to'
   act(() => {

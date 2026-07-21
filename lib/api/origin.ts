@@ -1,25 +1,25 @@
-import { getRequestHost, getRequestProto, type ApiRequest } from './vercel.js'
+import { getRequestHost, getRequestProto } from './request'
 
-export function getSiteOrigin(req: ApiRequest): string {
-  return `${getRequestProto(req)}://${getRequestHost(req)}`
+export function getSiteOrigin(headers: Headers): string {
+  return `${getRequestProto(headers)}://${getRequestHost(headers)}`
 }
 
-function requestOriginMatchesSite(req: ApiRequest, siteOrigin: string): boolean {
-  const origin = req.headers.origin
-  return typeof origin === 'string' && origin.length > 0 && origin === siteOrigin
+function requestOriginMatchesSite(headers: Headers, siteOrigin: string): boolean {
+  const origin = headers.get('origin')
+  return origin !== null && origin.length > 0 && origin === siteOrigin
 }
 
-function requestRefererMatchesSite(req: ApiRequest, siteOrigin: string): boolean {
-  const referer = req.headers.referer
-  return typeof referer === 'string' && referer.length > 0 && referer.startsWith(`${siteOrigin}/`)
+function requestRefererMatchesSite(headers: Headers, siteOrigin: string): boolean {
+  const referer = headers.get('referer')
+  return referer !== null && referer.length > 0 && referer.startsWith(`${siteOrigin}/`)
 }
 
-export function isSameOriginRequest(req: ApiRequest): boolean {
-  const siteOrigin = getSiteOrigin(req)
+export function isSameOriginRequest(headers: Headers): boolean {
+  const siteOrigin = getSiteOrigin(headers)
 
-  if (requestOriginMatchesSite(req, siteOrigin)) {
+  if (requestOriginMatchesSite(headers, siteOrigin)) {
     return true
   }
 
-  return requestRefererMatchesSite(req, siteOrigin)
+  return requestRefererMatchesSite(headers, siteOrigin)
 }

@@ -5,7 +5,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.hoisted(() => {
-  vi.stubEnv('DEV', '')
+  vi.stubEnv('NODE_ENV', 'test')
 })
 
 import useNowPlaying from '@/hooks/useNowPlaying'

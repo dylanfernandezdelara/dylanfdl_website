@@ -9,8 +9,9 @@ import {
 export const NOW_PLAYING_LABEL = 'Recently listened to'
 
 /**
- * Scenario pixel widths were captured from Inter 500 Italic (@fontsource/inter/500-italic)
- * in the about intro column at mobile (358px), tablet (848px), and desktop (864px) content widths.
+ * Scenario pixel widths were captured historically (Inter 500 Italic) in the intro column at
+ * mobile (358px), tablet (848px), and desktop (864px) content widths. They exercise the layout
+ * thresholds, not the current font's exact metrics — runtime measurement uses live scrollWidth.
  * Regenerate by measuring rendered `.now-playing-measure` spans in the target viewport.
  */
 export const NOW_PLAYING_CONTAINER_WIDTHS = {

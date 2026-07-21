@@ -1,3 +1,5 @@
+'use client'
+
 import { useRef } from 'react'
 
 import 'slot-text/style.css'
@@ -51,7 +53,7 @@ export default function CurrentlyListeningText({ initialPayload = null }: Props)
       <span ref={labelSlotRef} className="now-playing-label slot-text-cell-clip">
         {labelSlotTextActive ? null : label}
       </span>
-      {hasTrack ? (
+      {hasTrack && trackUrl ? (
         <>
           {labelTrackSeparator ? ' ' : null}
           <span className="now-playing-track">

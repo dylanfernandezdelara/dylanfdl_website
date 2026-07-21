@@ -1,22 +1,19 @@
-const secondaryLinkDecoration =
-  'hover:decoration-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]'
-
-const secondaryLinkFocus =
+const linkFocus =
   'focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-3'
 
-export const SECONDARY_LINK_BASE = [
-  'text-fg2 no-underline transition-colors duration-150 hover:text-fg1 hover:underline',
-  secondaryLinkDecoration,
-  secondaryLinkFocus,
+export const INLINE_LINK_STYLES = [
+  'text-fg1 underline underline-offset-2 transition-colors duration-150',
+  /* Light underline (rajan.sh decoration-border); text stays fg1. */
+  'decoration-[color:color-mix(in_oklab,var(--fg1),transparent_78%)]',
+  'hover:text-fg0 hover:decoration-[color:var(--fg0)]',
+  linkFocus,
 ].join(' ')
 
-export const CONTACT_LINK_STYLES = SECONDARY_LINK_BASE
+/** Footer / contact row — same color as inline links, no underline. */
+export const CONTACT_LINK_STYLES = [
+  'text-fg1 no-underline transition-colors duration-150 hover:text-fg0',
+  linkFocus,
+].join(' ')
 
 export const SECONDARY_LINK_SEPARATOR =
   'select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]'
-
-export const BACK_LINK_CLASSES = [
-  'inline-flex items-center gap-[0.4rem] text-[0.9375rem] font-semibold tracking-[0.01em]',
-  SECONDARY_LINK_BASE,
-  'focus-visible:no-underline',
-].join(' ')

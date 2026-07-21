@@ -86,7 +86,7 @@ describe('CurrentlyListeningText stacked layout DOM', () => {
         trackUrl="https://open.spotify.com/track/test"
       />,
     )
-    const root = container.querySelector('.now-playing')
+    const root = container.querySelector<HTMLElement>('.now-playing')
 
     expect(root?.getAttribute('data-layout')).toBe('stacked')
     assertArtistPeriodGluedInSlot(root!)

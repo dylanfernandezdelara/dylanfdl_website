@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { INLINE_LINK_STYLES } from '@/lib/linkStyles'
 
 interface ExternalLinkProps {
   href: string
@@ -18,9 +19,9 @@ export default function ExternalLink({
   allowWrap = false,
 }: ExternalLinkProps) {
   const classes = cn(
-    'inline leading-[inherit] text-fg1',
+    'inline leading-[inherit]',
     allowWrap ? 'whitespace-normal' : 'whitespace-nowrap',
-    noUnderline ? 'no-underline' : 'underline',
+    noUnderline ? 'text-fg1 no-underline' : INLINE_LINK_STYLES,
     thinGreyUnderline && 'decoration-gray decoration-[1px]',
     className
   )

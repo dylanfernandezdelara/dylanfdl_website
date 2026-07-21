@@ -1,3 +1,5 @@
+'use client'
+
 import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 
 import CardGridColumns from '@/components/card-grid/CardGridColumns'
@@ -86,7 +88,7 @@ export default function CardGridClient({ items, children }: Props) {
   )
 
   return (
-    <div className="mt-12">
+    <div className="mt-8">
       <CardGridTabs
         filter={filter}
         indicator={indicator}

@@ -3,7 +3,7 @@ import type { Config } from 'tailwindcss'
 const config: Config = {
   darkMode: ['class'],
   content: [
-    './src/**/*.{astro,ts,tsx}',
+    './src/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './lib/**/*.{ts,tsx}',
     './content/**/*.{md,mdx}',
@@ -69,14 +69,21 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          'var(--font-inter)',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'IBM Plex Sans',
-          "'Segoe UI'",
-          'Helvetica',
-          'Arial',
+          'ui-sans-serif',
+          'system-ui',
           'sans-serif',
+          "'Apple Color Emoji'",
+          "'Segoe UI Emoji'",
+          "'Segoe UI Symbol'",
+          "'Noto Color Emoji'",
+        ],
+        serif: ['var(--font-lora)', 'ui-serif', 'Georgia', 'serif'],
+        mono: [
+          'var(--font-geist-mono)',
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'monospace',
         ],
       },
       maxWidth: {

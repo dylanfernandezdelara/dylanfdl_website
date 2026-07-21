@@ -21,7 +21,7 @@ export type UseOptimistSlotOptions = {
 }
 
 export type UseOptimistSlotResult = {
-  slotRef: RefObject<HTMLSpanElement>
+  slotRef: RefObject<HTMLSpanElement | null>
   isBusy: boolean
   restPhaseMs: number
   roll: () => void

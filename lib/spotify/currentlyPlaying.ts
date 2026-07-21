@@ -1,4 +1,4 @@
-import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError.js'
+import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError'
 
 import type { CachedTrack, NowPlayingCache } from './types'
 

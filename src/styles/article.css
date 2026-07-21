@@ -12,18 +12,18 @@ article h6 {
 }
 
 article h1 {
-  font-size: 1.75rem;
-  color: var(--yellow);
+  font-size: 1.5rem;
+  color: var(--fg0);
 }
 
 article h2 {
-  font-size: 1.5rem;
-  color: var(--aqua);
+  font-size: 1.25rem;
+  color: var(--fg0);
 }
 
 article h3 {
-  font-size: 1.25rem;
-  color: var(--blue);
+  font-size: 1.125rem;
+  color: var(--fg0);
 }
 
 article p {
@@ -62,7 +62,7 @@ article blockquote {
 }
 
 article code {
-  font-family: ui-monospace, SFMono-Regular, 'Cascadia Code', 'IBM Plex Mono', 'Roboto Mono', 'DejaVu Sans Mono', 'Liberation Mono', Menlo, Monaco, 'Consolas', 'Source Code Pro', monospace;
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.9em;
   background-color: var(--bg1);
   color: var(--purple);
@@ -87,9 +87,17 @@ article pre code {
 }
 
 article a {
-  color: var(--blue);
+  color: var(--fg1);
   text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--fg1), transparent 78%);
   text-underline-offset: 2px;
+}
+
+@media (hover: hover) {
+  article a:hover {
+    color: var(--fg0);
+    text-decoration-color: var(--fg0);
+  }
 }
 
 article hr {
@@ -112,18 +120,6 @@ article img {
     line-height: 1.6;
   }
 
-  article h1 {
-    font-size: 1.5rem;
-  }
-
-  article h2 {
-    font-size: 1.25rem;
-  }
-
-  article h3 {
-    font-size: 1.125rem;
-  }
-
   article blockquote {
     padding-left: 1rem;
     margin: 1rem 0;
@@ -131,7 +127,6 @@ article img {
 
   article pre {
     padding: 0.75rem;
-    font-size: 0.875rem;
   }
 
   article img {
@@ -140,24 +135,11 @@ article img {
 }
 
 @media (max-width: 480px) {
-  article h1 {
-    font-size: 1.375rem;
-  }
-
-  article h2 {
-    font-size: 1.125rem;
-  }
-
-  article h3 {
-    font-size: 1rem;
-  }
-
   article blockquote {
     padding-left: 0.75rem;
   }
 
   article pre {
     padding: 0.5rem;
-    font-size: 0.8125rem;
   }
 }

@@ -1,3 +1,5 @@
+'use client'
+
 import { type KeyboardEvent } from 'react'
 import type { SlotOptions } from 'slot-text'
 import 'slot-text/style.css'

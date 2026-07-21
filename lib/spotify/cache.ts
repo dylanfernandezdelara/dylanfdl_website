@@ -1,6 +1,6 @@
 import { Redis } from '@upstash/redis'
 
-import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError.js'
+import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError'
 
 import type { NowPlayingCache } from './types'
 

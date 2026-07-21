@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { ApiRequest, ApiResponse } from '@/lib/api/vercel'
 import type { NowPlayingCache } from '@/lib/spotify/types'
 import * as logNowPlaying from '@/lib/nowPlaying/logNowPlaying'
 
@@ -37,7 +36,7 @@ const {
   mockIsSameOriginRequest: vi.fn(),
 }))
 
-vi.mock('../lib/spotify/cache.js', () => ({
+vi.mock('@/lib/spotify/cache', () => ({
   getNowPlayingCache: mockGetNowPlayingCache,
   shouldSkipLiveRefresh: mockShouldSkipLiveRefresh,
   markLiveRefresh: mockMarkLiveRefresh,
@@ -46,11 +45,11 @@ vi.mock('../lib/spotify/cache.js', () => ({
   setCachedAccessToken: mockSetCachedAccessToken,
 }))
 
-vi.mock('../lib/spotify/auth.js', () => ({
+vi.mock('@/lib/spotify/auth', () => ({
   refreshSpotifyAccessToken: mockRefreshSpotifyAccessToken,
 }))
 
-vi.mock('../lib/spotify/currentlyPlaying.js', () => ({
+vi.mock('@/lib/spotify/currentlyPlaying', () => ({
   fetchCurrentlyPlaying: mockFetchCurrentlyPlaying,
   toNowPlayingCache: (track: NowPlayingCache['track'], isPlaying: boolean | null = null) => ({
     track,
@@ -59,47 +58,21 @@ vi.mock('../lib/spotify/currentlyPlaying.js', () => ({
   }),
 }))
 
-vi.mock('../lib/api/origin.js', () => ({
+vi.mock('@/lib/api/origin', () => ({
   isSameOriginRequest: mockIsSameOriginRequest,
 }))
 
-function makeRequest(
-  options: {
-    method?: string
-    query?: Record<string, string | undefined>
-  } = {},
-): ApiRequest {
-  return {
-    method: options.method ?? 'GET',
-    query: options.query ?? {},
-    headers: {},
-  } as ApiRequest
-}
-
-function makeResponse(): ApiResponse & { statusCode?: number; body?: unknown } {
-  const response = {
-    statusCode: 200,
-    body: undefined as unknown,
-    status(statusCode: number) {
-      response.statusCode = statusCode
-      return response
-    },
-    json(body: unknown) {
-      response.body = body
-      return response
-    },
-    send() {
-      return response
-    },
-    redirect() {
-      return response
-    },
+function makeRequest(query: Record<string, string | undefined> = {}): Request {
+  const url = new URL('https://www.dylanfdl.com/api/now-playing')
+  for (const [key, value] of Object.entries(query)) {
+    if (value !== undefined) {
+      url.searchParams.set(key, value)
+    }
   }
-
-  return response as ApiResponse & { statusCode?: number; body?: unknown }
+  return new Request(url, { headers: {} })
 }
 
-describe('api/now-playing handler', () => {
+describe('handleNowPlayingRequest', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.spyOn(logNowPlaying, 'logNowPlayingWarn').mockImplementation(() => undefined)
@@ -113,48 +86,35 @@ describe('api/now-playing handler', () => {
   })
 
   it('returns cached payload for canonical requests', async () => {
-    const { default: handler } = await import('../api/now-playing')
-    const res = makeResponse()
+    const { handleNowPlayingRequest } = await import('@/lib/nowPlaying/handleNowPlayingRequest')
+    const response = await handleNowPlayingRequest(makeRequest())
 
-    await handler(makeRequest(), res)
-
-    expect(res.statusCode).toBe(200)
-    expect(res.body).toMatchObject({
+    expect(response.status).toBe(200)
+    await expect(response.json()).resolves.toMatchObject({
       source: 'cache',
       track: cache.track,
     })
   })
 
-  it('rejects non-GET requests', async () => {
-    const { default: handler } = await import('../api/now-playing')
-    const res = makeResponse()
-
-    await handler(makeRequest({ method: 'POST' }), res)
-
-    expect(res.statusCode).toBe(405)
-  })
-
   it('rejects cross-origin live refresh requests', async () => {
-    const { default: handler } = await import('../api/now-playing')
-    const res = makeResponse()
+    const { handleNowPlayingRequest } = await import('@/lib/nowPlaying/handleNowPlayingRequest')
     mockIsSameOriginRequest.mockReturnValue(false)
 
-    await handler(makeRequest({ query: { live: '1' } }), res)
+    const response = await handleNowPlayingRequest(makeRequest({ live: '1' }))
 
-    expect(res.statusCode).toBe(403)
+    expect(response.status).toBe(403)
   })
 
   it('logs and falls back to cache when live refresh fails', async () => {
-    const { default: handler } = await import('../api/now-playing')
-    const res = makeResponse()
+    const { handleNowPlayingRequest } = await import('@/lib/nowPlaying/handleNowPlayingRequest')
     const liveError = new Error('spotify unavailable')
     mockFetchCurrentlyPlaying.mockRejectedValue(liveError)
 
-    await handler(makeRequest({ query: { live: '1' } }), res)
+    const response = await handleNowPlayingRequest(makeRequest({ live: '1' }))
 
     expect(logNowPlaying.logNowPlayingWarn).toHaveBeenCalledWith('live refresh failed', liveError)
-    expect(res.statusCode).toBe(200)
-    expect(res.body).toMatchObject({
+    expect(response.status).toBe(200)
+    await expect(response.json()).resolves.toMatchObject({
       source: 'cache',
       track: cache.track,
       isPlaying: true,
@@ -162,38 +122,36 @@ describe('api/now-playing handler', () => {
   })
 
   it('logs and returns an empty fallback when the outer handler fails', async () => {
-    const { default: handler } = await import('../api/now-playing')
-    const res = makeResponse()
+    const { handleNowPlayingRequest } = await import('@/lib/nowPlaying/handleNowPlayingRequest')
     const outerError = new Error('redis unavailable')
     mockGetNowPlayingCache.mockRejectedValue(outerError)
 
-    await handler(makeRequest(), res)
+    const response = await handleNowPlayingRequest(makeRequest())
 
     expect(logNowPlaying.logNowPlayingError).toHaveBeenCalledWith('request failed', outerError)
-    expect(res.statusCode).toBe(200)
-    expect(res.body).toMatchObject({
+    expect(response.status).toBe(200)
+    await expect(response.json()).resolves.toMatchObject({
       source: 'cache',
       track: null,
     })
   })
 
   it('returns a live track response when refresh succeeds', async () => {
-    const { default: handler } = await import('../api/now-playing')
-    const res = makeResponse()
+    const { handleNowPlayingRequest } = await import('@/lib/nowPlaying/handleNowPlayingRequest')
     mockFetchCurrentlyPlaying.mockResolvedValue({
       track: cache.track,
       isPlaying: true,
     })
 
-    await handler(makeRequest({ query: { live: '1' } }), res)
+    const response = await handleNowPlayingRequest(makeRequest({ live: '1' }))
 
     expect(mockSetNowPlayingCache).toHaveBeenCalled()
     expect(mockMarkLiveRefresh).toHaveBeenCalled()
     expect(mockSetNowPlayingCache.mock.invocationCallOrder[0]).toBeLessThan(
       mockMarkLiveRefresh.mock.invocationCallOrder[0]!,
     )
-    expect(res.statusCode).toBe(200)
-    expect(res.body).toMatchObject({
+    expect(response.status).toBe(200)
+    await expect(response.json()).resolves.toMatchObject({
       source: 'live',
       track: cache.track,
       isPlaying: true,
@@ -201,8 +159,7 @@ describe('api/now-playing handler', () => {
   })
 
   it('does not mark live refresh when cache write fails', async () => {
-    const { default: handler } = await import('../api/now-playing')
-    const res = makeResponse()
+    const { handleNowPlayingRequest } = await import('@/lib/nowPlaying/handleNowPlayingRequest')
     const cacheError = new Error('cache write failed')
     mockFetchCurrentlyPlaying.mockResolvedValue({
       track: cache.track,
@@ -210,26 +167,25 @@ describe('api/now-playing handler', () => {
     })
     mockSetNowPlayingCache.mockRejectedValue(cacheError)
 
-    await handler(makeRequest({ query: { live: '1' } }), res)
+    const response = await handleNowPlayingRequest(makeRequest({ live: '1' }))
 
     expect(mockMarkLiveRefresh).not.toHaveBeenCalled()
     expect(logNowPlaying.logNowPlayingWarn).toHaveBeenCalledWith('live refresh failed', cacheError)
-    expect(res.body).toMatchObject({
+    await expect(response.json()).resolves.toMatchObject({
       source: 'cache',
       track: cache.track,
     })
   })
 
   it('returns cached playback when live refresh is debounced', async () => {
-    const { default: handler } = await import('../api/now-playing')
-    const res = makeResponse()
+    const { handleNowPlayingRequest } = await import('@/lib/nowPlaying/handleNowPlayingRequest')
     mockShouldSkipLiveRefresh.mockResolvedValue(true)
 
-    await handler(makeRequest({ query: { live: '1' } }), res)
+    const response = await handleNowPlayingRequest(makeRequest({ live: '1' }))
 
     expect(mockFetchCurrentlyPlaying).not.toHaveBeenCalled()
-    expect(res.statusCode).toBe(200)
-    expect(res.body).toMatchObject({
+    expect(response.status).toBe(200)
+    await expect(response.json()).resolves.toMatchObject({
       source: 'live',
       track: cache.track,
       isPlaying: true,
@@ -237,14 +193,13 @@ describe('api/now-playing handler', () => {
   })
 
   it('returns live playback state without a track when Spotify has nothing playing', async () => {
-    const { default: handler } = await import('../api/now-playing')
-    const res = makeResponse()
+    const { handleNowPlayingRequest } = await import('@/lib/nowPlaying/handleNowPlayingRequest')
     mockFetchCurrentlyPlaying.mockResolvedValue({
       track: null,
       isPlaying: false,
     })
 
-    await handler(makeRequest({ query: { live: '1' } }), res)
+    const response = await handleNowPlayingRequest(makeRequest({ live: '1' }))
 
     expect(mockSetNowPlayingCache).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -256,8 +211,8 @@ describe('api/now-playing handler', () => {
     expect(mockSetNowPlayingCache.mock.invocationCallOrder[0]).toBeLessThan(
       mockMarkLiveRefresh.mock.invocationCallOrder[0]!,
     )
-    expect(res.statusCode).toBe(200)
-    expect(res.body).toMatchObject({
+    expect(response.status).toBe(200)
+    await expect(response.json()).resolves.toMatchObject({
       source: 'live',
       track: cache.track,
       isPlaying: false,
@@ -265,8 +220,7 @@ describe('api/now-playing handler', () => {
   })
 
   it('does not mark live refresh when no-track cache write fails', async () => {
-    const { default: handler } = await import('../api/now-playing')
-    const res = makeResponse()
+    const { handleNowPlayingRequest } = await import('@/lib/nowPlaying/handleNowPlayingRequest')
     const cacheError = new Error('cache write failed')
     mockFetchCurrentlyPlaying.mockResolvedValue({
       track: null,
@@ -274,11 +228,11 @@ describe('api/now-playing handler', () => {
     })
     mockSetNowPlayingCache.mockRejectedValue(cacheError)
 
-    await handler(makeRequest({ query: { live: '1' } }), res)
+    const response = await handleNowPlayingRequest(makeRequest({ live: '1' }))
 
     expect(mockMarkLiveRefresh).not.toHaveBeenCalled()
     expect(logNowPlaying.logNowPlayingWarn).toHaveBeenCalledWith('live refresh failed', cacheError)
-    expect(res.body).toMatchObject({
+    await expect(response.json()).resolves.toMatchObject({
       source: 'cache',
       track: cache.track,
     })

@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
@@ -77,14 +79,14 @@ export default function PageSearchPalette() {
               enterKeyHint="search"
               data-1p-ignore="true"
               data-lpignore="true"
-              className="page-search-input h-12 py-0 text-[0.95rem] text-fg0 placeholder:text-fg3"
+              className="page-search-input h-12 py-0 text-sm text-fg0 placeholder:text-fg3"
             />
           </div>
 
           {query.length > 0 && (
             <CommandList className="max-h-[min(22rem,60vh)] overflow-y-auto p-1">
               {results.length === 0 ? (
-                <CommandEmpty className="px-3 py-3 text-left text-[0.85rem] text-fg3">
+                <CommandEmpty className="px-3 py-3 text-left text-sm text-fg3">
                   No matches found.
                 </CommandEmpty>
               ) : (
@@ -93,7 +95,7 @@ export default function PageSearchPalette() {
                     key={result.id}
                     value={result.id}
                     onSelect={() => goToResult(result)}
-                    className="cursor-pointer rounded-[0.55rem] px-[0.7rem] py-[0.65rem] text-left text-[0.87rem] leading-[1.45] text-fg1 aria-selected:bg-accent aria-selected:text-fg1"
+                    className="cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm leading-[1.45] text-fg1 aria-selected:bg-accent aria-selected:text-fg1"
                   >
                     {result.snippet}
                   </CommandItem>

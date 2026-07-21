@@ -25,7 +25,7 @@ export function readRainbowPhaseMs(container: HTMLElement, durationMs: number): 
 
   const rainbow = face
     .getAnimations()
-    .find((animation) => animation.animationName === RAINBOW_ANIMATION_NAME)
+    .find((animation) => (animation as CSSAnimation).animationName === RAINBOW_ANIMATION_NAME)
   const currentTime = rainbow?.currentTime
   if (typeof currentTime === 'number' && Number.isFinite(currentTime) && currentTime > 0) {
     return currentTime % durationMs
