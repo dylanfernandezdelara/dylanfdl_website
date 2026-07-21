@@ -59,9 +59,9 @@ export default function HomePage() {
             I am an{'\u00A0'}<OptimistText />
           </p>
           <p className="mb-4">
-            I work on model post-training at{' '}
-            <ExternalLink allowWrap href={INTRO_LINKS.museSparkAnnouncement}>Meta</ExternalLink>. I am building
-            RL environments for frontier coding agents, and we recently launched{' '}
+            I currently work on post-training at{' '}
+            <ExternalLink allowWrap href={INTRO_LINKS.museSparkAnnouncement}>Meta</ExternalLink> and build
+            RL environments for frontier coding agents. We recently launched{' '}
             <ExternalLink allowWrap href={INTRO_LINKS.museSpark11Analysis}>Muse Spark 1.1</ExternalLink>.
           </p>
 
