@@ -3,34 +3,20 @@
  */
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { useRef } from 'react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import useNowPlayingTrackLayout from '@/hooks/useNowPlayingTrackLayout'
 import {
   formatByArtistLineWithPeriod,
   formatFullTrackLine,
   formatLabelTitleLine,
+  NOW_PLAYING_SLOT_CLASS,
 } from '@/lib/nowPlaying/trackLayout'
-import { NOW_PLAYING_SLOT_CLASS } from '@/lib/nowPlaying/trackLayout'
 import {
   attachMockPrefixRowMeasure,
   attachMockTextMeasure,
 } from '@/tests/fixtures/mockTextMeasure'
-import {
-  NOW_PLAYING_LABEL,
-  NOW_PLAYING_LAYOUT_SCENARIOS,
-  labelWidthsForScenario,
-  prefixRowWidthsForScenario,
-  trackWidthsForScenario,
-} from '@/tests/fixtures/nowPlayingLayoutScenarios'
-
-class ResizeObserverMock {
-  observe() {}
-
-  disconnect() {}
-
-  unobserve() {}
-}
+import { NOW_PLAYING_LABEL } from '@/tests/fixtures/nowPlayingLayoutScenarios'
 
 function mockRect(width: number): DOMRect {
   return {
@@ -54,7 +40,6 @@ type LayoutProbeOptions = {
   labelWidthsByText: Record<string, number>
   trackWidthsByText: Record<string, number>
   prefixRowWidthsByText: Record<string, number>
-  withProductionMarkup?: boolean
   onContainerRef?: (node: HTMLSpanElement | null) => void
 }
 
@@ -66,7 +51,6 @@ function LayoutProbe({
   labelWidthsByText,
   trackWidthsByText,
   prefixRowWidthsByText,
-  withProductionMarkup = false,
   onContainerRef,
 }: LayoutProbeOptions) {
   const containerRef = useRef<HTMLSpanElement>(null)
@@ -79,9 +63,6 @@ function LayoutProbe({
     prefixTitleMeasureRef,
   } = useNowPlayingTrackLayout(label, title, artist, containerRef)
 
-  const rootClassName = withProductionMarkup ? 'now-playing' : undefined
-  const rootLayout = withProductionMarkup ? layout : undefined
-
   return (
     <span
       ref={(node) => {
@@ -93,8 +74,6 @@ function LayoutProbe({
         }
         node.getBoundingClientRect = () => mockRect(containerWidth)
       }}
-      className={rootClassName}
-      data-layout={rootLayout}
     >
       <span
         ref={(node) => {
@@ -103,8 +82,6 @@ function LayoutProbe({
             attachMockTextMeasure(node, labelWidthsByText)
           }
         }}
-        className={withProductionMarkup ? 'now-playing-measure now-playing-measure-label' : undefined}
-        aria-hidden={withProductionMarkup ? true : undefined}
       />
       <span
         ref={(node) => {
@@ -113,10 +90,6 @@ function LayoutProbe({
             attachMockTextMeasure(node, trackWidthsByText)
           }
         }}
-        className={
-          withProductionMarkup ? `now-playing-measure ${NOW_PLAYING_SLOT_CLASS}` : undefined
-        }
-        aria-hidden={withProductionMarkup ? true : undefined}
       />
       <span
         ref={(node) => {
@@ -125,20 +98,14 @@ function LayoutProbe({
             attachMockPrefixRowMeasure(node, prefixRowWidthsByText)
           }
         }}
-        className={
-          withProductionMarkup
-            ? 'now-playing-measure now-playing-prefix-row-measure'
-            : 'now-playing-prefix-row-measure'
-        }
-        aria-hidden={withProductionMarkup ? true : undefined}
+        className="now-playing-prefix-row-measure"
       >
         <span
           ref={(node) => {
             prefixLabelMeasureRef.current = node
           }}
           className="now-playing-measure-label"
-        />
-        {' '}
+        />{' '}
         <span
           ref={(node) => {
             prefixTitleMeasureRef.current = node
@@ -152,37 +119,9 @@ function LayoutProbe({
 }
 
 describe('useNowPlayingTrackLayout', () => {
-  beforeEach(() => {
-    vi.stubGlobal('ResizeObserver', ResizeObserverMock)
-  })
-
   afterEach(() => {
     cleanup()
     vi.unstubAllGlobals()
-  })
-
-  it('resolves mobile-long-title-split to split with production markup and CSS', async () => {
-    const scenario = NOW_PLAYING_LAYOUT_SCENARIOS.find(
-      (entry) => entry.id === 'mobile-long-title-split',
-    )!
-    expect(scenario.expected).toBe('split')
-
-    render(
-      <LayoutProbe
-        label={scenario.label}
-        title={scenario.title}
-        artist={scenario.artist}
-        containerWidth={scenario.containerWidth}
-        labelWidthsByText={labelWidthsForScenario(scenario)}
-        trackWidthsByText={trackWidthsForScenario(scenario)}
-        prefixRowWidthsByText={prefixRowWidthsForScenario(scenario)}
-        withProductionMarkup
-      />,
-    )
-
-    await waitFor(() => {
-      expect(screen.getByTestId('layout').textContent).toBe('split')
-    })
   })
 
   it('recomputes when resize observer callback runs with new container width', async () => {

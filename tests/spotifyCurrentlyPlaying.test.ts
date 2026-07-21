@@ -1,7 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchCurrentlyPlaying, parseSpotifyTrack, toNowPlayingCache } from '@/lib/spotify/currentlyPlaying'
 import { SanitizedInfrastructureError } from '@/lib/sanitizedInfrastructureError'
+import {
+  fetchCurrentlyPlaying,
+  parseSpotifyTrack,
+  toNowPlayingCache,
+} from '@/lib/spotify/currentlyPlaying'
 
 describe('fetchCurrentlyPlaying', () => {
   afterEach(() => {

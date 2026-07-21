@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import type { NowPlayingCache } from '@/lib/spotify/types'
-
 import { toLiveTrackResponse, toNowPlayingResponse } from '@/lib/spotify/response'
+import type { NowPlayingCache } from '@/lib/spotify/types'
 
 describe('toNowPlayingResponse', () => {
   const cache: NowPlayingCache = {

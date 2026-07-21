@@ -111,7 +111,10 @@ function requireStringFrontMatter(
   return value
 }
 
-function parsePostFrontMatter(frontMatter: Record<string, unknown>, slug: string): PostFrontMatter {
+export function parsePostFrontMatter(
+  frontMatter: Record<string, unknown>,
+  slug: string
+): PostFrontMatter {
   const date = requireStringFrontMatter(frontMatter, 'date', slug)
 
   if (!parsePostDate(date, [3])) {
