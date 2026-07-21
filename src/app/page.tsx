@@ -1,0 +1,104 @@
+import type { Metadata } from 'next'
+import { Fragment } from 'react'
+
+import CardGridClient from '@/components/CardGridClient'
+import ExternalLink from '@/components/ExternalLink'
+import JsonLdScript from '@/components/JsonLdScript'
+import OptimistText from '@/components/OptimistText'
+import PageSearchPalette from '@/components/PageSearchPalette'
+import ThemeToggle from '@/components/ThemeToggle'
+import { buildCardGridItems } from '@/lib/buildCardGridItems'
+import { buildHomePageJsonLd } from '@/lib/jsonLd'
+import { CONTACT_LINK_STYLES, SECONDARY_LINK_SEPARATOR } from '@/lib/linkStyles'
+import {
+  CONTACT_LINKS,
+  DEFAULT_DESCRIPTION,
+  HOME_PAGE_TITLE,
+  OPEN_GRAPH_BASE,
+  absoluteUrl,
+} from '@/lib/site'
+
+const cardGridItems = buildCardGridItems()
+
+const INTRO_LINKS = {
+  museSparkAnnouncement:
+    'https://ai.meta.com/blog/introducing-muse-spark-meta-model-api/',
+  museSpark11Analysis:
+    'https://artificialanalysis.ai/articles/muse-spark-1-1-everything-you-need-to-know',
+  aiGlasses: 'https://www.meta.com/ai-glasses/',
+} as const
+
+const canonicalUrl = absoluteUrl('/')
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    ...OPEN_GRAPH_BASE,
+    type: 'website',
+    title: HOME_PAGE_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    url: canonicalUrl,
+  },
+}
+
+export default function HomePage() {
+  return (
+    <>
+      <JsonLdScript
+        data={buildHomePageJsonLd({
+          canonicalUrl,
+          description: DEFAULT_DESCRIPTION,
+        })}
+      />
+      <div className="mx-auto max-w-4xl px-4 pt-12 text-base leading-[1.6] min-[481px]:px-6 md:px-8 md:pt-16">
+        <div className="text-pretty text-sm leading-relaxed text-fg1 min-[640px]:max-w-[75%]">
+          <h1 className="mb-6 font-serif text-2xl font-normal text-fg0">Dylan Fernandez de Lara</h1>
+          <p className="mb-4">
+            I am an{'\u00A0'}<OptimistText />
+          </p>
+          <p className="mb-4">
+            I work on model post-training at{' '}
+            <ExternalLink allowWrap href={INTRO_LINKS.museSparkAnnouncement}>Meta</ExternalLink>. I am building
+            RL environments for frontier coding agents, and we recently launched{' '}
+            <ExternalLink allowWrap href={INTRO_LINKS.museSpark11Analysis}>Muse Spark 1.1</ExternalLink>.
+          </p>
+
+          <p className="mb-4">
+            Previously, I scaled crash infrastructure for {' '}
+            <ExternalLink allowWrap href={INTRO_LINKS.aiGlasses}>Meta Glasses</ExternalLink>.
+          </p>
+
+          <p className="mb-4">
+            I am a Yale graduate, and currently based in New York.
+          </p>
+
+        </div>
+
+        <CardGridClient items={cardGridItems}>
+          <hr className="mb-3 mt-8 w-full border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
+
+          <div className="flex w-full items-center justify-between gap-4">
+            <div className="flex max-w-reading flex-wrap items-baseline gap-2 text-sm">
+              {CONTACT_LINKS.map((link, index) => (
+                <Fragment key={link.href}>
+                  {index > 0 && (
+                    <span className={SECONDARY_LINK_SEPARATOR} aria-hidden="true">
+                      ·
+                    </span>
+                  )}
+                  <a className={CONTACT_LINK_STYLES} href={link.href}>
+                    {link.label}
+                  </a>
+                </Fragment>
+              ))}
+            </div>
+            <ThemeToggle />
+          </div>
+        </CardGridClient>
+      </div>
+      <PageSearchPalette />
+    </>
+  )
+}

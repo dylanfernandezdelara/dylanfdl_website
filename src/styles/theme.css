@@ -1,5 +1,6 @@
 :root {
-  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
+  /* Matches rajan.sh's rendered body font: the system UI stack (SF Pro on macOS), not a webfont. */
+  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
   --light-bg0-hard: #faf8f0;
   --light-bg0: #fffef8;
@@ -7,11 +8,12 @@
   --light-bg2: #f5f2e8;
   --light-bg3: #f0ede0;
   --light-bg4: #ebe8d8;
-  --light-fg0: #2a2a2a;
-  --light-fg1: #3a3a3a;
-  --light-fg2: #4a4a4a;
-  --light-fg3: #5a5a5a;
-  --light-fg4: #6a6a6a;
+  /* Cool, higher-contrast text (aligned with rajan.sh); cream backgrounds stay warm. */
+  --light-fg0: #030303;
+  --light-fg1: #374151;
+  --light-fg2: #4b5563;
+  --light-fg3: #6b7280;
+  --light-fg4: #9ca3af;
   --light-red: #af5f5f;
   --light-green: #5f875f;
   --light-yellow: #af875f;
@@ -65,7 +67,7 @@
   --card: var(--bg0);
   --destructive-foreground: var(--bg0);
   --dialog-scrim: color-mix(in oklab, rgb(30 30 30), transparent 88%);
-  --elevated-shadow: 0 16px 40px rgba(42, 42, 42, 0.22);
+  --elevated-shadow: 0 16px 40px rgba(3, 3, 3, 0.22);
   --input: var(--bg2);
   --popover: color-mix(in oklab, var(--bg0), white 22%);
   --primary-foreground: var(--bg0);
@@ -100,11 +102,11 @@
     --light-bg2: oklch(96.07% 0.0136 92.98);
     --light-bg3: oklch(94.49% 0.0175 96.11);
     --light-bg4: oklch(92.90% 0.0215 98.13);
-    --light-fg0: oklch(28.50% 0 0);
-    --light-fg1: oklch(34.85% 0 0);
-    --light-fg2: oklch(40.91% 0 0);
-    --light-fg3: oklch(46.76% 0 0);
-    --light-fg4: oklch(52.43% 0 0);
+    --light-fg0: oklch(9.69% 0 0);
+    --light-fg1: oklch(37.29% 0.0306 259.73);
+    --light-fg2: oklch(44.61% 0.0263 256.80);
+    --light-fg3: oklch(55.10% 0.0234 264.36);
+    --light-fg4: oklch(71.37% 0.0192 261.32);
     --light-red: oklch(57.83% 0.1041 20.77);
     --light-green: oklch(58.26% 0.0749 144.54);
     --light-yellow: oklch(65.22% 0.0736 65.93);

@@ -11,13 +11,8 @@
 test-results/
 playwright-report/
 
-# astro
-/dist/
-/.astro/
-
-# legacy next.js (if present)
+# next.js
 /.next/
-/app/
 
 # production
 /build

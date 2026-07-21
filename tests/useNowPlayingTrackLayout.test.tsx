@@ -204,14 +204,14 @@ describe('useNowPlayingTrackLayout', () => {
     }
 
     const containerWidth = 864
-    let resizeCallback: (() => void) | null = null
+    const resizeCallbackRef = { current: null as (() => void) | null }
     const widthRef = { current: containerWidth }
 
     vi.stubGlobal(
       'ResizeObserver',
       class {
         constructor(callback: ResizeObserverCallback) {
-          resizeCallback = () => callback([], this as unknown as ResizeObserver)
+          resizeCallbackRef.current = () => callback([], this as unknown as ResizeObserver)
         }
 
         observe() {}
@@ -244,7 +244,7 @@ describe('useNowPlayingTrackLayout', () => {
     })
 
     widthRef.current = 200
-    resizeCallback?.()
+    resizeCallbackRef.current?.()
 
     await waitFor(() => {
       expect(screen.getByTestId('layout').textContent).toBe('stacked')

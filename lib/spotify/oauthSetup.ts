@@ -1,7 +1,5 @@
 import { randomBytes, timingSafeEqual } from 'node:crypto'
 
-import type { ApiRequest } from '../api/vercel.js'
-
 export const SPOTIFY_OAUTH_STATE_COOKIE = 'spotify_oauth_state'
 export const SPOTIFY_OAUTH_COOKIE_PATH = '/api/spotify'
 export const SPOTIFY_OAUTH_STATE_MAX_AGE_SECONDS = 600
@@ -10,7 +8,7 @@ export function isSpotifyOAuthSetupEnabled(): boolean {
   return process.env.SPOTIFY_OAUTH_SETUP_ENABLED === 'true'
 }
 
-export function isSpotifyOAuthLoginAuthorized(req: ApiRequest): boolean {
+export function isSpotifyOAuthLoginAuthorized(providedSecret: string | undefined): boolean {
   if (!isSpotifyOAuthSetupEnabled()) {
     return false
   }
@@ -20,13 +18,11 @@ export function isSpotifyOAuthLoginAuthorized(req: ApiRequest): boolean {
     return false
   }
 
-  const query = req.query.secret
-  const provided = Array.isArray(query) ? query[0] : query
-  if (typeof provided !== 'string' || provided.length === 0) {
+  if (typeof providedSecret !== 'string' || providedSecret.length === 0) {
     return false
   }
 
-  return safeEqual(provided, setupSecret)
+  return safeEqual(providedSecret, setupSecret)
 }
 
 export function isSpotifyOAuthCallbackAuthorized(): boolean {

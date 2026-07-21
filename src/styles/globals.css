@@ -1,9 +1,3 @@
-@import '@fontsource/inter/400.css';
-@import '@fontsource/inter/500.css';
-@import '@fontsource/inter/500-italic.css';
-@import '@fontsource/inter/600.css';
-@import '@fontsource/inter/700.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -18,8 +12,6 @@ html {
   font-size: 16px;
   background-color: var(--bg-color);
   color-scheme: light;
-  -webkit-font-smoothing: none;
-  -moz-osx-font-smoothing: unset;
   /* Always show vertical scrollbar; clip horizontal bleed so card transforms cannot widen the scrollport. */
   overflow-x: clip;
   overflow-y: scroll;
@@ -50,8 +42,8 @@ html.dark {
 
 body {
   width: 100%;
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
-  font-weight: 500;
+  font-family: var(--font-sans);
+  font-weight: 400;
   color: var(--text-color);
   background-color: var(--bg-color);
   line-height: 1.5;
@@ -60,8 +52,7 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Default subpixel smoothing (matches rajan.sh). `antialiased` makes the same hex look lighter/thinner. */
   word-wrap: break-word;
   /* Horizontal clipping lives on html — avoids overflow-x non-visible pairing that forces overflow-y:auto on body and nested scrollbars squeezing main by ~1 scrollbar width during grid animations. */
   -webkit-text-size-adjust: 100%;
@@ -84,7 +75,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   color: var(--fg0);
 }
@@ -95,7 +86,7 @@ pre {
 }
 
 a {
-  color: var(--link-color);
+  color: inherit;
   text-decoration: none;
   transition: color 0.2s ease;
   -webkit-tap-highlight-color: rgba(95, 95, 175, 0.2);
@@ -109,13 +100,13 @@ a {
 
 @media (hover: hover) and (pointer: fine) {
   a:hover {
-    color: var(--link-hover);
+    color: var(--fg0);
   }
 }
 
 @media (hover: none) and (pointer: coarse) {
   a:active {
-    color: var(--link-hover);
+    color: var(--fg0);
     opacity: 0.8;
   }
 }

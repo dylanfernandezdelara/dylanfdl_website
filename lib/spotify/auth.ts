@@ -1,4 +1,4 @@
-import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError.js'
+import { SanitizedInfrastructureError } from '../sanitizedInfrastructureError'
 
 const SPOTIFY_SCOPE = 'user-read-currently-playing'
 const SPOTIFY_AUTHORIZE_URL = 'https://accounts.spotify.com/authorize'

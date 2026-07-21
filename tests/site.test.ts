@@ -9,7 +9,6 @@ import {
   OG_IMAGE_WIDTH,
   PERSON_NAME,
   PERSON_NAME_ALTERNATES,
-  PERSON_ROLE,
   PERSON_URL,
   REL_ME_URLS,
   SAME_AS,
@@ -39,7 +38,7 @@ describe('site', () => {
 
   it('builds absolute URLs from paths', () => {
     expect(absoluteUrl('/about')).toBe('https://dylanfdl.com/about')
-    expect(PERSON_URL).toBe('https://dylanfdl.com/about')
+    expect(PERSON_URL).toBe('https://dylanfdl.com/')
     expect(OG_IMAGE_URL).toBe('https://dylanfdl.com/og-image.png')
   })
 
@@ -56,7 +55,7 @@ describe('site', () => {
   })
 
   it('uses the short profile page title', () => {
-    expect(HOME_PAGE_TITLE).toBe(`${PERSON_NAME} | ${PERSON_ROLE}`)
+    expect(HOME_PAGE_TITLE).toBe(PERSON_NAME)
     expect(buildPageTitle({ profilePage: true })).toBe(HOME_PAGE_TITLE)
   })
 
@@ -69,11 +68,15 @@ describe('site', () => {
   })
 
   it('derives sameAs URLs from contact link flags', () => {
-    expect(SAME_AS).toEqual(CONTACT_LINKS.filter((link) => link.sameAs).map((link) => link.href))
+    expect(SAME_AS).toEqual(
+      CONTACT_LINKS.filter((link) => 'sameAs' in link && link.sameAs).map((link) => link.href),
+    )
   })
 
   it('derives rel=me URLs from contact link flags', () => {
-    expect(REL_ME_URLS).toEqual(CONTACT_LINKS.filter((link) => link.relMe).map((link) => link.href))
+    expect(REL_ME_URLS).toEqual(
+      CONTACT_LINKS.filter((link) => 'relMe' in link && link.relMe).map((link) => link.href),
+    )
   })
 
   it('excludes LinkedIn from rel=me URLs', () => {
@@ -94,7 +97,7 @@ describe('site', () => {
   })
 
   it('derives the sitemap index URL from SITE_URL', () => {
-    expect(SITEMAP_INDEX_URL).toBe('https://dylanfdl.com/sitemap-index.xml')
+    expect(SITEMAP_INDEX_URL).toBe('https://dylanfdl.com/sitemap.xml')
   })
 
   it('escapes less-than in JSON-LD serialization', () => {

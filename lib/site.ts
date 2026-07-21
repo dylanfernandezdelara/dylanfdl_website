@@ -10,11 +10,11 @@ export const PERSON_GIVEN_NAME = 'Dylan'
 
 export const PERSON_FAMILY_NAME = 'Fernandez de Lara'
 
-export const PERSON_ROLE = 'Applied AI Engineer'
+export const PERSON_ROLE = 'Generalist Software Engineer'
 
 export const PERSON_TAGLINE = 'Engineer at Meta · Applied AI'
 
-export const PERSON_PAGE_PATH = '/about'
+export const PERSON_PAGE_PATH = '/'
 
 export const OG_IMAGE_PATH = '/og-image.png'
 
@@ -44,7 +44,7 @@ export const DEFAULT_DESCRIPTION =
 
 export const NOT_FOUND_DESCRIPTION = 'Page not found on dylanfdl.com.'
 
-export const HOME_PAGE_TITLE = `${PERSON_NAME} | ${PERSON_ROLE}`
+export const HOME_PAGE_TITLE = PERSON_NAME
 
 type ContactLink = {
   label: string
@@ -63,7 +63,7 @@ export const CONTACT_LINKS = [
   },
   { label: 'Email', href: 'mailto:fernandezdelaradylan@gmail.com' },
   {
-    label: 'Twitter',
+    label: 'X',
     href: 'https://x.com/dylan_fdl_',
     sameAs: true,
     relMe: true,
@@ -82,11 +82,18 @@ export const CONTACT_LINKS = [
   },
 ] as const satisfies readonly ContactLink[]
 
-export const SAME_AS = CONTACT_LINKS.filter((link) => link.sameAs).map((link) => link.href)
+export const SAME_AS = CONTACT_LINKS.filter(
+  (link): link is (typeof CONTACT_LINKS)[number] & { sameAs: true } => 'sameAs' in link && link.sameAs === true
+).map((link) => link.href)
 
-export const REL_ME_URLS = CONTACT_LINKS.filter((link) => link.relMe).map((link) => link.href)
+export const REL_ME_URLS = CONTACT_LINKS.filter(
+  (link): link is (typeof CONTACT_LINKS)[number] & { relMe: true } => 'relMe' in link && link.relMe === true
+).map((link) => link.href)
 
-const twitterProfile = CONTACT_LINKS.find((link) => link.twitterHandle)
+const twitterProfile = CONTACT_LINKS.find(
+  (link): link is (typeof CONTACT_LINKS)[number] & { twitterHandle: true } =>
+    'twitterHandle' in link && link.twitterHandle === true
+)
 
 export const TWITTER_CREATOR = twitterProfile
   ? `@${new URL(twitterProfile.href).pathname.replace(/^\//, '').replace(/\/$/, '')}`
@@ -100,7 +107,24 @@ export const PERSON_URL = absoluteUrl(PERSON_PAGE_PATH)
 
 export const OG_IMAGE_URL = absoluteUrl(OG_IMAGE_PATH)
 
-export const SITEMAP_INDEX_URL = absoluteUrl('/sitemap-index.xml')
+export const SITEMAP_INDEX_URL = absoluteUrl('/sitemap.xml')
+
+/**
+ * Shared Open Graph fields. Next.js replaces (not deep-merges) the nested
+ * `openGraph` object when a page defines its own, so pages must spread this.
+ */
+export const OPEN_GRAPH_BASE = {
+  siteName: PERSON_NAME,
+  locale: 'en_US' as const,
+  images: [
+    {
+      url: OG_IMAGE_URL,
+      width: OG_IMAGE_WIDTH,
+      height: OG_IMAGE_HEIGHT,
+      alt: OG_IMAGE_ALT,
+    },
+  ],
+}
 
 export function serializeJsonLd(data: unknown): string {
   return JSON.stringify(data).replace(/</g, '\\u003c')

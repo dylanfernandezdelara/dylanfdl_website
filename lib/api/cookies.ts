@@ -1,13 +1,6 @@
-import type { ApiRequest } from './vercel.js'
-
-export function getCookie(req: ApiRequest, name: string): string | undefined {
-  const fromParsed = req.cookies?.[name]
-  if (typeof fromParsed === 'string' && fromParsed.length > 0) {
-    return fromParsed
-  }
-
-  const header = req.headers.cookie
-  if (typeof header !== 'string' || header.length === 0) {
+export function getCookie(headers: Headers, name: string): string | undefined {
+  const header = headers.get('cookie')
+  if (!header || header.length === 0) {
     return undefined
   }
 

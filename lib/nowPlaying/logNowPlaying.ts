@@ -1,5 +1,5 @@
-import { extractErrorMessage } from '../extractErrorMessage.js'
-import { isLogSuppressedError } from '../sanitizedInfrastructureError.js'
+import { extractErrorMessage } from '../extractErrorMessage'
+import { isLogSuppressedError } from '../sanitizedInfrastructureError'
 
 function logNowPlaying(
   scope: string,

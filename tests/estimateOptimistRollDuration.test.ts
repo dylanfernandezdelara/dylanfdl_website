@@ -1,3 +1,4 @@
+import type { SlotOptions } from 'slot-text'
 import { describe, expect, it } from 'vitest'
 
 import { estimateOptimistRollDuration } from '../lib/estimateOptimistRollDuration'
@@ -9,10 +10,7 @@ function wobble(index: number, salt: number): number {
 }
 
 /** Mirror slot-text@0.2.2 transform-only maxEnd for same-length rolls (no width/color paths). */
-function slotTextTransformOnlyMaxEnd(
-  text: string,
-  options: typeof OPTIMIST_ROLL_DEFAULTS & { direction?: 'up' | 'down' },
-): number {
+function slotTextTransformOnlyMaxEnd(text: string, options: SlotOptions): number {
   const { stagger, duration, exitOffset, bounce } = { ...OPTIMIST_ROLL_DEFAULTS, ...options }
   const maxLen = text.length
   let maxEnd = 0

@@ -6,26 +6,18 @@ import {
   isSpotifyOAuthLoginAuthorized,
   validateSpotifyOAuthState,
 } from '@/lib/spotify/oauthSetup'
-import type { ApiRequest } from '@/lib/api/vercel'
-
-function makeRequest(query: Record<string, string | undefined> = {}): ApiRequest {
-  return {
-    query,
-    headers: {},
-  } as ApiRequest
-}
 
 describe('isSpotifyOAuthLoginAuthorized', () => {
   it('returns false when setup is disabled', () => {
-    expect(isSpotifyOAuthLoginAuthorized(makeRequest())).toBe(false)
+    expect(isSpotifyOAuthLoginAuthorized(undefined)).toBe(false)
   })
 
   it('requires the setup secret when configured', () => {
     vi.stubEnv('SPOTIFY_OAUTH_SETUP_ENABLED', 'true')
     vi.stubEnv('SPOTIFY_OAUTH_SETUP_SECRET', 'setup-secret')
 
-    expect(isSpotifyOAuthLoginAuthorized(makeRequest())).toBe(false)
-    expect(isSpotifyOAuthLoginAuthorized(makeRequest({ secret: 'setup-secret' }))).toBe(true)
+    expect(isSpotifyOAuthLoginAuthorized(undefined)).toBe(false)
+    expect(isSpotifyOAuthLoginAuthorized('setup-secret')).toBe(true)
 
     vi.unstubAllEnvs()
   })
@@ -34,8 +26,8 @@ describe('isSpotifyOAuthLoginAuthorized', () => {
     vi.stubEnv('SPOTIFY_OAUTH_SETUP_ENABLED', 'true')
     vi.stubEnv('SPOTIFY_OAUTH_SETUP_SECRET', '')
 
-    expect(isSpotifyOAuthLoginAuthorized(makeRequest())).toBe(false)
-    expect(isSpotifyOAuthLoginAuthorized(makeRequest({ secret: 'anything' }))).toBe(false)
+    expect(isSpotifyOAuthLoginAuthorized(undefined)).toBe(false)
+    expect(isSpotifyOAuthLoginAuthorized('anything')).toBe(false)
 
     vi.unstubAllEnvs()
   })

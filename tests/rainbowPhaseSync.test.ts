@@ -48,7 +48,7 @@ describe('readRainbowPhaseMs', () => {
     const letter = container.querySelector('.rainbow-letter') as HTMLElement
     letter.getAnimations = () => [
       { animationName: RAINBOW_ANIMATION_NAME, currentTime: 1200 },
-    ] as Animation[]
+    ] as unknown as Animation[]
 
     expect(readRainbowPhaseMs(container, 15_000)).toBe(1200)
   })
@@ -61,7 +61,7 @@ describe('readRainbowPhaseMs', () => {
     letter.style.animationDelay = '-4200ms'
     letter.getAnimations = () => [
       { animationName: RAINBOW_ANIMATION_NAME, currentTime: 0 },
-    ] as Animation[]
+    ] as unknown as Animation[]
     container.appendChild(letter)
     document.body.appendChild(container)
 
@@ -73,7 +73,7 @@ describe('readRainbowPhaseMs', () => {
     const face = container.querySelector('.char-face') as HTMLElement
     face.getAnimations = () => [
       { animationName: RAINBOW_ANIMATION_NAME, currentTime: 800 },
-    ] as Animation[]
+    ] as unknown as Animation[]
 
     expect(readRainbowPhaseMs(container, 15_000)).toBe(800)
   })

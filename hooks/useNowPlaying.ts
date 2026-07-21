@@ -66,7 +66,7 @@ export type UseNowPlayingResult = {
 export default function useNowPlaying(
   options: UseNowPlayingOptions = {},
 ): UseNowPlayingResult {
-  const isDevPreview = import.meta.env.DEV
+  const isDevPreview = process.env.NODE_ENV === 'development'
   const initialStateRef = useRef(deriveInitialNowPlayingState(options.initialPayload))
 
   const [label, setLabel] = useState(initialStateRef.current.label)
@@ -193,7 +193,9 @@ export default function useNowPlaying(
 
     const pollController = createNowPlayingPollController({
       pollIntervalMs: POLL_INTERVAL_MS,
-      refresh: () => refreshNowPlaying({ forceRoll: false, live: true }),
+      refresh: async () => {
+        await refreshNowPlaying({ forceRoll: false, live: true })
+      },
       onPollRefreshError: (error) => logNowPlayingWarn('poll refresh failed', error),
       onVisibilityRefreshError: (error) =>
         logNowPlayingWarn('visibility refresh failed', error),
