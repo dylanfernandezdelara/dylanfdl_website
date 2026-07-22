@@ -52,7 +52,7 @@ export default function HomePage() {
           description: DEFAULT_DESCRIPTION,
         })}
       />
-      <div className="mx-auto max-w-4xl px-4 pt-12 text-base leading-[1.6] min-[481px]:px-6 md:px-8 md:pt-16">
+      <div className="mx-auto max-w-4xl px-4 pt-20 text-base leading-[1.6] min-[481px]:px-6 md:px-8 md:pt-16">
         <div className="text-pretty text-sm leading-relaxed text-fg1 min-[640px]:max-w-[75%]">
           <h1 className="mb-6 font-serif text-2xl font-normal text-fg0">Dylan Fernandez de Lara</h1>
           <p className="mb-4">
