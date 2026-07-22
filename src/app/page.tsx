@@ -71,7 +71,7 @@ export default function HomePage() {
           </p>
 
           <p className="mb-4">
-            I am a Yale graduate, and currently based in New York.
+            I am a Yale graduate and am currently based in New York.
           </p>
 
         </div>
