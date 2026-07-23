@@ -12,8 +12,6 @@ export const PERSON_FAMILY_NAME = 'Fernandez de Lara'
 
 export const PERSON_ROLE = 'Generalist Software Engineer'
 
-export const PERSON_TAGLINE = 'Engineer at Meta · Applied AI'
-
 export const PERSON_PAGE_PATH = '/'
 
 export const OG_IMAGE_PATH = '/og-image.png'

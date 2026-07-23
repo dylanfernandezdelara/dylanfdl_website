@@ -52,9 +52,9 @@ describe('getSearchableElementText', () => {
   it('excludes sr-only accessibility hints from indexed text', () => {
     const element = document.createElement('a')
     element.href = 'https://example.com'
-    element.append('Applied AI', Object.assign(document.createElement('span'), { className: 'sr-only', textContent: ' (opens in new tab)' }))
+    element.append('Meta', Object.assign(document.createElement('span'), { className: 'sr-only', textContent: ' (opens in new tab)' }))
 
-    expect(getSearchableElementText(element)).toBe('Applied AI')
+    expect(getSearchableElementText(element)).toBe('Meta')
   })
 })
 
