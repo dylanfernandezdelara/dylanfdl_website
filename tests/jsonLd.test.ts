@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { SCHEMA_IDS, buildEssayPageJsonLd, buildHomePageJsonLd } from '@/lib/jsonLd'
+import { SCHEMA_IDS, buildArticlePageJsonLd, buildHomePageJsonLd } from '@/lib/jsonLd'
 import { PERSON_NAME, SITE_URL } from '@/lib/site'
 
 describe('jsonLd', () => {
@@ -22,12 +22,13 @@ describe('jsonLd', () => {
     })
   })
 
-  it('builds an essay graph with site entities and Article', () => {
-    const jsonLd = buildEssayPageJsonLd({
+  it('builds an article graph with site entities and Article', () => {
+    const jsonLd = buildArticlePageJsonLd({
       title: 'On Writing',
       description: 'Excerpt',
-      canonicalUrl: `${SITE_URL}/essays/purpose-of-writing`,
+      canonicalUrl: `${SITE_URL}/notes/purpose-of-writing`,
       datePublished: '2025-12-20T00:00:00.000Z',
+      dateModified: '2026-01-01T00:00:00.000Z',
     })
     const types = jsonLd['@graph'].map((node) => node['@type'])
 
@@ -36,6 +37,7 @@ describe('jsonLd', () => {
       '@type': 'Article',
       headline: 'On Writing',
       author: { '@id': SCHEMA_IDS.person },
+      dateModified: '2026-01-01T00:00:00.000Z',
     })
   })
 })

@@ -19,6 +19,8 @@ export function itemMatchesFilter(item: CardGridSerializableItem, filter: CardGr
       return true
     case 'projects':
       return item.category === 'projects'
+    case 'notes':
+      return item.category === 'notes'
     case 'music':
       return item.category === 'music'
     default: {

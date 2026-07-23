@@ -1,0 +1,47 @@
+/* Project meta */
+.article-project-meta {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1.25rem;
+}
+
+.article-project-meta__status {
+  font-size: 0.75rem;
+  color: var(--fg3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.article-project-meta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.article-project-meta__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: transform var(--article-duration-ui) var(--article-ease-out);
+}
+
+.article-project-meta__cta::after {
+  content: '→';
+  display: inline-block;
+  transition: transform var(--article-duration-ui) var(--article-ease-out);
+}
+
+@media (hover: hover) {
+  .article-project-meta__cta:hover {
+    transform: translateX(1px);
+  }
+
+  .article-project-meta__cta:hover::after {
+    transform: translateX(3px);
+  }
+}
+

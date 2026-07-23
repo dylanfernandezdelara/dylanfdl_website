@@ -9,16 +9,15 @@ npm install
 npm run dev
 ```
 
-Then open [http://localhost:4321](http://localhost:4321).
+Then open [http://localhost:3000](http://localhost:3000).
 
-## Writing posts
+## Writing
 
-Add Markdown files under `content/essays/` and use standard frontmatter:
+Projects and Notes are MDX folders under `content/projects/` and `content/notes/`. Prefer the generators:
 
-```md
----
-title: "Your Post Title"
-date: "2024-01-01"
-excerpt: "Brief excerpt"
----
+```bash
+npm run new:note -- "Your note title"
+npm run new:project -- "Your project title"
 ```
+
+See [docs/authoring.md](docs/authoring.md) for frontmatter, components, drafts, and publishing.

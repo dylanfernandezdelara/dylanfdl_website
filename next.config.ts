@@ -1,11 +1,18 @@
+import createMDX from '@next/mdx'
 import type { NextConfig } from 'next'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import rehypePrettyCode from 'rehype-pretty-code'
+import rehypeSlug from 'rehype-slug'
+import remarkFrontmatter from 'remark-frontmatter'
+import remarkGfm from 'remark-gfm'
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: __dirname,
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   async redirects() {
     return [
       {
@@ -24,8 +31,33 @@ const nextConfig: NextConfig = {
         destination: '/sitemap.xml',
         permanent: true,
       },
+      {
+        source: '/essays/:slug',
+        destination: '/notes/:slug',
+        permanent: true,
+      },
     ]
   },
 }
 
-export default nextConfig
+const withMDX = createMDX({
+  extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter],
+    rehypePlugins: [
+      rehypeSlug,
+      [
+        rehypePrettyCode,
+        {
+          theme: {
+            light: 'github-light',
+            dark: 'github-dark',
+          },
+          keepBackground: false,
+        },
+      ],
+    ],
+  },
+})
+
+export default withMDX(nextConfig)

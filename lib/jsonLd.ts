@@ -88,12 +88,13 @@ export function buildHomePageJsonLd(options: {
   }
 }
 
-/** Essay Article graph including shared site entities (matches former BaseLayout). */
-export function buildEssayPageJsonLd(options: {
+/** Article graph for Projects and Notes, including shared site entities. */
+export function buildArticlePageJsonLd(options: {
   title: string
   description: string
   canonicalUrl: string
   datePublished: string
+  dateModified?: string
 }) {
   return {
     '@context': 'https://schema.org',
@@ -104,6 +105,7 @@ export function buildEssayPageJsonLd(options: {
         headline: options.title,
         description: options.description,
         datePublished: options.datePublished,
+        ...(options.dateModified ? { dateModified: options.dateModified } : {}),
         author: { '@id': SCHEMA_IDS.person },
         publisher: { '@id': SCHEMA_IDS.publisher },
         mainEntityOfPage: options.canonicalUrl,

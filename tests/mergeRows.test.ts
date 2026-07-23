@@ -5,12 +5,12 @@ import { mergeRowsForFilter, shouldRestartEnterSequence } from '../components/ca
 import { itemKey, rowsForItems, type GridRow } from '../components/card-grid/model'
 import type { CardGridSerializableItem } from '../lib/buildCardGridItems'
 
-function essay(href: string, title: string): CardGridSerializableItem {
+function writing(href: string, title: string): CardGridSerializableItem {
   return {
-    kind: 'essay',
-    category: 'projects',
+    kind: 'writing',
+    category: 'notes',
     sortDate: '2025-01-01',
-    slug: href.replace('/essays/', ''),
+    slug: href.replace('/notes/', ''),
     title,
     dateLabel: 'Jan 2025',
     href,
@@ -36,32 +36,32 @@ function asRows(items: CardGridSerializableItem[], phase: GridRow['phase'] = 'st
 
 describe('shouldRestartEnterSequence', () => {
   it('returns false when there is no active previous row', () => {
-    const prev = asRows([essay('/essays/a', 'A')], 'exit')
-    expect(shouldRestartEnterSequence(prev, [essay('/essays/b', 'B')])).toBe(false)
+    const prev = asRows([writing('/notes/a', 'A')], 'exit')
+    expect(shouldRestartEnterSequence(prev, [writing('/notes/b', 'B')])).toBe(false)
   })
 
   it('returns true when active and wanted sets do not overlap', () => {
-    const prev = asRows([essay('/essays/a', 'A')])
-    expect(shouldRestartEnterSequence(prev, [essay('/essays/b', 'B')])).toBe(true)
+    const prev = asRows([writing('/notes/a', 'A')])
+    expect(shouldRestartEnterSequence(prev, [writing('/notes/b', 'B')])).toBe(true)
   })
 
   it('returns true when all active rows remain wanted but new rows are added', () => {
-    const prev = asRows([essay('/essays/a', 'A')])
-    const wanted = [essay('/essays/a', 'A'), essay('/essays/b', 'B')]
+    const prev = asRows([writing('/notes/a', 'A')])
+    const wanted = [writing('/notes/a', 'A'), writing('/notes/b', 'B')]
     expect(shouldRestartEnterSequence(prev, wanted)).toBe(true)
   })
 
   it('returns false when the same active set is still wanted', () => {
-    const prev = asRows([essay('/essays/a', 'A'), essay('/essays/b', 'B')])
-    const wanted = [essay('/essays/a', 'A'), essay('/essays/b', 'B')]
+    const prev = asRows([writing('/notes/a', 'A'), writing('/notes/b', 'B')])
+    const wanted = [writing('/notes/a', 'A'), writing('/notes/b', 'B')]
     expect(shouldRestartEnterSequence(prev, wanted)).toBe(false)
   })
 })
 
 describe('mergeRowsForFilter', () => {
   it('restarts enter sequence with staggered delays when there is no overlap', () => {
-    const prev = asRows([essay('/essays/a', 'A')])
-    const wanted = [essay('/essays/b', 'B'), essay('/essays/c', 'C')]
+    const prev = asRows([writing('/notes/a', 'A')])
+    const wanted = [writing('/notes/b', 'B'), writing('/notes/c', 'C')]
 
     const merged = mergeRowsForFilter(prev, wanted)
 
@@ -72,8 +72,8 @@ describe('mergeRowsForFilter', () => {
   })
 
   it('keeps overlapping rows in stay phase without re-entering', () => {
-    const prev = asRows([essay('/essays/a', 'A'), essay('/essays/b', 'B')])
-    const wanted = [essay('/essays/a', 'A')]
+    const prev = asRows([writing('/notes/a', 'A'), writing('/notes/b', 'B')])
+    const wanted = [writing('/notes/a', 'A')]
 
     const merged = mergeRowsForFilter(prev, wanted)
 
@@ -89,10 +89,10 @@ describe('mergeRowsForFilter', () => {
 
   it('restarts enter sequence when active rows remain but the wanted set grows', () => {
     const prev: GridRow[] = [
-      { item: essay('/essays/a', 'A'), phase: 'stay' },
-      { item: essay('/essays/b', 'B'), phase: 'stay' },
+      { item: writing('/notes/a', 'A'), phase: 'stay' },
+      { item: writing('/notes/b', 'B'), phase: 'stay' },
     ]
-    const wanted = [essay('/essays/a', 'A'), essay('/essays/b', 'B'), essay('/essays/c', 'C')]
+    const wanted = [writing('/notes/a', 'A'), writing('/notes/b', 'B'), writing('/notes/c', 'C')]
 
     const merged = mergeRowsForFilter(prev, wanted)
 
@@ -104,9 +104,9 @@ describe('mergeRowsForFilter', () => {
   })
 
   it('preserves an existing exit row instead of duplicating it', () => {
-    const exiting = { item: essay('/essays/a', 'A'), phase: 'exit' as const, exitDelayMs: 48 }
-    const prev: GridRow[] = [{ item: essay('/essays/b', 'B'), phase: 'stay' }, exiting]
-    const wanted = [essay('/essays/b', 'B')]
+    const exiting = { item: writing('/notes/a', 'A'), phase: 'exit' as const, exitDelayMs: 48 }
+    const prev: GridRow[] = [{ item: writing('/notes/b', 'B'), phase: 'stay' }, exiting]
+    const wanted = [writing('/notes/b', 'B')]
 
     const merged = mergeRowsForFilter(prev, wanted)
 
@@ -114,7 +114,7 @@ describe('mergeRowsForFilter', () => {
   })
 
   it('returns only exiting rows when wanted is empty', () => {
-    const prev = asRows([essay('/essays/a', 'A'), essay('/essays/b', 'B')])
+    const prev = asRows([writing('/notes/a', 'A'), writing('/notes/b', 'B')])
     const merged = mergeRowsForFilter(prev, [])
 
     expect(merged).toEqual([
@@ -125,10 +125,10 @@ describe('mergeRowsForFilter', () => {
 
   it('handles partial overlap with stay, enter, and exit rows', () => {
     const prev: GridRow[] = [
-      { item: essay('/essays/a', 'A'), phase: 'stay' },
+      { item: writing('/notes/a', 'A'), phase: 'stay' },
       { item: artifact('/music/old', 'Old'), phase: 'stay' },
     ]
-    const wanted = [essay('/essays/a', 'A'), artifact('/music/new', 'New')]
+    const wanted = [writing('/notes/a', 'A'), artifact('/music/new', 'New')]
 
     const merged = mergeRowsForFilter(prev, wanted)
 
@@ -142,7 +142,7 @@ describe('mergeRowsForFilter', () => {
 
 describe('mergeRowsForFilter keys', () => {
   it('keys rows by href', () => {
-    const item = essay('/essays/a', 'A')
-    expect(itemKey(item)).toBe('/essays/a')
+    const item = writing('/notes/a', 'A')
+    expect(itemKey(item)).toBe('/notes/a')
   })
 })
