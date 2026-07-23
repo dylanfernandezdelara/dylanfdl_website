@@ -37,7 +37,8 @@ export const PERSON_NAME_ALTERNATES = [
   'dylanfernandezdelara',
 ] as const
 
-export const DEFAULT_DESCRIPTION = PERSON_NAME
+export const DEFAULT_DESCRIPTION =
+  'Dylan Fernandez de Lara. Portfolio, projects, music.'
 
 export const NOT_FOUND_DESCRIPTION = 'Page not found on dylanfdl.com.'
 

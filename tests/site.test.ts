@@ -42,9 +42,9 @@ describe('site', () => {
     expect(OG_IMAGE_URL).toBe('https://dylanfdl.com/og-image.png')
   })
 
-  it('uses the full name as the default description', () => {
+  it('uses a short link-preview description', () => {
     expect(SITE_NAME).toBe('dylanfdl')
-    expect(DEFAULT_DESCRIPTION).toBe(PERSON_NAME)
+    expect(DEFAULT_DESCRIPTION).toBe('Dylan Fernandez de Lara. Portfolio, projects, music.')
   })
 
   it('lists all requested name variants for structured data', () => {
