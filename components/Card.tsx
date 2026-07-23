@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 import CardVideo from '@/components/CardVideo'
@@ -72,8 +73,8 @@ export default function Card({
   }
 
   return (
-    <a href={href} className={cn(cardClassName, 'text-inherit')}>
+    <Link href={href} prefetch className={cn(cardClassName, 'text-inherit')}>
       {inner}
-    </a>
+    </Link>
   )
 }

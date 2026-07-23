@@ -27,4 +27,14 @@ describe('next.config redirects', () => {
       permanent: true,
     })
   })
+
+  it('permanently redirects legacy essay URLs to notes', async () => {
+    const redirects = (await nextConfig.redirects?.()) ?? []
+
+    expect(redirects).toContainEqual({
+      source: '/essays/:slug',
+      destination: '/notes/:slug',
+      permanent: true,
+    })
+  })
 })

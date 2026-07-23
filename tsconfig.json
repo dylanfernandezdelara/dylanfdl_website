@@ -20,8 +20,11 @@
   },
   "include": [
     "next-env.d.ts",
+    "types/**/*.d.ts",
+    "mdx-components.tsx",
     "src/**/*",
     "components/**/*",
+    "content/**/*",
     "hooks/**/*",
     "lib/**/*",
     "tests/**/*",

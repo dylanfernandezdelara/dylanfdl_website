@@ -1,0 +1,30 @@
+/* Callouts */
+.article-callout {
+  margin: 1.5rem 0;
+  padding: 1rem 1.1rem;
+  border-left: 2px solid var(--bg3);
+  background: var(--bg1);
+  border-radius: 0 0.4rem 0.4rem 0;
+}
+
+.article-callout--tip {
+  border-left-color: var(--aqua);
+}
+
+.article-callout--warning {
+  border-left-color: var(--orange);
+}
+
+.article-callout__label {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg2);
+}
+
+.article-callout__body > :last-child {
+  margin-bottom: 0;
+}
+

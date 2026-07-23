@@ -12,7 +12,9 @@ type Props = {
 }
 
 function thumbnailFor(row: GridRow) {
-  return row.item.kind === 'essay' && row.item.thumbnail === 'editor' ? <EditorThumbnail /> : undefined
+  return row.item.kind === 'writing' && row.item.thumbnail === 'editor' ? (
+    <EditorThumbnail />
+  ) : undefined
 }
 
 export default function CardGridCard({ row, onEntered }: Props) {

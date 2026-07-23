@@ -1,12 +1,16 @@
-import { formatPostDateCardGrid, getAllPosts } from '@/lib/posts'
+import {
+  contentCanonicalPath,
+  formatContentDateCardGrid,
+  getPublishedEntries,
+} from '@/lib/content'
 
-export type CardGridFilter = 'all' | 'projects' | 'music'
+export type CardGridFilter = 'all' | 'projects' | 'notes' | 'music'
 export type CardGridThumbnail = 'editor'
 
 export type CardGridSerializableItem =
   | {
-      kind: 'essay'
-      category: 'projects'
+      kind: 'writing'
+      category: 'projects' | 'notes'
       sortDate: string
       slug: string
       title: string
@@ -33,6 +37,11 @@ interface ArtifactEntry {
   href: string
   videoSrc: string
   posterSrc: string
+}
+
+/** Bespoke card thumbnails keyed by content registry path. */
+const WRITING_THUMBNAILS: Record<string, CardGridThumbnail> = {
+  'notes/purpose-of-writing': 'editor',
 }
 
 const artifacts: ArtifactEntry[] = [
@@ -80,31 +89,34 @@ const artifacts: ArtifactEntry[] = [
   },
 ]
 
-const essayThumbnails = new Map<string, CardGridThumbnail>([['purpose-of-writing', 'editor']])
-
 export function buildCardGridItems(): CardGridSerializableItem[] {
-  const posts = getAllPosts()
-  const essayItems: CardGridSerializableItem[] = posts.map((post) => ({
-    kind: 'essay' as const,
-    category: 'projects' as const,
-    sortDate: post.date,
-    slug: post.slug,
-    title: post.title,
-    dateLabel: formatPostDateCardGrid(post.date),
-    href: `/essays/${post.slug}`,
-    thumbnail: essayThumbnails.get(post.slug),
-  }))
+  const writingItems: CardGridSerializableItem[] = getPublishedEntries().map((entry) => {
+    const registryKey = `${entry.kind}/${entry.slug}`
+    return {
+      kind: 'writing' as const,
+      category: entry.kind,
+      sortDate: entry.date,
+      slug: entry.slug,
+      title: entry.title,
+      dateLabel: formatContentDateCardGrid(entry.date),
+      href: contentCanonicalPath(entry.kind, entry.slug),
+      posterSrc: entry.cardImage,
+      thumbnail: WRITING_THUMBNAILS[registryKey],
+    }
+  })
 
-  const artifactItems: CardGridSerializableItem[] = artifacts.map((a) => ({
+  const artifactItems: CardGridSerializableItem[] = artifacts.map((artifact) => ({
     kind: 'artifact',
     category: 'music',
-    sortDate: a.date,
-    title: a.title,
-    dateLabel: formatPostDateCardGrid(a.date),
-    href: a.href,
-    videoSrc: a.videoSrc,
-    posterSrc: a.posterSrc,
+    sortDate: artifact.date,
+    title: artifact.title,
+    dateLabel: formatContentDateCardGrid(artifact.date),
+    href: artifact.href,
+    videoSrc: artifact.videoSrc,
+    posterSrc: artifact.posterSrc,
   }))
 
-  return [...essayItems, ...artifactItems].sort((a, b) => b.sortDate.localeCompare(a.sortDate))
+  return [...writingItems, ...artifactItems].sort((a, b) =>
+    b.sortDate.localeCompare(a.sortDate)
+  )
 }

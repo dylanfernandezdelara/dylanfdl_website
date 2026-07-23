@@ -1,0 +1,46 @@
+@media (max-width: 768px) {
+  body {
+    line-height: 1.6;
+  }
+
+  .article-shell__header {
+    margin-top: 2.5rem;
+  }
+
+  .article-shell__body blockquote,
+  article blockquote {
+    padding-left: 1rem;
+    margin: 1rem 0;
+  }
+
+  .article-code__pre {
+    padding: 0.75rem;
+  }
+
+  .article-figure {
+    margin: 1.25rem auto;
+  }
+
+  .article-figure--wide,
+  .article-figure--full {
+    width: 100%;
+    margin-left: 0;
+    transform: none;
+  }
+
+  .article-figure--wide.article-figure--reveal,
+  .article-figure--full.article-figure--reveal {
+    animation-name: article-figure-in-contained;
+  }
+}
+
+@media (max-width: 480px) {
+  .article-shell__body blockquote,
+  article blockquote {
+    padding-left: 0.75rem;
+  }
+
+  .article-code__pre {
+    padding: 0.5rem;
+  }
+}

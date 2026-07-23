@@ -1,0 +1,119 @@
+/* Prose */
+.article-shell__body :is(h1, h2, h3, h4, h5, h6),
+article :is(h1, h2, h3, h4, h5, h6) {
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+  color: var(--fg0);
+  scroll-margin-top: 5rem;
+}
+
+.article-shell__body h1,
+article h1 {
+  font-size: 1.5rem;
+}
+
+.article-shell__body h2,
+article h2,
+.article-heading--h2 {
+  font-size: 1.25rem;
+}
+
+.article-shell__body h3,
+article h3,
+.article-heading--h3 {
+  font-size: 1.125rem;
+}
+
+.article-shell__body h4,
+article h4,
+.article-heading--h4 {
+  font-size: 1rem;
+}
+
+.article-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.article-heading__anchor {
+  opacity: 0;
+  color: var(--fg3);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity var(--article-duration-fast) var(--article-ease-out);
+}
+
+.article-heading:hover .article-heading__anchor,
+.article-heading__anchor:focus-visible {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .article-heading__anchor {
+    display: none;
+  }
+}
+
+.article-shell__body p,
+article p {
+  margin-bottom: 1.5rem;
+  color: var(--fg1);
+}
+
+.article-shell__body strong,
+article strong {
+  font-weight: 700;
+  color: var(--fg0);
+}
+
+.article-shell__body em,
+article em {
+  font-style: italic;
+  color: var(--fg2);
+}
+
+.article-shell__body ul,
+.article-shell__body ol,
+article ul,
+article ol {
+  margin-bottom: 1.5rem;
+  padding-left: 0;
+  list-style-position: inside;
+}
+
+.article-shell__body li,
+article li {
+  margin-bottom: 0.5rem;
+  color: var(--fg1);
+}
+
+.article-shell__body blockquote,
+article blockquote {
+  border-left: 2px solid var(--bg2);
+  padding-left: 1.5rem;
+  margin: 1.5rem 0;
+  color: var(--fg3);
+  font-style: italic;
+}
+
+.article-shell__body :not(pre) > code,
+article :not(pre) > code {
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+  background-color: var(--bg1);
+  color: var(--purple);
+  padding: 0.2em 0.4em;
+  border: 1px solid var(--bg2);
+}
+
+.article-shell__body hr,
+article hr {
+  border: none;
+  border-top: 1px solid var(--bg2);
+  margin: 2rem 0;
+}
+

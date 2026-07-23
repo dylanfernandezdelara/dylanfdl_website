@@ -1,0 +1,70 @@
+---
+title: "Component showcase"
+date: "2026-07-23"
+summary: "Unpublished reference for the shared Projects/Notes editorial components and figure widths."
+draft: true
+topics: ["template"]
+---
+
+import DemoPipeline from './DemoPipeline'
+
+This draft Note exercises the shared editorial vocabulary. It stays local-only until `draft` is set to `false`.
+
+## Contents and headings
+
+Heading anchors appear on hover on desktop. The sticky contents rail tracks the active section as you scroll.
+
+### Nested section
+
+Nested headings indent in the table of contents.
+
+## Figures and widths
+
+Contained figures stay inside the reading column.
+
+<Figure width="contained" caption="A contained figure matches the prose measure.">
+  <BrowserFrame url="localhost:3000/demo">
+    <p style={{ margin: 0, color: 'var(--fg2)', fontSize: '0.9rem' }}>
+      Demo surface for interface walkthroughs.
+    </p>
+  </BrowserFrame>
+</Figure>
+
+Wide is the default editorial breakout for diagrams and recordings.
+
+<Figure width="wide" caption="A wide figure steps beyond the prose column.">
+  <DemoPipeline />
+</Figure>
+
+Full figures use the largest stage when a recording needs it.
+
+<Figure width="full" caption="A full-width stage for cinematic demos." credit="Replace with your own media under public/writing/.">
+  <div
+    style={{
+      aspectRatio: '16 / 9',
+      display: 'grid',
+      placeItems: 'center',
+      color: 'var(--fg3)',
+      fontSize: '0.9rem',
+      background: 'var(--bg2)',
+    }}
+  >
+    Drop an MP4/WebM into the media folder and wrap it with ArticleVideo.
+  </div>
+</Figure>
+
+## Callouts and code
+
+<Callout tone="tip" title="Authoring tip">
+  Keep most of the piece in Markdown. Reach for components only when a visual or interaction earns the interrupt.
+</Callout>
+
+```ts
+export function hello(name: string) {
+  return `Hello, ${name}`
+}
+```
+
+## Publishing
+
+Set `draft: false` when the piece is ready. Projects may also include `status`, `liveUrl`, and `repositoryUrl`.

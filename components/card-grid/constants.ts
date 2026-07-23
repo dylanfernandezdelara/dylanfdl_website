@@ -3,6 +3,7 @@ import type { CardGridFilter } from '@/lib/buildCardGridItems'
 export const TAB_OPTIONS: { id: CardGridFilter; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'projects', label: 'Projects' },
+  { id: 'notes', label: 'Notes' },
   { id: 'music', label: 'Music' },
 ]
 

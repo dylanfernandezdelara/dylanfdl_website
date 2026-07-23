@@ -1,0 +1,122 @@
+/* Motion tokens for editorial chrome and demos */
+:root {
+  --article-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --article-duration-fast: 150ms;
+  --article-duration-ui: 280ms;
+  --article-duration-enter: 520ms;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+.article-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  padding-bottom: 4rem;
+}
+
+@media (min-width: 1080px) {
+  .article-layout--with-toc {
+    grid-template-columns: 11rem minmax(0, 65ch);
+    column-gap: 2.5rem;
+    align-items: start;
+    justify-content: center;
+  }
+}
+
+.article-shell {
+  width: 100%;
+  max-width: 65ch;
+  margin: 0 auto;
+  min-width: 0;
+}
+
+.article-shell__header {
+  margin-top: 3rem;
+  margin-bottom: 2.5rem;
+  text-align: center;
+  animation: article-header-in var(--article-duration-enter) var(--article-ease-out) both;
+}
+
+.article-shell__kind {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg3);
+}
+
+.article-shell__title {
+  margin: 0;
+  text-wrap: balance;
+  font-family: var(--font-lora), ui-serif, Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--fg0);
+}
+
+.article-shell__summary {
+  margin: 1rem auto 0;
+  max-width: 55ch;
+  font-size: 0.875rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--fg2);
+  text-wrap: pretty;
+}
+
+.article-shell__date {
+  margin: 1rem 0 0;
+  font-size: 0.875rem;
+  color: var(--fg3);
+}
+
+.article-shell__body {
+  display: grid;
+  gap: 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--fg1);
+  animation: article-body-in var(--article-duration-enter) var(--article-ease-out) both;
+  animation-delay: 80ms;
+}
+
+@keyframes article-header-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes article-body-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-shell__header,
+  .article-shell__body,
+  .article-figure--reveal {
+    animation: none !important;
+  }
+}
+

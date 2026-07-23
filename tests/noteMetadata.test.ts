@@ -1,30 +1,30 @@
 import { describe, expect, it } from 'vitest'
 
-import { getPostBySlug } from '@/lib/posts'
+import { getEntryBySlug } from '@/lib/content'
 import { PERSON_NAME, absoluteUrl, buildPageTitle } from '@/lib/site'
-import { generateMetadata } from '@/src/app/essays/[slug]/page'
+import { generateMetadata } from '@/src/app/notes/[slug]/page'
 
-describe('essay generateMetadata', () => {
+describe('note generateMetadata', () => {
   it('builds title, description, canonical, and article OG fields', async () => {
-    const post = getPostBySlug('purpose-of-writing')
-    if (!post) {
-      throw new Error('expected purpose-of-writing essay fixture')
+    const entry = getEntryBySlug('notes', 'purpose-of-writing')
+    if (!entry) {
+      throw new Error('expected purpose-of-writing note fixture')
     }
 
     const metadata = await generateMetadata({
-      params: Promise.resolve({ slug: post.slug }),
+      params: Promise.resolve({ slug: entry.slug }),
     })
 
-    const pageTitle = buildPageTitle({ title: post.title })
+    const pageTitle = buildPageTitle({ title: entry.title })
 
     expect(metadata.title).toEqual({ absolute: pageTitle })
-    expect(metadata.description).toBe(post.excerpt)
-    expect(metadata.alternates).toEqual({ canonical: `/essays/${post.slug}` })
+    expect(metadata.description).toBe(entry.summary)
+    expect(metadata.alternates).toEqual({ canonical: `/notes/${entry.slug}` })
     expect(metadata.openGraph).toMatchObject({
       type: 'article',
       title: pageTitle,
-      description: post.excerpt,
-      url: absoluteUrl(`/essays/${post.slug}`),
+      description: entry.summary,
+      url: absoluteUrl(`/notes/${entry.slug}`),
       siteName: PERSON_NAME,
     })
   })
@@ -33,7 +33,7 @@ describe('essay generateMetadata', () => {
     await expect(
       generateMetadata({
         params: Promise.resolve({ slug: 'does-not-exist' }),
-      }),
+      })
     ).resolves.toEqual({})
   })
 })

@@ -1,21 +1,22 @@
 import { describe, expect, it } from 'vitest'
 
-import { getAllPosts } from '@/lib/posts'
+import { contentCanonicalPath, getPublishedEntries } from '@/lib/content'
 import { SITE_URL, SITEMAP_INDEX_URL, absoluteUrl } from '@/lib/site'
 import robots from '@/src/app/robots'
 import sitemap from '@/src/app/sitemap'
 
 describe('sitemap', () => {
-  it('includes the home page and every essay', () => {
+  it('includes the home page and every published writing entry', () => {
     const entries = sitemap()
     const urls = entries.map((entry) => entry.url)
-    const posts = getAllPosts()
+    const published = getPublishedEntries()
 
     expect(urls).toContain(SITE_URL)
-    for (const post of posts) {
-      expect(urls).toContain(absoluteUrl(`/essays/${post.slug}`))
+    for (const entry of published) {
+      expect(urls).toContain(absoluteUrl(contentCanonicalPath(entry.kind, entry.slug)))
     }
-    expect(urls).toHaveLength(1 + posts.length)
+    expect(urls).toHaveLength(1 + published.length)
+    expect(urls.some((url) => url.includes('component-showcase'))).toBe(false)
   })
 })
 

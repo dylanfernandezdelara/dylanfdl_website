@@ -1,0 +1,63 @@
+/* Code */
+.article-code {
+  margin: 1.5rem 0;
+  border: 1px solid var(--bg2);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--bg1);
+}
+
+.article-code__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.75rem;
+  border-bottom: 1px solid var(--bg2);
+}
+
+.article-code__lang {
+  font-size: 0.7rem;
+  color: var(--fg3);
+  text-transform: lowercase;
+}
+
+.article-code__copy {
+  border: 0;
+  background: transparent;
+  color: var(--fg3);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.15rem 0.35rem;
+}
+
+.article-code__copy-label {
+  display: inline-block;
+  transition:
+    opacity var(--article-duration-fast) ease-in-out,
+    transform var(--article-duration-fast) ease-in-out,
+    filter var(--article-duration-fast) ease-in-out;
+}
+
+.article-code__copy.is-copied .article-code__copy-label {
+  color: var(--fg0);
+}
+
+.article-code__pre {
+  margin: 0 !important;
+  padding: 1rem;
+  overflow-x: auto;
+  background: transparent !important;
+  border: 0 !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.article-code__pre code {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  color: var(--fg1);
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.875rem;
+}
+
