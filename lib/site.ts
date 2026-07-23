@@ -38,7 +38,7 @@ export const PERSON_NAME_ALTERNATES = [
 ] as const
 
 export const DEFAULT_DESCRIPTION =
-  'Dylan Fernandez de Lara. Portfolio, projects, music.'
+  `${PERSON_NAME}. Portfolio, projects, music.`
 
 export const NOT_FOUND_DESCRIPTION = 'Page not found on dylanfdl.com.'
 

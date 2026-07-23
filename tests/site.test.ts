@@ -44,7 +44,7 @@ describe('site', () => {
 
   it('uses a short link-preview description', () => {
     expect(SITE_NAME).toBe('dylanfdl')
-    expect(DEFAULT_DESCRIPTION).toBe('Dylan Fernandez de Lara. Portfolio, projects, music.')
+    expect(DEFAULT_DESCRIPTION).toBe(`${PERSON_NAME}. Portfolio, projects, music.`)
   })
 
   it('lists all requested name variants for structured data', () => {
