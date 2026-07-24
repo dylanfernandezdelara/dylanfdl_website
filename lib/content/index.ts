@@ -3,6 +3,7 @@ export {
   formatContentDateCardGrid,
   parseContentDate,
 } from '@/lib/content/dates'
+export { resolveContentDescription } from '@/lib/content/description'
 export { includeDraftEntries } from '@/lib/content/draftPolicy'
 export { parseContentFrontMatter } from '@/lib/content/frontmatter'
 export { extractContentHeadings } from '@/lib/content/headings'

@@ -16,20 +16,21 @@ describe('note generateMetadata', () => {
       throw new Error('expected purpose-of-writing note fixture')
     }
 
+    expect(entry.summary).toBeUndefined()
+
     const metadata = await generateMetadata({
       params: Promise.resolve({ slug: entry.slug }),
     })
 
     const pageTitle = buildPageTitle({ title: entry.title })
-    const description = entry.summary ?? DEFAULT_DESCRIPTION
 
     expect(metadata.title).toEqual({ absolute: pageTitle })
-    expect(metadata.description).toBe(description)
+    expect(metadata.description).toBe(DEFAULT_DESCRIPTION)
     expect(metadata.alternates).toEqual({ canonical: `/notes/${entry.slug}` })
     expect(metadata.openGraph).toMatchObject({
       type: 'article',
       title: pageTitle,
-      description,
+      description: DEFAULT_DESCRIPTION,
       url: absoluteUrl(`/notes/${entry.slug}`),
       siteName: PERSON_NAME,
     })

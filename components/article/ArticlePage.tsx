@@ -7,12 +7,12 @@ import {
   contentCanonicalPath,
   contentRegistryKey,
   getEntryBySlug,
+  resolveContentDescription,
   type ContentKind,
 } from '@/lib/content'
 import { loadContentModule } from '@/lib/content/registry.generated'
 import { buildArticlePageJsonLd } from '@/lib/jsonLd'
 import {
-  DEFAULT_DESCRIPTION,
   OPEN_GRAPH_BASE,
   absoluteUrl,
   buildPageTitle,
@@ -42,7 +42,7 @@ export async function generateArticleMetadata({
   }
 
   const pageTitle = buildPageTitle({ title: entry.title })
-  const description = entry.summary ?? DEFAULT_DESCRIPTION
+  const description = resolveContentDescription(entry.summary)
   const canonicalPath = contentCanonicalPath(entry.kind, entry.slug)
   const articlePublishedIso = toIsoDateTime(entry.date)
   const ogImage = entry.ogImage
@@ -97,7 +97,7 @@ export default async function ArticlePage({ kind, slug }: ArticlePageParams) {
       <JsonLdScript
         data={buildArticlePageJsonLd({
           title: entry.title,
-          description: entry.summary ?? DEFAULT_DESCRIPTION,
+          description: resolveContentDescription(entry.summary),
           canonicalUrl,
           datePublished: articlePublishedIso,
           dateModified: entry.updated ? toIsoDateTime(entry.updated) : undefined,

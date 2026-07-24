@@ -48,7 +48,7 @@ Common fields:
 title: "Title"
 date: "2026-07-23" # quote dates — unquoted YAML becomes a Date
 updated: "2026-08-01" # optional
-summary: "Optional. One or two sentences for cards, SEO, and long-form intros."
+# summary: "One or two sentences for cards, SEO, and long-form intros." # optional
 draft: true # boolean only; strings like "true" / yes are rejected
 topics: ["interfaces", "ai"]
 cardImage: "/writing/notes/my-slug/card.png"

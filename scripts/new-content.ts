@@ -62,7 +62,7 @@ const projectFields =
 const starter = `---
 title: "${title.replace(/"/g, '\\"')}"
 date: "${today()}"
-summary: "Optional. One or two sentences that orient the reader."
+# summary: "One or two sentences that orient the reader."
 draft: true
 topics: []
 ${projectFields}---
