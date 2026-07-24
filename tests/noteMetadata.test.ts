@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import { getEntryBySlug } from '@/lib/content'
-import { PERSON_NAME, absoluteUrl, buildPageTitle } from '@/lib/site'
+import {
+  DEFAULT_DESCRIPTION,
+  PERSON_NAME,
+  absoluteUrl,
+  buildPageTitle,
+} from '@/lib/site'
 import { generateMetadata } from '@/src/app/notes/[slug]/page'
 
 describe('note generateMetadata', () => {
@@ -16,14 +21,15 @@ describe('note generateMetadata', () => {
     })
 
     const pageTitle = buildPageTitle({ title: entry.title })
+    const description = entry.summary ?? DEFAULT_DESCRIPTION
 
     expect(metadata.title).toEqual({ absolute: pageTitle })
-    expect(metadata.description).toBe(entry.summary)
+    expect(metadata.description).toBe(description)
     expect(metadata.alternates).toEqual({ canonical: `/notes/${entry.slug}` })
     expect(metadata.openGraph).toMatchObject({
       type: 'article',
       title: pageTitle,
-      description: entry.summary,
+      description,
       url: absoluteUrl(`/notes/${entry.slug}`),
       siteName: PERSON_NAME,
     })

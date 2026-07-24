@@ -35,7 +35,7 @@ function coerceDateField(
 
 function requireStringFrontMatter(
   frontMatter: Record<string, unknown>,
-  field: 'title' | 'summary',
+  field: 'title',
   kind: ContentKind,
   slug: string
 ): string {
@@ -143,7 +143,7 @@ export function parseContentFrontMatter(
   const shared = {
     title: requireStringFrontMatter(frontMatter, 'title', kind, slug),
     date,
-    summary: requireStringFrontMatter(frontMatter, 'summary', kind, slug),
+    summary: optionalString(frontMatter, 'summary'),
     draft: parseDraft(frontMatter),
     updated,
     topics: parseTopics(frontMatter),

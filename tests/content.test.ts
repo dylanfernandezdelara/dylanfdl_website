@@ -16,7 +16,25 @@ import {
 } from '@/lib/content'
 
 describe('parseContentFrontMatter', () => {
-  it('accepts valid title, date, and summary', () => {
+  it('accepts valid title and date without summary', () => {
+    expect(
+      parseContentFrontMatter(
+        {
+          title: 'On Writing',
+          date: '2025-12-20',
+        },
+        'notes',
+        'purpose-of-writing'
+      )
+    ).toMatchObject({
+      kind: 'notes',
+      title: 'On Writing',
+      date: '2025-12-20',
+      draft: false,
+    })
+  })
+
+  it('accepts an optional summary when provided', () => {
     expect(
       parseContentFrontMatter(
         {
@@ -26,14 +44,8 @@ describe('parseContentFrontMatter', () => {
         },
         'notes',
         'purpose-of-writing'
-      )
-    ).toMatchObject({
-      kind: 'notes',
-      title: 'On Writing',
-      date: '2025-12-20',
-      summary: 'A short summary',
-      draft: false,
-    })
+      ).summary
+    ).toBe('A short summary')
   })
 
   it('coerces unquoted YAML Date objects to YYYY-MM-DD', () => {
@@ -42,7 +54,6 @@ describe('parseContentFrontMatter', () => {
         {
           title: 'On Writing',
           date: new Date(Date.UTC(2025, 11, 20)),
-          summary: 'A short summary',
         },
         'notes',
         'slug'
@@ -56,7 +67,6 @@ describe('parseContentFrontMatter', () => {
         {
           title: 'Title',
           date: '2025-12-20',
-          summary: 'summary',
           draft: 'true',
         },
         'notes',
@@ -69,7 +79,6 @@ describe('parseContentFrontMatter', () => {
         {
           title: 'Title',
           date: '2025-12-20',
-          summary: 'summary',
           draft: 'yes',
         },
         'notes',
@@ -80,15 +89,11 @@ describe('parseContentFrontMatter', () => {
 
   it('rejects missing required fields and invalid dates', () => {
     expect(() =>
-      parseContentFrontMatter({ date: '2025-12-20', summary: 'summary' }, 'notes', 'slug')
+      parseContentFrontMatter({ date: '2025-12-20' }, 'notes', 'slug')
     ).toThrow('missing required frontmatter field "title"')
 
     expect(() =>
-      parseContentFrontMatter(
-        { title: 'Title', date: '2025-12', summary: 'summary' },
-        'notes',
-        'slug'
-      )
+      parseContentFrontMatter({ title: 'Title', date: '2025-12' }, 'notes', 'slug')
     ).toThrow('invalid date frontmatter "2025-12"')
   })
 
@@ -98,7 +103,6 @@ describe('parseContentFrontMatter', () => {
         {
           title: 'Title',
           date: '2025-12-20',
-          summary: 'summary',
           liveUrl: 'https://example.com',
         },
         'notes',
@@ -112,7 +116,6 @@ describe('parseContentFrontMatter', () => {
       {
         title: 'Tool',
         date: '2025-12-20',
-        summary: 'summary',
         status: 'active',
         liveUrl: 'https://example.com',
       },
@@ -177,7 +180,7 @@ describe('content loading', () => {
     expect(entry?.kind).toBe('notes')
     expect(entry?.title).toBe('On Writing')
     expect(entry?.date).toBe('2025-12-20')
-    expect(entry?.summary.length).toBeGreaterThan(0)
+    expect(entry?.summary).toBeUndefined()
     expect(entry?.draft).toBe(false)
   })
 

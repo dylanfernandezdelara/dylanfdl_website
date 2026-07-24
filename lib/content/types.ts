@@ -12,7 +12,7 @@ type SharedFrontMatter = {
   title: string
   date: string
   updated?: string
-  summary: string
+  summary?: string
   draft: boolean
   topics: string[]
   cardImage?: string

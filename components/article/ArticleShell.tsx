@@ -48,7 +48,9 @@ export default function ArticleShell({ entry, children }: ArticleShellProps) {
               {entry.draft ? ' · Draft' : ''}
             </p>
             <h1 className="article-shell__title">{entry.title}</h1>
-            <p className="article-shell__summary">{entry.summary}</p>
+            {entry.summary ? (
+              <p className="article-shell__summary">{entry.summary}</p>
+            ) : null}
             <p className="article-shell__date">
               {formatContentDate(entry.date)}
               {entry.updated ? ` · Updated ${formatContentDate(entry.updated)}` : ''}
