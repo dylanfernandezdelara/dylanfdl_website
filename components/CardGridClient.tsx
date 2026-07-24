@@ -41,13 +41,11 @@ export default function CardGridClient({ items, children }: Props) {
       if (!container || !btn) {
         return
       }
-      const c = container.getBoundingClientRect()
-      const b = btn.getBoundingClientRect()
       setIndicator({
-        left: b.left - c.left,
-        top: b.top - c.top,
-        width: b.width,
-        height: b.height,
+        left: btn.offsetLeft,
+        top: btn.offsetTop,
+        width: btn.offsetWidth,
+        height: btn.offsetHeight,
       })
       setIndicatorReady(true)
     }
