@@ -107,5 +107,5 @@ Then reference them as `/writing/<kind>/<slug>/demo.mp4`.
 
 - Prose stays at the 65ch reading measure.
 - Selected visuals use the editorial breakout (`wide`) by default.
-- Desktop pages show a sticky contents rail; mobile collapses it to an accordion.
+- Desktop pages show a sticky contents rail; mobile hides the contents entirely.
 - Diagrams and recordings loop only while visible and pause under `prefers-reduced-motion`.

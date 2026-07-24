@@ -7,6 +7,12 @@
     margin-top: 2.5rem;
   }
 
+  /* 15px body on narrow screens: closer to the 14px used across the rest of the
+     site, and restores heading contrast (h2 becomes 1.33x body instead of 1.25x). */
+  .article-shell__body {
+    font-size: 0.9375rem;
+  }
+
   .article-shell__body blockquote,
   article blockquote {
     padding-left: 1rem;
