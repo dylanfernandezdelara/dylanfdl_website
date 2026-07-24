@@ -12,10 +12,9 @@ type ArticleTocProps = {
 type TocListProps = {
   headings: ContentHeading[]
   activeId: string | null
-  onNavigate?: () => void
 }
 
-function TocList({ headings, activeId, onNavigate }: TocListProps) {
+function TocList({ headings, activeId }: TocListProps) {
   return (
     <ol className="article-toc__list">
       {headings.map((heading) => (
@@ -30,7 +29,6 @@ function TocList({ headings, activeId, onNavigate }: TocListProps) {
           <a
             href={`#${heading.id}`}
             aria-current={activeId === heading.id ? 'location' : undefined}
-            onClick={onNavigate}
           >
             {heading.text}
           </a>
@@ -42,7 +40,6 @@ function TocList({ headings, activeId, onNavigate }: TocListProps) {
 
 export default function ArticleToc({ headings }: ArticleTocProps) {
   const [activeId, setActiveId] = useState<string | null>(headings[0]?.id ?? null)
-  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (headings.length === 0) {
@@ -85,30 +82,9 @@ export default function ArticleToc({ headings }: ArticleTocProps) {
   }
 
   return (
-    <>
-      <nav aria-label="Contents" className="article-toc article-toc--desktop">
-        <p className="article-toc__label">Contents</p>
-        <TocList headings={headings} activeId={activeId} />
-      </nav>
-
-      <div className="article-toc article-toc--mobile">
-        <button
-          type="button"
-          className="article-toc__accordion"
-          aria-expanded={open}
-          onClick={() => setOpen((value) => !value)}
-        >
-          <span>Contents</span>
-          <span className={cn('article-toc__chevron', open && 'is-open')} aria-hidden="true" />
-        </button>
-        <div className={cn('article-toc__panel', open && 'is-open')} hidden={!open}>
-          <TocList
-            headings={headings}
-            activeId={activeId}
-            onNavigate={() => setOpen(false)}
-          />
-        </div>
-      </div>
-    </>
+    <nav aria-label="Contents" className="article-toc">
+      <p className="article-toc__label">Contents</p>
+      <TocList headings={headings} activeId={activeId} />
+    </nav>
   )
 }

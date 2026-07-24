@@ -1,26 +1,14 @@
 /* TOC */
-.article-toc--desktop {
+.article-toc {
   display: none;
 }
 
-.article-toc--mobile {
-  display: block;
-  margin-top: 2rem;
-  border: 1px solid var(--bg2);
-  border-radius: 0.5rem;
-  background: var(--bg1);
-}
-
 @media (min-width: 1080px) {
-  .article-toc--desktop {
+  .article-toc {
     display: block;
     position: sticky;
     top: 6rem;
     padding-top: 3rem;
-  }
-
-  .article-toc--mobile {
-    display: none;
   }
 }
 
@@ -60,50 +48,3 @@
 .article-toc__item a[aria-current='location'] {
   color: var(--fg0);
 }
-
-.article-toc__accordion {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.85rem 1rem;
-  background: transparent;
-  border: 0;
-  color: var(--fg1);
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-.article-toc__chevron {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(45deg);
-  transition: transform var(--article-duration-ui) var(--article-ease-out);
-}
-
-.article-toc__chevron.is-open {
-  transform: rotate(225deg);
-}
-
-.article-toc__panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows var(--article-duration-ui) var(--article-ease-out);
-}
-
-.article-toc__panel.is-open {
-  grid-template-rows: 1fr;
-}
-
-.article-toc__panel[hidden] {
-  display: grid;
-}
-
-.article-toc__panel .article-toc__list {
-  overflow: hidden;
-  padding: 0 1rem 0.85rem;
-}
-
