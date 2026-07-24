@@ -29,18 +29,6 @@ export const metadata: Metadata = {
   title: HOME_PAGE_TITLE,
   description: DEFAULT_DESCRIPTION,
   authors: [{ name: PERSON_NAME }],
-  icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: '16x16 32x32', type: 'image/x-icon' },
-      { url: '/favicon-poppy-16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-poppy-32.png', sizes: '32x32', type: 'image/png' },
-    ],
-    apple: {
-      url: '/apple-touch-icon-poppy.png',
-      sizes: '180x180',
-      type: 'image/png',
-    },
-  },
   openGraph: {
     ...OPEN_GRAPH_BASE,
     type: 'website',
