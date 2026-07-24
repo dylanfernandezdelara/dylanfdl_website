@@ -1,4 +1,3 @@
-/* Prose */
 .article-shell__body :is(h1, h2, h3, h4, h5, h6),
 article :is(h1, h2, h3, h4, h5, h6) {
   font-weight: 700;

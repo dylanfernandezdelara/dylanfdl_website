@@ -52,9 +52,12 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  /* Default subpixel smoothing (matches rajan.sh). `antialiased` makes the same hex look lighter/thinner. */
+  /*
+   * Intentional defaults:
+   * - no font-smoothing override (subpixel matches rajan.sh; Tailwind `antialiased` thins glyphs)
+   * - overflow-x clip stays on html, not body (avoids nested scrollbars during grid animations)
+   */
   word-wrap: break-word;
-  /* Horizontal clipping lives on html — avoids overflow-x non-visible pairing that forces overflow-y:auto on body and nested scrollbars squeezing main by ~1 scrollbar width during grid animations. */
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;

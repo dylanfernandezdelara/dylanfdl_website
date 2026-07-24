@@ -16,9 +16,8 @@ function normalizeHeadingText(raw: string): string {
 }
 
 /**
- * Extract h2/h3 headings from MDX/markdown body for the article TOC.
- * Uses github-slugger (same as rehype-slug) so TOC ids match rendered heading ids.
- * Ignores fenced code blocks so hashes inside demos are not treated as headings.
+ * TOC headings from MDX body. Uses github-slugger (same as rehype-slug) and
+ * skips fenced code so demo hashes are not treated as headings.
  */
 export function extractContentHeadings(markdown: string): ContentHeading[] {
   const headings: ContentHeading[] = []

@@ -66,7 +66,6 @@ function siteEntities() {
   return [websiteJsonLd(), publisherJsonLd(), personJsonLd()]
 }
 
-/** Home ProfilePage graph including shared site entities (matches former BaseLayout). */
 export function buildHomePageJsonLd(options: {
   canonicalUrl: string
   description?: string
@@ -88,7 +87,6 @@ export function buildHomePageJsonLd(options: {
   }
 }
 
-/** Article graph for Projects and Notes, including shared site entities. */
 export function buildArticlePageJsonLd(options: {
   title: string
   description: string

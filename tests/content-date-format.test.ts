@@ -39,7 +39,6 @@ describe('formatContentDateCardGrid', () => {
     expect(formatContentDateCardGrid('2024-02-31')).toBe('2024-02-31')
     expect(formatContentDateCardGrid('2024-04-31')).toBe('2024-04-31')
     expect(formatContentDateCardGrid('2023-02-29')).toBe('2023-02-29')
-    // Leap day is still valid.
     expect(formatContentDateCardGrid('2024-02-29')).toBe('Feb 2024')
   })
 

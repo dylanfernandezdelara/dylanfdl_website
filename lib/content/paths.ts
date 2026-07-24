@@ -11,7 +11,6 @@ export function isValidContentSlug(slug: string): boolean {
   return CONTENT_SLUG_PATTERN.test(slug)
 }
 
-/** Derive a valid content slug from a title, or null if impossible. */
 export function slugifyTitle(title: string): string | null {
   const slug = title
     .toLowerCase()

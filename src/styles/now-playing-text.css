@@ -103,6 +103,5 @@
   line-height: inherit;
   vertical-align: baseline;
   --slot-text-cell-line-height: var(--slot-text-cell-line-height-italic);
-  /* font-synthesis: none disables synthetic slant when a true italic face is missing. */
   font-synthesis: none;
 }
