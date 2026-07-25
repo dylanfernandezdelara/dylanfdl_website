@@ -1,26 +1,11 @@
 'use client'
 
-import {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react'
+import { useRef, type ReactNode } from 'react'
 
 import CardGridColumns from '@/components/card-grid/CardGridColumns'
 import CardGridTabs from '@/components/card-grid/CardGridTabs'
-import { smoothEase, TAB_OPTIONS, tabTransitionMs } from '@/components/card-grid/constants'
 import useCardGridRows from '@/components/card-grid/useCardGridRows'
 import type { CardGridSerializableItem } from '@/lib/buildCardGridItems'
-
-type TabIndicator = {
-  left: number
-  top: number
-  width: number
-  height: number
-}
 
 type Props = {
   items: CardGridSerializableItem[]
@@ -29,90 +14,11 @@ type Props = {
 
 export default function CardGridClient({ items, children }: Props) {
   const { activeRows, exitRows, filter, markRowEntered, selectFilter } = useCardGridRows(items)
-  const tabContainerRef = useRef<HTMLDivElement>(null)
   const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([])
-  const measureRafRef = useRef<number | null>(null)
-  const [indicator, setIndicator] = useState<TabIndicator>({
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0,
-  })
-  const [indicatorReady, setIndicatorReady] = useState(false)
-  // Transitions stay off until after the first measured paint so Home remount
-  // does not grow the pill from 0×0 over the All tab.
-  const [indicatorCanAnimate, setIndicatorCanAnimate] = useState(false)
-
-  useLayoutEffect(() => {
-    function measureNow() {
-      const container = tabContainerRef.current
-      const idx = TAB_OPTIONS.findIndex((t) => t.id === filter)
-      const btn = tabButtonRefs.current[idx]
-      if (!container || !btn) {
-        return
-      }
-      setIndicator({
-        left: btn.offsetLeft,
-        top: btn.offsetTop,
-        width: btn.offsetWidth,
-        height: btn.offsetHeight,
-      })
-      setIndicatorReady(true)
-    }
-
-    function scheduleCoalescedTabIndicatorMeasure() {
-      if (measureRafRef.current !== null) {
-        cancelAnimationFrame(measureRafRef.current)
-      }
-      measureRafRef.current = requestAnimationFrame(() => {
-        measureRafRef.current = null
-        measureNow()
-      })
-    }
-
-    measureNow()
-
-    window.addEventListener('resize', scheduleCoalescedTabIndicatorMeasure)
-    return () => {
-      if (measureRafRef.current !== null) {
-        cancelAnimationFrame(measureRafRef.current)
-        measureRafRef.current = null
-      }
-      window.removeEventListener('resize', scheduleCoalescedTabIndicatorMeasure)
-    }
-  }, [filter])
-
-  useEffect(() => {
-    if (!indicatorReady || indicatorCanAnimate) {
-      return
-    }
-    setIndicatorCanAnimate(true)
-  }, [indicatorReady, indicatorCanAnimate])
-
-  const indicatorStyle = useMemo(
-    () => ({
-      left: indicator.left,
-      top: indicator.top,
-      width: indicator.width,
-      height: indicator.height,
-      transitionProperty: indicatorCanAnimate ? 'left, top, width, height' : 'none',
-      transitionDuration: `${tabTransitionMs}ms`,
-      transitionTimingFunction: smoothEase,
-    }),
-    [indicator, indicatorCanAnimate]
-  )
 
   return (
     <div className="mt-8">
-      <CardGridTabs
-        filter={filter}
-        indicator={indicator}
-        indicatorReady={indicatorReady}
-        indicatorStyle={indicatorStyle}
-        tabButtonRefs={tabButtonRefs}
-        tabContainerRef={tabContainerRef}
-        onSelect={selectFilter}
-      />
+      <CardGridTabs filter={filter} tabButtonRefs={tabButtonRefs} onSelect={selectFilter} />
 
       <div
         className="relative"

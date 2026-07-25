@@ -1,4 +1,4 @@
-import type { CSSProperties, KeyboardEvent, MutableRefObject, RefObject } from 'react'
+import type { KeyboardEvent, MutableRefObject } from 'react'
 
 import { TAB_OPTIONS } from '@/components/card-grid/constants'
 import type { CardGridFilter } from '@/lib/buildCardGridItems'
@@ -7,20 +7,9 @@ import { cn } from '@/lib/utils'
 const tabButtonBase =
   'relative z-10 rounded-md px-2.5 py-1.5 text-sm font-medium leading-none transition-colors duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue motion-reduce:transition-none'
 
-type TabIndicator = {
-  left: number
-  top: number
-  width: number
-  height: number
-}
-
 type Props = {
   filter: CardGridFilter
-  indicator: TabIndicator
-  indicatorReady: boolean
-  indicatorStyle: CSSProperties
   tabButtonRefs: MutableRefObject<(HTMLButtonElement | null)[]>
-  tabContainerRef: RefObject<HTMLDivElement | null>
   onSelect: (filter: CardGridFilter) => void
 }
 
@@ -28,15 +17,7 @@ function focusTab(index: number, tabButtonRefs: MutableRefObject<(HTMLButtonElem
   tabButtonRefs.current[index]?.focus()
 }
 
-export default function CardGridTabs({
-  filter,
-  indicator,
-  indicatorReady,
-  indicatorStyle,
-  tabButtonRefs,
-  tabContainerRef,
-  onSelect,
-}: Props) {
+export default function CardGridTabs({ filter, tabButtonRefs, onSelect }: Props) {
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     const lastIndex = TAB_OPTIONS.length - 1
     let nextIndex: number | null = null
@@ -70,19 +51,7 @@ export default function CardGridTabs({
 
   return (
     <div className="mb-4 flex flex-wrap gap-2 min-[640px]:mb-5">
-      <div
-        ref={tabContainerRef}
-        role="tablist"
-        aria-label="Filter work"
-        className="relative inline-flex rounded-md border border-bg3 bg-bg2 p-0.5"
-      >
-        {indicatorReady && indicator.width > 0 ? (
-          <span
-            aria-hidden
-            className="pointer-events-none absolute z-0 rounded-md bg-bg0 shadow-sm motion-reduce:hidden"
-            style={indicatorStyle}
-          />
-        ) : null}
+      <div role="tablist" aria-label="Filter work" className="relative inline-flex rounded-md border border-bg3 bg-bg2 p-0.5">
         {TAB_OPTIONS.map(({ id, label }, index) => {
           const selected = filter === id
 
@@ -98,7 +67,10 @@ export default function CardGridTabs({
               aria-selected={selected}
               aria-controls={selected ? 'tabpanel-work' : undefined}
               tabIndex={selected ? 0 : -1}
-              className={cn(tabButtonBase, selected ? 'text-fg0' : 'text-fg3 hover:text-fg1')}
+              className={cn(
+                tabButtonBase,
+                selected ? 'bg-bg0 text-fg0 shadow-sm' : 'text-fg3 hover:text-fg1',
+              )}
               onClick={() => onSelect(id)}
               onKeyDown={(event) => handleKeyDown(event, index)}
             >
