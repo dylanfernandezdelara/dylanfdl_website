@@ -78,7 +78,8 @@ export default function CardGridClient({ items, children }: Props) {
       top: indicator.top,
       width: indicator.width,
       height: indicator.height,
-      transitionProperty: 'left, top, width, height, opacity',
+      // Omit opacity so the pill does not fade in when Home remounts.
+      transitionProperty: 'left, top, width, height',
       transitionDuration: `${tabTransitionMs}ms`,
       transitionTimingFunction: smoothEase,
     }),
