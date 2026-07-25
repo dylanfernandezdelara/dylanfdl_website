@@ -1,6 +1,6 @@
-import { SITE_URL } from '../site.config.mjs'
+import { APEX_HOST, SITE_URL } from '../site.config.mjs'
 
-export { SITE_URL }
+export { APEX_HOST, SITE_URL }
 
 export const SITE_NAME = 'dylanfdl'
 
