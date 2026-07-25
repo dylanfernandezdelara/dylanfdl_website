@@ -1,6 +1,13 @@
 'use client'
 
-import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 
 import CardGridColumns from '@/components/card-grid/CardGridColumns'
 import CardGridTabs from '@/components/card-grid/CardGridTabs'
@@ -32,6 +39,9 @@ export default function CardGridClient({ items, children }: Props) {
     height: 0,
   })
   const [indicatorReady, setIndicatorReady] = useState(false)
+  // Transitions stay off until after the first measured paint so Home remount
+  // does not grow the pill from 0×0 over the All tab.
+  const [indicatorCanAnimate, setIndicatorCanAnimate] = useState(false)
 
   useLayoutEffect(() => {
     function measureNow() {
@@ -72,18 +82,24 @@ export default function CardGridClient({ items, children }: Props) {
     }
   }, [filter])
 
+  useEffect(() => {
+    if (!indicatorReady || indicatorCanAnimate) {
+      return
+    }
+    setIndicatorCanAnimate(true)
+  }, [indicatorReady, indicatorCanAnimate])
+
   const indicatorStyle = useMemo(
     () => ({
       left: indicator.left,
       top: indicator.top,
       width: indicator.width,
       height: indicator.height,
-      // Omit opacity so the pill does not fade in when Home remounts.
-      transitionProperty: 'left, top, width, height',
+      transitionProperty: indicatorCanAnimate ? 'left, top, width, height' : 'none',
       transitionDuration: `${tabTransitionMs}ms`,
       transitionTimingFunction: smoothEase,
     }),
-    [indicator]
+    [indicator, indicatorCanAnimate]
   )
 
   return (

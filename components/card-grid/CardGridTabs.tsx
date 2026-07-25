@@ -76,14 +76,13 @@ export default function CardGridTabs({
         aria-label="Filter work"
         className="relative inline-flex rounded-md border border-bg3 bg-bg2 p-0.5"
       >
-        <span
-          aria-hidden
-          className={cn(
-            'pointer-events-none absolute z-0 rounded-md bg-bg0 shadow-sm motion-reduce:hidden',
-            indicatorReady && indicator.width > 0 ? 'opacity-100' : 'opacity-0',
-          )}
-          style={indicatorStyle}
-        />
+        {indicatorReady && indicator.width > 0 ? (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute z-0 rounded-md bg-bg0 shadow-sm motion-reduce:hidden"
+            style={indicatorStyle}
+          />
+        ) : null}
         {TAB_OPTIONS.map(({ id, label }, index) => {
           const selected = filter === id
 
