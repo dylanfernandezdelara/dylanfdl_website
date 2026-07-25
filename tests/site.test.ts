@@ -33,13 +33,13 @@ const REQUESTED_NAME_VARIANTS = [
 
 describe('site', () => {
   it('uses the production domain', () => {
-    expect(SITE_URL).toBe('https://dylanfdl.com')
+    expect(SITE_URL).toBe('https://www.dylanfdl.com')
   })
 
   it('builds absolute URLs from paths', () => {
-    expect(absoluteUrl('/about')).toBe('https://dylanfdl.com/about')
-    expect(PERSON_URL).toBe('https://dylanfdl.com/')
-    expect(OG_IMAGE_URL).toBe('https://dylanfdl.com/og-image.png')
+    expect(absoluteUrl('/about')).toBe('https://www.dylanfdl.com/about')
+    expect(PERSON_URL).toBe('https://www.dylanfdl.com/')
+    expect(OG_IMAGE_URL).toBe('https://www.dylanfdl.com/og-image.png')
   })
 
   it('uses a short link-preview description', () => {
@@ -96,7 +96,7 @@ describe('site', () => {
   })
 
   it('derives the sitemap index URL from SITE_URL', () => {
-    expect(SITEMAP_INDEX_URL).toBe('https://dylanfdl.com/sitemap.xml')
+    expect(SITEMAP_INDEX_URL).toBe('https://www.dylanfdl.com/sitemap.xml')
   })
 
   it('escapes less-than in JSON-LD serialization', () => {
