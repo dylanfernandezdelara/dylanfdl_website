@@ -2,6 +2,8 @@ import createMDX from '@next/mdx'
 import type { NextConfig } from 'next'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+
+import { APEX_HOST, SITE_URL } from './site.config.mjs'
 import rehypePrettyCode from 'rehype-pretty-code'
 import rehypeSlug from 'rehype-slug'
 import remarkFrontmatter from 'remark-frontmatter'
@@ -15,6 +17,12 @@ const nextConfig: NextConfig = {
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   async redirects() {
     return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: APEX_HOST }],
+        destination: `${SITE_URL}/:path*`,
+        permanent: true,
+      },
       {
         source: '/about',
         destination: '/',

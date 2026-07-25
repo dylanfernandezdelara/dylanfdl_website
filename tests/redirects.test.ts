@@ -1,8 +1,20 @@
 import { describe, expect, it } from 'vitest'
 
 import nextConfig from '@/next.config'
+import { APEX_HOST, SITE_URL } from '@/lib/site'
 
 describe('next.config redirects', () => {
+  it('permanently redirects the apex host to www', async () => {
+    const redirects = (await nextConfig.redirects?.()) ?? []
+
+    expect(redirects).toContainEqual({
+      source: '/:path*',
+      has: [{ type: 'host', value: APEX_HOST }],
+      destination: `${SITE_URL}/:path*`,
+      permanent: true,
+    })
+  })
+
   it('permanently redirects /about to the home page', async () => {
     const redirects = (await nextConfig.redirects?.()) ?? []
 
