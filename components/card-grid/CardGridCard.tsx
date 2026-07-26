@@ -1,5 +1,3 @@
-import type { AnimationEvent } from 'react'
-
 import Card from '@/components/Card'
 import EditorThumbnail from '@/components/EditorThumbnail'
 import { cardAnimMs, cardExitAnimMs, smoothEase } from '@/components/card-grid/constants'
@@ -8,7 +6,6 @@ import { cn } from '@/lib/utils'
 
 type Props = {
   row: GridRow
-  onEntered: (href: string) => void
 }
 
 function thumbnailFor(row: GridRow) {
@@ -17,7 +14,7 @@ function thumbnailFor(row: GridRow) {
   ) : undefined
 }
 
-export default function CardGridCard({ row, onEntered }: Props) {
+export default function CardGridCard({ row }: Props) {
   const href = itemKey(row.item)
   const enterDelay = row.enterDelayMs ?? 0
   const exitDelay = row.exitDelayMs ?? 0
@@ -25,11 +22,11 @@ export default function CardGridCard({ row, onEntered }: Props) {
 
   const wrapperClass = cn(
     row.phase === 'enter' &&
-      'animate-in fade-in slide-in-from-bottom-2 fill-mode-both motion-reduce:animate-none motion-reduce:opacity-100 motion-reduce:transform-none',
+      'animate-in fade-in slide-in-from-bottom-1 fill-mode-both motion-reduce:animate-none motion-reduce:opacity-100 motion-reduce:transform-none',
     row.phase === 'exit' &&
       'animate-out fade-out fill-mode-forwards motion-reduce:animate-none motion-reduce:opacity-0 motion-reduce:transform-none',
     row.phase === 'stay' && 'opacity-100',
-    isAnimating && 'will-change-[transform,opacity] [backface-visibility:hidden] [transform:translateZ(0)]'
+    isAnimating && 'will-change-[transform,opacity] [backface-visibility:hidden] [transform:translateZ(0)]',
   )
 
   const animationStyle =
@@ -47,18 +44,11 @@ export default function CardGridCard({ row, onEntered }: Props) {
           }
         : undefined
 
-  const handleAnimationEnd = (event: AnimationEvent<HTMLDivElement>) => {
-    if (event.target === event.currentTarget && event.animationName.includes('enter')) {
-      onEntered(href)
-    }
-  }
-
   return (
     <div
       key={href}
       className={wrapperClass}
       style={animationStyle}
-      onAnimationEnd={handleAnimationEnd}
       aria-hidden={row.phase === 'exit'}
     >
       <div className={row.phase === 'exit' ? 'pointer-events-none' : undefined}>

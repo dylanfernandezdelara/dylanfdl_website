@@ -13,7 +13,7 @@ type Props = {
 }
 
 export default function CardGridClient({ items, children }: Props) {
-  const { activeRows, exitRows, filter, markRowEntered, selectFilter } = useCardGridRows(items)
+  const { activeRows, exitRows, filter, selectFilter } = useCardGridRows(items)
 
   return (
     <div className="mt-8">
@@ -26,7 +26,7 @@ export default function CardGridClient({ items, children }: Props) {
         aria-labelledby={`tab-${filter}`}
       >
         <div className="relative z-20">
-          <CardGridColumns rows={activeRows} onRowEntered={markRowEntered} />
+          <CardGridColumns rows={activeRows} />
         </div>
         {children != null ? <div className="relative z-20">{children}</div> : null}
         {exitRows.length > 0 ? (
@@ -35,7 +35,7 @@ export default function CardGridClient({ items, children }: Props) {
               aria-hidden
               className="pointer-events-none absolute inset-x-0 top-0 z-10"
             >
-              <CardGridColumns rows={exitRows} onRowEntered={markRowEntered} showDesktop={false} />
+              <CardGridColumns rows={exitRows} showDesktop={false} />
             </div>
             <div
               aria-hidden
@@ -44,7 +44,6 @@ export default function CardGridClient({ items, children }: Props) {
               <CardGridColumns
                 rows={exitRows}
                 columnOffset={activeRows.length}
-                onRowEntered={markRowEntered}
                 showMobile={false}
               />
             </div>

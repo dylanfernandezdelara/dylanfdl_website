@@ -1,3 +1,4 @@
+import { cardStaggerMs } from '@/components/card-grid/constants'
 import type { CardGridFilter, CardGridSerializableItem } from '@/lib/buildCardGridItems'
 
 export type RowPhase = 'enter' | 'stay' | 'exit'
@@ -11,6 +12,18 @@ export type GridRow = {
 
 export function itemKey(item: CardGridSerializableItem): string {
   return item.href
+}
+
+/** Build staggered enter rows; optional cap keeps long initial grids as one composition. */
+export function enterRowsFor(
+  items: CardGridSerializableItem[],
+  options?: { staggerCap?: number },
+): GridRow[] {
+  const staggerCap = options?.staggerCap
+  return rowsForItems(items, 'enter', (index) => ({
+    enterDelayMs:
+      (staggerCap === undefined ? index : Math.min(index, staggerCap)) * cardStaggerMs,
+  }))
 }
 
 export function itemMatchesFilter(item: CardGridSerializableItem, filter: CardGridFilter): boolean {

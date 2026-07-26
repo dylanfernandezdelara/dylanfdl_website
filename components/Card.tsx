@@ -41,6 +41,7 @@ export default function Card({
         <img
           src={posterSrc}
           alt=""
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
       )

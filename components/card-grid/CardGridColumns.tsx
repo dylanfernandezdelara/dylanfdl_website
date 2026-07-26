@@ -4,7 +4,6 @@ import { itemKey, type GridRow } from '@/components/card-grid/model'
 type Props = {
   rows: GridRow[]
   columnOffset?: number
-  onRowEntered: (href: string) => void
   showDesktop?: boolean
   showMobile?: boolean
 }
@@ -12,7 +11,6 @@ type Props = {
 export default function CardGridColumns({
   rows,
   columnOffset = 0,
-  onRowEntered,
   showDesktop = true,
   showMobile = true,
 }: Props) {
@@ -21,7 +19,7 @@ export default function CardGridColumns({
       {showMobile ? (
         <div className="flex flex-col gap-3 md:gap-4 min-[640px]:hidden">
           {rows.map((row) => (
-            <CardGridCard key={itemKey(row.item)} row={row} onEntered={onRowEntered} />
+            <CardGridCard key={itemKey(row.item)} row={row} />
           ))}
         </div>
       ) : null}
@@ -31,15 +29,15 @@ export default function CardGridColumns({
           <div className="flex min-w-0 flex-col gap-3 md:gap-4">
             {rows.map((row, index) =>
               (columnOffset + index) % 2 === 0 ? (
-                <CardGridCard key={itemKey(row.item)} row={row} onEntered={onRowEntered} />
-              ) : null
+                <CardGridCard key={itemKey(row.item)} row={row} />
+              ) : null,
             )}
           </div>
           <div className="flex min-w-0 flex-col gap-3 md:gap-4">
             {rows.map((row, index) =>
               (columnOffset + index) % 2 === 1 ? (
-                <CardGridCard key={itemKey(row.item)} row={row} onEntered={onRowEntered} />
-              ) : null
+                <CardGridCard key={itemKey(row.item)} row={row} />
+              ) : null,
             )}
           </div>
         </div>

@@ -7,8 +7,11 @@ export const TAB_OPTIONS: { id: CardGridFilter; label: string }[] = [
   { id: 'music', label: 'Music' },
 ]
 
-export const smoothEase = 'cubic-bezier(0.4, 0, 0.2, 1)'
-export const cardStaggerMs = 64
-export const cardAnimMs = 520
-export const cardExitAnimMs = 300
+/** Smooth ease-out: settles quickly without the material “ease-in” hitch at the start. */
+export const smoothEase = 'cubic-bezier(0.16, 1, 0.3, 1)'
+export const cardStaggerMs = 56
+export const cardAnimMs = 580
+export const cardExitAnimMs = 280
 export const cardExitStaggerMs = 24
+/** Cap initial stagger so long grids finish as one composition. */
+export const cardInitialStaggerCap = 12

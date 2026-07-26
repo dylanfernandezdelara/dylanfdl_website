@@ -1,8 +1,13 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
-import { cardExitAnimMs, cardStaggerMs } from '@/components/card-grid/constants'
+import {
+  cardAnimMs,
+  cardExitAnimMs,
+  cardInitialStaggerCap,
+} from '@/components/card-grid/constants'
 import { mergeRowsForFilter } from '@/components/card-grid/mergeRows'
 import {
+  enterRowsFor,
   itemKey,
   rowsForItems,
   sortedItemsForFilter,
@@ -11,65 +16,104 @@ import {
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
 import type { CardGridFilter, CardGridSerializableItem } from '@/lib/buildCardGridItems'
 
+function phaseBatch(
+  rows: GridRow[],
+  phase: 'enter' | 'exit',
+  durationMs: number,
+  delayOf: (row: GridRow) => number,
+) {
+  const matched = rows.filter((row) => row.phase === phase)
+  if (matched.length === 0) {
+    return null
+  }
+
+  return {
+    signature: matched
+      .map((row) => itemKey(row.item))
+      .sort()
+      .join('\0'),
+    maxEndMs: Math.max(...matched.map((row) => delayOf(row) + durationMs), durationMs),
+  }
+}
+
 export default function useCardGridRows(items: CardGridSerializableItem[]) {
   const [filter, setFilter] = useState<CardGridFilter>('all')
   const { reduced: reducedMotion, ready } = usePrefersReducedMotion()
-  const initialEnterDoneRef = useRef(false)
+  /**
+   * Start in `enter` so SSR HTML already carries the keyframed classes.
+   * Animations begin on first paint (not after hydration), which removes the
+   * visible → opacity-0 snap that read as judder on cold mobile loads.
+   */
   const [rows, setRows] = useState<GridRow[]>(() =>
-    rowsForItems(sortedItemsForFilter(items, 'all'), 'stay'),
+    enterRowsFor(sortedItemsForFilter(items, 'all'), {
+      staggerCap: cardInitialStaggerCap,
+    }),
   )
-
   const wantedSorted = useMemo(() => sortedItemsForFilter(items, filter), [items, filter])
+  const prevWantedRef = useRef(wantedSorted)
 
   useLayoutEffect(() => {
-    if (!ready) {
+    if (!ready || !reducedMotion) {
       return
     }
 
+    setRows(rowsForItems(wantedSorted, 'stay'))
+  }, [ready, reducedMotion, wantedSorted])
+
+  useLayoutEffect(() => {
     if (reducedMotion) {
-      setRows(rowsForItems(wantedSorted, 'stay'))
       return
     }
 
-    if (!initialEnterDoneRef.current) {
-      initialEnterDoneRef.current = true
-      setRows(
-        rowsForItems(wantedSorted, 'enter', (index) => ({
-          enterDelayMs: Math.min(index, 12) * cardStaggerMs,
-        })),
-      )
+    if (prevWantedRef.current === wantedSorted) {
       return
     }
 
+    prevWantedRef.current = wantedSorted
     setRows((previous) => mergeRowsForFilter(previous, wantedSorted))
-  }, [wantedSorted, reducedMotion, ready])
+  }, [wantedSorted, reducedMotion])
 
-  const exitBatch = useMemo(() => {
-    const exiting = rows.filter((row) => row.phase === 'exit')
-    if (exiting.length === 0) {
-      return null
-    }
+  const enterBatch = useMemo(
+    () => phaseBatch(rows, 'enter', cardAnimMs, (row) => row.enterDelayMs ?? 0),
+    [rows],
+  )
+  const enterBatchSignature = enterBatch?.signature ?? ''
+  const enterBatchMaxEndMs = enterBatch?.maxEndMs ?? 0
 
-    const maxEndMs = Math.max(
-      ...exiting.map((row) => (row.exitDelayMs ?? 0) + cardExitAnimMs),
-      cardExitAnimMs
-    )
-    const signature = exiting.map((row) => itemKey(row.item)).sort().join('\0')
-
-    return { maxEndMs, signature }
-  }, [rows])
+  const exitBatch = useMemo(
+    () => phaseBatch(rows, 'exit', cardExitAnimMs, (row) => row.exitDelayMs ?? 0),
+    [rows],
+  )
+  const exitBatchSignature = exitBatch?.signature ?? ''
+  const exitBatchMaxEndMs = exitBatch?.maxEndMs ?? 0
 
   useEffect(() => {
-    if (!exitBatch) {
+    if (!enterBatchSignature) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setRows((previous) =>
+        previous.map((row) =>
+          row.phase === 'enter' ? { item: row.item, phase: 'stay' as const } : row,
+        ),
+      )
+    }, enterBatchMaxEndMs)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [enterBatchSignature, enterBatchMaxEndMs])
+
+  useEffect(() => {
+    if (!exitBatchSignature) {
       return
     }
 
     const timeoutId = window.setTimeout(() => {
       setRows((previous) => previous.filter((row) => row.phase !== 'exit'))
-    }, exitBatch.maxEndMs)
+    }, exitBatchMaxEndMs)
 
     return () => window.clearTimeout(timeoutId)
-  }, [exitBatch?.signature, exitBatch?.maxEndMs])
+  }, [exitBatchSignature, exitBatchMaxEndMs])
 
   const { activeRows, exitRows } = useMemo(() => {
     const active: GridRow[] = []
@@ -86,21 +130,10 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
     return { activeRows: active, exitRows: exiting }
   }, [rows])
 
-  const markRowEntered = (href: string) => {
-    setRows((previous) =>
-      previous.map((row) =>
-        itemKey(row.item) === href && row.phase === 'enter'
-          ? { item: row.item, phase: 'stay' }
-          : row
-      )
-    )
-  }
-
   return {
     activeRows,
     exitRows,
     filter,
-    markRowEntered,
     selectFilter: setFilter,
   }
 }

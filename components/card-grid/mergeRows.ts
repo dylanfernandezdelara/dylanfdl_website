@@ -1,7 +1,7 @@
 import { cardExitStaggerMs, cardStaggerMs } from '@/components/card-grid/constants'
 import {
+  enterRowsFor,
   itemKey,
-  rowsForItems,
   type GridRow,
 } from '@/components/card-grid/model'
 import type { CardGridSerializableItem } from '@/lib/buildCardGridItems'
@@ -20,15 +20,9 @@ export function shouldRestartEnterSequence(prev: GridRow[], wantedSorted: CardGr
   return !hasOverlap || (activeStillWanted && wantedKeys.size > activeKeys.size)
 }
 
-function enterRowsWithoutStaggerCap(wantedSorted: CardGridSerializableItem[]): GridRow[] {
-  return rowsForItems(wantedSorted, 'enter', (index) => ({
-    enterDelayMs: index * cardStaggerMs,
-  }))
-}
-
 export function mergeRowsForFilter(prev: GridRow[], wantedSorted: CardGridSerializableItem[]): GridRow[] {
   if (shouldRestartEnterSequence(prev, wantedSorted)) {
-    return enterRowsWithoutStaggerCap(wantedSorted)
+    return enterRowsFor(wantedSorted)
   }
 
   const wantedByKey = new Map(wantedSorted.map((item) => [itemKey(item), item]))
