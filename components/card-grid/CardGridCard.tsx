@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils'
 
 type Props = {
   row: GridRow
-  mediaEnabled: boolean
 }
 
 function thumbnailFor(row: GridRow) {
@@ -15,7 +14,7 @@ function thumbnailFor(row: GridRow) {
   ) : undefined
 }
 
-export default function CardGridCard({ row, mediaEnabled }: Props) {
+export default function CardGridCard({ row }: Props) {
   const href = itemKey(row.item)
   const enterDelay = row.enterDelayMs ?? 0
   const exitDelay = row.exitDelayMs ?? 0
@@ -61,7 +60,6 @@ export default function CardGridCard({ row, mediaEnabled }: Props) {
           videoSrc={row.item.videoSrc}
           posterSrc={row.item.posterSrc}
           thumbnail={thumbnailFor(row)}
-          mediaEnabled={mediaEnabled}
         />
       </div>
     </div>

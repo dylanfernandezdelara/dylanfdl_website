@@ -4,12 +4,7 @@ import type { ReactNode } from 'react'
 
 import CardGridColumns from '@/components/card-grid/CardGridColumns'
 import CardGridTabs from '@/components/card-grid/CardGridTabs'
-import {
-  cardGridBreakpointVisibility,
-  cardGridDesktopQuery,
-} from '@/components/card-grid/constants'
 import useCardGridRows from '@/components/card-grid/useCardGridRows'
-import useMediaQuery from '@/hooks/useMediaQuery'
 import type { CardGridSerializableItem } from '@/lib/buildCardGridItems'
 
 type Props = {
@@ -18,10 +13,7 @@ type Props = {
 }
 
 export default function CardGridClient({ items, children }: Props) {
-  const { activeRows, exitRows, filter, layoutLocked, mediaEnabled, selectFilter } =
-    useCardGridRows(items)
-  const isDesktop = useMediaQuery(cardGridDesktopQuery)
-  const { showMobile, showDesktop } = cardGridBreakpointVisibility(isDesktop, layoutLocked)
+  const { activeRows, exitRows, filter, selectFilter } = useCardGridRows(items)
 
   return (
     <div className="mt-8">
@@ -34,12 +26,7 @@ export default function CardGridClient({ items, children }: Props) {
         aria-labelledby={`tab-${filter}`}
       >
         <div className="relative z-20">
-          <CardGridColumns
-            rows={activeRows}
-            mediaEnabled={mediaEnabled}
-            showDesktop={showDesktop}
-            showMobile={showMobile}
-          />
+          <CardGridColumns rows={activeRows} />
         </div>
         {children != null ? <div className="relative z-20">{children}</div> : null}
         {exitRows.length > 0 ? (
@@ -48,12 +35,7 @@ export default function CardGridClient({ items, children }: Props) {
               aria-hidden
               className="pointer-events-none absolute inset-x-0 top-0 z-10"
             >
-              <CardGridColumns
-                rows={exitRows}
-                mediaEnabled={mediaEnabled}
-                showDesktop={false}
-                showMobile={showMobile}
-              />
+              <CardGridColumns rows={exitRows} showDesktop={false} />
             </div>
             <div
               aria-hidden
@@ -62,8 +44,6 @@ export default function CardGridClient({ items, children }: Props) {
               <CardGridColumns
                 rows={exitRows}
                 columnOffset={activeRows.length}
-                mediaEnabled={mediaEnabled}
-                showDesktop={showDesktop}
                 showMobile={false}
               />
             </div>

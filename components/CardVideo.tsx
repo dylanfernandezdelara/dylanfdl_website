@@ -6,8 +6,6 @@ type CardVideoProps = {
   src: string
   poster?: string
   className?: string
-  /** When false, keep the poster only — do not attach or decode the mp4 yet. */
-  mediaEnabled?: boolean
 }
 
 function ignoreAutoplayBlockedError(): void {}
@@ -15,14 +13,13 @@ function ignoreAutoplayBlockedError(): void {}
 function useAttachAndPlayVideoWhenVisible(
   videoRef: RefObject<HTMLVideoElement | null>,
   src: string,
-  mediaEnabled: boolean,
 ): boolean {
   const sourceAttachedRef = useRef(false)
   const [sourceAttached, setSourceAttached] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
-    if (!video || !mediaEnabled) return
+    if (!video) return
 
     const attachSource = () => {
       if (sourceAttachedRef.current) return
@@ -68,19 +65,14 @@ function useAttachAndPlayVideoWhenVisible(
     return () => {
       observer.disconnect()
     }
-  }, [src, videoRef, mediaEnabled])
+  }, [src, videoRef])
 
   return sourceAttached
 }
 
-export default function CardVideo({
-  src,
-  poster,
-  className,
-  mediaEnabled = true,
-}: CardVideoProps) {
+export default function CardVideo({ src, poster, className }: CardVideoProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
-  const sourceAttached = useAttachAndPlayVideoWhenVisible(videoRef, src, mediaEnabled)
+  const sourceAttached = useAttachAndPlayVideoWhenVisible(videoRef, src)
 
   return (
     <video

@@ -15,8 +15,6 @@ export type CardProps = {
   videoSrc?: string
   posterSrc?: string
   thumbnail?: ReactNode
-  /** When false, defer attaching video sources so decode work does not contend with enter motion. */
-  mediaEnabled?: boolean
 }
 
 export default function Card({
@@ -27,7 +25,6 @@ export default function Card({
   videoSrc,
   posterSrc,
   thumbnail,
-  mediaEnabled = true,
 }: CardProps) {
   const media = (() => {
     if (videoSrc) {
@@ -36,7 +33,6 @@ export default function Card({
           src={videoSrc}
           poster={posterSrc}
           className="absolute inset-0 h-full w-full object-cover"
-          mediaEnabled={mediaEnabled}
         />
       )
     }

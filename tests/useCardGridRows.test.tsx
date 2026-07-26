@@ -70,8 +70,6 @@ describe('useCardGridRows', () => {
       cardStaggerMs,
       cardStaggerMs * 2,
     ])
-    expect(result.current.mediaEnabled).toBe(false)
-    expect(result.current.layoutLocked).toBe(true)
   })
 
   it('keeps the initial enter sequence without rewriting on ready', () => {
@@ -85,7 +83,7 @@ describe('useCardGridRows', () => {
     ])
   })
 
-  it('batches enter → stay, unlocks media, and clears layout lock', () => {
+  it('batches enter → stay once without per-card commits', () => {
     const { result } = renderHook(() => useCardGridRows(items))
     const batchMs = Math.min(2, cardInitialStaggerCap) * cardStaggerMs + cardAnimMs
 
@@ -94,8 +92,6 @@ describe('useCardGridRows', () => {
     })
 
     expect(result.current.activeRows.every((row) => row.phase === 'stay')).toBe(true)
-    expect(result.current.mediaEnabled).toBe(true)
-    expect(result.current.layoutLocked).toBe(false)
   })
 
   it('shows stay immediately when prefers-reduced-motion is set', () => {
@@ -103,11 +99,9 @@ describe('useCardGridRows', () => {
     const { result } = renderHook(() => useCardGridRows(items))
 
     expect(result.current.activeRows.every((row) => row.phase === 'stay')).toBe(true)
-    expect(result.current.mediaEnabled).toBe(true)
-    expect(result.current.layoutLocked).toBe(false)
   })
 
-  it('merges filter changes after mount without a bootstrap skip-ref', () => {
+  it('merges filter changes after mount', () => {
     const { result } = renderHook(() => useCardGridRows(items))
 
     act(() => {
@@ -120,6 +114,5 @@ describe('useCardGridRows', () => {
     ])
     expect(result.current.exitRows).toHaveLength(1)
     expect(result.current.exitRows[0]?.item.href).toBe('/projects/c')
-    expect(result.current.layoutLocked).toBe(true)
   })
 })

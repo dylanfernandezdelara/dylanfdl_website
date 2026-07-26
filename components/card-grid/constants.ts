@@ -15,24 +15,3 @@ export const cardExitAnimMs = 280
 export const cardExitStaggerMs = 24
 /** Cap initial stagger so long grids finish as one composition. */
 export const cardInitialStaggerCap = 12
-
-export const cardGridDesktopQuery = '(min-width: 640px)'
-
-/**
- * Until the breakpoint is known — or while enter/exit is in flight — keep both
- * responsive trees mounted so a rotate/resize cannot remount mid-animation and
- * restart opacity-0 enter keyframes.
- */
-export function cardGridBreakpointVisibility(
-  isDesktop: boolean | null,
-  layoutLocked: boolean,
-): { showMobile: boolean; showDesktop: boolean } {
-  if (layoutLocked || isDesktop === null) {
-    return { showMobile: true, showDesktop: true }
-  }
-
-  return {
-    showMobile: !isDesktop,
-    showDesktop: isDesktop,
-  }
-}

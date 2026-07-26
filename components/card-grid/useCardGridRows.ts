@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import {
   cardAnimMs,
@@ -8,13 +8,33 @@ import {
 import { mergeRowsForFilter } from '@/components/card-grid/mergeRows'
 import {
   enterRowsFor,
+  itemKey,
   rowsForItems,
   sortedItemsForFilter,
   type GridRow,
 } from '@/components/card-grid/model'
-import { batchForPhase, usePhaseBatchTimeout } from '@/components/card-grid/phaseBatch'
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
 import type { CardGridFilter, CardGridSerializableItem } from '@/lib/buildCardGridItems'
+
+function phaseBatch(
+  rows: GridRow[],
+  phase: 'enter' | 'exit',
+  durationMs: number,
+  delayOf: (row: GridRow) => number,
+) {
+  const matched = rows.filter((row) => row.phase === phase)
+  if (matched.length === 0) {
+    return null
+  }
+
+  return {
+    signature: matched
+      .map((row) => itemKey(row.item))
+      .sort()
+      .join('\0'),
+    maxEndMs: Math.max(...matched.map((row) => delayOf(row) + durationMs), durationMs),
+  }
+}
 
 export default function useCardGridRows(items: CardGridSerializableItem[]) {
   const [filter, setFilter] = useState<CardGridFilter>('all')
@@ -29,8 +49,6 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
       staggerCap: cardInitialStaggerCap,
     }),
   )
-  /** One-way latch: unlock video decode after the initial enter (or reduced motion). */
-  const [mediaEnabled, setMediaEnabled] = useState(false)
   const wantedSorted = useMemo(() => sortedItemsForFilter(items, filter), [items, filter])
   const prevWantedRef = useRef(wantedSorted)
 
@@ -40,7 +58,6 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
     }
 
     setRows(rowsForItems(wantedSorted, 'stay'))
-    setMediaEnabled(true)
   }, [ready, reducedMotion, wantedSorted])
 
   useLayoutEffect(() => {
@@ -57,26 +74,46 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
   }, [wantedSorted, reducedMotion])
 
   const enterBatch = useMemo(
-    () => batchForPhase(rows, 'enter', cardAnimMs, (row) => row.enterDelayMs ?? 0),
+    () => phaseBatch(rows, 'enter', cardAnimMs, (row) => row.enterDelayMs ?? 0),
     [rows],
   )
+  const enterBatchSignature = enterBatch?.signature ?? ''
+  const enterBatchMaxEndMs = enterBatch?.maxEndMs ?? 0
+
   const exitBatch = useMemo(
-    () => batchForPhase(rows, 'exit', cardExitAnimMs, (row) => row.exitDelayMs ?? 0),
+    () => phaseBatch(rows, 'exit', cardExitAnimMs, (row) => row.exitDelayMs ?? 0),
     [rows],
   )
+  const exitBatchSignature = exitBatch?.signature ?? ''
+  const exitBatchMaxEndMs = exitBatch?.maxEndMs ?? 0
 
-  usePhaseBatchTimeout(enterBatch, () => {
-    setRows((previous) =>
-      previous.map((row) =>
-        row.phase === 'enter' ? { item: row.item, phase: 'stay' as const } : row,
-      ),
-    )
-    setMediaEnabled(true)
-  })
+  useEffect(() => {
+    if (!enterBatchSignature) {
+      return
+    }
 
-  usePhaseBatchTimeout(exitBatch, () => {
-    setRows((previous) => previous.filter((row) => row.phase !== 'exit'))
-  })
+    const timeoutId = window.setTimeout(() => {
+      setRows((previous) =>
+        previous.map((row) =>
+          row.phase === 'enter' ? { item: row.item, phase: 'stay' as const } : row,
+        ),
+      )
+    }, enterBatchMaxEndMs)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [enterBatchSignature, enterBatchMaxEndMs])
+
+  useEffect(() => {
+    if (!exitBatchSignature) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setRows((previous) => previous.filter((row) => row.phase !== 'exit'))
+    }, exitBatchMaxEndMs)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [exitBatchSignature, exitBatchMaxEndMs])
 
   const { activeRows, exitRows } = useMemo(() => {
     const active: GridRow[] = []
@@ -93,15 +130,10 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
     return { activeRows: active, exitRows: exiting }
   }, [rows])
 
-  const layoutLocked =
-    exitRows.length > 0 || activeRows.some((row) => row.phase !== 'stay')
-
   return {
     activeRows,
     exitRows,
     filter,
-    layoutLocked,
-    mediaEnabled,
     selectFilter: setFilter,
   }
 }
