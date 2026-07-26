@@ -1,45 +1,20 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import {
   cardAnimMs,
-  cardEnterBatchMs,
   cardExitAnimMs,
   cardInitialStaggerCap,
-  cardStaggerMs,
 } from '@/components/card-grid/constants'
 import { mergeRowsForFilter } from '@/components/card-grid/mergeRows'
 import {
-  itemKey,
+  enterRowsFor,
   rowsForItems,
   sortedItemsForFilter,
   type GridRow,
 } from '@/components/card-grid/model'
+import { batchForPhase, usePhaseBatchTimeout } from '@/components/card-grid/phaseBatch'
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
 import type { CardGridFilter, CardGridSerializableItem } from '@/lib/buildCardGridItems'
-
-function initialEnterRows(items: CardGridSerializableItem[]): GridRow[] {
-  return rowsForItems(sortedItemsForFilter(items, 'all'), 'enter', (index) => ({
-    enterDelayMs: Math.min(index, cardInitialStaggerCap) * cardStaggerMs,
-  }))
-}
-
-function enterBatchFromRows(rows: GridRow[]) {
-  const entering = rows.filter((row) => row.phase === 'enter')
-  if (entering.length === 0) {
-    return null
-  }
-
-  const maxEndMs = Math.max(
-    ...entering.map((row) => (row.enterDelayMs ?? 0) + cardAnimMs),
-    cardAnimMs,
-  )
-  const signature = entering
-    .map((row) => itemKey(row.item))
-    .sort()
-    .join('\0')
-
-  return { maxEndMs, signature }
-}
 
 export default function useCardGridRows(items: CardGridSerializableItem[]) {
   const [filter, setFilter] = useState<CardGridFilter>('all')
@@ -49,97 +24,59 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
    * Animations begin on first paint (not after hydration), which removes the
    * visible → opacity-0 snap that read as judder on cold mobile loads.
    */
-  const [rows, setRows] = useState<GridRow[]>(() => initialEnterRows(items))
-  const skipFilterMergeRef = useRef(true)
+  const [rows, setRows] = useState<GridRow[]>(() =>
+    enterRowsFor(sortedItemsForFilter(items, 'all'), {
+      staggerCap: cardInitialStaggerCap,
+    }),
+  )
+  /** One-way latch: unlock video decode after the initial enter (or reduced motion). */
   const [mediaEnabled, setMediaEnabled] = useState(false)
-
   const wantedSorted = useMemo(() => sortedItemsForFilter(items, filter), [items, filter])
+  const prevWantedRef = useRef(wantedSorted)
 
   useLayoutEffect(() => {
-    if (!ready) {
+    if (!ready || !reducedMotion) {
       return
     }
 
+    setRows(rowsForItems(wantedSorted, 'stay'))
+    setMediaEnabled(true)
+  }, [ready, reducedMotion, wantedSorted])
+
+  useLayoutEffect(() => {
     if (reducedMotion) {
-      skipFilterMergeRef.current = false
-      setRows(rowsForItems(wantedSorted, 'stay'))
-      setMediaEnabled(true)
       return
     }
 
-    if (skipFilterMergeRef.current) {
-      skipFilterMergeRef.current = false
+    if (prevWantedRef.current === wantedSorted) {
       return
     }
 
+    prevWantedRef.current = wantedSorted
     setRows((previous) => mergeRowsForFilter(previous, wantedSorted))
-  }, [wantedSorted, reducedMotion, ready])
+  }, [wantedSorted, reducedMotion])
 
-  const enterBatch = useMemo(() => enterBatchFromRows(rows), [rows])
-  const enterBatchSignature = enterBatch?.signature ?? ''
-  const enterBatchMaxEndMs = enterBatch?.maxEndMs ?? 0
+  const enterBatch = useMemo(
+    () => batchForPhase(rows, 'enter', cardAnimMs, (row) => row.enterDelayMs ?? 0),
+    [rows],
+  )
+  const exitBatch = useMemo(
+    () => batchForPhase(rows, 'exit', cardExitAnimMs, (row) => row.exitDelayMs ?? 0),
+    [rows],
+  )
 
-  useEffect(() => {
-    if (!enterBatchSignature) {
-      return
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setRows((previous) =>
-        previous.map((row) =>
-          row.phase === 'enter' ? { item: row.item, phase: 'stay' as const } : row,
-        ),
-      )
-      setMediaEnabled(true)
-    }, enterBatchMaxEndMs)
-
-    return () => window.clearTimeout(timeoutId)
-  }, [enterBatchSignature, enterBatchMaxEndMs])
-
-  useEffect(() => {
-    if (mediaEnabled || !ready) {
-      return
-    }
-
-    // Safety: if enter never armed (or completed before hydration), unlock media.
-    const timeoutId = window.setTimeout(() => {
-      setMediaEnabled(true)
-    }, cardEnterBatchMs(items.length) + 50)
-
-    return () => window.clearTimeout(timeoutId)
-  }, [mediaEnabled, ready, items.length])
-
-  const exitBatch = useMemo(() => {
-    const exiting = rows.filter((row) => row.phase === 'exit')
-    if (exiting.length === 0) {
-      return null
-    }
-
-    const maxEndMs = Math.max(
-      ...exiting.map((row) => (row.exitDelayMs ?? 0) + cardExitAnimMs),
-      cardExitAnimMs,
+  usePhaseBatchTimeout(enterBatch, () => {
+    setRows((previous) =>
+      previous.map((row) =>
+        row.phase === 'enter' ? { item: row.item, phase: 'stay' as const } : row,
+      ),
     )
-    const signature = exiting
-      .map((row) => itemKey(row.item))
-      .sort()
-      .join('\0')
+    setMediaEnabled(true)
+  })
 
-    return { maxEndMs, signature }
-  }, [rows])
-  const exitBatchSignature = exitBatch?.signature ?? ''
-  const exitBatchMaxEndMs = exitBatch?.maxEndMs ?? 0
-
-  useEffect(() => {
-    if (!exitBatchSignature) {
-      return
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setRows((previous) => previous.filter((row) => row.phase !== 'exit'))
-    }, exitBatchMaxEndMs)
-
-    return () => window.clearTimeout(timeoutId)
-  }, [exitBatchSignature, exitBatchMaxEndMs])
+  usePhaseBatchTimeout(exitBatch, () => {
+    setRows((previous) => previous.filter((row) => row.phase !== 'exit'))
+  })
 
   const { activeRows, exitRows } = useMemo(() => {
     const active: GridRow[] = []
@@ -156,10 +93,14 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
     return { activeRows: active, exitRows: exiting }
   }, [rows])
 
+  const layoutLocked =
+    exitRows.length > 0 || activeRows.some((row) => row.phase !== 'stay')
+
   return {
     activeRows,
     exitRows,
     filter,
+    layoutLocked,
     mediaEnabled,
     selectFilter: setFilter,
   }

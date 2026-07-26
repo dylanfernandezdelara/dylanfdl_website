@@ -12,12 +12,16 @@ import {
 } from '../components/card-grid/constants'
 import type { CardGridSerializableItem } from '../lib/buildCardGridItems'
 
-function writing(href: string, title: string): CardGridSerializableItem {
+function writing(
+  href: string,
+  title: string,
+  category: 'notes' | 'projects' = 'notes',
+): CardGridSerializableItem {
   return {
     kind: 'writing',
-    category: 'notes',
+    category,
     sortDate: '2025-01-01',
-    slug: href.replace('/notes/', ''),
+    slug: href.replace(/^\/(notes|projects)\//, ''),
     title,
     dateLabel: 'Jan 2025',
     href,
@@ -27,7 +31,7 @@ function writing(href: string, title: string): CardGridSerializableItem {
 const items = [
   writing('/notes/a', 'A'),
   writing('/notes/b', 'B'),
-  writing('/notes/c', 'C'),
+  writing('/projects/c', 'C', 'projects'),
 ]
 
 function stubMatchMedia(initialMatches: boolean) {
@@ -67,9 +71,10 @@ describe('useCardGridRows', () => {
       cardStaggerMs * 2,
     ])
     expect(result.current.mediaEnabled).toBe(false)
+    expect(result.current.layoutLocked).toBe(true)
   })
 
-  it('keeps the initial enter sequence after reduced-motion readiness', () => {
+  it('keeps the initial enter sequence without rewriting on ready', () => {
     const { result } = renderHook(() => useCardGridRows(items))
 
     expect(result.current.activeRows.every((row) => row.phase === 'enter')).toBe(true)
@@ -80,7 +85,7 @@ describe('useCardGridRows', () => {
     ])
   })
 
-  it('batches enter → stay and unlocks media once without per-card commits', () => {
+  it('batches enter → stay, unlocks media, and clears layout lock', () => {
     const { result } = renderHook(() => useCardGridRows(items))
     const batchMs = Math.min(2, cardInitialStaggerCap) * cardStaggerMs + cardAnimMs
 
@@ -90,6 +95,7 @@ describe('useCardGridRows', () => {
 
     expect(result.current.activeRows.every((row) => row.phase === 'stay')).toBe(true)
     expect(result.current.mediaEnabled).toBe(true)
+    expect(result.current.layoutLocked).toBe(false)
   })
 
   it('shows stay immediately when prefers-reduced-motion is set', () => {
@@ -98,5 +104,22 @@ describe('useCardGridRows', () => {
 
     expect(result.current.activeRows.every((row) => row.phase === 'stay')).toBe(true)
     expect(result.current.mediaEnabled).toBe(true)
+    expect(result.current.layoutLocked).toBe(false)
+  })
+
+  it('merges filter changes after mount without a bootstrap skip-ref', () => {
+    const { result } = renderHook(() => useCardGridRows(items))
+
+    act(() => {
+      result.current.selectFilter('notes')
+    })
+
+    expect(result.current.activeRows.map((row) => row.item.href)).toEqual([
+      '/notes/a',
+      '/notes/b',
+    ])
+    expect(result.current.exitRows).toHaveLength(1)
+    expect(result.current.exitRows[0]?.item.href).toBe('/projects/c')
+    expect(result.current.layoutLocked).toBe(true)
   })
 })

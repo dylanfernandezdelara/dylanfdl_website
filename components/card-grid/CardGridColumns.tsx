@@ -5,16 +5,16 @@ type Props = {
   rows: GridRow[]
   columnOffset?: number
   mediaEnabled: boolean
-  showDesktop?: boolean
-  showMobile?: boolean
+  showDesktop: boolean
+  showMobile: boolean
 }
 
 export default function CardGridColumns({
   rows,
   columnOffset = 0,
   mediaEnabled,
-  showDesktop = true,
-  showMobile = true,
+  showDesktop,
+  showMobile,
 }: Props) {
   return (
     <>

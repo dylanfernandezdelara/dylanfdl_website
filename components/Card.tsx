@@ -36,7 +36,7 @@ export default function Card({
           src={videoSrc}
           poster={posterSrc}
           className="absolute inset-0 h-full w-full object-cover"
-          enabled={mediaEnabled}
+          mediaEnabled={mediaEnabled}
         />
       )
     }

@@ -4,7 +4,10 @@ import type { ReactNode } from 'react'
 
 import CardGridColumns from '@/components/card-grid/CardGridColumns'
 import CardGridTabs from '@/components/card-grid/CardGridTabs'
-import { cardGridDesktopQuery } from '@/components/card-grid/constants'
+import {
+  cardGridBreakpointVisibility,
+  cardGridDesktopQuery,
+} from '@/components/card-grid/constants'
 import useCardGridRows from '@/components/card-grid/useCardGridRows'
 import useMediaQuery from '@/hooks/useMediaQuery'
 import type { CardGridSerializableItem } from '@/lib/buildCardGridItems'
@@ -15,13 +18,10 @@ type Props = {
 }
 
 export default function CardGridClient({ items, children }: Props) {
-  const { activeRows, exitRows, filter, mediaEnabled, selectFilter } = useCardGridRows(items)
+  const { activeRows, exitRows, filter, layoutLocked, mediaEnabled, selectFilter } =
+    useCardGridRows(items)
   const isDesktop = useMediaQuery(cardGridDesktopQuery)
-  // Until the breakpoint is known, SSR both trees so markup matches CSS. After
-  // the layout read, mount only the active tree to avoid duplicate video
-  // observers and EditorThumbnail rAF loops on mobile.
-  const showMobile = isDesktop !== true
-  const showDesktop = isDesktop !== false
+  const { showMobile, showDesktop } = cardGridBreakpointVisibility(isDesktop, layoutLocked)
 
   return (
     <div className="mt-8">

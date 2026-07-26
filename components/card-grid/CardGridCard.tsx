@@ -27,8 +27,7 @@ export default function CardGridCard({ row, mediaEnabled }: Props) {
     row.phase === 'exit' &&
       'animate-out fade-out fill-mode-forwards motion-reduce:animate-none motion-reduce:opacity-0 motion-reduce:transform-none',
     row.phase === 'stay' && 'opacity-100',
-    isAnimating &&
-      'will-change-[transform,opacity] [backface-visibility:hidden] [transform:translateZ(0)] [contain:layout_paint]',
+    isAnimating && 'will-change-[transform,opacity] [backface-visibility:hidden] [transform:translateZ(0)]',
   )
 
   const animationStyle =
