@@ -166,7 +166,12 @@ export default function CardGridTabs({ filter, onSelect }: Props) {
               className={cn(
                 tabButtonBase,
                 selected
-                  ? 'text-fg0 motion-reduce:bg-bg0 motion-reduce:shadow-sm'
+                  ? cn(
+                      'text-fg0',
+                      // Static chrome until the sliding pill mounts (SSR / first measure).
+                      (!indicatorReady || indicator.width === 0) && 'bg-bg0 shadow-sm',
+                      'motion-reduce:bg-bg0 motion-reduce:shadow-sm',
+                    )
                   : 'text-fg3 hover:text-fg1',
               )}
               onClick={() => onSelect(id)}
