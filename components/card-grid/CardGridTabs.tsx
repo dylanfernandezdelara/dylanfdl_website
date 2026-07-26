@@ -1,23 +1,22 @@
-import type { KeyboardEvent, MutableRefObject } from 'react'
+'use client'
+
+import { useRef, type KeyboardEvent } from 'react'
 
 import { TAB_OPTIONS } from '@/components/card-grid/constants'
 import type { CardGridFilter } from '@/lib/buildCardGridItems'
 import { cn } from '@/lib/utils'
 
 const tabButtonBase =
-  'relative z-10 rounded-md px-2.5 py-1.5 text-sm font-medium leading-none transition-colors duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue motion-reduce:transition-none'
+  'rounded-md px-2.5 py-1.5 text-sm font-medium leading-none transition-colors duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue motion-reduce:transition-none'
 
 type Props = {
   filter: CardGridFilter
-  tabButtonRefs: MutableRefObject<(HTMLButtonElement | null)[]>
   onSelect: (filter: CardGridFilter) => void
 }
 
-function focusTab(index: number, tabButtonRefs: MutableRefObject<(HTMLButtonElement | null)[]>) {
-  tabButtonRefs.current[index]?.focus()
-}
+export default function CardGridTabs({ filter, onSelect }: Props) {
+  const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([])
 
-export default function CardGridTabs({ filter, tabButtonRefs, onSelect }: Props) {
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     const lastIndex = TAB_OPTIONS.length - 1
     let nextIndex: number | null = null
@@ -46,12 +45,12 @@ export default function CardGridTabs({ filter, tabButtonRefs, onSelect }: Props)
     }
 
     onSelect(nextFilter)
-    focusTab(nextIndex, tabButtonRefs)
+    tabButtonRefs.current[nextIndex]?.focus()
   }
 
   return (
     <div className="mb-4 flex flex-wrap gap-2 min-[640px]:mb-5">
-      <div role="tablist" aria-label="Filter work" className="relative inline-flex rounded-md border border-bg3 bg-bg2 p-0.5">
+      <div role="tablist" aria-label="Filter work" className="inline-flex rounded-md border border-bg3 bg-bg2 p-0.5">
         {TAB_OPTIONS.map(({ id, label }, index) => {
           const selected = filter === id
 

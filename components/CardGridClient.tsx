@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 import CardGridColumns from '@/components/card-grid/CardGridColumns'
 import CardGridTabs from '@/components/card-grid/CardGridTabs'
@@ -14,11 +14,10 @@ type Props = {
 
 export default function CardGridClient({ items, children }: Props) {
   const { activeRows, exitRows, filter, markRowEntered, selectFilter } = useCardGridRows(items)
-  const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([])
 
   return (
     <div className="mt-8">
-      <CardGridTabs filter={filter} tabButtonRefs={tabButtonRefs} onSelect={selectFilter} />
+      <CardGridTabs filter={filter} onSelect={selectFilter} />
 
       <div
         className="relative"
