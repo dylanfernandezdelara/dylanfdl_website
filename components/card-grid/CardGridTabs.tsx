@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type KeyboardEvent,
-} from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
 
 import { TAB_OPTIONS, smoothEase, tabTransitionMs } from '@/components/card-grid/constants'
 import type { CardGridFilter } from '@/lib/buildCardGridItems'
@@ -16,7 +9,7 @@ import { cn } from '@/lib/utils'
 const tabButtonBase =
   'relative z-10 rounded-md px-2.5 py-1.5 text-sm font-medium leading-none transition-colors duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue motion-reduce:transition-none'
 
-type TabIndicator = {
+type TabIndicatorBox = {
   left: number
   top: number
   width: number
@@ -32,32 +25,24 @@ export default function CardGridTabs({ filter, onSelect }: Props) {
   const tabContainerRef = useRef<HTMLDivElement>(null)
   const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([])
   const measureRafRef = useRef<number | null>(null)
-  const [indicator, setIndicator] = useState<TabIndicator>({
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0,
-  })
-  const [indicatorReady, setIndicatorReady] = useState(false)
+  const [box, setBox] = useState<TabIndicatorBox | null>(null)
   // Transitions stay off until after the first measured paint so Home remount
   // does not grow the pill from 0×0 over the All tab.
-  const [indicatorCanAnimate, setIndicatorCanAnimate] = useState(false)
+  const [live, setLive] = useState(false)
 
   useLayoutEffect(() => {
     function measureNow() {
-      const container = tabContainerRef.current
       const idx = TAB_OPTIONS.findIndex((t) => t.id === filter)
       const btn = tabButtonRefs.current[idx]
-      if (!container || !btn) {
+      if (!tabContainerRef.current || !btn) {
         return
       }
-      setIndicator({
+      setBox({
         left: btn.offsetLeft,
         top: btn.offsetTop,
         width: btn.offsetWidth,
         height: btn.offsetHeight,
       })
-      setIndicatorReady(true)
     }
 
     function scheduleCoalescedTabIndicatorMeasure() {
@@ -83,24 +68,24 @@ export default function CardGridTabs({ filter, onSelect }: Props) {
   }, [filter])
 
   useEffect(() => {
-    if (!indicatorReady || indicatorCanAnimate) {
+    if (!box || live) {
       return
     }
-    setIndicatorCanAnimate(true)
-  }, [indicatorReady, indicatorCanAnimate])
+    setLive(true)
+  }, [box, live])
 
-  const indicatorStyle = useMemo(
-    () => ({
-      left: indicator.left,
-      top: indicator.top,
-      width: indicator.width,
-      height: indicator.height,
-      transitionProperty: indicatorCanAnimate ? 'left, top, width, height' : 'none',
-      transitionDuration: `${tabTransitionMs}ms`,
-      transitionTimingFunction: smoothEase,
-    }),
-    [indicator, indicatorCanAnimate],
-  )
+  const showPill = box !== null && box.width > 0
+  const indicatorStyle = box
+    ? {
+        left: box.left,
+        top: box.top,
+        width: box.width,
+        height: box.height,
+        transitionProperty: live ? 'left, top, width, height' : 'none',
+        transitionDuration: `${tabTransitionMs}ms`,
+        transitionTimingFunction: smoothEase,
+      }
+    : undefined
 
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     const lastIndex = TAB_OPTIONS.length - 1
@@ -141,7 +126,7 @@ export default function CardGridTabs({ filter, onSelect }: Props) {
         aria-label="Filter work"
         className="relative inline-flex rounded-md border border-bg3 bg-bg2 p-0.5"
       >
-        {indicatorReady && indicator.width > 0 ? (
+        {showPill ? (
           <span
             aria-hidden
             className="pointer-events-none absolute z-0 rounded-md bg-bg0 shadow-sm motion-reduce:hidden"
@@ -166,12 +151,9 @@ export default function CardGridTabs({ filter, onSelect }: Props) {
               className={cn(
                 tabButtonBase,
                 selected
-                  ? cn(
-                      'text-fg0',
-                      // Static chrome until the sliding pill mounts (SSR / first measure).
-                      (!indicatorReady || indicator.width === 0) && 'bg-bg0 shadow-sm',
-                      'motion-reduce:bg-bg0 motion-reduce:shadow-sm',
-                    )
+                  ? showPill
+                    ? 'text-fg0 motion-reduce:bg-bg0 motion-reduce:shadow-sm'
+                    : 'bg-bg0 text-fg0 shadow-sm'
                   : 'text-fg3 hover:text-fg1',
               )}
               onClick={() => onSelect(id)}
