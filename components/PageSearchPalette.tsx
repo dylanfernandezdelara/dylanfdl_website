@@ -7,44 +7,32 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { activatePageSearchResult, collectPageSearchTargets } from '@/components/page-search/dom'
 import { computeSearchResults, type SearchResult, type SearchTarget } from '@/lib/page-search'
 
-export default function PageSearchPalette() {
-  const [isOpen, setIsOpen] = useState(false)
+type PageSearchPaletteProps = {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export default function PageSearchPalette({ open, onOpenChange }: PageSearchPaletteProps) {
   const [query, setQuery] = useState('')
   const [targets, setTargets] = useState<SearchTarget<HTMLElement>[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-        event.preventDefault()
-        setIsOpen((prev) => !prev)
-      }
-
-      if (event.key === 'Escape') {
-        setIsOpen(false)
-      }
-    }
-
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [])
-
-  useEffect(() => {
-    if (!isOpen) {
+    if (!open) {
       setQuery('')
       return
     }
 
     setTargets(collectPageSearchTargets())
     requestAnimationFrame(() => inputRef.current?.focus())
-  }, [isOpen])
+  }, [open])
 
   const results = useMemo<SearchResult<HTMLElement>[]>(() => {
     return computeSearchResults(query, targets, 24)
   }, [query, targets])
 
   const goToResult = (result: SearchResult<HTMLElement>) => {
-    setIsOpen(false)
+    onOpenChange(false)
 
     requestAnimationFrame(() => {
       activatePageSearchResult(result)
@@ -52,7 +40,7 @@ export default function PageSearchPalette() {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
         data-search-overlay="true"

@@ -7,7 +7,7 @@ import {
   absoluteUrl,
   buildPageTitle,
 } from '@/lib/site'
-import { generateMetadata } from '@/src/app/notes/[slug]/page'
+import { generateMetadata } from '@/src/app/(article)/notes/[slug]/page'
 
 describe('note generateMetadata', () => {
   it('builds title, description, canonical, and article OG fields', async () => {

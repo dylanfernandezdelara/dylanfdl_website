@@ -5,7 +5,7 @@ import CardGridClient from '@/components/CardGridClient'
 import ExternalLink from '@/components/ExternalLink'
 import JsonLdScript from '@/components/JsonLdScript'
 import OptimistText from '@/components/OptimistText'
-import PageSearchPalette from '@/components/PageSearchPalette'
+import PageSearchPaletteHost from '@/components/PageSearchPaletteHost'
 import ThemeToggle from '@/components/ThemeToggle'
 import { buildCardGridItems } from '@/lib/buildCardGridItems'
 import { buildHomePageJsonLd } from '@/lib/jsonLd'
@@ -98,7 +98,7 @@ export default function HomePage() {
           </div>
         </CardGridClient>
       </div>
-      <PageSearchPalette />
+      <PageSearchPaletteHost />
     </>
   )
 }
