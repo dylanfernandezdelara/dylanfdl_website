@@ -7,35 +7,41 @@ const PageSearchPalette = dynamic(() => import('@/components/PageSearchPalette')
   ssr: false,
 })
 
+function isSearchHotkey(event: KeyboardEvent): boolean {
+  return (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k'
+}
+
 /**
- * Defers the cmdk/dialog search chunk until the browser is idle (or the user
- * presses ⌘/Ctrl+K). Keeps the home critical path free of that dependency graph.
+ * Owns search hotkeys and open state for the life of the page. Loads the
+ * cmdk/dialog chunk on idle (or on the first ⌘/Ctrl+K) so it stays off the
+ * home critical path without a shortcut dead zone during import.
  */
 export default function PageSearchPaletteHost() {
-  const [shouldMount, setShouldMount] = useState(false)
-  const [initialOpen, setInitialOpen] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if (shouldMount) {
-      return
-    }
-
-    const mount = () => setShouldMount(true)
+    const load = () => setLoaded(true)
 
     let idleId: number | undefined
     let timeoutId: ReturnType<typeof setTimeout> | undefined
 
     if (typeof window.requestIdleCallback === 'function') {
-      idleId = window.requestIdleCallback(mount, { timeout: 2000 })
+      idleId = window.requestIdleCallback(load, { timeout: 2000 })
     } else {
-      timeoutId = setTimeout(mount, 1)
+      timeoutId = setTimeout(load, 1)
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      if (isSearchHotkey(event)) {
         event.preventDefault()
-        setInitialOpen(true)
-        mount()
+        load()
+        setOpen((prev) => !prev)
+        return
+      }
+
+      if (event.key === 'Escape') {
+        setOpen(false)
       }
     }
 
@@ -49,11 +55,11 @@ export default function PageSearchPaletteHost() {
         clearTimeout(timeoutId)
       }
     }
-  }, [shouldMount])
+  }, [])
 
-  if (!shouldMount) {
+  if (!loaded) {
     return null
   }
 
-  return <PageSearchPalette initialOpen={initialOpen} />
+  return <PageSearchPalette open={open} onOpenChange={setOpen} />
 }

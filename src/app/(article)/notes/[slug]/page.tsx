@@ -1,4 +1,4 @@
-import { createContentPage } from '../../_content/createContentPage'
+import { createContentPage } from '../../../_content/createContentPage'
 
 const { dynamicParams, generateStaticParams, generateMetadata, Page } =
   createContentPage('notes')
