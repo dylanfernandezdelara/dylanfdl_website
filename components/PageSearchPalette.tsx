@@ -7,8 +7,12 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { activatePageSearchResult, collectPageSearchTargets } from '@/components/page-search/dom'
 import { computeSearchResults, type SearchResult, type SearchTarget } from '@/lib/page-search'
 
-export default function PageSearchPalette() {
-  const [isOpen, setIsOpen] = useState(false)
+type PageSearchPaletteProps = {
+  initialOpen?: boolean
+}
+
+export default function PageSearchPalette({ initialOpen = false }: PageSearchPaletteProps) {
+  const [isOpen, setIsOpen] = useState(initialOpen)
   const [query, setQuery] = useState('')
   const [targets, setTargets] = useState<SearchTarget<HTMLElement>[]>([])
   const inputRef = useRef<HTMLInputElement>(null)

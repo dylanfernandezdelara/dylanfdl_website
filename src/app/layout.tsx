@@ -15,7 +15,6 @@ import {
 
 import '../styles/theme.css'
 import '../styles/globals.css'
-import '../styles/article.css'
 import '../styles/effects.css'
 
 const lora = Lora({
