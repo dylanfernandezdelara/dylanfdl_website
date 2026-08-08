@@ -3,36 +3,30 @@ import { CAREER_ENTRIES } from '@/lib/career'
 
 export default function CareerTimeline() {
   return (
-    <section className="mt-8" aria-label="Career">
-      <ul className="flex flex-col gap-3.5">
+    <section className="mt-6" aria-label="Career">
+      <ul className="flex flex-col gap-1.5">
         {CAREER_ENTRIES.map((entry) => (
           <li
             key={`${entry.company}-${entry.dates}`}
-            className="flex items-start justify-between gap-4"
+            className="flex items-center justify-between gap-3"
           >
-            <div className="flex min-w-0 items-start gap-2.5">
+            <div className="flex min-w-0 items-center gap-2">
               <img
                 src={entry.faviconSrc}
                 alt=""
-                width={16}
-                height={16}
+                width={14}
+                height={14}
                 decoding="async"
-                className="mt-0.5 size-4 shrink-0 rounded-[3px]"
+                className="size-3.5 shrink-0"
               />
-              <div className="min-w-0 leading-snug">
-                <ExternalLink
-                  href={entry.href}
-                  noUnderline
-                  className="font-[450] text-fg0 hover:text-fg0"
-                >
+              <span className="min-w-0 truncate">
+                <ExternalLink href={entry.href} noUnderline className="text-fg1 hover:text-fg0">
                   {entry.company}
                 </ExternalLink>
-                <div className="text-[13px] text-fg3">{entry.role}</div>
-              </div>
+                <span className="text-fg3"> · {entry.role}</span>
+              </span>
             </div>
-            <time className="shrink-0 pt-0.5 text-xs font-normal tabular-nums text-fg3">
-              {entry.dates}
-            </time>
+            <time className="shrink-0 tabular-nums text-fg3">{entry.dates}</time>
           </li>
         ))}
       </ul>

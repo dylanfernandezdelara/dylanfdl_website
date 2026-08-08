@@ -19,7 +19,7 @@ export const CAREER_ENTRIES = [
     company: 'Reality Labs',
     role: 'SWE',
     dates: 'Nov 2024 – May 2026',
-    faviconSrc: '/career/meta.png',
+    faviconSrc: '/career/reality-labs.png',
     href: 'https://www.meta.com/ai-glasses/',
   },
   {
@@ -33,7 +33,7 @@ export const CAREER_ENTRIES = [
     company: 'Messenger',
     role: 'SWE Intern',
     dates: 'Summer 2022',
-    faviconSrc: '/career/meta.png',
+    faviconSrc: '/career/messenger.png',
     href: 'https://www.messenger.com',
   },
 ] as const satisfies readonly CareerEntry[]

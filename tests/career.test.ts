@@ -25,4 +25,15 @@ describe('career', () => {
       dates: 'May 2026 – Present',
     })
   })
+
+  it('uses distinct favicons for Reality Labs and Messenger', () => {
+    const byCompany = Object.fromEntries(
+      CAREER_ENTRIES.map((entry) => [entry.company, entry.faviconSrc]),
+    )
+
+    expect(byCompany['Reality Labs']).toBe('/career/reality-labs.png')
+    expect(byCompany.Messenger).toBe('/career/messenger.png')
+    expect(byCompany['Meta Applied AI']).toBe('/career/meta.png')
+    expect(byCompany['Meta Billing']).toBe('/career/meta.png')
+  })
 })
