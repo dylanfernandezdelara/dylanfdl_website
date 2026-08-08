@@ -4,8 +4,7 @@ export type CareerEntry = {
   dates: string
   /** Local path under /public for the company favicon. */
   faviconSrc: string
-  faviconAlt: string
-  href?: string
+  href: string
 }
 
 export const CAREER_ENTRIES = [
@@ -14,7 +13,6 @@ export const CAREER_ENTRIES = [
     role: 'Senior SWE',
     dates: 'May 2026 – Present',
     faviconSrc: '/career/meta.png',
-    faviconAlt: 'Meta',
     href: 'https://ai.meta.com',
   },
   {
@@ -22,7 +20,6 @@ export const CAREER_ENTRIES = [
     role: 'SWE',
     dates: 'Nov 2024 – May 2026',
     faviconSrc: '/career/meta.png',
-    faviconAlt: 'Meta',
     href: 'https://www.meta.com/ai-glasses/',
   },
   {
@@ -30,7 +27,6 @@ export const CAREER_ENTRIES = [
     role: 'SWE',
     dates: 'Nov 2023 – Nov 2024',
     faviconSrc: '/career/meta.png',
-    faviconAlt: 'Meta',
     href: 'https://www.meta.com',
   },
   {
@@ -38,7 +34,6 @@ export const CAREER_ENTRIES = [
     role: 'SWE Intern',
     dates: 'Summer 2022',
     faviconSrc: '/career/meta.png',
-    faviconAlt: 'Meta',
     href: 'https://www.messenger.com',
   },
 ] as const satisfies readonly CareerEntry[]

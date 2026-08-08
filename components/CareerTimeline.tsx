@@ -20,17 +20,13 @@ export default function CareerTimeline() {
                 className="mt-0.5 size-4 shrink-0 rounded-[3px]"
               />
               <div className="min-w-0 leading-snug">
-                {entry.href ? (
-                  <ExternalLink
-                    href={entry.href}
-                    noUnderline
-                    className="font-[450] text-fg0 hover:text-fg0"
-                  >
-                    {entry.company}
-                  </ExternalLink>
-                ) : (
-                  <span className="font-[450] text-fg0">{entry.company}</span>
-                )}
+                <ExternalLink
+                  href={entry.href}
+                  noUnderline
+                  className="font-[450] text-fg0 hover:text-fg0"
+                >
+                  {entry.company}
+                </ExternalLink>
                 <div className="text-[13px] text-fg3">{entry.role}</div>
               </div>
             </div>
