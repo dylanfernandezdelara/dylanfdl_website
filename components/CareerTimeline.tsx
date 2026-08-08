@@ -14,12 +14,12 @@ export default function CareerTimeline() {
               <img
                 src={entry.faviconSrc}
                 alt=""
-                width={14}
-                height={14}
+                width={16}
+                height={16}
                 decoding="async"
-                className="size-3.5 shrink-0"
+                className="size-4 shrink-0"
               />
-              <span className="min-w-0 truncate">
+              <span className="min-w-0 text-pretty">
                 <ExternalLink href={entry.href} noUnderline className="text-fg1 hover:text-fg0">
                   {entry.company}
                 </ExternalLink>
