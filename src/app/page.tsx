@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Fragment } from 'react'
 
 import CardGridClient from '@/components/CardGridClient'
+import CareerTimeline from '@/components/CareerTimeline'
 import ExternalLink from '@/components/ExternalLink'
 import JsonLdScript from '@/components/JsonLdScript'
 import OptimistText from '@/components/OptimistText'
@@ -75,6 +76,7 @@ export default function HomePage() {
             I am a Yale graduate and am currently based in New York.
           </p>
 
+          <CareerTimeline />
         </div>
 
         <CardGridClient items={cardGridItems}>
