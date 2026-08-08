@@ -19,7 +19,7 @@ export const CAREER_ENTRIES = [
     company: 'Reality Labs',
     role: 'SWE',
     dates: 'Nov 2024 – May 2026',
-    faviconSrc: '/career/reality-labs.png',
+    faviconSrc: '/career/reality-labs.svg',
     href: 'https://www.meta.com/ai-glasses/',
   },
   {

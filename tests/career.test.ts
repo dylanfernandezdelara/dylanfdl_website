@@ -31,7 +31,7 @@ describe('career', () => {
       CAREER_ENTRIES.map((entry) => [entry.company, entry.faviconSrc]),
     )
 
-    expect(byCompany['Reality Labs']).toBe('/career/reality-labs.png')
+    expect(byCompany['Reality Labs']).toBe('/career/reality-labs.svg')
     expect(byCompany.Messenger).toBe('/career/messenger.png')
     expect(byCompany['Meta Applied AI']).toBe('/career/meta.png')
     expect(byCompany['Meta Billing']).toBe('/career/meta.png')
