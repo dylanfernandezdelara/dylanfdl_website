@@ -3,6 +3,7 @@ import { Fragment } from 'react'
 
 import CardGridClient from '@/components/CardGridClient'
 import ExternalLink from '@/components/ExternalLink'
+import HomeWorkIndex from '@/components/HomeWorkIndex'
 import JsonLdScript from '@/components/JsonLdScript'
 import OptimistText from '@/components/OptimistText'
 import PageSearchPaletteHost from '@/components/PageSearchPaletteHost'
@@ -15,8 +16,10 @@ import {
   DEFAULT_DESCRIPTION,
   HOME_PAGE_TITLE,
   OPEN_GRAPH_BASE,
+  SITE_DOCUMENT_LINKS,
   absoluteUrl,
 } from '@/lib/site'
+import { HOME_INTRO_PARAGRAPHS, HOME_WORK_HEADING } from '@/lib/siteCopy'
 
 const cardGridItems = buildCardGridItems()
 
@@ -33,6 +36,9 @@ const canonicalUrl = absoluteUrl('/')
 export const metadata: Metadata = {
   alternates: {
     canonical: '/',
+    types: {
+      'text/markdown': '/',
+    },
   },
   openGraph: {
     ...OPEN_GRAPH_BASE,
@@ -74,10 +80,25 @@ export default function HomePage() {
           <p className="mb-4">
             I am a Yale graduate and am currently based in New York.
           </p>
+          {HOME_INTRO_PARAGRAPHS.slice(3).map((paragraph) => (
+            <p key={paragraph} className="mb-4">
+              {paragraph}
+            </p>
+          ))}
 
         </div>
 
+        <section className="mt-8" aria-labelledby="work-heading">
+          <h2 id="work-heading" className="mb-3 font-serif text-xl font-normal text-fg0">
+            {HOME_WORK_HEADING}
+          </h2>
+          <p className="mb-4 text-pretty text-sm font-[450] leading-relaxed text-fg1">
+            Selected notes, projects, and music from this site.
+          </p>
+        </section>
+
         <CardGridClient items={cardGridItems}>
+          <HomeWorkIndex items={cardGridItems} />
           <hr className="mb-3 mt-8 w-full border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
 
           <div className="flex w-full items-center justify-between gap-4">
@@ -89,6 +110,16 @@ export default function HomePage() {
                       ·
                     </span>
                   )}
+                  <a className={CONTACT_LINK_STYLES} href={link.href}>
+                    {link.label}
+                  </a>
+                </Fragment>
+              ))}
+              {SITE_DOCUMENT_LINKS.map((link) => (
+                <Fragment key={link.href}>
+                  <span className={SECONDARY_LINK_SEPARATOR} aria-hidden="true">
+                    ·
+                  </span>
                   <a className={CONTACT_LINK_STYLES} href={link.href}>
                     {link.label}
                   </a>

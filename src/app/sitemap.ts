@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 
 import { contentCanonicalPath, getPublishedEntries } from '@/lib/content'
-import { SITE_URL, toIsoDateTime } from '@/lib/site'
+import { SITE_DOCUMENT_LINKS, SITE_URL, absoluteUrl, toIsoDateTime } from '@/lib/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const writingEntries = getPublishedEntries().map((entry) => ({
@@ -9,10 +9,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(toIsoDateTime(entry.updated ?? entry.date)),
   }))
 
+  const documentEntries = SITE_DOCUMENT_LINKS.map((link) => ({
+    url: absoluteUrl(link.href),
+  }))
+
   return [
     {
       url: SITE_URL,
     },
+    ...documentEntries,
     ...writingEntries,
   ]
 }

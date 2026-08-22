@@ -52,7 +52,7 @@ export default function Card({
   const inner = (
     <>
       <div className="flex items-baseline justify-between gap-3 px-4 py-3.5">
-        <span className="text-sm font-normal leading-snug text-fg0">{title}</span>
+        <h3 className="text-sm font-normal leading-snug text-fg0">{title}</h3>
         <span className="shrink-0 text-xs font-normal tabular-nums text-fg1">{dateLabel}</span>
       </div>
       <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-bg2">{media}</div>

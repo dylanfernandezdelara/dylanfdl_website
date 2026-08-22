@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  CONTACT_EMAIL,
   CONTACT_LINKS,
   DEFAULT_DESCRIPTION,
   HOME_PAGE_TITLE,
@@ -60,6 +61,13 @@ describe('site', () => {
 
   it('includes the full name on content page titles', () => {
     expect(buildPageTitle({ title: 'On Writing' })).toBe('On Writing — Dylan Fernandez de Lara')
+  })
+
+  it('exposes a stable public email and document paths', () => {
+    expect(CONTACT_EMAIL).toBe('fernandezdelaradylan@gmail.com')
+    expect(CONTACT_LINKS.find((link) => link.label === 'Email')?.href).toBe(
+      `mailto:${CONTACT_EMAIL}`,
+    )
   })
 
   it('derives twitter creator from the X profile URL', () => {

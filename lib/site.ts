@@ -37,12 +37,29 @@ export const PERSON_NAME_ALTERNATES = [
   'dylanfernandezdelara',
 ] as const
 
+export const CONTACT_EMAIL = 'fernandezdelaradylan@gmail.com'
+
+export const PERSON_LOCATION = {
+  locality: 'New York',
+  region: 'NY',
+  country: 'US',
+  countryName: 'United States',
+} as const
+
 export const DEFAULT_DESCRIPTION =
   `${PERSON_NAME}. Portfolio, projects, music.`
 
 export const NOT_FOUND_DESCRIPTION = 'Page not found on dylanfdl.com.'
 
 export const HOME_PAGE_TITLE = PERSON_NAME
+
+export const ABOUT_PATH = '/about'
+
+export const CONTACT_PATH = '/contact'
+
+export const PRIVACY_PATH = '/privacy'
+
+export const LLMS_TXT_PATH = '/llms.txt'
 
 type ContactLink = {
   label: string
@@ -59,7 +76,7 @@ export const CONTACT_LINKS = [
     sameAs: true,
     relMe: true,
   },
-  { label: 'Email', href: 'mailto:fernandezdelaradylan@gmail.com' },
+  { label: 'Email', href: `mailto:${CONTACT_EMAIL}` },
   {
     label: 'X',
     href: 'https://x.com/dylan_fdl_',
@@ -106,6 +123,12 @@ export const PERSON_URL = absoluteUrl(PERSON_PAGE_PATH)
 export const OG_IMAGE_URL = absoluteUrl(OG_IMAGE_PATH)
 
 export const SITEMAP_INDEX_URL = absoluteUrl('/sitemap.xml')
+
+export const SITE_DOCUMENT_LINKS = [
+  { label: 'About', href: ABOUT_PATH },
+  { label: 'Contact', href: CONTACT_PATH },
+  { label: 'Privacy', href: PRIVACY_PATH },
+] as const
 
 /**
  * Shared Open Graph fields. Next.js replaces (not deep-merges) the nested

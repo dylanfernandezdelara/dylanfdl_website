@@ -1,0 +1,41 @@
+import { describe, expect, it } from 'vitest'
+
+import { appendVaryAccept, preferredType } from '@/lib/acceptMarkdown'
+
+describe('preferredType', () => {
+  it('defaults to HTML when Accept is missing', () => {
+    expect(preferredType(null)).toBe('text/html')
+  })
+
+  it('prefers markdown when it appears first among equals', () => {
+    expect(preferredType('text/markdown, text/html, */*')).toBe('text/markdown')
+  })
+
+  it('honors a higher HTML q-value', () => {
+    expect(preferredType('text/markdown;q=0.4, text/html;q=0.8')).toBe('text/html')
+  })
+
+  it('returns null when every produced type is rejected', () => {
+    expect(preferredType('application/pdf')).toBe(null)
+    expect(preferredType('text/html;q=0, text/markdown;q=0, */*;q=0')).toBe(null)
+  })
+
+  it('lets a specific rejection beat a wildcard', () => {
+    expect(preferredType('text/html;q=0, */*;q=1')).toBe('text/markdown')
+  })
+})
+
+describe('appendVaryAccept', () => {
+  it('adds Accept when Vary is empty', () => {
+    const headers = new Headers()
+    appendVaryAccept(headers)
+    expect(headers.get('Vary')).toBe('Accept')
+  })
+
+  it('appends Accept without duplicating it', () => {
+    const headers = new Headers({ Vary: 'rsc, next-router-state-tree' })
+    appendVaryAccept(headers)
+    appendVaryAccept(headers)
+    expect(headers.get('Vary')).toBe('rsc, next-router-state-tree, Accept')
+  })
+})

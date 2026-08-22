@@ -14,6 +14,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: __dirname,
+  outputFileTracingIncludes: {
+    '/api/markdown/[[...slug]]': ['./content/**/*'],
+  },
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   async redirects() {
     return [
@@ -21,11 +24,6 @@ const nextConfig: NextConfig = {
         source: '/:path*',
         has: [{ type: 'host', value: APEX_HOST }],
         destination: `${SITE_URL}/:path*`,
-        permanent: true,
-      },
-      {
-        source: '/about',
-        destination: '/',
         permanent: true,
       },
       // Astro @astrojs/sitemap used these URLs; keep crawlers from 404ing.
