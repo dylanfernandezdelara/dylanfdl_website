@@ -22,6 +22,8 @@ export const PRIVACY_PAGE_TITLE = 'Privacy'
 
 export const HOME_WORK_HEADING = 'Work'
 
+export const HOME_ABOUT_HEADING = 'About this site'
+
 export const HOME_INTRO_PARAGRAPHS = [
   `I currently work on post-training at Meta and build RL environments for frontier coding agents. We recently launched Muse Spark 1.2 and Muse Code.`,
   `Previously, I scaled crash infrastructure for Meta Glasses.`,
@@ -35,6 +37,12 @@ export const ABOUT_PAGE_PARAGRAPHS = [
   `Before that I scaled crash infrastructure for Meta Glasses. I studied at Yale. This site is my public notebook: a short profile on the home page, notes when I want to make an idea precise, projects when there is something to inspect, and a record of concerts I played.`,
   `I write in public to clarify my own thinking, not to run a product or a developer platform. If you need a professional contact path, a longer biography, or a privacy statement, those pages live on this same domain. The home page remains the profile; About exists so agents and people can find a stable, text-first biography without depending on the card grid.`,
   `You can reach me by email or through the profiles listed on Contact. I am the only person who publishes here. Nothing on this site is a Meta documentation portal, and I do not publish private work information.`,
+] as const
+
+export const HOME_DETAIL_PARAGRAPHS = [
+  ...ABOUT_PAGE_PARAGRAPHS,
+  `Contact is ${CONTACT_EMAIL}. Privacy explains that theme preference stays in the browser, that visitors are not asked to log into Spotify, and that I do not sell data. If a path is missing, the 404 links to the sitemap and llms.txt instead of pretending the page exists.`,
+  `Agents should fetch HTML or Markdown from the same path. Send Accept: text/markdown when you want the text representation, or open /llms.txt for when-to-use guidance. The sitemap lists published notes and the About, Contact, and Privacy pages. This site does not expose OAuth, GraphQL, or an MCP server.`,
 ] as const
 
 export const CONTACT_PAGE_PARAGRAPHS = [
@@ -111,6 +119,10 @@ export function buildHomeMarkdown(): string {
     '## Music',
     '',
     ...music.map((item) => `- [${item.title}](${item.href}) — ${item.dateLabel}`),
+    '',
+    `## ${HOME_ABOUT_HEADING}`,
+    '',
+    joinParagraphs(HOME_DETAIL_PARAGRAPHS),
     '',
     '## Pages',
     '',

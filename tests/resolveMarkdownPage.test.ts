@@ -17,6 +17,7 @@ describe('resolveMarkdownPage', () => {
     expect(page.body).toContain('# Dylan Fernandez de Lara')
     expect(page.body).toContain('## Work')
     expect(page.body).toContain('## Notes')
+    expect(page.body).toContain('## About this site')
     expect(page.body).toContain('On Writing')
     expect(page.body).toContain('/about')
   })
