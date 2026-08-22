@@ -2,9 +2,9 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 import {
   appendVaryAccept,
-  MARKDOWN_CONTENT_TYPE,
   NOT_ACCEPTABLE_BODY,
   preferredType,
+  shouldNegotiate,
 } from '@/lib/acceptMarkdown'
 
 function rewriteToMarkdown(request: NextRequest, pathname: string): NextResponse {
@@ -12,7 +12,6 @@ function rewriteToMarkdown(request: NextRequest, pathname: string): NextResponse
   url.pathname = `/api/markdown${pathname === '/' ? '' : pathname}`
   const rewritten = NextResponse.rewrite(url)
   appendVaryAccept(rewritten.headers)
-  rewritten.headers.set('Content-Type', MARKDOWN_CONTENT_TYPE)
   return rewritten
 }
 
@@ -26,6 +25,10 @@ export function middleware(request: NextRequest): NextResponse | Response {
   if (pathname.endsWith('.md')) {
     const barePath = pathname.slice(0, -3) || '/'
     return rewriteToMarkdown(request, barePath === '/index' ? '/' : barePath)
+  }
+
+  if (!shouldNegotiate(request)) {
+    return NextResponse.next()
   }
 
   const acceptHeader = request.headers.get('accept')

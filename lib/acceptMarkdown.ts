@@ -110,3 +110,46 @@ export function appendVaryAccept(headers: Headers): void {
 export const MARKDOWN_CONTENT_TYPE = 'text/markdown; charset=utf-8'
 
 export const NOT_ACCEPTABLE_BODY = 'Not Acceptable\n\nAvailable: text/html, text/markdown\n'
+
+const FRAMEWORK_ACCEPT_TYPES = ['text/x-component'] as const
+
+function headerPresent(headers: { get(name: string): string | null }, name: string): boolean {
+  return Boolean(headers.get(name))
+}
+
+/**
+ * Skip markdown negotiation for Next Flight / Server Actions and non-GET
+ * requests. Those Accept values are not document negotiation.
+ */
+export function shouldNegotiate(request: {
+  method: string
+  headers: { get(name: string): string | null }
+}): boolean {
+  const method = request.method.toUpperCase()
+  if (method !== 'GET' && method !== 'HEAD') {
+    return false
+  }
+  if (headerPresent(request.headers, 'rsc')) {
+    return false
+  }
+  if (headerPresent(request.headers, 'next-action')) {
+    return false
+  }
+  if (headerPresent(request.headers, 'next-router-state-tree')) {
+    return false
+  }
+
+  const accept = request.headers.get('accept')?.toLowerCase() ?? ''
+  return !FRAMEWORK_ACCEPT_TYPES.some((type) => accept.includes(type))
+}
+
+export function markdownResponse(body: string, status: 200 | 404 = 200): Response {
+  return new Response(body, {
+    status,
+    headers: {
+      'Content-Type': MARKDOWN_CONTENT_TYPE,
+      Vary: 'Accept',
+      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=86400',
+    },
+  })
+}

@@ -1,6 +1,9 @@
 import Link from 'next/link'
 
-import type { CardGridSerializableItem } from '@/lib/buildCardGridItems'
+import {
+  partitionCardGridItems,
+  type CardGridSerializableItem,
+} from '@/lib/buildCardGridItems'
 import { INLINE_LINK_STYLES } from '@/lib/linkStyles'
 
 type Section = {
@@ -38,9 +41,7 @@ function WorkList({ heading, items, empty }: Section) {
 }
 
 export default function HomeWorkIndex({ items }: { items: CardGridSerializableItem[] }) {
-  const projects = items.filter((item) => item.category === 'projects')
-  const notes = items.filter((item) => item.category === 'notes')
-  const music = items.filter((item) => item.category === 'music')
+  const { projects, notes, music } = partitionCardGridItems(items)
 
   return (
     <nav aria-label="Contents" className="mt-10 text-sm font-[450] leading-relaxed text-fg1">

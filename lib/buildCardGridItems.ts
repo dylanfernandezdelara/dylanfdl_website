@@ -120,3 +120,11 @@ export function buildCardGridItems(): CardGridSerializableItem[] {
     b.sortDate.localeCompare(a.sortDate)
   )
 }
+
+export function partitionCardGridItems(items: CardGridSerializableItem[]) {
+  return {
+    projects: items.filter((item) => item.category === 'projects'),
+    notes: items.filter((item) => item.category === 'notes'),
+    music: items.filter((item) => item.category === 'music'),
+  }
+}

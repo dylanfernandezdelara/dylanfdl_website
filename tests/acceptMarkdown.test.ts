@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { appendVaryAccept, preferredType } from '@/lib/acceptMarkdown'
+import { appendVaryAccept, preferredType, shouldNegotiate } from '@/lib/acceptMarkdown'
 
 describe('preferredType', () => {
   it('defaults to HTML when Accept is missing', () => {
@@ -22,6 +22,38 @@ describe('preferredType', () => {
 
   it('lets a specific rejection beat a wildcard', () => {
     expect(preferredType('text/html;q=0, */*;q=1')).toBe('text/markdown')
+  })
+})
+
+describe('shouldNegotiate', () => {
+  it('skips Next Flight and Server Action requests', () => {
+    expect(
+      shouldNegotiate({
+        method: 'GET',
+        headers: new Headers({ accept: 'text/x-component', rsc: '1' }),
+      }),
+    ).toBe(false)
+    expect(
+      shouldNegotiate({
+        method: 'POST',
+        headers: new Headers({ accept: 'text/x-component', 'next-action': 'abc' }),
+      }),
+    ).toBe(false)
+  })
+
+  it('still negotiates ordinary document GET requests', () => {
+    expect(
+      shouldNegotiate({
+        method: 'GET',
+        headers: new Headers({ accept: 'text/markdown,text/html;q=0.8' }),
+      }),
+    ).toBe(true)
+    expect(
+      shouldNegotiate({
+        method: 'GET',
+        headers: new Headers({ accept: 'application/pdf' }),
+      }),
+    ).toBe(true)
   })
 })
 

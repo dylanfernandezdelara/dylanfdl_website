@@ -1,42 +1,25 @@
-import type { Metadata } from 'next'
+import ExternalLink from '@/components/ExternalLink'
+import InfoPage, { InfoParagraph } from '@/components/InfoPage'
+import { documentPageMetadata } from '@/lib/documentPage'
+import { INLINE_LINK_STYLES } from '@/lib/linkStyles'
+import { CONTACT_LINKS, CONTACT_PATH, absoluteUrl } from '@/lib/site'
+import { CONTACT_PAGE_PARAGRAPHS, CONTACT_PAGE_TITLE } from '@/lib/siteCopy'
 
-import InfoPage, { InfoLink, InfoParagraph } from '@/components/InfoPage'
-import {
-  CONTACT_PAGE_PARAGRAPHS,
-  CONTACT_PAGE_TITLE,
-} from '@/lib/siteCopy'
-import {
-  CONTACT_LINKS,
-  CONTACT_PATH,
-  OPEN_GRAPH_BASE,
-  absoluteUrl,
-  buildPageTitle,
-} from '@/lib/site'
+const description = CONTACT_PAGE_PARAGRAPHS[0] ?? CONTACT_PAGE_TITLE
 
-const canonicalUrl = absoluteUrl(CONTACT_PATH)
-const description = CONTACT_PAGE_PARAGRAPHS[0]
-
-export const metadata: Metadata = {
-  title: buildPageTitle({ title: CONTACT_PAGE_TITLE }),
+export const metadata = documentPageMetadata({
+  path: CONTACT_PATH,
+  title: CONTACT_PAGE_TITLE,
   description,
-  alternates: {
-    canonical: CONTACT_PATH,
-    types: {
-      'text/markdown': CONTACT_PATH,
-    },
-  },
-  openGraph: {
-    ...OPEN_GRAPH_BASE,
-    type: 'website',
-    title: buildPageTitle({ title: CONTACT_PAGE_TITLE }),
-    description,
-    url: canonicalUrl,
-  },
-}
+})
 
 export default function ContactPage() {
   return (
-    <InfoPage title={CONTACT_PAGE_TITLE} canonicalUrl={canonicalUrl} description={description}>
+    <InfoPage
+      title={CONTACT_PAGE_TITLE}
+      canonicalUrl={absoluteUrl(CONTACT_PATH)}
+      description={description}
+    >
       {CONTACT_PAGE_PARAGRAPHS.map((paragraph) => (
         <InfoParagraph key={paragraph}>{paragraph}</InfoParagraph>
       ))}
@@ -44,7 +27,13 @@ export default function ContactPage() {
       <ul className="mb-4 space-y-1">
         {CONTACT_LINKS.map((link) => (
           <li key={link.href}>
-            <InfoLink href={link.href}>{link.label}</InfoLink>
+            {link.href.startsWith('mailto:') ? (
+              <a href={link.href} className={INLINE_LINK_STYLES}>
+                {link.label}
+              </a>
+            ) : (
+              <ExternalLink href={link.href}>{link.label}</ExternalLink>
+            )}
           </li>
         ))}
       </ul>

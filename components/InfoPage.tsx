@@ -2,10 +2,8 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 
 import JsonLdScript from '@/components/JsonLdScript'
-import { INLINE_LINK_STYLES } from '@/lib/linkStyles'
 import { buildDocumentPageJsonLd } from '@/lib/jsonLd'
 import { PERSON_NAME } from '@/lib/site'
-import { cn } from '@/lib/utils'
 
 type Props = {
   title: string
@@ -33,7 +31,7 @@ export default function InfoPage({ title, canonicalUrl, description, children }:
             {PERSON_NAME}
           </Link>
           <nav aria-label="Site" className="flex items-center gap-5 text-fg3">
-            <Link href="/" className={cn('transition-colors duration-150 hover:text-fg0')}>
+            <Link href="/" className="transition-colors duration-150 hover:text-fg0">
               Home
             </Link>
           </nav>
@@ -49,22 +47,4 @@ export default function InfoPage({ title, canonicalUrl, description, children }:
 
 export function InfoParagraph({ children }: { children: ReactNode }) {
   return <p className="mb-4">{children}</p>
-}
-
-export function InfoLink({ href, children }: { href: string; children: ReactNode }) {
-  const external = href.startsWith('http') || href.startsWith('mailto:')
-
-  if (external) {
-    return (
-      <a href={href} className={INLINE_LINK_STYLES}>
-        {children}
-      </a>
-    )
-  }
-
-  return (
-    <Link href={href} className={INLINE_LINK_STYLES}>
-      {children}
-    </Link>
-  )
 }

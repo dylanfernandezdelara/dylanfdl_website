@@ -1,36 +1,23 @@
-import type { Metadata } from 'next'
-
 import InfoPage, { InfoParagraph } from '@/components/InfoPage'
-import {
-  PRIVACY_PAGE_PARAGRAPHS,
-  PRIVACY_PAGE_TITLE,
-} from '@/lib/siteCopy'
-import { OPEN_GRAPH_BASE, PRIVACY_PATH, absoluteUrl, buildPageTitle } from '@/lib/site'
+import { documentPageMetadata } from '@/lib/documentPage'
+import { PRIVACY_PATH, absoluteUrl } from '@/lib/site'
+import { PRIVACY_PAGE_PARAGRAPHS, PRIVACY_PAGE_TITLE } from '@/lib/siteCopy'
 
-const canonicalUrl = absoluteUrl(PRIVACY_PATH)
-const description = PRIVACY_PAGE_PARAGRAPHS[0]
+const description = PRIVACY_PAGE_PARAGRAPHS[0] ?? PRIVACY_PAGE_TITLE
 
-export const metadata: Metadata = {
-  title: buildPageTitle({ title: PRIVACY_PAGE_TITLE }),
+export const metadata = documentPageMetadata({
+  path: PRIVACY_PATH,
+  title: PRIVACY_PAGE_TITLE,
   description,
-  alternates: {
-    canonical: PRIVACY_PATH,
-    types: {
-      'text/markdown': PRIVACY_PATH,
-    },
-  },
-  openGraph: {
-    ...OPEN_GRAPH_BASE,
-    type: 'website',
-    title: buildPageTitle({ title: PRIVACY_PAGE_TITLE }),
-    description,
-    url: canonicalUrl,
-  },
-}
+})
 
 export default function PrivacyPage() {
   return (
-    <InfoPage title={PRIVACY_PAGE_TITLE} canonicalUrl={canonicalUrl} description={description}>
+    <InfoPage
+      title={PRIVACY_PAGE_TITLE}
+      canonicalUrl={absoluteUrl(PRIVACY_PATH)}
+      description={description}
+    >
       {PRIVACY_PAGE_PARAGRAPHS.map((paragraph) => (
         <InfoParagraph key={paragraph}>{paragraph}</InfoParagraph>
       ))}

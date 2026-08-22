@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { INLINE_LINK_STYLES } from '@/lib/linkStyles'
 import { NOT_FOUND_DESCRIPTION } from '@/lib/site'
 import { NOT_FOUND_RECOVERY_LINKS } from '@/lib/siteCopy'
-import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'Not found',
@@ -25,7 +24,7 @@ export default function NotFound() {
       <ul className="mb-8 space-y-2 text-sm">
         {NOT_FOUND_RECOVERY_LINKS.map((link) => (
           <li key={link.href}>
-            <Link href={link.href} className={cn(INLINE_LINK_STYLES)}>
+            <Link href={link.href} className={INLINE_LINK_STYLES}>
               {link.label}
             </Link>
           </li>
