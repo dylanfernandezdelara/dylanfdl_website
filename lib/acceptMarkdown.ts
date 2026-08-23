@@ -76,7 +76,10 @@ export function preferredType(header: string | null): ProducedMediaType | null {
       if (
         matched === null ||
         entry.specificity > matched.specificity ||
-        (entry.specificity === matched.specificity && index < matchedPosition)
+        (entry.specificity === matched.specificity && entry.q > matched.q) ||
+        (entry.specificity === matched.specificity &&
+          entry.q === matched.q &&
+          index < matchedPosition)
       ) {
         matched = entry
         matchedPosition = index
