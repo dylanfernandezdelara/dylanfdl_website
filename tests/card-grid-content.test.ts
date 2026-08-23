@@ -1,20 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { itemMatchesFilter, visibleTabOptions } from '@/components/card-grid/model'
-import { buildCardGridItems, partitionCardGridItems, type CardGridSerializableItem } from '@/lib/buildCardGridItems'
-
-function musicCard(href: string, title: string): CardGridSerializableItem {
-  return {
-    kind: 'artifact',
-    category: 'music',
-    sortDate: '2023-01-01',
-    title,
-    dateLabel: 'Jan 2023',
-    href,
-    videoSrc: '/artifacts/demo.mp4',
-    posterSrc: '/artifacts/demo.webp',
-  }
-}
+import { itemMatchesFilter } from '@/components/card-grid/model'
+import { buildCardGridItems, partitionCardGridItems } from '@/lib/buildCardGridItems'
 
 describe('buildCardGridItems', () => {
   it('omits the retired On Writing note and draft showcase', () => {
@@ -34,13 +21,6 @@ describe('buildCardGridItems', () => {
     expect(projects.every((item) => item.category === 'projects')).toBe(true)
     expect(music.every((item) => item.category === 'music')).toBe(true)
     expect(music.length).toBeGreaterThan(0)
-  })
-
-  it('hides category tabs that currently have no cards', () => {
-    expect(visibleTabOptions([musicCard('/music/a', 'A')]).map((tab) => tab.id)).toEqual([
-      'all',
-      'music',
-    ])
   })
 
   it('partitions homepage items by category', () => {

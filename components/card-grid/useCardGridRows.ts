@@ -11,7 +11,6 @@ import {
   itemKey,
   rowsForItems,
   sortedItemsForFilter,
-  visibleTabOptions,
   type GridRow,
 } from '@/components/card-grid/model'
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
@@ -38,7 +37,7 @@ function phaseBatch(
 }
 
 export default function useCardGridRows(items: CardGridSerializableItem[]) {
-  const [requestedFilter, setRequestedFilter] = useState<CardGridFilter>('all')
+  const [filter, setFilter] = useState<CardGridFilter>('all')
   const { reduced: reducedMotion, ready } = usePrefersReducedMotion()
   /**
    * Start in `enter` so SSR HTML already carries the keyframed classes.
@@ -50,8 +49,6 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
       staggerCap: cardInitialStaggerCap,
     }),
   )
-  const tabOptions = useMemo(() => visibleTabOptions(items), [items])
-  const filter = tabOptions.some((tab) => tab.id === requestedFilter) ? requestedFilter : 'all'
   const wantedSorted = useMemo(() => sortedItemsForFilter(items, filter), [items, filter])
   const prevWantedRef = useRef(wantedSorted)
 
@@ -137,7 +134,6 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
     activeRows,
     exitRows,
     filter,
-    selectFilter: setRequestedFilter,
-    tabOptions,
+    selectFilter: setFilter,
   }
 }
