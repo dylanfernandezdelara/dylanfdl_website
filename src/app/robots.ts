@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-import { SITEMAP_INDEX_URL } from '@/lib/site'
+import { SITE_URL, SITEMAP_INDEX_URL } from '@/lib/site'
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -9,5 +9,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
     },
     sitemap: SITEMAP_INDEX_URL,
+    host: new URL(SITE_URL).host,
   }
 }

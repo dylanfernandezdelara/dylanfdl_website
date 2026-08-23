@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { itemMatchesFilter } from '@/components/card-grid/model'
-import { buildCardGridItems } from '@/lib/buildCardGridItems'
+import { buildCardGridItems, partitionCardGridItems } from '@/lib/buildCardGridItems'
 
 describe('buildCardGridItems writing migration', () => {
   it('maps published notes to /notes hrefs and notes category', () => {
@@ -43,5 +43,16 @@ describe('buildCardGridItems writing migration', () => {
       true
     )
     expect(music.length).toBeGreaterThan(0)
+  })
+
+  it('partitions homepage items by category', () => {
+    const items = buildCardGridItems()
+    const partitioned = partitionCardGridItems(items)
+
+    expect(partitioned.notes.some((item) => item.kind === 'writing' && item.slug === 'purpose-of-writing')).toBe(
+      true,
+    )
+    expect(partitioned.music.every((item) => item.category === 'music')).toBe(true)
+    expect(partitioned.projects.every((item) => item.category === 'projects')).toBe(true)
   })
 })

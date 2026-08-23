@@ -60,6 +60,9 @@ export async function generateArticleMetadata({
     description,
     alternates: {
       canonical: canonicalPath,
+      types: {
+        'text/markdown': canonicalPath,
+      },
     },
     openGraph: {
       ...OPEN_GRAPH_BASE,

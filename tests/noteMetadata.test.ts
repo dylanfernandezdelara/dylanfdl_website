@@ -26,7 +26,10 @@ describe('note generateMetadata', () => {
 
     expect(metadata.title).toEqual({ absolute: pageTitle })
     expect(metadata.description).toBe(DEFAULT_DESCRIPTION)
-    expect(metadata.alternates).toEqual({ canonical: `/notes/${entry.slug}` })
+    expect(metadata.alternates).toEqual({
+      canonical: `/notes/${entry.slug}`,
+      types: { 'text/markdown': `/notes/${entry.slug}` },
+    })
     expect(metadata.openGraph).toMatchObject({
       type: 'article',
       title: pageTitle,

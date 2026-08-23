@@ -33,6 +33,9 @@ const canonicalUrl = absoluteUrl('/')
 export const metadata: Metadata = {
   alternates: {
     canonical: '/',
+    types: {
+      'text/markdown': '/',
+    },
   },
   openGraph: {
     ...OPEN_GRAPH_BASE,

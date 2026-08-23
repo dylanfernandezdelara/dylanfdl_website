@@ -15,14 +15,10 @@ describe('next.config redirects', () => {
     })
   })
 
-  it('permanently redirects /about to the home page', async () => {
+  it('does not redirect /about so the about page can be served', async () => {
     const redirects = (await nextConfig.redirects?.()) ?? []
 
-    expect(redirects).toContainEqual({
-      source: '/about',
-      destination: '/',
-      permanent: true,
-    })
+    expect(redirects.some((redirect) => redirect.source === '/about')).toBe(false)
   })
 
   it('permanently redirects legacy Astro sitemap URLs', async () => {
@@ -48,5 +44,21 @@ describe('next.config redirects', () => {
       destination: '/notes/:slug',
       permanent: true,
     })
+  })
+})
+
+describe('next.config rewrites and headers', () => {
+  it('rewrites the well-known llms.txt alias', async () => {
+    const rewrites = (await nextConfig.rewrites?.()) ?? []
+    const list = Array.isArray(rewrites) ? rewrites : (rewrites.beforeFiles ?? [])
+
+    expect(list).toContainEqual({
+      source: '/.well-known/llms.txt',
+      destination: '/llms.txt',
+    })
+  })
+
+  it('does not set a site-wide Vary: Accept header on static assets', async () => {
+    expect(nextConfig.headers).toBeUndefined()
   })
 })
