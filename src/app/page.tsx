@@ -22,6 +22,7 @@ import {
 import {
   HOME_ABOUT_HEADING,
   HOME_DETAIL_PARAGRAPHS,
+  HOME_PROFILE_HEADING,
   HOME_SHARED_INTRO_PARAGRAPHS,
   HOME_WORK_HEADING,
   HOME_WORK_INTRO,
@@ -64,9 +65,10 @@ export default function HomePage() {
           description: DEFAULT_DESCRIPTION,
         })}
       />
-      <div className="mx-auto max-w-4xl px-4 pt-20 text-base leading-[1.6] min-[481px]:px-6 md:px-8 md:pt-16">
+      <article className="mx-auto max-w-4xl px-4 pt-20 text-base leading-[1.6] min-[481px]:px-6 md:px-8 md:pt-16">
         <div className="text-pretty text-sm font-[450] leading-relaxed text-fg1 min-[640px]:max-w-[75%]">
           <h1 className="mb-6 font-serif text-2xl font-normal text-fg0">Dylan Fernandez de Lara</h1>
+          <h2 className="mb-4 font-serif text-xl font-normal text-fg0">{HOME_PROFILE_HEADING}</h2>
           <p className="mb-4">
             I am an{'\u00A0'}<OptimistText />
           </p>
@@ -143,7 +145,7 @@ export default function HomePage() {
           </div>
           <ThemeToggle />
         </div>
-      </div>
+      </article>
       <PageSearchPaletteHost />
     </>
   )

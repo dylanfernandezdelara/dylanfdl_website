@@ -13,6 +13,7 @@ import {
   HOME_ABOUT_HEADING,
   HOME_DETAIL_PARAGRAPHS,
   HOME_INTRO_PARAGRAPHS,
+  HOME_PROFILE_HEADING,
   HOME_WORK_HEADING,
   HOME_WORK_INTRO,
   NOT_FOUND_RECOVERY_LINKS,
@@ -53,6 +54,8 @@ export function buildHomeMarkdown(): string {
 
   return [
     `# ${PERSON_NAME}`,
+    '',
+    `## ${HOME_PROFILE_HEADING}`,
     '',
     'I am an optimist.',
     '',

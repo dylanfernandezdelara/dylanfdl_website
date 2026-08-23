@@ -15,6 +15,7 @@ describe('resolveMarkdownPage', () => {
 
     expect(page.status).toBe(200)
     expect(page.body).toContain('# Dylan Fernandez de Lara')
+    expect(page.body).toContain('## Profile')
     expect(page.body).toContain('## Work')
     expect(page.body).toContain('## Notes')
     expect(page.body).toContain('## About this site')

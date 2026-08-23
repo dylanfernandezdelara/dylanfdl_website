@@ -18,6 +18,8 @@ export const PRIVACY_PAGE_TITLE = 'Privacy'
 
 export const HOME_WORK_HEADING = 'Work'
 
+export const HOME_PROFILE_HEADING = 'Profile'
+
 export const HOME_ABOUT_HEADING = 'About this site'
 
 /** Plain-text twins of the homepage paragraphs that use ExternalLinks in HTML. */
