@@ -16,16 +16,52 @@ function normalizeHeadingText(raw: string): string {
 }
 
 /**
- * TOC headings from MDX body. Uses github-slugger (same as rehype-slug) and
- * skips fenced code so demo hashes are not treated as headings.
+ * Visible (non-comment) text on a line, updating JSX comment state across lines.
+ */
+function visibleLineText(
+  line: string,
+  inJsxComment: boolean
+): { text: string; inJsxComment: boolean } {
+  let result = ''
+  let index = 0
+  let comment = inJsxComment
+
+  while (index < line.length) {
+    if (!comment) {
+      const start = line.indexOf('{/*', index)
+      if (start === -1) {
+        result += line.slice(index)
+        break
+      }
+      result += line.slice(index, start)
+      comment = true
+      index = start + 3
+    } else {
+      const end = line.indexOf('*/}', index)
+      if (end === -1) {
+        break
+      }
+      comment = false
+      index = end + 3
+    }
+  }
+
+  return { text: result, inJsxComment: comment }
+}
+
+/**
+ * Extract h2/h3 headings from MDX/markdown body for the article TOC.
+ * Uses github-slugger (same as rehype-slug) so TOC ids match rendered heading ids.
+ * Ignores fenced code blocks and JSX block comments.
  */
 export function extractContentHeadings(markdown: string): ContentHeading[] {
   const headings: ContentHeading[] = []
   const slugger = new GithubSlugger()
   let inFence = false
+  let inJsxComment = false
 
   for (const line of markdown.split('\n')) {
-    if (line.trimStart().startsWith('```')) {
+    if (!inJsxComment && line.trimStart().startsWith('```')) {
       inFence = !inFence
       continue
     }
@@ -33,7 +69,10 @@ export function extractContentHeadings(markdown: string): ContentHeading[] {
       continue
     }
 
-    const match = /^(#{2,3})\s+(.+?)\s*#*\s*$/.exec(line)
+    const visible = visibleLineText(line, inJsxComment)
+    inJsxComment = visible.inJsxComment
+
+    const match = /^(#{2,3})\s+(.+?)\s*#*\s*$/.exec(visible.text)
     if (!match) {
       continue
     }

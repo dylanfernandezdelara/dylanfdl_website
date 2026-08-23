@@ -170,6 +170,28 @@ describe('extractContentHeadings', () => {
 
     expect(headings).toEqual([{ id: 'linked-heading', text: 'Linked heading', level: 2 }])
   })
+
+  it('ignores headings inside JSX block comments', () => {
+    const headings = extractContentHeadings(`
+{/* Outline
+## Ghost Context
+## Ghost Learned
+*/}
+
+## Context
+
+Still here.
+
+{/* ## Inline ghost */}
+
+## How it works
+`)
+
+    expect(headings).toEqual([
+      { id: 'context', text: 'Context', level: 2 },
+      { id: 'how-it-works', text: 'How it works', level: 2 },
+    ])
+  })
 })
 
 describe('content loading', () => {

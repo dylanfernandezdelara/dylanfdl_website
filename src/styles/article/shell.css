@@ -16,6 +16,60 @@ html {
   }
 }
 
+/* Single home for the article's measure, type scale, and vertical rhythm.
+   Breakpoints retune these tokens rather than overriding properties. */
+.article-page {
+  --article-page-pad-x: 1rem;
+  --article-toc-width: 11rem;
+  --article-toc-gap: 2rem;
+  --article-measure: 65ch;
+  --article-title-block-offset: 3rem;
+
+  /* Prose sits one step above the 14px site chrome, and the serif title stays
+     the largest text on the page so body headings cannot outrank it. */
+  --article-body-size: 0.9375rem;
+  --article-title-size: 1.75rem;
+  --article-h2-size: 1.25rem;
+  --article-h3-size: 1.0625rem;
+  --article-heading-weight: 600;
+  --article-heading-line-height: 1.35;
+
+  /* Sections separate; headings bind to the text directly below them. */
+  --article-paragraph-gap: 1.25rem;
+  --article-section-space: 2.5rem;
+  --article-subsection-space: 1.75rem;
+  --article-heading-space-after: 0.75rem;
+
+  /* Figures breathe wider than the blocks that read as prose. */
+  --article-figure-gap: 2rem;
+
+  /* Padding is inside max-width under border-box, so reserve it here. */
+  max-width: calc(var(--article-measure) + 2 * var(--article-page-pad-x));
+  padding-left: var(--article-page-pad-x);
+  padding-right: var(--article-page-pad-x);
+}
+
+@media (min-width: 481px) {
+  .article-page {
+    --article-page-pad-x: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .article-page {
+    --article-page-pad-x: 2rem;
+  }
+}
+
+@media (min-width: 1080px) {
+  .article-page--with-toc {
+    max-width: calc(
+      var(--article-toc-width) + var(--article-toc-gap) + var(--article-measure) +
+        2 * var(--article-page-pad-x)
+    );
+  }
+}
+
 .article-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -24,23 +78,35 @@ html {
 }
 
 @media (min-width: 1080px) {
-  .article-layout--with-toc {
-    grid-template-columns: 11rem minmax(0, 65ch);
-    column-gap: 2.5rem;
+  .article-page--with-toc .article-layout {
+    grid-template-columns: var(--article-toc-width) minmax(0, var(--article-measure));
+    column-gap: var(--article-toc-gap);
     align-items: start;
-    justify-content: center;
+  }
+
+  .article-page--with-toc .article-shell {
+    margin: 0;
+  }
+
+  .article-page--with-toc .article-shell__header {
+    text-align: left;
+  }
+
+  .article-page--with-toc .article-shell__summary {
+    margin-left: 0;
+    margin-right: 0;
   }
 }
 
 .article-shell {
   width: 100%;
-  max-width: 65ch;
+  max-width: var(--article-measure);
   margin: 0 auto;
   min-width: 0;
 }
 
 .article-shell__header {
-  margin-top: 3rem;
+  margin-top: var(--article-title-block-offset);
   margin-bottom: 2.5rem;
   text-align: center;
   animation: article-header-in var(--article-duration-enter) var(--article-ease-out) both;
@@ -58,12 +124,13 @@ html {
   margin: 0;
   text-wrap: balance;
   font-family: var(--font-lora), ui-serif, Georgia, serif;
-  font-size: 1.5rem;
+  font-size: var(--article-title-size);
   font-weight: 400;
   line-height: 1.2;
   color: var(--fg0);
 }
 
+/* Dek, not prose: sits with the date on the chrome tier, not the body tier. */
 .article-shell__summary {
   margin: 1rem auto 0;
   max-width: 55ch;
@@ -80,14 +147,23 @@ html {
   color: var(--fg3);
 }
 
+/* flow-root, not grid: grid items never margin-collapse, so a grid body would
+   add the paragraph and heading margins together at every section break. */
 .article-shell__body {
-  display: grid;
-  gap: 0;
-  font-size: 1rem;
+  display: flow-root;
+  font-size: var(--article-body-size);
   line-height: 1.7;
   color: var(--fg1);
   animation: article-body-in var(--article-duration-enter) var(--article-ease-out) both;
   animation-delay: 80ms;
+}
+
+.article-shell__body > :first-child {
+  margin-top: 0;
+}
+
+.article-shell__body > :last-child {
+  margin-bottom: 0;
 }
 
 @keyframes article-header-in {
@@ -119,4 +195,3 @@ html {
     animation: none !important;
   }
 }
-
