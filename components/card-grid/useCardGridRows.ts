@@ -38,7 +38,7 @@ function phaseBatch(
 }
 
 export default function useCardGridRows(items: CardGridSerializableItem[]) {
-  const [filter, setFilter] = useState<CardGridFilter>('all')
+  const [requestedFilter, setRequestedFilter] = useState<CardGridFilter>('all')
   const { reduced: reducedMotion, ready } = usePrefersReducedMotion()
   /**
    * Start in `enter` so SSR HTML already carries the keyframed classes.
@@ -50,16 +50,10 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
       staggerCap: cardInitialStaggerCap,
     }),
   )
-  const wantedSorted = useMemo(() => sortedItemsForFilter(items, filter), [items, filter])
   const tabOptions = useMemo(() => visibleTabOptions(items), [items])
+  const filter = tabOptions.some((tab) => tab.id === requestedFilter) ? requestedFilter : 'all'
+  const wantedSorted = useMemo(() => sortedItemsForFilter(items, filter), [items, filter])
   const prevWantedRef = useRef(wantedSorted)
-
-  useEffect(() => {
-    if (tabOptions.some((tab) => tab.id === filter)) {
-      return
-    }
-    setFilter('all')
-  }, [filter, tabOptions])
 
   useLayoutEffect(() => {
     if (!ready || !reducedMotion) {
@@ -143,7 +137,7 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
     activeRows,
     exitRows,
     filter,
-    selectFilter: setFilter,
+    selectFilter: setRequestedFilter,
     tabOptions,
   }
 }

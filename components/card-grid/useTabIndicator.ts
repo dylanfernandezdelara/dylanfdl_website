@@ -10,10 +10,8 @@ import {
   type RefObject,
 } from 'react'
 
-import { TAB_OPTIONS, smoothEase, tabTransitionMs } from '@/components/card-grid/constants'
+import { smoothEase, tabTransitionMs, type TabOption } from '@/components/card-grid/constants'
 import type { CardGridFilter } from '@/lib/buildCardGridItems'
-
-type TabOption = (typeof TAB_OPTIONS)[number]
 
 type TabIndicatorBox = {
   left: number
@@ -31,7 +29,7 @@ export type UseTabIndicatorResult = {
 
 export default function useTabIndicator(
   filter: CardGridFilter,
-  options: readonly TabOption[] = TAB_OPTIONS,
+  options: readonly TabOption[],
 ): UseTabIndicatorResult {
   const tablistRef = useRef<HTMLDivElement>(null)
   const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([])

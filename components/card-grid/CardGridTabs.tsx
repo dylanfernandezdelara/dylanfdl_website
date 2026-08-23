@@ -2,23 +2,21 @@
 
 import { type KeyboardEvent } from 'react'
 
-import { TAB_OPTIONS } from '@/components/card-grid/constants'
 import useTabIndicator from '@/components/card-grid/useTabIndicator'
+import type { TabOption } from '@/components/card-grid/constants'
 import type { CardGridFilter } from '@/lib/buildCardGridItems'
 import { cn } from '@/lib/utils'
 
 const tabButtonBase =
   'relative z-10 rounded-sm px-2.5 py-1.5 text-sm font-medium leading-none transition-colors duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue motion-reduce:transition-none'
 
-type TabOption = (typeof TAB_OPTIONS)[number]
-
 type Props = {
   filter: CardGridFilter
   onSelect: (filter: CardGridFilter) => void
-  options?: readonly TabOption[]
+  options: readonly TabOption[]
 }
 
-export default function CardGridTabs({ filter, onSelect, options = TAB_OPTIONS }: Props) {
+export default function CardGridTabs({ filter, onSelect, options }: Props) {
   const { tablistRef, tabButtonRefs, showPill, indicatorStyle } = useTabIndicator(filter, options)
 
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
