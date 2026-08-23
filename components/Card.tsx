@@ -23,28 +23,20 @@ export default function Card({
   videoSrc,
   posterSrc,
 }: CardProps) {
-  const media = (() => {
-    if (videoSrc) {
-      return (
-        <CardVideo
-          src={videoSrc}
-          poster={posterSrc}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )
-    }
-    if (posterSrc) {
-      return (
-        <img
-          src={posterSrc}
-          alt=""
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )
-    }
-    return null
-  })()
+  const media = videoSrc ? (
+    <CardVideo
+      src={videoSrc}
+      poster={posterSrc}
+      className="absolute inset-0 h-full w-full object-cover"
+    />
+  ) : posterSrc ? (
+    <img
+      src={posterSrc}
+      alt=""
+      decoding="async"
+      className="absolute inset-0 h-full w-full object-cover"
+    />
+  ) : null
 
   const inner = (
     <>
@@ -52,7 +44,9 @@ export default function Card({
         <span className="text-sm font-normal leading-snug text-fg0">{title}</span>
         <span className="shrink-0 text-xs font-normal tabular-nums text-fg1">{dateLabel}</span>
       </div>
-      <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-bg2">{media}</div>
+      {media ? (
+        <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-bg2">{media}</div>
+      ) : null}
     </>
   )
 
