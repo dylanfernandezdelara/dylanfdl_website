@@ -66,9 +66,9 @@ export default function HomePage() {
         })}
       />
       <article className="mx-auto max-w-4xl px-4 pt-20 text-base leading-[1.6] min-[481px]:px-6 md:px-8 md:pt-16">
-        <div className="text-pretty text-sm font-[450] leading-relaxed text-fg1 min-[640px]:max-w-[75%]">
-          <h1 className="mb-6 font-serif text-2xl font-normal text-fg0">Dylan Fernandez de Lara</h1>
-          <h2 className="mb-4 font-serif text-xl font-normal text-fg0">{HOME_PROFILE_HEADING}</h2>
+        <div className="text-pretty text-sm font-[450] leading-relaxed text-fg1 min-[640px]:max-w-[75%] [&_h1]:mb-6 [&_h1]:font-serif [&_h1]:text-2xl [&_h1]:font-normal [&_h1]:text-fg0 [&_h2]:mb-4 [&_h2]:mt-8 [&_h2]:font-serif [&_h2]:text-xl [&_h2]:font-normal [&_h2]:text-fg0 [&_h3]:mb-2 [&_h3]:font-serif [&_h3]:text-lg [&_h3]:font-normal [&_h3]:text-fg0">
+          <h1>Dylan Fernandez de Lara</h1>
+          <h2>{HOME_PROFILE_HEADING}</h2>
           <p className="mb-4">
             I am an{'\u00A0'}<OptimistText />
           </p>
@@ -94,13 +94,11 @@ export default function HomePage() {
             </p>
           ))}
 
-          <h2 id="work-heading" className="mb-3 mt-8 font-serif text-xl font-normal text-fg0">
-            {HOME_WORK_HEADING}
-          </h2>
+          <h2>{HOME_WORK_HEADING}</h2>
           <p className="mb-4">{HOME_WORK_INTRO}</p>
           <HomeWorkIndex items={cardGridItems} />
 
-          <h2 className="mb-4 mt-8 font-serif text-xl font-normal text-fg0">{HOME_ABOUT_HEADING}</h2>
+          <h2>{HOME_ABOUT_HEADING}</h2>
           {HOME_DETAIL_PARAGRAPHS.map((paragraph) => (
             <p key={paragraph} className="mb-4">
               {paragraph}

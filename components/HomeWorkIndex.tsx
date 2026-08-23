@@ -15,7 +15,7 @@ type Section = {
 function WorkList({ heading, items, empty }: Section) {
   return (
     <section className="mb-6">
-      <h3 className="mb-2 font-serif text-lg font-normal text-fg0">{heading}</h3>
+      <h3>{heading}</h3>
       {items.length === 0 ? (
         <p className="text-fg2">{empty}</p>
       ) : (
