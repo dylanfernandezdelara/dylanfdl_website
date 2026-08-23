@@ -82,7 +82,3 @@ export const NOT_FOUND_RECOVERY_LINKS = [
 export function joinParagraphs(paragraphs: readonly string[]): string {
   return paragraphs.join('\n\n')
 }
-
-export function visibleTextLength(paragraphs: readonly string[]): number {
-  return paragraphs.join('').length
-}

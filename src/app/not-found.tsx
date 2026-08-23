@@ -23,13 +23,22 @@ export default function NotFound() {
         This path does not exist. Try the sitemap, llms.txt, or one of the pages below.
       </p>
       <ul className="mb-6 space-y-2 text-sm">
-        {NOT_FOUND_RECOVERY_LINKS.map((link) => (
-          <li key={link.href}>
-            <Link href={link.href} className={INLINE_LINK_STYLES}>
-              {link.label}
-            </Link>
-          </li>
-        ))}
+        {NOT_FOUND_RECOVERY_LINKS.map((link) => {
+          const usesClientNav = !link.href.includes('.')
+          return (
+            <li key={link.href}>
+              {usesClientNav ? (
+                <Link href={link.href} className={INLINE_LINK_STYLES}>
+                  {link.label}
+                </Link>
+              ) : (
+                <a href={link.href} className={INLINE_LINK_STYLES}>
+                  {link.label}
+                </a>
+              )}
+            </li>
+          )
+        })}
       </ul>
       <pre className="mb-8 overflow-x-auto whitespace-pre-wrap text-sm leading-[1.6] text-fg2">
         {buildNotFoundMarkdown()}

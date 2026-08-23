@@ -1,10 +1,16 @@
-import { buildCardGridItems, partitionCardGridItems } from '@/lib/buildCardGridItems'
+import {
+  WORK_INDEX_SECTIONS,
+  buildCardGridItems,
+  partitionCardGridItems,
+  type CardGridSerializableItem,
+} from '@/lib/buildCardGridItems'
 import {
   contentCanonicalPath,
   getEntryBySlug,
   isValidContentSlug,
   type ContentKind,
 } from '@/lib/content'
+import { toAgentMarkdown } from '@/lib/markdown/toAgentMarkdown'
 import {
   ABOUT_PAGE_PARAGRAPHS,
   ABOUT_PAGE_TITLE,
@@ -36,10 +42,7 @@ import {
   toIsoDateTime,
 } from '@/lib/site'
 
-function listItems(
-  items: { title: string; href: string; dateLabel: string; kind?: string }[],
-  empty: string,
-): string[] {
+function listItems(items: CardGridSerializableItem[], empty: string): string[] {
   if (items.length === 0) {
     return [empty]
   }
@@ -50,7 +53,7 @@ function listItems(
 }
 
 export function buildHomeMarkdown(): string {
-  const { projects, notes, music } = partitionCardGridItems(buildCardGridItems())
+  const partitioned = partitionCardGridItems(buildCardGridItems())
 
   return [
     `# ${PERSON_NAME}`,
@@ -65,18 +68,12 @@ export function buildHomeMarkdown(): string {
     '',
     HOME_WORK_INTRO,
     '',
-    '## Projects',
-    '',
-    ...listItems(projects, 'No published projects yet.'),
-    '',
-    '## Notes',
-    '',
-    ...listItems(notes, 'No published notes yet.'),
-    '',
-    '## Music',
-    '',
-    ...listItems(music, 'No music recordings yet.'),
-    '',
+    ...WORK_INDEX_SECTIONS.flatMap((section) => [
+      `## ${section.heading}`,
+      '',
+      ...listItems(partitioned[section.key], section.empty),
+      '',
+    ]),
     `## ${HOME_ABOUT_HEADING}`,
     '',
     joinParagraphs(HOME_DETAIL_PARAGRAPHS),
@@ -145,9 +142,9 @@ export function buildArticleMarkdown(kind: ContentKind, slug: string): string | 
     ...(updated ? [`Updated: ${updated}`] : []),
     ...(entry.summary ? ['', entry.summary] : []),
     '',
-    `Canonical: ${contentCanonicalPath(entry.kind, entry.slug)}`,
+    `Canonical: ${absoluteUrl(contentCanonicalPath(entry.kind, entry.slug))}`,
     '',
-    entry.content.trim(),
+    toAgentMarkdown(entry.content),
     '',
   ].join('\n')
 }

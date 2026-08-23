@@ -58,12 +58,7 @@ describe('next.config rewrites and headers', () => {
     })
   })
 
-  it('adds Accept to Vary so HTML and Markdown stay cache-distinct', async () => {
-    const headers = (await nextConfig.headers?.()) ?? []
-
-    expect(headers).toContainEqual({
-      source: '/:path*',
-      headers: [{ key: 'Vary', value: 'Accept' }],
-    })
+  it('does not set a site-wide Vary: Accept header on static assets', async () => {
+    expect(nextConfig.headers).toBeUndefined()
   })
 })

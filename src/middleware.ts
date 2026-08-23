@@ -24,6 +24,9 @@ export function middleware(request: NextRequest): NextResponse | Response {
   }
 
   if (pathname.endsWith('.md')) {
+    if (!shouldNegotiate(request)) {
+      return NextResponse.next()
+    }
     const barePath = pathname.slice(0, -3) || '/'
     return rewriteToMarkdown(request, barePath === '/index' ? '/' : barePath)
   }

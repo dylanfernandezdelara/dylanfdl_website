@@ -128,3 +128,13 @@ export function partitionCardGridItems(items: CardGridSerializableItem[]) {
     music: items.filter((item) => item.category === 'music'),
   }
 }
+
+export const WORK_INDEX_SECTIONS = [
+  { key: 'projects', heading: 'Projects', empty: 'No published projects yet.' },
+  { key: 'notes', heading: 'Notes', empty: 'No published notes yet.' },
+  { key: 'music', heading: 'Music', empty: 'No music recordings yet.' },
+] as const satisfies readonly {
+  key: keyof ReturnType<typeof partitionCardGridItems>
+  heading: string
+  empty: string
+}[]

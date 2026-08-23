@@ -16,6 +16,8 @@ import {
   DEFAULT_DESCRIPTION,
   HOME_PAGE_TITLE,
   OPEN_GRAPH_BASE,
+  PERSON_LOCATION,
+  PERSON_NAME,
   SITE_DOCUMENT_LINKS,
   absoluteUrl,
 } from '@/lib/site'
@@ -67,7 +69,7 @@ export default function HomePage() {
       />
       <article className="mx-auto max-w-4xl px-4 pt-20 text-base leading-[1.6] min-[481px]:px-6 md:px-8 md:pt-16">
         <div className="text-pretty text-sm font-[450] leading-relaxed text-fg1 min-[640px]:max-w-[75%] [&_h1]:mb-6 [&_h1]:font-serif [&_h1]:text-2xl [&_h1]:font-normal [&_h1]:text-fg0 [&_h2]:mb-4 [&_h2]:mt-8 [&_h2]:font-serif [&_h2]:text-xl [&_h2]:font-normal [&_h2]:text-fg0 [&_h3]:mb-2 [&_h3]:font-serif [&_h3]:text-lg [&_h3]:font-normal [&_h3]:text-fg0">
-          <h1>Dylan Fernandez de Lara</h1>
+          <h1>{PERSON_NAME}</h1>
           <h2>{HOME_PROFILE_HEADING}</h2>
           <p className="mb-4">
             I am an{'\u00A0'}<OptimistText />
@@ -86,7 +88,7 @@ export default function HomePage() {
           </p>
 
           <p className="mb-4">
-            I am a Yale graduate and am currently based in New York.
+            I am a Yale graduate and am currently based in {PERSON_LOCATION.locality}.
           </p>
           {HOME_SHARED_INTRO_PARAGRAPHS.map((paragraph) => (
             <p key={paragraph} className="mb-4">

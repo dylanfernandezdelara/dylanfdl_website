@@ -15,7 +15,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const nextConfig: NextConfig = {
   outputFileTracingRoot: __dirname,
   outputFileTracingIncludes: {
-    '/api/markdown/[[...slug]]': ['./content/**/*'],
+    '/api/markdown/**': ['./content/**/*'],
   },
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   async redirects() {
@@ -49,14 +49,6 @@ const nextConfig: NextConfig = {
       {
         source: '/.well-known/llms.txt',
         destination: '/llms.txt',
-      },
-    ]
-  },
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [{ key: 'Vary', value: 'Accept' }],
       },
     ]
   },

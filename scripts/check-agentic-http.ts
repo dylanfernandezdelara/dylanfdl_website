@@ -111,6 +111,7 @@ try {
   })
   const flight = await load('/', { accept: 'text/x-component', rsc: '1' })
   const pdf = await load('/', { accept: 'application/pdf' })
+  const plain = await load('/', { accept: 'text/plain' })
   const robots = await load('/robots.txt')
   const sitemap = await load('/sitemap.xml')
 
@@ -180,6 +181,11 @@ try {
     'document-406',
     pdf.status === 406,
     `Accept: application/pdf status=${pdf.status}`,
+  )
+  add(
+    'text-plain-markdown',
+    plain.status === 200 && isMarkdownType(plain.contentType),
+    `Accept: text/plain status=${plain.status} type=${plain.contentType}`,
   )
 
   const organization = organizationFrom(home.body)

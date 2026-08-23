@@ -28,6 +28,11 @@ describe('preferredType', () => {
   it('lets a specific rejection beat a wildcard', () => {
     expect(preferredType('text/html;q=0, */*;q=1')).toBe('text/markdown')
   })
+
+  it('treats text/plain as markdown so agent clients do not 406', () => {
+    expect(preferredType('text/plain')).toBe('text/markdown')
+    expect(preferredType('text/plain, text/html;q=0.8')).toBe('text/markdown')
+  })
 })
 
 describe('shouldNegotiate', () => {

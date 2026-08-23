@@ -6,7 +6,6 @@ import {
   CONTACT_PAGE_PARAGRAPHS,
   HOME_INTRO_PARAGRAPHS,
   PRIVACY_PAGE_PARAGRAPHS,
-  visibleTextLength,
 } from '@/lib/siteCopy'
 
 describe('resolveMarkdownPage', () => {
@@ -34,6 +33,7 @@ describe('resolveMarkdownPage', () => {
     expect(note.status).toBe(200)
     expect(note.body).toContain('# On Writing')
     expect(note.body).toContain('I have decided to start writing')
+    expect(note.body).toContain('Canonical: https://www.dylanfdl.com/notes/purpose-of-writing')
 
     const missing = resolveMarkdownPage('/notes/does-not-exist')
     expect(missing.status).toBe(404)
@@ -45,9 +45,11 @@ describe('resolveMarkdownPage', () => {
 
 describe('trust page copy length', () => {
   it('keeps about, contact, and privacy above the 500-character floor', () => {
-    expect(visibleTextLength(ABOUT_PAGE_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
-    expect(visibleTextLength(CONTACT_PAGE_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
-    expect(visibleTextLength(PRIVACY_PAGE_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
-    expect(visibleTextLength(HOME_INTRO_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
+    const length = (paragraphs: readonly string[]) => paragraphs.join('').length
+
+    expect(length(ABOUT_PAGE_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
+    expect(length(CONTACT_PAGE_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
+    expect(length(PRIVACY_PAGE_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
+    expect(length(HOME_INTRO_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
   })
 })

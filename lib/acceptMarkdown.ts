@@ -39,6 +39,9 @@ function matches(entry: AcceptEntry, candidate: string): boolean {
   if (entry.type.endsWith('/*')) {
     return candidate.startsWith(entry.type.slice(0, -1))
   }
+  if (candidate === 'text/markdown' && entry.type === 'text/plain') {
+    return true
+  }
   return entry.type === candidate
 }
 
