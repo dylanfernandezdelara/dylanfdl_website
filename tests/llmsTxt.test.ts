@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildLlmsTxt } from '@/lib/markdown/documents'
+import { buildLlmsTxt } from '@/lib/markdown/pages'
 import { CONTACT_EMAIL, SITE_URL } from '@/lib/site'
 
 describe('buildLlmsTxt', () => {

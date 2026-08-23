@@ -1,30 +1,26 @@
 import { describe, expect, it } from 'vitest'
 
-import { resolveMarkdownPage } from '@/lib/markdown/resolveMarkdownPage'
-import {
-  ABOUT_PAGE_PARAGRAPHS,
-  CONTACT_PAGE_PARAGRAPHS,
-  HOME_INTRO_PARAGRAPHS,
-  PRIVACY_PAGE_PARAGRAPHS,
-} from '@/lib/siteCopy'
+import { resolveMarkdownPage } from '@/lib/markdown/pages'
+import { ABOUT_DOCUMENT, CONTACT_DOCUMENT, PRIVACY_DOCUMENT } from '@/lib/siteDocuments'
 
 describe('resolveMarkdownPage', () => {
-  it('serves home markdown with heading structure and when-to-use pages', () => {
+  it('serves home markdown with the card-grid work index and document links', () => {
     const page = resolveMarkdownPage('/')
 
     expect(page.status).toBe(200)
     expect(page.body).toContain('# Dylan Fernandez de Lara')
-    expect(page.body).toContain('## Profile')
-    expect(page.body).toContain('## Work')
+    expect(page.body).toContain('I am an optimist.')
     expect(page.body).toContain('## Notes')
-    expect(page.body).toContain('## About this site')
     expect(page.body).toContain('On Writing')
     expect(page.body).toContain('/about')
+    expect(page.body).not.toContain('## About this site')
+    expect(page.body).not.toContain('Do not use this site as a public API')
   })
 
-  it('serves about, contact, and privacy markdown', () => {
+  it('serves about, contact, and privacy markdown from the document catalog', () => {
     expect(resolveMarkdownPage('/about').body).toContain('# About')
-    expect(resolveMarkdownPage('/contact').body).toContain(CONTACT_PAGE_PARAGRAPHS[0])
+    expect(resolveMarkdownPage('/contact').body).toContain(CONTACT_DOCUMENT.paragraphs[0])
+    expect(resolveMarkdownPage('/contact').body).toContain('## Profiles')
     expect(resolveMarkdownPage('/privacy').body).toContain('# Privacy')
   })
 
@@ -47,9 +43,8 @@ describe('trust page copy length', () => {
   it('keeps about, contact, and privacy above the 500-character floor', () => {
     const length = (paragraphs: readonly string[]) => paragraphs.join('').length
 
-    expect(length(ABOUT_PAGE_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
-    expect(length(CONTACT_PAGE_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
-    expect(length(PRIVACY_PAGE_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
-    expect(length(HOME_INTRO_PARAGRAPHS)).toBeGreaterThanOrEqual(500)
+    expect(length(ABOUT_DOCUMENT.paragraphs)).toBeGreaterThanOrEqual(500)
+    expect(length(CONTACT_DOCUMENT.paragraphs)).toBeGreaterThanOrEqual(500)
+    expect(length(PRIVACY_DOCUMENT.paragraphs)).toBeGreaterThanOrEqual(500)
   })
 })

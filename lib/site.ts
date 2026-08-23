@@ -124,12 +124,6 @@ export const OG_IMAGE_URL = absoluteUrl(OG_IMAGE_PATH)
 
 export const SITEMAP_INDEX_URL = absoluteUrl('/sitemap.xml')
 
-export const SITE_DOCUMENT_LINKS = [
-  { label: 'About', href: ABOUT_PATH },
-  { label: 'Contact', href: CONTACT_PATH },
-  { label: 'Privacy', href: PRIVACY_PATH },
-] as const
-
 /**
  * Shared Open Graph fields. Next.js replaces (not deep-merges) the nested
  * `openGraph` object when a page defines its own, so pages must spread this.

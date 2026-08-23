@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   appendVaryAccept,
   isDocumentNegotiation,
+  negotiateDocument,
   preferredType,
   shouldNegotiate,
 } from '@/lib/acceptMarkdown'
@@ -32,6 +33,13 @@ describe('preferredType', () => {
   it('treats text/plain as markdown so agent clients do not 406', () => {
     expect(preferredType('text/plain')).toBe('text/markdown')
     expect(preferredType('text/plain, text/html;q=0.8')).toBe('text/markdown')
+  })
+
+  it('prefers a higher-q text/plain alias over a rejected or weaker text/markdown', () => {
+    expect(preferredType('text/markdown;q=0, text/plain')).toBe('text/markdown')
+    expect(preferredType('text/markdown;q=0.1, text/plain;q=1, text/html;q=0.5')).toBe(
+      'text/markdown',
+    )
   })
 })
 
@@ -78,6 +86,59 @@ describe('isDocumentNegotiation', () => {
     expect(isDocumentNegotiation('text/x-component')).toBe(false)
     expect(isDocumentNegotiation('application/json')).toBe(false)
     expect(isDocumentNegotiation(null)).toBe(false)
+  })
+})
+
+describe('negotiateDocument', () => {
+  it('skips static files and framework requests', () => {
+    expect(
+      negotiateDocument({
+        method: 'GET',
+        headers: new Headers({ accept: 'text/html' }),
+        nextUrl: { pathname: '/favicon.ico' },
+      }).kind,
+    ).toBe('skip')
+    expect(
+      negotiateDocument({
+        method: 'GET',
+        headers: new Headers({ accept: 'text/x-component', rsc: '1' }),
+        nextUrl: { pathname: '/' },
+      }).kind,
+    ).toBe('skip')
+  })
+
+  it('treats a .md suffix as an explicit markdown request', () => {
+    expect(
+      negotiateDocument({
+        method: 'GET',
+        headers: new Headers({ accept: 'text/html' }),
+        nextUrl: { pathname: '/about.md' },
+      }),
+    ).toEqual({ kind: 'markdown', pathname: '/about' })
+    expect(
+      negotiateDocument({
+        method: 'GET',
+        headers: new Headers({ accept: 'text/html' }),
+        nextUrl: { pathname: '/index.md' },
+      }),
+    ).toEqual({ kind: 'markdown', pathname: '/' })
+  })
+
+  it('returns 406 only for rejected document Accept values', () => {
+    expect(
+      negotiateDocument({
+        method: 'GET',
+        headers: new Headers({ accept: 'application/pdf' }),
+        nextUrl: { pathname: '/' },
+      }).kind,
+    ).toBe('not-acceptable')
+    expect(
+      negotiateDocument({
+        method: 'GET',
+        headers: new Headers({ accept: 'application/json' }),
+        nextUrl: { pathname: '/' },
+      }).kind,
+    ).toBe('html')
   })
 })
 

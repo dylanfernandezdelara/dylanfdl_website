@@ -16,7 +16,6 @@ This is a Next.js personal portfolio/blog site using npm as the package manager.
 | Test | `npm run test` (Vitest) |
 | Build | `npm run build` (output in `.next`) |
 | Preview build | `npm run preview` |
-| Local is-agentic HTTP probe | `npm run check:agentic` (needs `npm run preview`; override with `BASE_URL`) |
 | New Note draft | `npm run new:note -- "Title"` |
 | New Project draft | `npm run new:project -- "Title"` |
 | Refresh content registry | `npm run content:registry` |

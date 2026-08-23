@@ -1,5 +1,5 @@
 import { markdownResponse } from '@/lib/acceptMarkdown'
-import { resolveMarkdownPage } from '@/lib/markdown/resolveMarkdownPage'
+import { resolveMarkdownPage } from '@/lib/markdown/pages'
 
 type RouteContext = {
   params: Promise<{ slug?: string[] }>

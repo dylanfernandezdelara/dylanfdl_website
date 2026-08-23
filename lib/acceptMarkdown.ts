@@ -76,7 +76,10 @@ export function preferredType(header: string | null): ProducedMediaType | null {
       if (
         matched === null ||
         entry.specificity > matched.specificity ||
-        (entry.specificity === matched.specificity && index < matchedPosition)
+        (entry.specificity === matched.specificity && entry.q > matched.q) ||
+        (entry.specificity === matched.specificity &&
+          entry.q === matched.q &&
+          index < matchedPosition)
       ) {
         matched = entry
         matchedPosition = index
@@ -124,9 +127,19 @@ const DOCUMENT_ACCEPT_HINTS = [
   'application/pdf',
 ] as const
 
-function headerPresent(headers: { get(name: string): string | null }, name: string): boolean {
-  return Boolean(headers.get(name))
+const FRAMEWORK_HEADERS = ['rsc', 'next-action', 'next-router-state-tree'] as const
+
+export type NegotiateRequest = {
+  method: string
+  headers: { get(name: string): string | null }
+  nextUrl: { pathname: string }
 }
+
+export type DocumentNegotiation =
+  | { kind: 'skip' }
+  | { kind: 'html' }
+  | { kind: 'markdown'; pathname: string }
+  | { kind: 'not-acceptable' }
 
 /**
  * True when Accept looks like document negotiation (HTML/Markdown/PDF),
@@ -152,18 +165,44 @@ export function shouldNegotiate(request: {
   if (method !== 'GET' && method !== 'HEAD') {
     return false
   }
-  if (headerPresent(request.headers, 'rsc')) {
-    return false
-  }
-  if (headerPresent(request.headers, 'next-action')) {
-    return false
-  }
-  if (headerPresent(request.headers, 'next-router-state-tree')) {
+  if (FRAMEWORK_HEADERS.some((name) => request.headers.get(name))) {
     return false
   }
 
   const accept = request.headers.get('accept')?.toLowerCase() ?? ''
   return !FRAMEWORK_ACCEPT_TYPES.some((type) => accept.includes(type))
+}
+
+function markdownPathname(pathname: string): string {
+  const barePath = pathname.endsWith('.md') ? pathname.slice(0, -3) || '/' : pathname
+  return barePath === '/index' ? '/' : barePath
+}
+
+/**
+ * Decide whether this request should skip, get HTML, get Markdown, or 406.
+ * `.md` suffixes are treated as an explicit markdown request.
+ */
+export function negotiateDocument(request: NegotiateRequest): DocumentNegotiation {
+  const pathname = request.nextUrl.pathname
+  if (pathname.includes('.') && !pathname.endsWith('.md')) {
+    return { kind: 'skip' }
+  }
+  if (!shouldNegotiate(request)) {
+    return { kind: 'skip' }
+  }
+  if (pathname.endsWith('.md')) {
+    return { kind: 'markdown', pathname: markdownPathname(pathname) }
+  }
+
+  const acceptHeader = request.headers.get('accept')
+  const chosen = preferredType(acceptHeader)
+  if (chosen === 'text/markdown') {
+    return { kind: 'markdown', pathname }
+  }
+  if (chosen === null && isDocumentNegotiation(acceptHeader)) {
+    return { kind: 'not-acceptable' }
+  }
+  return { kind: 'html' }
 }
 
 export function markdownResponse(body: string, status: 200 | 404 = 200): Response {

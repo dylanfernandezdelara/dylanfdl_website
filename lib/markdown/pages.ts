@@ -12,35 +12,33 @@ import {
 } from '@/lib/content'
 import { toAgentMarkdown } from '@/lib/markdown/toAgentMarkdown'
 import {
-  ABOUT_PAGE_PARAGRAPHS,
-  ABOUT_PAGE_TITLE,
-  CONTACT_PAGE_PARAGRAPHS,
-  CONTACT_PAGE_TITLE,
-  HOME_ABOUT_HEADING,
-  HOME_DETAIL_PARAGRAPHS,
-  HOME_INTRO_PARAGRAPHS,
-  HOME_PROFILE_HEADING,
-  HOME_WORK_HEADING,
-  HOME_WORK_INTRO,
-  NOT_FOUND_RECOVERY_LINKS,
-  PRIVACY_PAGE_PARAGRAPHS,
-  PRIVACY_PAGE_TITLE,
-  joinParagraphs,
-} from '@/lib/siteCopy'
+  SITE_DOCUMENTS,
+  buildDocumentMarkdown,
+  siteDocumentByPath,
+} from '@/lib/siteDocuments'
 import {
-  ABOUT_PATH,
   CONTACT_EMAIL,
-  CONTACT_LINKS,
-  CONTACT_PATH,
   LLMS_TXT_PATH,
   PERSON_LOCATION,
   PERSON_NAME,
-  PRIVACY_PATH,
   SITE_URL,
   SITEMAP_INDEX_URL,
   absoluteUrl,
   toIsoDateTime,
 } from '@/lib/site'
+
+const HOME_INTRO_PARAGRAPHS = [
+  'I currently work on post-training at Meta and build RL environments for frontier coding agents. We recently launched Muse Spark 1.2 and Muse Code.',
+  'Previously, I scaled crash infrastructure for Meta Glasses.',
+  `I am a Yale graduate and am currently based in ${PERSON_LOCATION.locality}.`,
+] as const
+
+const NOT_FOUND_RECOVERY_LINKS = [
+  { label: 'Home', href: '/' },
+  ...SITE_DOCUMENTS.map((document) => ({ label: document.title, href: document.path })),
+  { label: 'Sitemap', href: '/sitemap.xml' },
+  { label: 'llms.txt', href: LLMS_TXT_PATH },
+] as const
 
 function listItems(items: CardGridSerializableItem[], empty: string): string[] {
   if (items.length === 0) {
@@ -58,15 +56,9 @@ export function buildHomeMarkdown(): string {
   return [
     `# ${PERSON_NAME}`,
     '',
-    `## ${HOME_PROFILE_HEADING}`,
-    '',
     'I am an optimist.',
     '',
-    joinParagraphs(HOME_INTRO_PARAGRAPHS),
-    '',
-    `## ${HOME_WORK_HEADING}`,
-    '',
-    HOME_WORK_INTRO,
+    HOME_INTRO_PARAGRAPHS.join('\n\n'),
     '',
     ...WORK_INDEX_SECTIONS.flatMap((section) => [
       `## ${section.heading}`,
@@ -74,40 +66,13 @@ export function buildHomeMarkdown(): string {
       ...listItems(partitioned[section.key], section.empty),
       '',
     ]),
-    `## ${HOME_ABOUT_HEADING}`,
-    '',
-    joinParagraphs(HOME_DETAIL_PARAGRAPHS),
-    '',
     '## Pages',
     '',
-    `- [About](${absoluteUrl(ABOUT_PATH)})`,
-    `- [Contact](${absoluteUrl(CONTACT_PATH)})`,
-    `- [Privacy](${absoluteUrl(PRIVACY_PATH)})`,
+    ...SITE_DOCUMENTS.map((document) => `- [${document.title}](${absoluteUrl(document.path)})`),
     `- [Sitemap](${SITEMAP_INDEX_URL})`,
     `- [llms.txt](${absoluteUrl(LLMS_TXT_PATH)})`,
     '',
   ].join('\n')
-}
-
-export function buildAboutMarkdown(): string {
-  return [`# ${ABOUT_PAGE_TITLE}`, '', joinParagraphs(ABOUT_PAGE_PARAGRAPHS), ''].join('\n')
-}
-
-export function buildContactMarkdown(): string {
-  return [
-    `# ${CONTACT_PAGE_TITLE}`,
-    '',
-    joinParagraphs(CONTACT_PAGE_PARAGRAPHS),
-    '',
-    '## Profiles',
-    '',
-    ...CONTACT_LINKS.map((link) => `- [${link.label}](${link.href})`),
-    '',
-  ].join('\n')
-}
-
-export function buildPrivacyMarkdown(): string {
-  return [`# ${PRIVACY_PAGE_TITLE}`, '', joinParagraphs(PRIVACY_PAGE_PARAGRAPHS), ''].join('\n')
 }
 
 export function buildNotFoundMarkdown(): string {
@@ -175,7 +140,7 @@ export function buildLlmsTxt(): string {
     '## How to call this site',
     '',
     `- HTML and Markdown share the same paths. Send \`Accept: text/markdown\` or append \`.md\` (for example ${absoluteUrl('/about.md')}).`,
-    `- Start with ${SITE_URL}, ${absoluteUrl(ABOUT_PATH)}, ${absoluteUrl(CONTACT_PATH)}, and ${absoluteUrl(PRIVACY_PATH)}.`,
+    `- Start with ${SITE_URL}, ${SITE_DOCUMENTS.map((document) => absoluteUrl(document.path)).join(', ')}.`,
     `- Discover URLs from ${SITEMAP_INDEX_URL} or this file.`,
     `- Missing paths return HTTP 404 with recovery links to the sitemap and ${absoluteUrl(LLMS_TXT_PATH)}.`,
     '',
@@ -194,11 +159,11 @@ export function buildLlmsTxt(): string {
   ].join('\n')
 }
 
-export function isWritingKind(value: string): value is ContentKind {
+function isWritingKind(value: string): value is ContentKind {
   return value === 'notes' || value === 'projects'
 }
 
-export function parseWritingPath(pathname: string): { kind: ContentKind; slug: string } | null {
+function parseWritingPath(pathname: string): { kind: ContentKind; slug: string } | null {
   const match = pathname.match(/^\/(notes|projects)\/([^/]+)$/)
   if (!match) {
     return null
@@ -209,4 +174,39 @@ export function parseWritingPath(pathname: string): { kind: ContentKind; slug: s
     return null
   }
   return { kind, slug }
+}
+
+export type MarkdownPageResult = {
+  status: 200 | 404
+  body: string
+}
+
+function normalizePathname(pathname: string): string {
+  const withLeadingSlash = pathname.startsWith('/') ? pathname : `/${pathname}`
+  if (withLeadingSlash.length > 1 && withLeadingSlash.endsWith('/')) {
+    return withLeadingSlash.slice(0, -1)
+  }
+  return withLeadingSlash === '' ? '/' : withLeadingSlash
+}
+
+export function resolveMarkdownPage(pathname: string): MarkdownPageResult {
+  const normalized = normalizePathname(pathname)
+  if (normalized === '/') {
+    return { status: 200, body: buildHomeMarkdown() }
+  }
+
+  const document = siteDocumentByPath(normalized)
+  if (document) {
+    return { status: 200, body: buildDocumentMarkdown(document) }
+  }
+
+  const writing = parseWritingPath(normalized)
+  if (writing) {
+    const body = buildArticleMarkdown(writing.kind, writing.slug)
+    if (body) {
+      return { status: 200, body }
+    }
+  }
+
+  return { status: 404, body: buildNotFoundMarkdown() }
 }

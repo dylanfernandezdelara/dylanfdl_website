@@ -1,11 +1,9 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
 import {
-  appendVaryAccept,
-  isDocumentNegotiation,
   NOT_ACCEPTABLE_BODY,
-  preferredType,
-  shouldNegotiate,
+  appendVaryAccept,
+  negotiateDocument,
 } from '@/lib/acceptMarkdown'
 
 function rewriteToMarkdown(request: NextRequest, pathname: string): NextResponse {
@@ -17,44 +15,31 @@ function rewriteToMarkdown(request: NextRequest, pathname: string): NextResponse
 }
 
 export function middleware(request: NextRequest): NextResponse | Response {
-  const pathname = request.nextUrl.pathname
+  const decision = negotiateDocument(request)
 
-  if (pathname.includes('.') && !pathname.endsWith('.md')) {
-    return NextResponse.next()
-  }
-
-  if (pathname.endsWith('.md')) {
-    if (!shouldNegotiate(request)) {
+  switch (decision.kind) {
+    case 'skip':
       return NextResponse.next()
+    case 'markdown':
+      return rewriteToMarkdown(request, decision.pathname)
+    case 'not-acceptable':
+      return new Response(NOT_ACCEPTABLE_BODY, {
+        status: 406,
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          Vary: 'Accept',
+        },
+      })
+    case 'html': {
+      const response = NextResponse.next()
+      appendVaryAccept(response.headers)
+      return response
     }
-    const barePath = pathname.slice(0, -3) || '/'
-    return rewriteToMarkdown(request, barePath === '/index' ? '/' : barePath)
+    default: {
+      const _exhaustive: never = decision
+      return _exhaustive
+    }
   }
-
-  if (!shouldNegotiate(request)) {
-    return NextResponse.next()
-  }
-
-  const acceptHeader = request.headers.get('accept')
-  const chosen = preferredType(acceptHeader)
-
-  if (chosen === 'text/markdown') {
-    return rewriteToMarkdown(request, pathname)
-  }
-
-  if (chosen === null && isDocumentNegotiation(acceptHeader)) {
-    return new Response(NOT_ACCEPTABLE_BODY, {
-      status: 406,
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        Vary: 'Accept',
-      },
-    })
-  }
-
-  const response = NextResponse.next()
-  appendVaryAccept(response.headers)
-  return response
 }
 
 export const config = {

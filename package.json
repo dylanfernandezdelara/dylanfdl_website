@@ -12,7 +12,6 @@
     "lint": "eslint . --ext .js,.mjs,.ts,.tsx",
     "typecheck": "tsc --noEmit",
     "check": "tsx scripts/generate-content-registry.ts && npm run lint && npm run typecheck && npm run test",
-    "check:agentic": "tsx scripts/check-agentic-http.ts",
     "test": "vitest run",
     "content:registry": "tsx scripts/generate-content-registry.ts",
     "new:note": "tsx scripts/new-content.ts notes",

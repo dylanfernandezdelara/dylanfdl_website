@@ -98,25 +98,26 @@ function siteEntities() {
   return [websiteJsonLd(), publisherJsonLd(), personJsonLd()]
 }
 
+function siteGraph(page: Record<string, unknown>) {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [...siteEntities(), page],
+  }
+}
+
 export function buildHomePageJsonLd(options: {
   canonicalUrl: string
   description?: string
 }) {
-  return {
-    '@context': 'https://schema.org',
-    '@graph': [
-      ...siteEntities(),
-      {
-        '@type': 'ProfilePage',
-        '@id': options.canonicalUrl,
-        url: options.canonicalUrl,
-        name: PERSON_NAME,
-        description: options.description ?? DEFAULT_DESCRIPTION,
-        mainEntity: { '@id': SCHEMA_IDS.person },
-        isPartOf: { '@id': SCHEMA_IDS.website },
-      },
-    ],
-  }
+  return siteGraph({
+    '@type': 'ProfilePage',
+    '@id': options.canonicalUrl,
+    url: options.canonicalUrl,
+    name: PERSON_NAME,
+    description: options.description ?? DEFAULT_DESCRIPTION,
+    mainEntity: { '@id': SCHEMA_IDS.person },
+    isPartOf: { '@id': SCHEMA_IDS.website },
+  })
 }
 
 export function buildDocumentPageJsonLd(options: {
@@ -124,21 +125,15 @@ export function buildDocumentPageJsonLd(options: {
   name: string
   description: string
 }) {
-  return {
-    '@context': 'https://schema.org',
-    '@graph': [
-      ...siteEntities(),
-      {
-        '@type': 'WebPage',
-        '@id': options.canonicalUrl,
-        url: options.canonicalUrl,
-        name: options.name,
-        description: options.description,
-        isPartOf: { '@id': SCHEMA_IDS.website },
-        about: { '@id': SCHEMA_IDS.person },
-      },
-    ],
-  }
+  return siteGraph({
+    '@type': 'WebPage',
+    '@id': options.canonicalUrl,
+    url: options.canonicalUrl,
+    name: options.name,
+    description: options.description,
+    isPartOf: { '@id': SCHEMA_IDS.website },
+    about: { '@id': SCHEMA_IDS.person },
+  })
 }
 
 export function buildArticlePageJsonLd(options: {
@@ -148,21 +143,15 @@ export function buildArticlePageJsonLd(options: {
   datePublished: string
   dateModified?: string
 }) {
-  return {
-    '@context': 'https://schema.org',
-    '@graph': [
-      ...siteEntities(),
-      {
-        '@type': 'Article',
-        headline: options.title,
-        description: options.description,
-        datePublished: options.datePublished,
-        ...(options.dateModified ? { dateModified: options.dateModified } : {}),
-        author: { '@id': SCHEMA_IDS.person },
-        publisher: { '@id': SCHEMA_IDS.publisher },
-        mainEntityOfPage: options.canonicalUrl,
-        isPartOf: { '@id': SCHEMA_IDS.website },
-      },
-    ],
-  }
+  return siteGraph({
+    '@type': 'Article',
+    headline: options.title,
+    description: options.description,
+    datePublished: options.datePublished,
+    ...(options.dateModified ? { dateModified: options.dateModified } : {}),
+    author: { '@id': SCHEMA_IDS.person },
+    publisher: { '@id': SCHEMA_IDS.publisher },
+    mainEntityOfPage: options.canonicalUrl,
+    isPartOf: { '@id': SCHEMA_IDS.website },
+  })
 }
