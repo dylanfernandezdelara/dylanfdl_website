@@ -116,7 +116,7 @@ describe('useCardGridRows', () => {
     expect(result.current.exitRows[0]?.item.href).toBe('/projects/c')
   })
 
-  it('resets to all when the current filter has no cards', () => {
+  it('keeps an empty category filter selected', () => {
     const notesOnly = items.filter((item) => item.category === 'notes')
     const { result } = renderHook(() => useCardGridRows(notesOnly))
 
@@ -124,7 +124,13 @@ describe('useCardGridRows', () => {
       result.current.selectFilter('projects')
     })
 
-    expect(result.current.filter).toBe('all')
-    expect(result.current.tabOptions.map((tab) => tab.id)).toEqual(['all', 'notes'])
+    expect(result.current.filter).toBe('projects')
+    expect(result.current.activeRows).toHaveLength(0)
+    expect(result.current.tabOptions.map((tab) => tab.id)).toEqual([
+      'all',
+      'projects',
+      'notes',
+      'music',
+    ])
   })
 })
