@@ -60,7 +60,7 @@ describe('site', () => {
   })
 
   it('includes the full name on content page titles', () => {
-    expect(buildPageTitle({ title: 'On Writing' })).toBe('On Writing — Dylan Fernandez de Lara')
+    expect(buildPageTitle({ title: 'A Note' })).toBe('A Note — Dylan Fernandez de Lara')
   })
 
   it('exposes a stable public email and document paths', () => {

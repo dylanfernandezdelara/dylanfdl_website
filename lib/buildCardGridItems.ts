@@ -5,7 +5,6 @@ import {
 } from '@/lib/content'
 
 export type CardGridFilter = 'all' | 'projects' | 'notes' | 'music'
-export type CardGridThumbnail = 'editor'
 
 export type CardGridSerializableItem =
   | {
@@ -18,7 +17,6 @@ export type CardGridSerializableItem =
       href: string
       videoSrc?: string
       posterSrc?: string
-      thumbnail?: CardGridThumbnail
     }
   | {
       kind: 'artifact'
@@ -37,11 +35,6 @@ interface ArtifactEntry {
   href: string
   videoSrc: string
   posterSrc: string
-}
-
-/** Bespoke card thumbnails keyed by content registry path. */
-const WRITING_THUMBNAILS: Record<string, CardGridThumbnail> = {
-  'notes/purpose-of-writing': 'editor',
 }
 
 const artifacts: ArtifactEntry[] = [
@@ -90,20 +83,16 @@ const artifacts: ArtifactEntry[] = [
 ]
 
 export function buildCardGridItems(): CardGridSerializableItem[] {
-  const writingItems: CardGridSerializableItem[] = getPublishedEntries().map((entry) => {
-    const registryKey = `${entry.kind}/${entry.slug}`
-    return {
-      kind: 'writing' as const,
-      category: entry.kind,
-      sortDate: entry.date,
-      slug: entry.slug,
-      title: entry.title,
-      dateLabel: formatContentDateCardGrid(entry.date),
-      href: contentCanonicalPath(entry.kind, entry.slug),
-      posterSrc: entry.cardImage,
-      thumbnail: WRITING_THUMBNAILS[registryKey],
-    }
-  })
+  const writingItems: CardGridSerializableItem[] = getPublishedEntries().map((entry) => ({
+    kind: 'writing' as const,
+    category: entry.kind,
+    sortDate: entry.date,
+    slug: entry.slug,
+    title: entry.title,
+    dateLabel: formatContentDateCardGrid(entry.date),
+    href: contentCanonicalPath(entry.kind, entry.slug),
+    posterSrc: entry.cardImage,
+  }))
 
   const artifactItems: CardGridSerializableItem[] = artifacts.map((artifact) => ({
     kind: 'artifact',

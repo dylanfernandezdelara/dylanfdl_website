@@ -36,6 +36,28 @@ describe('next.config redirects', () => {
     })
   })
 
+  it('permanently redirects the retired On Writing note to home', async () => {
+    const redirects = (await nextConfig.redirects?.()) ?? []
+    const essaySpecificIndex = redirects.findIndex(
+      (redirect) => redirect.source === '/essays/purpose-of-writing'
+    )
+    const essayGenericIndex = redirects.findIndex((redirect) => redirect.source === '/essays/:slug')
+
+    expect(redirects).toContainEqual({
+      source: '/notes/purpose-of-writing',
+      destination: '/',
+      permanent: true,
+    })
+    expect(redirects).toContainEqual({
+      source: '/essays/purpose-of-writing',
+      destination: '/',
+      permanent: true,
+    })
+    expect(essaySpecificIndex).toBeGreaterThan(-1)
+    expect(essayGenericIndex).toBeGreaterThan(-1)
+    expect(essaySpecificIndex).toBeLessThan(essayGenericIndex)
+  })
+
   it('permanently redirects legacy essay URLs to notes', async () => {
     const redirects = (await nextConfig.redirects?.()) ?? []
 

@@ -2,8 +2,8 @@
 
 import { type KeyboardEvent } from 'react'
 
-import { TAB_OPTIONS } from '@/components/card-grid/constants'
 import useTabIndicator from '@/components/card-grid/useTabIndicator'
+import type { TabOption } from '@/components/card-grid/constants'
 import type { CardGridFilter } from '@/lib/buildCardGridItems'
 import { cn } from '@/lib/utils'
 
@@ -13,13 +13,14 @@ const tabButtonBase =
 type Props = {
   filter: CardGridFilter
   onSelect: (filter: CardGridFilter) => void
+  options: readonly TabOption[]
 }
 
-export default function CardGridTabs({ filter, onSelect }: Props) {
-  const { tablistRef, tabButtonRefs, showPill, indicatorStyle } = useTabIndicator(filter)
+export default function CardGridTabs({ filter, onSelect, options }: Props) {
+  const { tablistRef, tabButtonRefs, showPill, indicatorStyle } = useTabIndicator(filter, options)
 
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
-    const lastIndex = TAB_OPTIONS.length - 1
+    const lastIndex = options.length - 1
     let nextIndex: number | null = null
 
     switch (event.key) {
@@ -40,7 +41,7 @@ export default function CardGridTabs({ filter, onSelect }: Props) {
     }
 
     event.preventDefault()
-    const nextFilter = TAB_OPTIONS[nextIndex]?.id
+    const nextFilter = options[nextIndex]?.id
     if (!nextFilter) {
       return
     }
@@ -64,7 +65,7 @@ export default function CardGridTabs({ filter, onSelect }: Props) {
             style={indicatorStyle}
           />
         ) : null}
-        {TAB_OPTIONS.map(({ id, label }, index) => {
+        {options.map(({ id, label }, index) => {
           const selected = filter === id
           const selectedClass = showPill
             ? 'text-fg0 motion-reduce:bg-bg0 motion-reduce:shadow-sm'

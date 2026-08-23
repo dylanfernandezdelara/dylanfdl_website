@@ -7,6 +7,8 @@ export const TAB_OPTIONS: { id: CardGridFilter; label: string }[] = [
   { id: 'music', label: 'Music' },
 ]
 
+export type TabOption = (typeof TAB_OPTIONS)[number]
+
 /** Smooth ease-out: settles quickly without the material “ease-in” hitch at the start. */
 export const smoothEase = 'cubic-bezier(0.16, 1, 0.3, 1)'
 export const tabTransitionMs = 450

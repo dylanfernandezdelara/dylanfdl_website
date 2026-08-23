@@ -1,33 +1,27 @@
 import { describe, expect, it } from 'vitest'
 
-import { itemMatchesFilter } from '@/components/card-grid/model'
-import { buildCardGridItems, partitionCardGridItems } from '@/lib/buildCardGridItems'
+import { itemMatchesFilter, visibleTabOptions } from '@/components/card-grid/model'
+import { buildCardGridItems, partitionCardGridItems, type CardGridSerializableItem } from '@/lib/buildCardGridItems'
 
-describe('buildCardGridItems writing migration', () => {
-  it('maps published notes to /notes hrefs and notes category', () => {
+function musicCard(href: string, title: string): CardGridSerializableItem {
+  return {
+    kind: 'artifact',
+    category: 'music',
+    sortDate: '2023-01-01',
+    title,
+    dateLabel: 'Jan 2023',
+    href,
+    videoSrc: '/artifacts/demo.mp4',
+    posterSrc: '/artifacts/demo.webp',
+  }
+}
+
+describe('buildCardGridItems', () => {
+  it('omits the retired On Writing note and draft showcase', () => {
     const items = buildCardGridItems()
-    const onWriting = items.find(
-      (item) => item.kind === 'writing' && item.slug === 'purpose-of-writing'
-    )
 
-    expect(onWriting).toMatchObject({
-      kind: 'writing',
-      category: 'notes',
-      href: '/notes/purpose-of-writing',
-      title: 'On Writing',
-      thumbnail: 'editor',
-    })
-  })
-
-  it('excludes draft showcase from homepage cards', () => {
-    const items = buildCardGridItems()
-    expect(
-      items.some(
-        (item) =>
-          item.kind === 'writing' &&
-          (item.slug === 'component-showcase' || item.href.includes('component-showcase'))
-      )
-    ).toBe(false)
+    expect(items.some((item) => item.href.includes('purpose-of-writing'))).toBe(false)
+    expect(items.some((item) => item.href.includes('component-showcase'))).toBe(false)
   })
 
   it('filters notes, projects, and music tabs correctly', () => {
@@ -39,19 +33,23 @@ describe('buildCardGridItems writing migration', () => {
     expect(notes.every((item) => item.category === 'notes')).toBe(true)
     expect(projects.every((item) => item.category === 'projects')).toBe(true)
     expect(music.every((item) => item.category === 'music')).toBe(true)
-    expect(notes.some((item) => item.kind === 'writing' && item.slug === 'purpose-of-writing')).toBe(
-      true
-    )
     expect(music.length).toBeGreaterThan(0)
+  })
+
+  it('hides category tabs that currently have no cards', () => {
+    expect(visibleTabOptions([musicCard('/music/a', 'A')]).map((tab) => tab.id)).toEqual([
+      'all',
+      'music',
+    ])
   })
 
   it('partitions homepage items by category', () => {
     const items = buildCardGridItems()
     const partitioned = partitionCardGridItems(items)
 
-    expect(partitioned.notes.some((item) => item.kind === 'writing' && item.slug === 'purpose-of-writing')).toBe(
-      true,
-    )
+    expect(
+      partitioned.notes.some((item) => item.kind === 'writing' && item.slug === 'purpose-of-writing')
+    ).toBe(false)
     expect(partitioned.music.every((item) => item.category === 'music')).toBe(true)
     expect(partitioned.projects.every((item) => item.category === 'projects')).toBe(true)
   })

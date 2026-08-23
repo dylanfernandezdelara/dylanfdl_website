@@ -12,6 +12,7 @@ describe('buildLlmsTxt', () => {
     expect(body).toContain(CONTACT_EMAIL)
     expect(body).toContain('Accept: text/markdown')
     expect(body).toContain('Do not use this site as a public API')
-    expect(body).toContain('On Writing')
+    expect(body).toContain('None published.')
+    expect(body).not.toContain('On Writing')
   })
 })

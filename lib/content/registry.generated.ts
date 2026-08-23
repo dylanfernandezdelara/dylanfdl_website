@@ -8,7 +8,6 @@ export type ContentModule = {
 
 export const contentRegistryKeys = [
   'notes/component-showcase',
-  'notes/purpose-of-writing',
 ] as const
 
 export type ContentRegistryKey = (typeof contentRegistryKeys)[number]
@@ -17,8 +16,6 @@ export function loadContentModule(key: string): Promise<ContentModule> | null {
   switch (key) {
     case 'notes/component-showcase':
       return import('../../content/notes/component-showcase/index.mdx') as Promise<ContentModule>
-    case 'notes/purpose-of-writing':
-      return import('../../content/notes/purpose-of-writing/index.mdx') as Promise<ContentModule>
     default:
       return null
   }

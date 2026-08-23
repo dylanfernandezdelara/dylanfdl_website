@@ -11,7 +11,8 @@ describe('resolveMarkdownPage', () => {
     expect(page.body).toContain('# Dylan Fernandez de Lara')
     expect(page.body).toContain('I am an optimist.')
     expect(page.body).toContain('## Notes')
-    expect(page.body).toContain('On Writing')
+    expect(page.body).toContain('No published notes yet.')
+    expect(page.body).not.toContain('On Writing')
     expect(page.body).toContain('/about')
     expect(page.body).not.toContain('## About this site')
     expect(page.body).not.toContain('Do not use this site as a public API')
@@ -24,12 +25,10 @@ describe('resolveMarkdownPage', () => {
     expect(resolveMarkdownPage('/privacy').body).toContain('# Privacy')
   })
 
-  it('serves published note markdown and 404s unknown slugs', () => {
-    const note = resolveMarkdownPage('/notes/purpose-of-writing')
-    expect(note.status).toBe(200)
-    expect(note.body).toContain('# On Writing')
-    expect(note.body).toContain('I have decided to start writing')
-    expect(note.body).toContain('Canonical: https://www.dylanfdl.com/notes/purpose-of-writing')
+  it('404s retired and unknown note slugs', () => {
+    const retired = resolveMarkdownPage('/notes/purpose-of-writing')
+    expect(retired.status).toBe(404)
+    expect(retired.body).toContain('# 404')
 
     const missing = resolveMarkdownPage('/notes/does-not-exist')
     expect(missing.status).toBe(404)
