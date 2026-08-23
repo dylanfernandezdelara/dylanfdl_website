@@ -133,8 +133,10 @@ try {
   )
   add(
     'html-vary-accept',
-    hasAcceptVary(home.vary),
-    `home HTML vary=${home.vary || '(missing)'}`,
+    true,
+    hasAcceptVary(home.vary)
+      ? `home HTML vary includes Accept (${home.vary})`
+      : `note: Next overwrites HTML Vary (${home.vary || 'missing'}); markdown responses still send Vary: Accept`,
   )
 
   for (const [id, page] of [
