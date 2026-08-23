@@ -11,6 +11,7 @@ import {
   itemKey,
   rowsForItems,
   sortedItemsForFilter,
+  visibleTabOptions,
   type GridRow,
 } from '@/components/card-grid/model'
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
@@ -50,7 +51,15 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
     }),
   )
   const wantedSorted = useMemo(() => sortedItemsForFilter(items, filter), [items, filter])
+  const tabOptions = useMemo(() => visibleTabOptions(items), [items])
   const prevWantedRef = useRef(wantedSorted)
+
+  useEffect(() => {
+    if (tabOptions.some((tab) => tab.id === filter)) {
+      return
+    }
+    setFilter('all')
+  }, [filter, tabOptions])
 
   useLayoutEffect(() => {
     if (!ready || !reducedMotion) {
@@ -135,5 +144,6 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
     exitRows,
     filter,
     selectFilter: setFilter,
+    tabOptions,
   }
 }

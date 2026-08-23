@@ -1,4 +1,4 @@
-import { cardStaggerMs } from '@/components/card-grid/constants'
+import { cardStaggerMs, TAB_OPTIONS } from '@/components/card-grid/constants'
 import type { CardGridFilter, CardGridSerializableItem } from '@/lib/buildCardGridItems'
 
 export type RowPhase = 'enter' | 'stay' | 'exit'
@@ -64,4 +64,9 @@ export function sortedItemsForFilter(
   filter: CardGridFilter
 ): CardGridSerializableItem[] {
   return sortItemsByDateDesc(source.filter((item) => itemMatchesFilter(item, filter)))
+}
+
+export function visibleTabOptions(items: CardGridSerializableItem[]) {
+  const present = new Set(items.map((item) => item.category))
+  return TAB_OPTIONS.filter((tab) => tab.id === 'all' || present.has(tab.id))
 }

@@ -13,6 +13,8 @@ import {
 import { TAB_OPTIONS, smoothEase, tabTransitionMs } from '@/components/card-grid/constants'
 import type { CardGridFilter } from '@/lib/buildCardGridItems'
 
+type TabOption = (typeof TAB_OPTIONS)[number]
+
 type TabIndicatorBox = {
   left: number
   top: number
@@ -27,7 +29,10 @@ export type UseTabIndicatorResult = {
   indicatorStyle: CSSProperties | undefined
 }
 
-export default function useTabIndicator(filter: CardGridFilter): UseTabIndicatorResult {
+export default function useTabIndicator(
+  filter: CardGridFilter,
+  options: readonly TabOption[] = TAB_OPTIONS,
+): UseTabIndicatorResult {
   const tablistRef = useRef<HTMLDivElement>(null)
   const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [box, setBox] = useState<TabIndicatorBox | null>(null)
@@ -42,7 +47,7 @@ export default function useTabIndicator(filter: CardGridFilter): UseTabIndicator
     }
 
     const measure = () => {
-      const idx = TAB_OPTIONS.findIndex((t) => t.id === filter)
+      const idx = options.findIndex((t) => t.id === filter)
       const btn = tabButtonRefs.current[idx]
       if (!btn || btn.offsetWidth <= 0) {
         return
@@ -63,7 +68,7 @@ export default function useTabIndicator(filter: CardGridFilter): UseTabIndicator
     return () => {
       observer.disconnect()
     }
-  }, [filter])
+  }, [filter, options])
 
   useEffect(() => {
     if (box) {

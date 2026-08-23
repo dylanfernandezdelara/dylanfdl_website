@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { itemMatchesFilter } from '@/components/card-grid/model'
+import { itemMatchesFilter, visibleTabOptions } from '@/components/card-grid/model'
 import { buildCardGridItems } from '@/lib/buildCardGridItems'
 
 describe('buildCardGridItems', () => {
@@ -21,5 +21,9 @@ describe('buildCardGridItems', () => {
     expect(projects.every((item) => item.category === 'projects')).toBe(true)
     expect(music.every((item) => item.category === 'music')).toBe(true)
     expect(music.length).toBeGreaterThan(0)
+  })
+
+  it('hides category tabs that currently have no cards', () => {
+    expect(visibleTabOptions(buildCardGridItems()).map((tab) => tab.id)).toEqual(['all', 'music'])
   })
 })
