@@ -29,7 +29,7 @@ export const HOME_LINKED_INTRO_PARAGRAPHS = [
   `I am a Yale graduate and am currently based in ${PERSON_LOCATION.locality}.`,
 ] as const
 
-/** Extra homepage paragraphs shared by HTML and Markdown. */
+/** Extra homepage paragraphs for Markdown only. Keep HTML visually unchanged. */
 export const HOME_SHARED_INTRO_PARAGRAPHS = [
   `This website is the public record I keep of work I can share. Notes are the best place to see how I think. Projects appear when I have something people can read or use. Music is a list of concerts I played, with recordings where they exist.`,
   `If you are confirming who I am, this is the canonical site for ${PERSON_NAME} (${new URL(SITE_URL).hostname}). Use Contact to email me. About and Privacy have a longer biography and how this site handles data. I do not run a public API, developer portal, or MCP server here.`,
@@ -49,7 +49,7 @@ export const ABOUT_PAGE_PARAGRAPHS = [
   `You can reach me by email or through the profiles listed on Contact. I am the only person who publishes here. Nothing on this site is a Meta documentation portal, and I do not publish private work information.`,
 ] as const
 
-/** Intentionally repeats About plus agent-facing extras so homepage HTML stays text-dense. */
+/** About plus agent-facing extras for Markdown only. Keep HTML visually unchanged. */
 export const HOME_DETAIL_PARAGRAPHS = [
   ...ABOUT_PAGE_PARAGRAPHS,
   `Contact is ${CONTACT_EMAIL}. Privacy explains that theme preference stays in the browser, that visitors are not asked to log into Spotify, and that I do not sell data. If a path is missing, the 404 links to the sitemap and llms.txt instead of pretending the page exists.`,
