@@ -6,17 +6,15 @@ import { buildCardGridItems } from '@/lib/buildCardGridItems'
 describe('buildCardGridItems writing migration', () => {
   it('maps published notes to /notes hrefs and notes category', () => {
     const items = buildCardGridItems()
-    const onWriting = items.find(
-      (item) => item.kind === 'writing' && item.slug === 'purpose-of-writing'
+    const notes = items.filter(
+      (item): item is Extract<(typeof items)[number], { kind: 'writing' }> =>
+        item.kind === 'writing' && item.category === 'notes'
     )
 
-    expect(onWriting).toMatchObject({
-      kind: 'writing',
-      category: 'notes',
-      href: '/notes/purpose-of-writing',
-      title: 'On Writing',
-      thumbnail: 'editor',
-    })
+    for (const item of notes) {
+      expect(item.href).toBe(`/notes/${item.slug}`)
+    }
+    expect(notes.some((item) => item.slug === 'purpose-of-writing')).toBe(false)
   })
 
   it('excludes draft showcase from homepage cards', () => {
@@ -40,7 +38,7 @@ describe('buildCardGridItems writing migration', () => {
     expect(projects.every((item) => item.category === 'projects')).toBe(true)
     expect(music.every((item) => item.category === 'music')).toBe(true)
     expect(notes.some((item) => item.kind === 'writing' && item.slug === 'purpose-of-writing')).toBe(
-      true
+      false
     )
     expect(music.length).toBeGreaterThan(0)
   })

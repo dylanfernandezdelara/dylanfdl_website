@@ -1,17 +1,10 @@
 import Card from '@/components/Card'
-import EditorThumbnail from '@/components/EditorThumbnail'
 import { cardAnimMs, cardExitAnimMs, smoothEase } from '@/components/card-grid/constants'
 import { itemKey, type GridRow } from '@/components/card-grid/model'
 import { cn } from '@/lib/utils'
 
 type Props = {
   row: GridRow
-}
-
-function thumbnailFor(row: GridRow) {
-  return row.item.kind === 'writing' && row.item.thumbnail === 'editor' ? (
-    <EditorThumbnail />
-  ) : undefined
 }
 
 export default function CardGridCard({ row }: Props) {
@@ -59,7 +52,6 @@ export default function CardGridCard({ row }: Props) {
           external={row.item.kind === 'artifact'}
           videoSrc={row.item.videoSrc}
           posterSrc={row.item.posterSrc}
-          thumbnail={thumbnailFor(row)}
         />
       </div>
     </div>

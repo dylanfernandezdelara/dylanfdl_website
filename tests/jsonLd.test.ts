@@ -24,9 +24,9 @@ describe('jsonLd', () => {
 
   it('builds an article graph with site entities and Article', () => {
     const jsonLd = buildArticlePageJsonLd({
-      title: 'On Writing',
+      title: 'A Note',
       description: 'Excerpt',
-      canonicalUrl: `${SITE_URL}/notes/purpose-of-writing`,
+      canonicalUrl: `${SITE_URL}/notes/a-note`,
       datePublished: '2025-12-20T00:00:00.000Z',
       dateModified: '2026-01-01T00:00:00.000Z',
     })
@@ -35,7 +35,7 @@ describe('jsonLd', () => {
     expect(types).toEqual(['WebSite', 'Organization', 'Person', 'Article'])
     expect(jsonLd['@graph'][3]).toMatchObject({
       '@type': 'Article',
-      headline: 'On Writing',
+      headline: 'A Note',
       author: { '@id': SCHEMA_IDS.person },
       dateModified: '2026-01-01T00:00:00.000Z',
     })

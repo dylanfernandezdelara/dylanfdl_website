@@ -173,15 +173,9 @@ describe('extractContentHeadings', () => {
 })
 
 describe('content loading', () => {
-  it('loads the migrated On Writing note', () => {
-    const entry = getEntryBySlug('notes', 'purpose-of-writing', { allowDrafts: true })
-
-    expect(entry).not.toBeNull()
-    expect(entry?.kind).toBe('notes')
-    expect(entry?.title).toBe('On Writing')
-    expect(entry?.date).toBe('2025-12-20')
-    expect(entry?.summary).toBeUndefined()
-    expect(entry?.draft).toBe(false)
+  it('does not load the retired On Writing note', () => {
+    expect(getEntryBySlug('notes', 'purpose-of-writing', { allowDrafts: true })).toBeNull()
+    expect(getPublishedEntries().some((entry) => entry.slug === 'purpose-of-writing')).toBe(false)
   })
 
   it('keeps draft showcase available locally but out of published lists', () => {
@@ -259,7 +253,7 @@ describe('content registry generation', () => {
     try {
       expect(result.status, result.stderr || result.stdout).toBe(0)
       const source = fs.readFileSync(outFile, 'utf8')
-      expect(source).toContain('notes/purpose-of-writing')
+      expect(source).not.toContain('purpose-of-writing')
       expect(source).not.toContain('component-showcase')
       expect(source).not.toContain('frontmatter?')
     } finally {
@@ -325,7 +319,7 @@ Body
     try {
       expect(result.status, result.stderr || result.stdout).toBe(0)
       const source = fs.readFileSync(outFile, 'utf8')
-      expect(source).toContain('notes/purpose-of-writing')
+      expect(source).not.toContain('purpose-of-writing')
       expect(source).not.toContain('broken-draft-registry-audit')
     } finally {
       fs.rmSync(draftDir, { recursive: true, force: true })

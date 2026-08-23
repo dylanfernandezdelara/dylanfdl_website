@@ -40,6 +40,21 @@ describe('next.config redirects', () => {
     })
   })
 
+  it('permanently redirects the retired On Writing note to home', async () => {
+    const redirects = (await nextConfig.redirects?.()) ?? []
+
+    expect(redirects).toContainEqual({
+      source: '/notes/purpose-of-writing',
+      destination: '/',
+      permanent: true,
+    })
+    expect(redirects).toContainEqual({
+      source: '/essays/purpose-of-writing',
+      destination: '/',
+      permanent: true,
+    })
+  })
+
   it('permanently redirects legacy essay URLs to notes', async () => {
     const redirects = (await nextConfig.redirects?.()) ?? []
 

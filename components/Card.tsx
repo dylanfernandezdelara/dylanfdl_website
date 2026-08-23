@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import type { ReactNode } from 'react'
 
 import CardVideo from '@/components/CardVideo'
 import { cn } from '@/lib/utils'
@@ -14,7 +13,6 @@ export type CardProps = {
   external?: boolean
   videoSrc?: string
   posterSrc?: string
-  thumbnail?: ReactNode
 }
 
 export default function Card({
@@ -24,7 +22,6 @@ export default function Card({
   external = false,
   videoSrc,
   posterSrc,
-  thumbnail,
 }: CardProps) {
   const media = (() => {
     if (videoSrc) {
@@ -46,7 +43,7 @@ export default function Card({
         />
       )
     }
-    return thumbnail ?? null
+    return null
   })()
 
   const inner = (
