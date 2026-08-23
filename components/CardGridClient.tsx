@@ -13,11 +13,11 @@ type Props = {
 }
 
 export default function CardGridClient({ items, children }: Props) {
-  const { activeRows, exitRows, filter, selectFilter, tabOptions } = useCardGridRows(items)
+  const { activeRows, exitRows, filter, selectFilter } = useCardGridRows(items)
 
   return (
     <div className="mt-8">
-      <CardGridTabs filter={filter} onSelect={selectFilter} options={tabOptions} />
+      <CardGridTabs filter={filter} onSelect={selectFilter} />
 
       <div
         className="relative"

@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import {
-  TAB_OPTIONS,
   cardAnimMs,
   cardExitAnimMs,
   cardInitialStaggerCap,
@@ -136,6 +135,5 @@ export default function useCardGridRows(items: CardGridSerializableItem[]) {
     exitRows,
     filter,
     selectFilter: setFilter,
-    tabOptions: TAB_OPTIONS,
   }
 }

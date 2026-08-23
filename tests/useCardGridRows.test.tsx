@@ -126,11 +126,5 @@ describe('useCardGridRows', () => {
 
     expect(result.current.filter).toBe('projects')
     expect(result.current.activeRows).toHaveLength(0)
-    expect(result.current.tabOptions.map((tab) => tab.id)).toEqual([
-      'all',
-      'projects',
-      'notes',
-      'music',
-    ])
   })
 })
