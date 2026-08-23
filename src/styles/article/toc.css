@@ -7,7 +7,7 @@
     display: block;
     position: sticky;
     top: 6rem;
-    padding-top: 3rem;
+    padding-top: var(--article-title-block-offset);
   }
 }
 

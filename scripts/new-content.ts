@@ -67,15 +67,17 @@ draft: true
 topics: []
 ${projectFields}---
 
-{/* Outline (delete before publishing)
-## Context
-## How it works
-## What I learned
-*/}
-
 ## Context
 
 Start with the problem or idea.
+
+## How it works
+
+Describe the approach.
+
+## What I learned
+
+Capture the takeaway.
 
 {/*
 <Figure width="wide" caption="Describe the visual.">

@@ -18,27 +18,27 @@ export default function ArticleShell({ entry, children }: ArticleShellProps) {
   const hasToc = entry.headings.length > 0
 
   return (
-    <>
-      <header className="article-site-header mx-auto flex max-w-4xl items-center justify-between gap-4 px-4 pt-12 text-sm min-[481px]:px-6 md:px-8 md:pt-16">
+    <div
+      className={cn(
+        'article-page mx-auto pt-12 md:pt-16',
+        hasToc && 'article-page--with-toc'
+      )}
+    >
+      <header className="article-site-header flex items-baseline justify-between gap-4 text-sm">
         <Link
           href="/"
           className="font-serif font-normal text-fg0 transition-colors duration-150 hover:text-fg2"
         >
           {PERSON_NAME}
         </Link>
-        <nav aria-label="Site" className="flex items-center gap-5 text-fg3">
+        <nav aria-label="Site" className="flex items-baseline gap-5 text-fg3">
           <Link href="/" className="transition-colors duration-150 hover:text-fg0">
             Home
           </Link>
         </nav>
       </header>
 
-      <div
-        className={cn(
-          'article-layout mx-auto px-4 min-[481px]:px-6 md:px-8',
-          hasToc ? 'article-layout--with-toc max-w-5xl' : 'max-w-reading'
-        )}
-      >
+      <div className="article-layout">
         <ArticleToc headings={entry.headings} />
 
         <article className="article-shell">
@@ -61,6 +61,6 @@ export default function ArticleShell({ entry, children }: ArticleShellProps) {
           <div className="article-shell__body">{children}</div>
         </article>
       </div>
-    </>
+    </div>
   )
 }

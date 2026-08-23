@@ -1,5 +1,5 @@
 .article-code {
-  margin: 1.5rem 0;
+  margin: var(--article-paragraph-gap) 0;
   border: 1px solid var(--bg2);
   border-radius: 0.5rem;
   overflow: hidden;

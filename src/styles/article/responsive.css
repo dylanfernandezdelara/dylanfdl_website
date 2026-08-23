@@ -3,28 +3,23 @@
     line-height: 1.6;
   }
 
-  .article-shell__header {
-    margin-top: 2.5rem;
+  /* Retune the scale, not individual properties: the whole ladder tightens
+     together instead of drifting apart one override at a time. */
+  .article-page {
+    --article-title-size: 1.5rem;
+    --article-title-block-offset: 2.5rem;
+    --article-paragraph-gap: 1rem;
+    --article-section-space: 2rem;
+    --article-subsection-space: 1.5rem;
+    --article-figure-gap: 1.25rem;
   }
 
-  /* 15px body on narrow screens: closer to the 14px used across the rest of the
-     site, and restores heading contrast (h2 becomes 1.33x body instead of 1.25x). */
-  .article-shell__body {
-    font-size: 0.9375rem;
-  }
-
-  .article-shell__body blockquote,
-  article blockquote {
+  .article-shell__body blockquote {
     padding-left: 1rem;
-    margin: 1rem 0;
   }
 
   .article-code__pre {
     padding: 0.75rem;
-  }
-
-  .article-figure {
-    margin: 1.25rem auto;
   }
 
   .article-figure--wide,
@@ -41,8 +36,7 @@
 }
 
 @media (max-width: 480px) {
-  .article-shell__body blockquote,
-  article blockquote {
+  .article-shell__body blockquote {
     padding-left: 0.75rem;
   }
 
