@@ -15,6 +15,19 @@ describe('jsonLd', () => {
     const types = jsonLd['@graph'].map((node) => node['@type'])
 
     expect(types).toEqual(['WebSite', 'Organization', 'Person', 'ProfilePage'])
+    expect(jsonLd['@graph'][1]).toMatchObject({
+      '@type': 'Organization',
+      url: SITE_URL,
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'author',
+      },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'New York',
+      },
+      sameAs: expect.arrayContaining(['https://github.com/dylanfernandezdelara']),
+    })
     expect(jsonLd['@graph'][3]).toMatchObject({
       '@type': 'ProfilePage',
       name: PERSON_NAME,

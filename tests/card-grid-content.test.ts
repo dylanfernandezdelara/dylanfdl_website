@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { itemMatchesFilter, visibleTabOptions } from '@/components/card-grid/model'
-import { buildCardGridItems, type CardGridSerializableItem } from '@/lib/buildCardGridItems'
+import { buildCardGridItems, partitionCardGridItems, type CardGridSerializableItem } from '@/lib/buildCardGridItems'
 
 function musicCard(href: string, title: string): CardGridSerializableItem {
   return {
@@ -41,5 +41,16 @@ describe('buildCardGridItems', () => {
       'all',
       'music',
     ])
+  })
+
+  it('partitions homepage items by category', () => {
+    const items = buildCardGridItems()
+    const partitioned = partitionCardGridItems(items)
+
+    expect(
+      partitioned.notes.some((item) => item.kind === 'writing' && item.slug === 'purpose-of-writing')
+    ).toBe(false)
+    expect(partitioned.music.every((item) => item.category === 'music')).toBe(true)
+    expect(partitioned.projects.every((item) => item.category === 'projects')).toBe(true)
   })
 })

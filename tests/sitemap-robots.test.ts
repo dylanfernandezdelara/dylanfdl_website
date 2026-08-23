@@ -12,10 +12,13 @@ describe('sitemap', () => {
     const published = getPublishedEntries()
 
     expect(urls).toContain(SITE_URL)
+    expect(urls).toContain(absoluteUrl('/about'))
+    expect(urls).toContain(absoluteUrl('/contact'))
+    expect(urls).toContain(absoluteUrl('/privacy'))
     for (const entry of published) {
       expect(urls).toContain(absoluteUrl(contentCanonicalPath(entry.kind, entry.slug)))
     }
-    expect(urls).toHaveLength(1 + published.length)
+    expect(urls).toHaveLength(4 + published.length)
     expect(urls.some((url) => url.includes('component-showcase'))).toBe(false)
   })
 })
@@ -28,6 +31,7 @@ describe('robots', () => {
         allow: '/',
       },
       sitemap: SITEMAP_INDEX_URL,
+      host: 'www.dylanfdl.com',
     })
   })
 })
