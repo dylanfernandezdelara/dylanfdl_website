@@ -94,28 +94,21 @@ export default function HomePage() {
             </p>
           ))}
 
-        </div>
-
-        <section className="mt-8" aria-labelledby="work-heading">
-          <h2 id="work-heading" className="mb-3 font-serif text-xl font-normal text-fg0">
+          <h2 id="work-heading" className="mb-3 mt-8 font-serif text-xl font-normal text-fg0">
             {HOME_WORK_HEADING}
           </h2>
-          <p className="mb-4 text-pretty text-sm font-[450] leading-relaxed text-fg1">
-            {HOME_WORK_INTRO}
-          </p>
-        </section>
+          <p className="mb-4">{HOME_WORK_INTRO}</p>
+          <HomeWorkIndex items={cardGridItems} />
 
-        <CardGridClient items={cardGridItems} />
-
-        <HomeWorkIndex items={cardGridItems} />
-        <section className="mt-10 text-pretty text-sm font-[450] leading-relaxed text-fg1 min-[640px]:max-w-[75%]">
-          <h2 className="mb-4 font-serif text-xl font-normal text-fg0">{HOME_ABOUT_HEADING}</h2>
+          <h2 className="mb-4 mt-8 font-serif text-xl font-normal text-fg0">{HOME_ABOUT_HEADING}</h2>
           {HOME_DETAIL_PARAGRAPHS.map((paragraph) => (
             <p key={paragraph} className="mb-4">
               {paragraph}
             </p>
           ))}
-        </section>
+        </div>
+
+        <CardGridClient items={cardGridItems} />
         <hr className="mb-3 mt-8 w-full border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
 
         <div className="flex w-full items-center justify-between gap-4">

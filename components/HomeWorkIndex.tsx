@@ -44,7 +44,7 @@ export default function HomeWorkIndex({ items }: { items: CardGridSerializableIt
   const { projects, notes, music } = partitionCardGridItems(items)
 
   return (
-    <nav aria-label="Contents" className="mt-10 text-sm font-[450] leading-relaxed text-fg1">
+    <nav aria-label="Contents" className="mt-2 text-sm font-[450] leading-relaxed text-fg1">
       <WorkList heading="Projects" items={projects} empty="No published projects yet." />
       <WorkList heading="Notes" items={notes} empty="No published notes yet." />
       <WorkList heading="Music" items={music} empty="No music recordings yet." />
