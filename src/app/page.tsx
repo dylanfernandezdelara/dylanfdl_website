@@ -21,8 +21,7 @@ import {
 const cardGridItems = buildCardGridItems()
 
 const INTRO_LINKS = {
-  museSparkAnnouncement:
-    'https://ai.meta.com/blog/introducing-muse-spark-meta-model-api/',
+  meta: 'https://ai.meta.com',
   museSpark12AndMuseCode:
     'https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2',
   aiGlasses: 'https://www.meta.com/ai-glasses/',
@@ -63,7 +62,7 @@ export default function HomePage() {
           </p>
           <p className="mb-4">
             I currently work on post-training at{' '}
-            <ExternalLink allowWrap href={INTRO_LINKS.museSparkAnnouncement}>Meta</ExternalLink> and build
+            <ExternalLink allowWrap href={INTRO_LINKS.meta}>Meta</ExternalLink> and build
             RL environments for frontier coding agents. We recently launched{' '}
             <ExternalLink allowWrap href={INTRO_LINKS.museSpark12AndMuseCode}>Muse Spark 1.2</ExternalLink> and{' '}
             <ExternalLink allowWrap href={INTRO_LINKS.museSpark12AndMuseCode}>Muse Code</ExternalLink>.
