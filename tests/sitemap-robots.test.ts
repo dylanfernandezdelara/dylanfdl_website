@@ -31,6 +31,7 @@ describe('robots', () => {
         allow: '/',
       },
       sitemap: SITEMAP_INDEX_URL,
+      host: 'www.dylanfdl.com',
     })
   })
 })

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { appendVaryAccept, preferredType, shouldNegotiate } from '@/lib/acceptMarkdown'
+import {
+  appendVaryAccept,
+  isDocumentNegotiation,
+  preferredType,
+  shouldNegotiate,
+} from '@/lib/acceptMarkdown'
 
 describe('preferredType', () => {
   it('defaults to HTML when Accept is missing', () => {
@@ -54,6 +59,20 @@ describe('shouldNegotiate', () => {
         headers: new Headers({ accept: 'application/pdf' }),
       }),
     ).toBe(true)
+  })
+})
+
+describe('isDocumentNegotiation', () => {
+  it('treats HTML, Markdown, and PDF Accept values as document negotiation', () => {
+    expect(isDocumentNegotiation('application/pdf')).toBe(true)
+    expect(isDocumentNegotiation('text/markdown, text/html;q=0.8')).toBe(true)
+    expect(isDocumentNegotiation('text/html;q=0, text/markdown;q=0')).toBe(true)
+  })
+
+  it('leaves Flight and other non-document Accept values alone', () => {
+    expect(isDocumentNegotiation('text/x-component')).toBe(false)
+    expect(isDocumentNegotiation('application/json')).toBe(false)
+    expect(isDocumentNegotiation(null)).toBe(false)
   })
 })
 

@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 import {
   appendVaryAccept,
+  isDocumentNegotiation,
   NOT_ACCEPTABLE_BODY,
   preferredType,
   shouldNegotiate,
@@ -38,7 +39,7 @@ export function middleware(request: NextRequest): NextResponse | Response {
     return rewriteToMarkdown(request, pathname)
   }
 
-  if (chosen === null && acceptHeader) {
+  if (chosen === null && isDocumentNegotiation(acceptHeader)) {
     return new Response(NOT_ACCEPTABLE_BODY, {
       status: 406,
       headers: {

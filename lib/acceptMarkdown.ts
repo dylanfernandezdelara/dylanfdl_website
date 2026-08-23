@@ -113,8 +113,28 @@ export const NOT_ACCEPTABLE_BODY = 'Not Acceptable\n\nAvailable: text/html, text
 
 const FRAMEWORK_ACCEPT_TYPES = ['text/x-component'] as const
 
+const DOCUMENT_ACCEPT_HINTS = [
+  'text/html',
+  'text/markdown',
+  'text/plain',
+  'application/xhtml',
+  'application/pdf',
+] as const
+
 function headerPresent(headers: { get(name: string): string | null }, name: string): boolean {
   return Boolean(headers.get(name))
+}
+
+/**
+ * True when Accept looks like document negotiation (HTML/Markdown/PDF),
+ * not a framework or API content type we should leave alone.
+ */
+export function isDocumentNegotiation(header: string | null): boolean {
+  if (!header) {
+    return false
+  }
+  const lower = header.toLowerCase()
+  return DOCUMENT_ACCEPT_HINTS.some((hint) => lower.includes(hint))
 }
 
 /**

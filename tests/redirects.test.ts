@@ -46,3 +46,24 @@ describe('next.config redirects', () => {
     })
   })
 })
+
+describe('next.config rewrites and headers', () => {
+  it('rewrites the well-known llms.txt alias', async () => {
+    const rewrites = (await nextConfig.rewrites?.()) ?? []
+    const list = Array.isArray(rewrites) ? rewrites : (rewrites.beforeFiles ?? [])
+
+    expect(list).toContainEqual({
+      source: '/.well-known/llms.txt',
+      destination: '/llms.txt',
+    })
+  })
+
+  it('adds Accept to Vary so HTML and Markdown stay cache-distinct', async () => {
+    const headers = (await nextConfig.headers?.()) ?? []
+
+    expect(headers).toContainEqual({
+      source: '/:path*',
+      headers: [{ key: 'Vary', value: 'Accept' }],
+    })
+  })
+})

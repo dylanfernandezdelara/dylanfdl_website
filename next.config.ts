@@ -44,6 +44,22 @@ const nextConfig: NextConfig = {
       },
     ]
   },
+  async rewrites() {
+    return [
+      {
+        source: '/.well-known/llms.txt',
+        destination: '/llms.txt',
+      },
+    ]
+  },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [{ key: 'Vary', value: 'Accept' }],
+      },
+    ]
+  },
 }
 
 const withMDX = createMDX({
