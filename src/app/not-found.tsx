@@ -12,7 +12,7 @@ const styles = stylex.create({
     paddingLeft: '1rem',
     paddingRight: '1rem',
     paddingTop: '3rem',
-    '@media (min-width: 481px)': {
+    '@media (min-width: 481px) and (max-width: 767px)': {
       paddingLeft: '1.5rem',
       paddingRight: '1.5rem',
     },

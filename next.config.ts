@@ -94,5 +94,5 @@ export default stylexPlugin({
       type: 'commonJS',
     },
   },
-  useCSSLayers: true,
+  useCSSLayers: false,
 })(withMDX(nextConfig))

@@ -39,7 +39,7 @@ const styles = stylex.create({
     paddingTop: '5rem',
     fontSize: '1rem',
     lineHeight: 1.6,
-    '@media (min-width: 481px)': {
+    '@media (min-width: 481px) and (max-width: 767px)': {
       paddingLeft: '1.5rem',
       paddingRight: '1.5rem',
     },
@@ -78,7 +78,7 @@ const styles = stylex.create({
     borderTopWidth: '1px',
     borderStyle: 'solid',
     borderColor: 'var(--bg3)',
-    '@media (min-width: 481px)': {
+    '@media (min-width: 481px) and (max-width: 767px)': {
       marginBottom: '1rem',
     },
     '@media (min-width: 768px)': {

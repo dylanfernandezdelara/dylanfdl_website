@@ -9,20 +9,6 @@ import { activatePageSearchResult, collectPageSearchTargets } from '@/components
 import { computeSearchResults, type SearchResult, type SearchTarget } from '@/lib/page-search'
 
 const styles = stylex.create({
-  panel: {
-    top: '16.667%',
-    width: 'min(40rem, calc(100% - 2rem))',
-    transform: 'translate(-50%, -50%)',
-    gap: 0,
-    overflow: 'hidden',
-    borderRadius: '1rem',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    backgroundColor: 'var(--popover)',
-    padding: 0,
-    boxShadow: 'var(--elevated-shadow)',
-    backdropFilter: 'blur(24px) saturate(130%)',
-  },
   command: {
     backgroundColor: 'transparent',
   },
@@ -83,7 +69,6 @@ export default function PageSearchPalette({ open, onOpenChange }: PageSearchPale
   const [query, setQuery] = useState('')
   const [targets, setTargets] = useState<SearchTarget<HTMLElement>[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
-  const panelSx = stylex.props(styles.panel)
 
   useEffect(() => {
     if (!open) {
@@ -117,8 +102,6 @@ export default function PageSearchPalette({ open, onOpenChange }: PageSearchPale
           event.preventDefault()
           requestAnimationFrame(() => inputRef.current?.focus())
         }}
-        className={panelSx.className}
-        style={panelSx.style}
       >
         <DialogTitle className="sr-only">Search</DialogTitle>
         <Command shouldFilter={false} {...stylex.props(styles.command)}>

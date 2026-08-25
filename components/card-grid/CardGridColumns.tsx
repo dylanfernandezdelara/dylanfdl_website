@@ -11,18 +11,17 @@ const styles = stylex.create({
     '@media (min-width: 640px)': {
       display: 'none',
     },
-    '@media (min-width: 768px)': {
-      gap: '1rem',
-    },
   },
   desktop: {
     display: 'none',
-    '@media (min-width: 640px)': {
+    '@media (min-width: 640px) and (max-width: 767px)': {
       display: 'grid',
       gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
       gap: '0.75rem',
     },
     '@media (min-width: 768px)': {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
       gap: '1rem',
     },
   },

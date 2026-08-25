@@ -31,7 +31,9 @@ const styles = stylex.create({
   },
   main: {
     paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))',
-    '@media (min-width: 481px)': {
+    // Exclusive ranges: StyleX can emit the 481px rule after 768px, so stacked
+    // min-width queries for the same property would let 481px win at 768px+.
+    '@media (min-width: 481px) and (max-width: 767px)': {
       paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 0px))',
     },
     '@media (min-width: 768px)': {

@@ -18,7 +18,7 @@ const styles = stylex.create({
     paddingTop: '3rem',
     fontSize: '1rem',
     lineHeight: 1.6,
-    '@media (min-width: 481px)': {
+    '@media (min-width: 481px) and (max-width: 767px)': {
       paddingLeft: '1.5rem',
       paddingRight: '1.5rem',
     },
