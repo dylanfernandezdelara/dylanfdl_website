@@ -18,3 +18,49 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
+
+  visual:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium --with-deps
+      - name: Capture StyleX treatment
+        run: |
+          CONTENT_INCLUDE_DRAFTS=1 npm run dev -- --hostname 127.0.0.1 --port 3000 &
+          for i in $(seq 1 90); do
+            if curl -sf http://127.0.0.1:3000 >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          npx tsx scripts/visual/capture.ts --out /tmp/visual/treatment --base-url http://127.0.0.1:3000
+      - name: Capture Tailwind baseline from main
+        run: |
+          git fetch origin main
+          git worktree add /tmp/main-src origin/main
+          cd /tmp/main-src
+          npm ci
+          CONTENT_INCLUDE_DRAFTS=1 npm run dev -- --hostname 127.0.0.1 --port 3001 &
+          for i in $(seq 1 90); do
+            if curl -sf http://127.0.0.1:3001 >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          cd "$GITHUB_WORKSPACE"
+          npx tsx scripts/visual/capture.ts --out /tmp/visual/baseline --base-url http://127.0.0.1:3001
+      - name: Compare screenshots
+        run: npx tsx scripts/visual/compare.ts --baseline /tmp/visual/baseline --treatment /tmp/visual/treatment --out /tmp/visual/report
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-diff
+          path: /tmp/visual/report
