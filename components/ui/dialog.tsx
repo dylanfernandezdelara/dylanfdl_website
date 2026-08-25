@@ -3,8 +3,66 @@
 import * as React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
+import * as stylex from '@stylexjs/stylex'
 
-import { cn } from '@/lib/utils'
+import { withClassName } from '@/lib/sx'
+
+const styles = stylex.create({
+  overlay: {
+    position: 'fixed',
+    inset: 0,
+    zIndex: 50,
+    backgroundColor: 'var(--dialog-scrim)',
+    backdropFilter: 'blur(10px)',
+    ':is([data-state="open"])': {
+      animationName: 'search-dialog-fade-in',
+      animationDuration: '180ms',
+      animationTimingFunction: 'ease-out',
+    },
+    ':is([data-state="closed"])': {
+      animationName: 'search-dialog-fade-out',
+      animationDuration: '120ms',
+      animationTimingFunction: 'ease-in',
+    },
+  },
+  content: {
+    position: 'fixed',
+    left: '50%',
+    top: '6rem',
+    zIndex: 50,
+    width: 'min(40rem, calc(100% - 2rem))',
+    transform: 'translateX(-50%)',
+    gap: '1rem',
+    backgroundColor: 'var(--background)',
+    padding: '1.5rem',
+    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+    ':is([data-state="open"])': {
+      animationName: 'search-panel-materialize-in',
+      animationDuration: '180ms',
+      animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    },
+    ':is([data-state="closed"])': {
+      animationName: 'search-panel-materialize-out',
+      animationDuration: '120ms',
+      animationTimingFunction: 'ease-in',
+    },
+  },
+  close: {
+    position: 'absolute',
+    right: '1rem',
+    top: '1rem',
+    borderRadius: 'calc(var(--radius) - 4px)',
+    opacity: 0.7,
+    transitionProperty: 'opacity',
+    ':hover': {
+      opacity: 1,
+    },
+  },
+  closeIcon: {
+    height: '1rem',
+    width: '1rem',
+  },
+})
 
 const Dialog = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
@@ -19,10 +77,7 @@ const DialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
-    className={cn(
-      'fixed inset-0 z-50 bg-[var(--dialog-scrim)] backdrop-blur-[10px] data-[state=closed]:animate-[search-dialog-fade-out_120ms_ease-in] data-[state=open]:animate-[search-dialog-fade-in_180ms_ease-out]',
-      className
-    )}
+    {...withClassName(className, stylex.props(styles.overlay))}
     {...props}
   />
 ))
@@ -40,16 +95,13 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
-      className={cn(
-        'fixed left-1/2 top-[6rem] z-50 w-[min(40rem,calc(100%-2rem))] -translate-x-1/2 gap-4 bg-background p-6 shadow-lg data-[state=closed]:animate-[search-panel-materialize-out_120ms_ease-in] data-[state=open]:animate-[search-panel-materialize-in_180ms_cubic-bezier(0.16,1,0.3,1)]',
-        className
-      )}
+      {...withClassName(className, stylex.props(styles.content))}
       {...props}
     >
       {children}
       {showCloseButton && (
-        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
-          <X className="h-4 w-4" />
+        <DialogPrimitive.Close {...stylex.props(styles.close)}>
+          <X {...stylex.props(styles.closeIcon)} />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
       )}

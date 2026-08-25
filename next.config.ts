@@ -1,4 +1,5 @@
 import createMDX from '@next/mdx'
+import stylexPlugin from '@stylexswc/nextjs-plugin'
 import type { NextConfig } from 'next'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -84,4 +85,14 @@ const withMDX = createMDX({
   },
 })
 
-export default withMDX(nextConfig)
+export default stylexPlugin({
+  rsOptions: {
+    aliases: {
+      '@/*': [path.join(__dirname, '*')],
+    },
+    unstable_moduleResolution: {
+      type: 'commonJS',
+    },
+  },
+  useCSSLayers: true,
+})(withMDX(nextConfig))

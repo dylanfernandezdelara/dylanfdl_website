@@ -102,6 +102,9 @@
   display: inline-flex;
   line-height: inherit;
   vertical-align: baseline;
+  font-style: italic;
+  max-width: 100%;
+  flex-wrap: wrap;
   --slot-text-cell-line-height: var(--slot-text-cell-line-height-italic);
   /* Avoid synthetic italic slant when a true italic face is missing. */
   font-synthesis: none;

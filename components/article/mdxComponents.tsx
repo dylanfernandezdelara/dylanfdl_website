@@ -1,5 +1,6 @@
 import type { MDXComponents } from 'mdx/types'
 import type { ComponentPropsWithoutRef } from 'react'
+import * as stylex from '@stylexjs/stylex'
 
 import ArticleHeading from '@/components/article/ArticleHeading'
 import ArticleImage from '@/components/article/ArticleImage'
@@ -8,8 +9,8 @@ import BrowserFrame from '@/components/article/BrowserFrame'
 import Callout from '@/components/article/Callout'
 import CodeBlock from '@/components/article/CodeBlock'
 import Figure from '@/components/article/Figure'
-import { INLINE_LINK_STYLES } from '@/lib/linkStyles'
-import { cn } from '@/lib/utils'
+import { linkStyles } from '@/lib/linkStyles'
+import { withClassName } from '@/lib/sx'
 
 function isExternalHref(href: string | undefined): boolean {
   return Boolean(href && /^https?:\/\//.test(href))
@@ -22,7 +23,7 @@ function Anchor(props: ComponentPropsWithoutRef<'a'>) {
   return (
     <a
       href={href}
-      className={cn(INLINE_LINK_STYLES, className)}
+      {...withClassName(className, stylex.props(linkStyles.inline))}
       {...(external
         ? { target: '_blank', rel: 'noopener noreferrer' }
         : {})}

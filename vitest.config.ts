@@ -15,6 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': root,
+      '@stylexjs/stylex': path.join(root, 'tests/stylexTestRuntime.ts'),
     },
   },
   test: {

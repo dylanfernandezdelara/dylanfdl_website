@@ -1,10 +1,61 @@
 import Link from 'next/link'
+import * as stylex from '@stylexjs/stylex'
 
 import CardVideo from '@/components/CardVideo'
-import { cn } from '@/lib/utils'
 
-const cardClassName =
-  'group flex flex-col overflow-hidden rounded-md border border-bg3 bg-bg1 no-underline hover:border-fg4/25'
+const styles = stylex.create({
+  card: {
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+    borderRadius: 'calc(var(--radius) - 2px)',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: 'var(--bg3)',
+    backgroundColor: 'var(--bg1)',
+    textDecorationLine: 'none',
+    color: 'inherit',
+  },
+  header: {
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    gap: '0.75rem',
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+    paddingTop: '0.875rem',
+    paddingBottom: '0.875rem',
+  },
+  title: {
+    fontSize: '0.875rem',
+    fontWeight: 400,
+    lineHeight: 1.375,
+    color: 'var(--fg0)',
+  },
+  date: {
+    flexShrink: 0,
+    fontSize: '0.75rem',
+    lineHeight: '1rem',
+    fontWeight: 400,
+    fontVariantNumeric: 'tabular-nums',
+    color: 'var(--fg1)',
+  },
+  media: {
+    position: 'relative',
+    aspectRatio: '16 / 9',
+    width: '100%',
+    flexShrink: 0,
+    overflow: 'hidden',
+    backgroundColor: 'var(--bg2)',
+  },
+  mediaFill: {
+    position: 'absolute',
+    inset: 0,
+    height: '100%',
+    width: '100%',
+    objectFit: 'cover',
+  },
+})
 
 export type CardProps = {
   title: string
@@ -23,41 +74,26 @@ export default function Card({
   videoSrc,
   posterSrc,
 }: CardProps) {
+  const mediaSx = stylex.props(styles.mediaFill)
   const media = videoSrc ? (
-    <CardVideo
-      src={videoSrc}
-      poster={posterSrc}
-      className="absolute inset-0 h-full w-full object-cover"
-    />
+    <CardVideo src={videoSrc} poster={posterSrc} className={mediaSx.className} />
   ) : posterSrc ? (
-    <img
-      src={posterSrc}
-      alt=""
-      decoding="async"
-      className="absolute inset-0 h-full w-full object-cover"
-    />
+    <img src={posterSrc} alt="" decoding="async" {...mediaSx} />
   ) : null
 
   const inner = (
     <>
-      <div className="flex items-baseline justify-between gap-3 px-4 py-3.5">
-        <span className="text-sm font-normal leading-snug text-fg0">{title}</span>
-        <span className="shrink-0 text-xs font-normal tabular-nums text-fg1">{dateLabel}</span>
+      <div {...stylex.props(styles.header)}>
+        <span {...stylex.props(styles.title)}>{title}</span>
+        <span {...stylex.props(styles.date)}>{dateLabel}</span>
       </div>
-      {media ? (
-        <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-bg2">{media}</div>
-      ) : null}
+      {media ? <div {...stylex.props(styles.media)}>{media}</div> : null}
     </>
   )
 
   if (external) {
     return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={cn(cardClassName, 'text-inherit')}
-      >
+      <a href={href} target="_blank" rel="noopener noreferrer" {...stylex.props(styles.card)}>
         {inner}
         <span className="sr-only"> (opens in new tab)</span>
       </a>
@@ -65,7 +101,7 @@ export default function Card({
   }
 
   return (
-    <Link href={href} prefetch className={cn(cardClassName, 'text-inherit')}>
+    <Link href={href} prefetch {...stylex.props(styles.card)}>
       {inner}
     </Link>
   )

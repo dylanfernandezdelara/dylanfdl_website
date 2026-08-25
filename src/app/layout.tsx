@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
+import * as stylex from '@stylexjs/stylex'
 import { GeistMono } from 'geist/font/mono'
 import { Lora } from 'next/font/google'
 
@@ -16,11 +17,28 @@ import {
 import '../styles/theme.css'
 import '../styles/globals.css'
 import '../styles/effects.css'
+import '@stylexswc/webpack-plugin/stylex.css'
 
 const lora = Lora({
   subsets: ['latin'],
   style: ['normal', 'italic'],
   variable: '--font-lora',
+})
+
+const styles = stylex.create({
+  html: {
+    fontFamily: 'var(--font-sans)',
+  },
+  main: {
+    paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))',
+    '@media (min-width: 481px)': {
+      paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 0px))',
+    },
+    '@media (min-width: 768px)': {
+      paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom, 0px))',
+      paddingTop: '2rem',
+    },
+  },
 })
 
 export const metadata: Metadata = {
@@ -57,10 +75,13 @@ const themeInitScript = `(function () {
 })()`
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const htmlSx = stylex.props(styles.html)
+
   return (
     <html
       lang="en"
-      className={`${GeistMono.variable} ${lora.variable} font-sans`}
+      className={`${GeistMono.variable} ${lora.variable}${htmlSx.className ? ` ${htmlSx.className}` : ''}`}
+      style={htmlSx.style}
       suppressHydrationWarning
     >
       <head>
@@ -70,7 +91,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
-        <main className="pb-safe min-[481px]:pb-safe-8 md:pb-safe-10 md:pt-8">{children}</main>
+        <main {...stylex.props(styles.main)}>{children}</main>
       </body>
     </html>
   )

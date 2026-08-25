@@ -2,10 +2,12 @@
 
 import { type KeyboardEvent } from 'react'
 import type { SlotOptions } from 'slot-text'
+import * as stylex from '@stylexjs/stylex'
 import 'slot-text/style.css'
 
 import useOptimistSlot from '@/hooks/useOptimistSlot'
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
+import { withClassName } from '@/lib/sx'
 
 import '@/src/styles/optimist-text.css'
 
@@ -16,8 +18,29 @@ interface OptimistTextProps {
   className?: string
 }
 
-const TRIGGER_CLASS =
-  'optimist-text-trigger cursor-pointer border-0 bg-transparent p-0 font-inherit leading-inherit text-inherit transition-opacity hover:opacity-85'
+const styles = stylex.create({
+  trigger: {
+    cursor: 'pointer',
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+    padding: 0,
+    fontFamily: 'inherit',
+    fontSize: 'inherit',
+    fontWeight: 'inherit',
+    lineHeight: 'inherit',
+    color: 'inherit',
+    transitionProperty: 'opacity',
+    ':hover': {
+      opacity: 0.85,
+    },
+  },
+  staticTrigger: {
+    cursor: 'default',
+    ':hover': {
+      opacity: 1,
+    },
+  },
+})
 
 function StaticRainbowText({
   text,
@@ -62,14 +85,14 @@ export default function OptimistText({
   }
 
   const isInteractive = ready && !prefersReducedMotion
-  const staticClassName = prefersReducedMotion
-    ? ' cursor-default hover:opacity-100'
-    : ''
 
   return (
     <button
       type="button"
-      className={`${TRIGGER_CLASS}${staticClassName}${className ? ` ${className}` : ''}`}
+      {...withClassName(
+        className ? `optimist-text-trigger ${className}` : 'optimist-text-trigger',
+        stylex.props(styles.trigger, isInteractive ? null : styles.staticTrigger),
+      )}
       aria-label={isInteractive ? `${text} — press to animate` : text}
       aria-disabled={!isInteractive || undefined}
       aria-busy={isBusy}

@@ -1,14 +1,84 @@
 'use client'
 
 import { type KeyboardEvent } from 'react'
+import * as stylex from '@stylexjs/stylex'
 
 import { TAB_OPTIONS } from '@/components/card-grid/constants'
 import useTabIndicator from '@/components/card-grid/useTabIndicator'
 import type { CardGridFilter } from '@/lib/buildCardGridItems'
-import { cn } from '@/lib/utils'
 
-const tabButtonBase =
-  'relative z-10 rounded-sm px-2.5 py-1.5 text-sm font-medium leading-none transition-colors duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue motion-reduce:transition-none'
+const styles = stylex.create({
+  wrap: {
+    marginBottom: '1rem',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '0.5rem',
+    '@media (min-width: 640px)': {
+      marginBottom: '1.25rem',
+    },
+  },
+  list: {
+    position: 'relative',
+    display: 'inline-flex',
+    borderRadius: 'calc(var(--radius) - 2px)',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: 'var(--bg3)',
+    backgroundColor: 'var(--bg2)',
+    padding: '0.125rem',
+  },
+  pill: {
+    pointerEvents: 'none',
+    position: 'absolute',
+    zIndex: 0,
+    borderRadius: 'calc(var(--radius) - 4px)',
+    backgroundColor: 'var(--bg0)',
+    boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    '@media (prefers-reduced-motion: reduce)': {
+      display: 'none',
+    },
+  },
+  tab: {
+    position: 'relative',
+    zIndex: 10,
+    borderRadius: 'calc(var(--radius) - 4px)',
+    paddingInline: '0.625rem',
+    paddingBlock: '0.375rem',
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    lineHeight: 1,
+    transitionProperty: 'color, background-color, box-shadow',
+    transitionDuration: '300ms',
+    transitionTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
+    ':focus-visible': {
+      outlineStyle: 'solid',
+      outlineWidth: '2px',
+      outlineOffset: '2px',
+      outlineColor: 'var(--blue)',
+    },
+    '@media (prefers-reduced-motion: reduce)': {
+      transitionDuration: '0s',
+    },
+  },
+  idle: {
+    color: 'var(--fg3)',
+    ':hover': {
+      color: 'var(--fg1)',
+    },
+  },
+  selectedWithPill: {
+    color: 'var(--fg0)',
+    '@media (prefers-reduced-motion: reduce)': {
+      backgroundColor: 'var(--bg0)',
+      boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    },
+  },
+  selectedStatic: {
+    backgroundColor: 'var(--bg0)',
+    color: 'var(--fg0)',
+    boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+  },
+})
 
 type Props = {
   filter: CardGridFilter
@@ -50,26 +120,22 @@ export default function CardGridTabs({ filter, onSelect }: Props) {
   }
 
   return (
-    <div className="mb-4 flex flex-wrap gap-2 min-[640px]:mb-5">
+    <div {...stylex.props(styles.wrap)}>
       <div
         ref={tablistRef}
         role="tablist"
         aria-label="Filter work"
-        className="relative inline-flex rounded-md border border-bg3 bg-bg2 p-0.5"
+        {...stylex.props(styles.list)}
       >
         {showPill ? (
           <span
             aria-hidden
-            className="pointer-events-none absolute z-0 rounded-sm bg-bg0 shadow-sm motion-reduce:hidden"
-            style={indicatorStyle}
+            className={stylex.props(styles.pill).className}
+            style={{ ...stylex.props(styles.pill).style, ...indicatorStyle }}
           />
         ) : null}
         {TAB_OPTIONS.map(({ id, label }, index) => {
           const selected = filter === id
-          const selectedClass = showPill
-            ? 'text-fg0 motion-reduce:bg-bg0 motion-reduce:shadow-sm'
-            : 'bg-bg0 text-fg0 shadow-sm'
-
           return (
             <button
               key={id}
@@ -82,7 +148,14 @@ export default function CardGridTabs({ filter, onSelect }: Props) {
               aria-selected={selected}
               aria-controls={selected ? 'tabpanel-work' : undefined}
               tabIndex={selected ? 0 : -1}
-              className={cn(tabButtonBase, selected ? selectedClass : 'text-fg3 hover:text-fg1')}
+              {...stylex.props(
+                styles.tab,
+                selected
+                  ? showPill
+                    ? styles.selectedWithPill
+                    : styles.selectedStatic
+                  : styles.idle,
+              )}
               onClick={() => onSelect(id)}
               onKeyDown={(event) => handleKeyDown(event, index)}
             >

@@ -1,7 +1,7 @@
 export type NowPlayingTrackLayout = 'inline' | 'prefix-split' | 'split' | 'stacked'
 
 export const NOW_PLAYING_SLOT_CLASS =
-  'now-playing-slot slot-text-cell-clip italic max-w-full flex-wrap'
+  'now-playing-slot slot-text-cell-clip'
 
 export type NowPlayingLayoutPresentation = {
   labelTrackSeparator: boolean

@@ -1,11 +1,78 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import * as stylex from '@stylexjs/stylex'
 
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { activatePageSearchResult, collectPageSearchTargets } from '@/components/page-search/dom'
 import { computeSearchResults, type SearchResult, type SearchTarget } from '@/lib/page-search'
+
+const styles = stylex.create({
+  panel: {
+    top: '16.667%',
+    width: 'min(40rem, calc(100% - 2rem))',
+    transform: 'translate(-50%, -50%)',
+    gap: 0,
+    overflow: 'hidden',
+    borderRadius: '1rem',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    backgroundColor: 'var(--popover)',
+    padding: 0,
+    boxShadow: 'var(--elevated-shadow)',
+    backdropFilter: 'blur(24px) saturate(130%)',
+  },
+  command: {
+    backgroundColor: 'transparent',
+  },
+  inputWrap: {
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+  },
+  input: {
+    height: '3rem',
+    paddingTop: 0,
+    paddingBottom: 0,
+    fontSize: '0.875rem',
+    lineHeight: '1.25rem',
+    color: 'var(--fg0)',
+    '::placeholder': {
+      color: 'var(--fg3)',
+    },
+  },
+  list: {
+    maxHeight: 'min(22rem, 60vh)',
+    overflowY: 'auto',
+    padding: '0.25rem',
+  },
+  empty: {
+    paddingLeft: '0.75rem',
+    paddingRight: '0.75rem',
+    paddingTop: '0.75rem',
+    paddingBottom: '0.75rem',
+    textAlign: 'left',
+    fontSize: '0.875rem',
+    lineHeight: '1.25rem',
+    color: 'var(--fg3)',
+  },
+  item: {
+    cursor: 'pointer',
+    borderRadius: 'var(--radius)',
+    paddingLeft: '0.75rem',
+    paddingRight: '0.75rem',
+    paddingTop: '0.625rem',
+    paddingBottom: '0.625rem',
+    textAlign: 'left',
+    fontSize: '0.875rem',
+    lineHeight: 1.45,
+    color: 'var(--fg1)',
+    ':is([aria-selected="true"])': {
+      backgroundColor: 'var(--accent)',
+      color: 'var(--fg1)',
+    },
+  },
+})
 
 type PageSearchPaletteProps = {
   open: boolean
@@ -16,6 +83,7 @@ export default function PageSearchPalette({ open, onOpenChange }: PageSearchPale
   const [query, setQuery] = useState('')
   const [targets, setTargets] = useState<SearchTarget<HTMLElement>[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
+  const panelSx = stylex.props(styles.panel)
 
   useEffect(() => {
     if (!open) {
@@ -49,11 +117,12 @@ export default function PageSearchPalette({ open, onOpenChange }: PageSearchPale
           event.preventDefault()
           requestAnimationFrame(() => inputRef.current?.focus())
         }}
-        className="top-[16.667%] w-[min(40rem,calc(100%-2rem))] -translate-y-1/2 gap-0 overflow-hidden rounded-2xl border border-bg3/55 bg-popover p-0 shadow-[var(--elevated-shadow)] backdrop-blur-[24px] saturate-[130%]"
+        className={panelSx.className}
+        style={panelSx.style}
       >
         <DialogTitle className="sr-only">Search</DialogTitle>
-        <Command shouldFilter={false} className="bg-transparent">
-          <div className="px-4">
+        <Command shouldFilter={false} {...stylex.props(styles.command)}>
+          <div {...stylex.props(styles.inputWrap)}>
             <CommandInput
               ref={inputRef}
               value={query}
@@ -67,14 +136,14 @@ export default function PageSearchPalette({ open, onOpenChange }: PageSearchPale
               enterKeyHint="search"
               data-1p-ignore="true"
               data-lpignore="true"
-              className="page-search-input h-12 py-0 text-sm text-fg0 placeholder:text-fg3"
+              className={`page-search-input ${stylex.props(styles.input).className ?? ''}`}
             />
           </div>
 
           {query.length > 0 && (
-            <CommandList className="max-h-[min(22rem,60vh)] overflow-y-auto p-1">
+            <CommandList {...stylex.props(styles.list)}>
               {results.length === 0 ? (
-                <CommandEmpty className="px-3 py-3 text-left text-sm text-fg3">
+                <CommandEmpty {...stylex.props(styles.empty)}>
                   No matches found.
                 </CommandEmpty>
               ) : (
@@ -83,7 +152,7 @@ export default function PageSearchPalette({ open, onOpenChange }: PageSearchPale
                     key={result.id}
                     value={result.id}
                     onSelect={() => goToResult(result)}
-                    className="cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm leading-[1.45] text-fg1 aria-selected:bg-accent aria-selected:text-fg1"
+                    {...stylex.props(styles.item)}
                   >
                     {result.snippet}
                   </CommandItem>

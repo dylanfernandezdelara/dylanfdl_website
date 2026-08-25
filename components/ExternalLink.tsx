@@ -1,5 +1,7 @@
-import { cn } from '@/lib/utils'
-import { INLINE_LINK_STYLES } from '@/lib/linkStyles'
+import * as stylex from '@stylexjs/stylex'
+
+import { linkStyles } from '@/lib/linkStyles'
+import { withClassName } from '@/lib/sx'
 
 interface ExternalLinkProps {
   href: string
@@ -10,6 +12,27 @@ interface ExternalLinkProps {
   allowWrap?: boolean
 }
 
+const styles = stylex.create({
+  base: {
+    display: 'inline',
+    lineHeight: 'inherit',
+  },
+  wrap: {
+    whiteSpace: 'normal',
+  },
+  nowrap: {
+    whiteSpace: 'nowrap',
+  },
+  plain: {
+    color: 'var(--fg1)',
+    textDecorationLine: 'none',
+  },
+  thinGrey: {
+    textDecorationColor: 'var(--gray)',
+    textDecorationThickness: '1px',
+  },
+})
+
 export default function ExternalLink({
   href,
   children,
@@ -18,21 +41,18 @@ export default function ExternalLink({
   className,
   allowWrap = false,
 }: ExternalLinkProps) {
-  const classes = cn(
-    'inline leading-[inherit]',
-    allowWrap ? 'whitespace-normal' : 'whitespace-nowrap',
-    noUnderline ? 'text-fg1 no-underline' : INLINE_LINK_STYLES,
-    thinGreyUnderline && 'decoration-gray decoration-[1px]',
-    className
+  const sx = withClassName(
+    className,
+    stylex.props(
+      styles.base,
+      allowWrap ? styles.wrap : styles.nowrap,
+      noUnderline ? styles.plain : linkStyles.inline,
+      thinGreyUnderline ? styles.thinGrey : null,
+    ),
   )
 
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={classes}
-    >
+    <a href={href} target="_blank" rel="noopener noreferrer" {...sx}>
       {children}
       <span className="sr-only"> (opens in new tab)</span>
     </a>

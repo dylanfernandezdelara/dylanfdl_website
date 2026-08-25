@@ -1,7 +1,53 @@
+import * as stylex from '@stylexjs/stylex'
+
 import Card from '@/components/Card'
 import { cardAnimMs, cardExitAnimMs, smoothEase } from '@/components/card-grid/constants'
 import { itemKey, type GridRow } from '@/components/card-grid/model'
-import { cn } from '@/lib/utils'
+
+const enter = stylex.keyframes({
+  from: {
+    opacity: 0,
+    transform: 'translate3d(0, 0.25rem, 0)',
+  },
+})
+
+const exit = stylex.keyframes({
+  to: {
+    opacity: 0,
+  },
+})
+
+const styles = stylex.create({
+  stay: {
+    opacity: 1,
+  },
+  enter: {
+    animationName: enter,
+    animationFillMode: 'both',
+    '@media (prefers-reduced-motion: reduce)': {
+      animationName: 'none',
+      opacity: 1,
+      transform: 'none',
+    },
+  },
+  exit: {
+    animationName: exit,
+    animationFillMode: 'forwards',
+    '@media (prefers-reduced-motion: reduce)': {
+      animationName: 'none',
+      opacity: 0,
+      transform: 'none',
+    },
+  },
+  animating: {
+    willChange: 'transform, opacity',
+    backfaceVisibility: 'hidden',
+    transform: 'translateZ(0)',
+  },
+  inert: {
+    pointerEvents: 'none',
+  },
+})
 
 type Props = {
   row: GridRow
@@ -13,13 +59,11 @@ export default function CardGridCard({ row }: Props) {
   const exitDelay = row.exitDelayMs ?? 0
   const isAnimating = row.phase !== 'stay'
 
-  const wrapperClass = cn(
-    row.phase === 'enter' &&
-      'animate-in fade-in slide-in-from-bottom-1 fill-mode-both motion-reduce:animate-none motion-reduce:opacity-100 motion-reduce:transform-none',
-    row.phase === 'exit' &&
-      'animate-out fade-out fill-mode-forwards motion-reduce:animate-none motion-reduce:opacity-0 motion-reduce:transform-none',
-    row.phase === 'stay' && 'opacity-100',
-    isAnimating && 'will-change-[transform,opacity] [backface-visibility:hidden] [transform:translateZ(0)]',
+  const sx = stylex.props(
+    row.phase === 'enter' ? styles.enter : null,
+    row.phase === 'exit' ? styles.exit : null,
+    row.phase === 'stay' ? styles.stay : null,
+    isAnimating ? styles.animating : null,
   )
 
   const animationStyle =
@@ -40,11 +84,11 @@ export default function CardGridCard({ row }: Props) {
   return (
     <div
       key={href}
-      className={wrapperClass}
-      style={animationStyle}
+      className={sx.className}
+      style={{ ...sx.style, ...animationStyle }}
       aria-hidden={row.phase === 'exit'}
     >
-      <div className={row.phase === 'exit' ? 'pointer-events-none' : undefined}>
+      <div {...(row.phase === 'exit' ? stylex.props(styles.inert) : {})}>
         <Card
           title={row.item.title}
           dateLabel={row.item.dateLabel}

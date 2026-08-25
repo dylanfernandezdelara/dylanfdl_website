@@ -1,5 +1,41 @@
+import * as stylex from '@stylexjs/stylex'
+
 import CardGridCard from '@/components/card-grid/CardGridCard'
 import { itemKey, type GridRow } from '@/components/card-grid/model'
+
+const styles = stylex.create({
+  mobile: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.75rem',
+    '@media (min-width: 640px)': {
+      display: 'none',
+    },
+    '@media (min-width: 768px)': {
+      gap: '1rem',
+    },
+  },
+  desktop: {
+    display: 'none',
+    '@media (min-width: 640px)': {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+      gap: '0.75rem',
+    },
+    '@media (min-width: 768px)': {
+      gap: '1rem',
+    },
+  },
+  column: {
+    display: 'flex',
+    minWidth: 0,
+    flexDirection: 'column',
+    gap: '0.75rem',
+    '@media (min-width: 768px)': {
+      gap: '1rem',
+    },
+  },
+})
 
 type Props = {
   rows: GridRow[]
@@ -17,7 +53,7 @@ export default function CardGridColumns({
   return (
     <>
       {showMobile ? (
-        <div className="flex flex-col gap-3 md:gap-4 min-[640px]:hidden">
+        <div {...stylex.props(styles.mobile)}>
           {rows.map((row) => (
             <CardGridCard key={itemKey(row.item)} row={row} />
           ))}
@@ -25,15 +61,15 @@ export default function CardGridColumns({
       ) : null}
 
       {showDesktop ? (
-        <div className="hidden min-[640px]:grid min-[640px]:grid-cols-2 min-[640px]:gap-3 md:gap-4">
-          <div className="flex min-w-0 flex-col gap-3 md:gap-4">
+        <div {...stylex.props(styles.desktop)}>
+          <div {...stylex.props(styles.column)}>
             {rows.map((row, index) =>
               (columnOffset + index) % 2 === 0 ? (
                 <CardGridCard key={itemKey(row.item)} row={row} />
               ) : null,
             )}
           </div>
-          <div className="flex min-w-0 flex-col gap-3 md:gap-4">
+          <div {...stylex.props(styles.column)}>
             {rows.map((row, index) =>
               (columnOffset + index) % 2 === 1 ? (
                 <CardGridCard key={itemKey(row.item)} row={row} />

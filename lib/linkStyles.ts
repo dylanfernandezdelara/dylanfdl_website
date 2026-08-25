@@ -1,18 +1,41 @@
-const linkFocus =
-  'focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-3'
+import * as stylex from '@stylexjs/stylex'
 
-export const INLINE_LINK_STYLES = [
-  'text-fg1 underline underline-offset-2 transition-colors duration-150',
-  'decoration-[color:color-mix(in_oklab,var(--fg1),transparent_78%)]',
-  'hover:text-fg0 hover:decoration-[color:var(--fg0)]',
-  linkFocus,
-].join(' ')
-
-/** Footer / contact row — same color as inline links, no underline. */
-export const CONTACT_LINK_STYLES = [
-  'text-fg1 no-underline transition-colors duration-150 hover:text-fg0',
-  linkFocus,
-].join(' ')
-
-export const SECONDARY_LINK_SEPARATOR =
-  'select-none text-[color:color-mix(in_oklab,var(--fg2),transparent_35%)]'
+export const linkStyles = stylex.create({
+  inline: {
+    color: 'var(--fg1)',
+    textDecorationLine: 'underline',
+    textUnderlineOffset: '2px',
+    transitionProperty: 'color',
+    transitionDuration: '150ms',
+    textDecorationColor: 'color-mix(in oklab, var(--fg1), transparent 78%)',
+    ':hover': {
+      color: 'var(--fg0)',
+      textDecorationColor: 'var(--fg0)',
+    },
+    ':focus-visible': {
+      outlineWidth: '2px',
+      outlineStyle: 'solid',
+      outlineColor: 'var(--blue)',
+      outlineOffset: '3px',
+    },
+  },
+  contact: {
+    color: 'var(--fg1)',
+    textDecorationLine: 'none',
+    transitionProperty: 'color',
+    transitionDuration: '150ms',
+    ':hover': {
+      color: 'var(--fg0)',
+    },
+    ':focus-visible': {
+      outlineWidth: '2px',
+      outlineStyle: 'solid',
+      outlineColor: 'var(--blue)',
+      outlineOffset: '3px',
+    },
+  },
+  secondarySeparator: {
+    userSelect: 'none',
+    color: 'color-mix(in oklab, var(--fg2), transparent 35%)',
+  },
+})

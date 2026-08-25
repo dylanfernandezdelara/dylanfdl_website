@@ -2,11 +2,39 @@
 
 import { Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import * as stylex from '@stylexjs/stylex'
 
 import usePrefersReducedMotion from '@/hooks/usePrefersReducedMotion'
-import { cn } from '@/lib/utils'
 
-const ICON_SIZE_CLASSES = 'h-4 w-4 shrink-0'
+const styles = stylex.create({
+  button: {
+    position: 'relative',
+    top: '-1px',
+    margin: '-0.25rem',
+    display: 'flex',
+    flexShrink: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '0.25rem',
+    color: 'var(--fg2)',
+    transitionProperty: 'color',
+    transitionDuration: '150ms',
+    ':hover': {
+      color: 'var(--fg1)',
+    },
+    ':focus-visible': {
+      outlineWidth: '2px',
+      outlineStyle: 'solid',
+      outlineColor: 'var(--blue)',
+      outlineOffset: '2px',
+    },
+  },
+  icon: {
+    height: '1rem',
+    width: '1rem',
+    flexShrink: 0,
+  },
+})
 
 function resolvedDark(): boolean {
   if (typeof document === 'undefined') return false
@@ -57,13 +85,13 @@ export default function ThemeToggle() {
     }
   }
 
+  const iconSx = stylex.props(styles.icon)
+
   return (
     <button
       type="button"
       onClick={toggle}
-      className={cn(
-        'relative -top-px -m-1 flex shrink-0 items-center justify-center p-1 text-fg2 transition-colors duration-150 hover:text-fg1 focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2',
-      )}
+      {...stylex.props(styles.button)}
       aria-label={
         !hasReadDomTheme
           ? 'Toggle theme'
@@ -74,11 +102,11 @@ export default function ThemeToggle() {
       suppressHydrationWarning
     >
       {!hasReadDomTheme ? (
-        <span className={ICON_SIZE_CLASSES} aria-hidden />
+        <span {...iconSx} aria-hidden />
       ) : isDark ? (
-        <Sun className={ICON_SIZE_CLASSES} strokeWidth={2} aria-hidden />
+        <Sun className={iconSx.className} style={iconSx.style} strokeWidth={2} aria-hidden />
       ) : (
-        <Moon className={ICON_SIZE_CLASSES} strokeWidth={2} aria-hidden />
+        <Moon className={iconSx.className} style={iconSx.style} strokeWidth={2} aria-hidden />
       )}
     </button>
   )
