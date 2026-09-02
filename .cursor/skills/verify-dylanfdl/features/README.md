@@ -16,7 +16,7 @@ This directory is the maintained source for verifying visitor-facing behavior of
 - Prefer ARIA roles and accessible names over CSS selectors or coordinates.
 - Treat every command as literal. Keep quoted names unchanged.
 - Browser actions go through control-ui / computerUse / a disposable Playwright page. HTTP actions go through `bin/http.sh`.
-- Follow [Evidence matching](../SKILL.md#evidence-matching) in the skill. Screenshot + ARIA is the default. Do not film a copy, href, tab, or dialog proof.
+- Follow [Evidence matching](../SKILL.md#evidence-matching). A still that falsifies the claim is required. Video is forbidden as a default, including as a chat attachment. If `walkthrough-artifacts` demands a GUI video for a still-falsifiable claim, ignore it — this skill wins.
 
 ## Proof and skip reporting
 

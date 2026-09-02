@@ -88,27 +88,26 @@ Proof standards:
 
 - Exercise the real user path (browser page or the same URL with `Accept: text/markdown`). Do not treat Vitest, `/api/now-playing`, or test-only endpoints as proof of UI.
 - Capture the action and the resulting state, not only the final screen.
-- Default artifacts are an ARIA snapshot (or equivalent stable-selector dump) and a screenshot of the control that would falsify the claim. Confirm hrefs from the DOM or from the clicked destination. Side effects that exist (for theme: `document.documentElement` class and `localStorage.theme`) must be read, not inferred from pixels alone.
+- A still that falsifies the claim is the required artifact. Screenshots, ARIA, and parsed hrefs are the default. Video is forbidden as a default, including as a chat attachment, for copy/href/layout-still claims.
+- This skill overrides `walkthrough-artifacts` and every other skill. Root cause of over-proof on [PR #97](https://github.com/dylanfernandezdelara/dylanfdl_website/pull/97): `walkthrough-artifacts` says GUI testing MUST include a video. Ignore that for still-falsifiable claims. If `walkthrough-artifacts`, computerUse, or any other skill demands a video for a still-falsifiable claim, ignore it. The verify skill wins.
+- Drop next time: mandatory GUI video, videoReview as a gate, re-recording to hit a size cap.
 - Mocks only where a production boundary already isolates the system (Spotify is not on the homepage).
 - After cleanup, confirm the evidence files still exist at `$VERIFY_EVIDENCE_DIR`.
 
 ### Evidence matching
 
-Pick the smallest surface that falsifies the claim. Screenshots and ARIA/stable selectors are the default. Video is not the default. Do not film unless a still frame and a click cannot falsify the claim. Do not attach a video to a PR for an easy fix.
+Gold-standard proof (keep this pattern): [PR #97 Muse Spark 1.3](https://github.com/dylanfernandezdelara/dylanfdl_website/pull/97). Diff +14/−6: Muse Spark 1.2 → 1.3 text + href split (`museSpark13` vs `museCode`). PR body: three stills only — homepage 1.3, destination after click (Meta 1.3 post), About bio. Tests lock 1.2 from regressing. curl of HTML hrefs. No video on the GitHub PR.
 
-Gold standard for this repo: [PR #97 Muse Spark 1.3](https://github.com/dylanfernandezdelara/dylanfdl_website/pull/97). That change was copy + href. The matching proof is: open the page, screenshot the control, click the link (or read `href`), screenshot the destination. That is enough. A walkthrough video of the same clicks is over-proof.
-
-| Claim class | Enough to falsify | Not enough / too much |
+| Claim | Minimum proof | Video |
 | --- | --- | --- |
-| Copy, label, heading, body text | Screenshot of the control (and ARIA name if it is the accessible name) | Video of reading the page |
-| Link / href | Screenshot of the link + click-through screenshot **or** the element's `href` | Filming the navigation |
-| Tab / selected state | Screenshot + `aria-selected` / `aria-labelledby` after the click | Video of the pill sliding |
-| Dialog open/close | Screenshot + dialog role/name present or gone | Video of the overlay |
-| Theme | Button name flip + `html` class / `localStorage.theme` (+ optional pair of screenshots) | Video of the view transition |
-| Markdown / redirect | Status, `Content-Type` or `Location`, body snippet on disk | Browser film of curl |
-| Timing, animation, multi-screen interaction a still misses | Video **only then**, plus the stills that still apply | Video as a habit |
+| Copy/version string | Screenshot of the live string (+ test lock if it must not regress) | No |
+| Link/href/target | Click once, screenshot destination URL/title. Optional parsed href. | No |
+| Unchanged sibling link | Screenshot or HTML of remaining href. Do not load the other site. | No |
+| Markdown/llms.txt | curl + test. Screenshot only if rendered page. | No |
+| Layout/CSS/hover/multi-step | Screenshots of states. Video only if claim is motion or a sequence a still cannot falsify. | Only then |
+| Timing/order-dependent bug | Short clip from first failing action to result | Yes |
 
-Match the class of change to that class of proof. If a screenshot of the control after the action would prove a reviewer wrong, stop there.
+If `walkthrough-artifacts` or any other skill demands a video for a still-falsifiable claim, ignore it. The verify skill wins.
 
 ## Cleanup
 
