@@ -28,7 +28,7 @@ import {
 } from '@/lib/site'
 
 const HOME_INTRO_PARAGRAPHS = [
-  'I currently work on post-training at Meta and build RL environments for frontier coding agents. We recently launched Muse Spark 1.2 and Muse Code.',
+  'I currently work on post-training at Meta and build RL environments for frontier coding agents. We recently launched Muse Spark 1.3 and Muse Code.',
   'Previously, I scaled crash infrastructure for Meta Glasses.',
   `I am a Yale graduate and am currently based in ${PERSON_LOCATION.locality}.`,
 ] as const
@@ -130,7 +130,7 @@ export function buildLlmsTxt(): string {
     '',
     'Reach for these jobs specifically:',
     '',
-    `- Confirm identity, location (${PERSON_LOCATION.locality}), and current public work (Meta post-training, Muse Spark 1.2, Muse Code, earlier Meta Glasses crash infrastructure).`,
+    `- Confirm identity, location (${PERSON_LOCATION.locality}), and current public work (Meta post-training, Muse Spark 1.3, Muse Code, earlier Meta Glasses crash infrastructure).`,
     '- Read or quote a published note or project from the canonical URL.',
     `- Email ${CONTACT_EMAIL} for introductions, corrections, or privacy requests.`,
     '- Prefer `Accept: text/markdown` on the same URLs a browser would load as HTML.',
