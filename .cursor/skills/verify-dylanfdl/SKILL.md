@@ -1,0 +1,128 @@
+---
+name: verify-dylanfdl
+description: Drive the dylanfdl.com Next.js site (local, preview, or live) the way a visitor does. Use when proving homepage, work-filter, site-document, page-search, or theme behavior with screenshots and ARIA — not for unit tests or npm run check alone.
+---
+
+# Verify dylanfdl
+
+Public personal site. Visitors touch a Next.js web UI. The same paths also speak Markdown when `Accept: text/markdown` or a `.md` suffix is used. There is no visitor auth, no first-party CLI, and no in-repo Playwright/Cypress harness. `/api/now-playing` is not on the homepage; do not treat it as a user path.
+
+This file is for the next agent, read cold. Drive the real page. Match evidence size to the claim.
+
+## Launch
+
+Isolated local instance (preferred for mutations such as theme):
+
+```bash
+export RUN_ID="${RUN_ID:-$RANDOM}"
+export VERIFY_PORT="${VERIFY_PORT:-4317}"
+export VERIFY_BASE_URL="http://127.0.0.1:${VERIFY_PORT}"
+export VERIFY_EVIDENCE_DIR="${VERIFY_EVIDENCE_DIR:-/tmp/verify-dylanfdl-${RUN_ID}}"
+mkdir -p "$VERIFY_EVIDENCE_DIR"
+npm install
+npm run dev -- --port "$VERIFY_PORT" --hostname 127.0.0.1
+```
+
+Ready when the Next log prints `Ready` / `Local: http://127.0.0.1:$VERIFY_PORT` **and** `bin/doctor.sh` exits 0. Record the shell PID you started as `VERIFY_PID`.
+
+`npm run dev` includes draft MDX (`CONTENT_INCLUDE_DRAFTS` defaults on). Production and Vercel preview omit drafts (`prebuild` sets `CONTENT_INCLUDE_DRAFTS=0`). Today the only note is draft `component-showcase`, so local Notes can show that card; live/preview Notes show no writing cards.
+
+Read-only proofs against a deployed site are allowed:
+
+```bash
+export VERIFY_BASE_URL="https://www.dylanfdl.com"   # or the Vercel preview origin
+export VERIFY_ALLOW_REMOTE=1
+export VERIFY_EVIDENCE_DIR="${VERIFY_EVIDENCE_DIR:-/tmp/verify-dylanfdl-${RUN_ID:-live}}"
+mkdir -p "$VERIFY_EVIDENCE_DIR"
+```
+
+Never drive `localhost:3000` unless doctor proves it is the instance this run started. Two instances can share a checkout if each binds its own `VERIFY_PORT`.
+
+Teardown is in Cleanup. Do not kill by process name.
+
+## Doctor
+
+Run first whenever anything looks off:
+
+```bash
+.cursor/skills/verify-dylanfdl/bin/doctor.sh
+```
+
+Pass means: `VERIFY_BASE_URL/` returns HTML 200 containing `Dylan Fernandez de Lara`, and the same path with `Accept: text/markdown` returns `Content-Type: text/markdown` whose body starts with `# Dylan Fernandez de Lara`. Remote hosts fail unless `VERIFY_ALLOW_REMOTE=1`.
+
+A failed doctor means stop. Do not click through a foreign or half-booted server.
+
+## Drive
+
+No project browser harness. Use control-ui, computerUse, or a disposable Playwright page against `$VERIFY_BASE_URL`. Do not add Playwright as a repo dependency.
+
+Stable handles (use these; do not click coordinates):
+
+| Surface | Handle |
+| --- | --- |
+| Home heading | `heading` name `Dylan Fernandez de Lara` |
+| Work tabs | `tablist` name `Filter work`; tabs `All`, `Projects`, `Notes`, `Music` |
+| Work panel | `#tabpanel-work` (`aria-labelledby` is `tab-<filter>`) |
+| Theme | button `Switch to dark theme` / `Switch to light theme` (pre-hydration: `Toggle theme`) |
+| Page search | `Control+K` or `Meta+K` → dialog name `Search` |
+| Search empty | text `No matches found.` |
+| Site chrome | `navigation` name `Site`, link `Home`; header link `Dylan Fernandez de Lara` |
+| Documents | `/about`, `/contact`, `/privacy` — heading matches the title |
+| Contact row | links `GitHub`, `Email`, `X`, `LinkedIn`, `Cursor` |
+| Music card | link name starts with `Stravinsky: Le Sacre du Printemps` |
+
+Recipe shape: snapshot or screenshot → one structural action (click / type / key / navigate) → fresh snapshot → assert the named result. Read `features/` for the feature you are proving. A proof that uses one convenient entry point is incomplete when that feature file lists others.
+
+HTTP-only claims (markdown, redirects) use the helper:
+
+```bash
+.cursor/skills/verify-dylanfdl/bin/http.sh GET /about --accept text/markdown --out "$VERIFY_EVIDENCE_DIR/about.md"
+.cursor/skills/verify-dylanfdl/bin/http.sh GET /essays/purpose-of-writing --no-follow
+```
+
+## Evidence
+
+Write every artifact under `$VERIFY_EVIDENCE_DIR` (default `/tmp/verify-dylanfdl-$RUN_ID`). Name files with the feature id and entry point, for example `work-filter-music.aria.txt` and `work-filter-music.png`. Cleanup must not delete this directory.
+
+Proof standards:
+
+- Exercise the real user path (browser page or the same URL with `Accept: text/markdown`). Do not treat Vitest, `/api/now-playing`, or test-only endpoints as proof of UI.
+- Capture the action and the resulting state, not only the final screen.
+- Default artifacts are an ARIA snapshot (or equivalent stable-selector dump) and a screenshot of the control that would falsify the claim. Confirm hrefs from the DOM or from the clicked destination. Side effects that exist (for theme: `document.documentElement` class and `localStorage.theme`) must be read, not inferred from pixels alone.
+- Mocks only where a production boundary already isolates the system (Spotify is not on the homepage).
+- After cleanup, confirm the evidence files still exist at `$VERIFY_EVIDENCE_DIR`.
+
+### Evidence matching
+
+Pick the smallest surface that falsifies the claim. Screenshots and ARIA/stable selectors are the default. Video is not the default. Do not film unless a still frame and a click cannot falsify the claim. Do not attach a video to a PR for an easy fix.
+
+Gold standard for this repo: [PR #97 Muse Spark 1.3](https://github.com/dylanfernandezdelara/dylanfdl_website/pull/97). That change was copy + href. The matching proof is: open the page, screenshot the control, click the link (or read `href`), screenshot the destination. That is enough. A walkthrough video of the same clicks is over-proof.
+
+| Claim class | Enough to falsify | Not enough / too much |
+| --- | --- | --- |
+| Copy, label, heading, body text | Screenshot of the control (and ARIA name if it is the accessible name) | Video of reading the page |
+| Link / href | Screenshot of the link + click-through screenshot **or** the element's `href` | Filming the navigation |
+| Tab / selected state | Screenshot + `aria-selected` / `aria-labelledby` after the click | Video of the pill sliding |
+| Dialog open/close | Screenshot + dialog role/name present or gone | Video of the overlay |
+| Theme | Button name flip + `html` class / `localStorage.theme` (+ optional pair of screenshots) | Video of the view transition |
+| Markdown / redirect | Status, `Content-Type` or `Location`, body snippet on disk | Browser film of curl |
+| Timing, animation, multi-screen interaction a still misses | Video **only then**, plus the stills that still apply | Video as a habit |
+
+Match the class of change to that class of proof. If a screenshot of the control after the action would prove a reviewer wrong, stop there.
+
+## Cleanup
+
+Kill only the `VERIFY_PID` this run started. Confirm `$VERIFY_PORT` no longer answers. Do not `pkill` Next or node by name.
+
+Leave `$VERIFY_EVIDENCE_DIR` on disk. Do not revert theme `localStorage` on a remote site you did not launch; on a local instance, the process death is enough.
+
+If launch or drive fails, run this cleanup before the next attempt so ports are not stranded.
+
+## Helpers
+
+Both scripts are executable. They need `VERIFY_BASE_URL` (and `VERIFY_ALLOW_REMOTE=1` off localhost).
+
+```bash
+.cursor/skills/verify-dylanfdl/bin/doctor.sh
+.cursor/skills/verify-dylanfdl/bin/http.sh GET / --accept text/markdown --out "$VERIFY_EVIDENCE_DIR/home.md"
+```
