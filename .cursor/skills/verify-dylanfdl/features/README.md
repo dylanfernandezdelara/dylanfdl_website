@@ -8,7 +8,7 @@ This directory is the maintained source for verifying visitor-facing behavior of
 - Set `VERIFY_EVIDENCE_DIR` and create it. Cleanup must not delete it.
 - Run `.cursor/skills/verify-dylanfdl/bin/doctor.sh` and require `doctor: ok`.
 - Never drive an instance that was not started by this run unless it is an explicit remote proof.
-- Local `npm run dev` includes drafts. Live and Vercel preview omit them. Do not treat a local draft card as production proof.
+- Local `npm run dev` can serve draft article routes. The homepage work filter always shows published cards only. Do not treat a draft URL as proof the Notes tab showed a card.
 
 ## Driving conventions
 
