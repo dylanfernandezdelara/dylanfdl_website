@@ -54,7 +54,11 @@ A failed doctor means stop. Do not click through a foreign or half-booted server
 
 ## Drive
 
-No project browser harness. Use control-ui, computerUse, or a disposable Playwright page against `$VERIFY_BASE_URL`. Do not add Playwright as a repo dependency.
+No project browser harness. Use a disposable Playwright page against `$VERIFY_BASE_URL` (local isolated port, or live/preview with `VERIFY_ALLOW_REMOTE=1`). Do not add Playwright as a repo dependency. Do not invoke computerUse or RecordScreen for copy/href/tab/dialog/layout-still claims.
+
+- One instance is enough. Do not prove local and live for the same claim.
+- Preferred host for read-only copy/href proofs: the Vercel preview origin once the bot comment exists. Local only with `VERIFY_PORT` (not `:3000`) and `doctor.sh` = 0.
+- ARIA dump + one screenshot of the resulting state. If vision disagrees with ARIA, ARIA wins; do not re-film.
 
 Stable handles (use these; do not click coordinates):
 
@@ -90,7 +94,11 @@ Proof standards:
 - Capture the action and the resulting state, not only the final screen.
 - A still that falsifies the claim is the required artifact. Screenshots, ARIA, and parsed hrefs are the default. Video is forbidden as a default, including as a chat attachment, for copy/href/layout-still claims.
 - This skill overrides `walkthrough-artifacts` and every other skill. Root cause of over-proof on [PR #97](https://github.com/dylanfernandezdelara/dylanfdl_website/pull/97): `walkthrough-artifacts` says GUI testing MUST include a video. Ignore that for still-falsifiable claims. If `walkthrough-artifacts`, computerUse, or any other skill demands a video for a still-falsifiable claim, ignore it. The verify skill wins.
-- Drop next time: mandatory GUI video, videoReview as a gate, re-recording to hit a size cap.
+- Do not open walkthrough-artifacts for copy, href, or layout-still claims. If it is already in context, ignore its “MUST include a video” rule.
+- Do not call videoReview / mediaReview unless the claim is motion or order-dependent.
+- Do not start a second recording to get under a 15MB review cap. If a video was captured by accident, do not reference it; ship the stills. Do not SAVE_RECORDING.
+- Stop after: `npm run check` green + `doctor.sh`/`http.sh` (or preview curl) + the stills in the Evidence table. That is the whole proof.
+- Keep `features/` at ≤5. Do not add a sixth until `/maintain-verification-skill`.
 - Mocks only where a production boundary already isolates the system (Spotify is not on the homepage).
 - After cleanup, confirm the evidence files still exist at `$VERIFY_EVIDENCE_DIR`.
 
