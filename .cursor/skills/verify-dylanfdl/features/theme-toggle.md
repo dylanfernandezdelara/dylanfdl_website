@@ -20,7 +20,7 @@ Preconditions:
 - You are on `/` on an instance this run may mutate (local). Do not use a shared human session.
 - Wait until the button name is no longer `Toggle theme`.
 
-- **Read.** Note the button name and `document.documentElement.className` (`light`, `dark`, or unset-before-hydration).
+- **Read.** Note the button name and whether `document.documentElement` has class `light` or `dark` (`classList`, not raw `className` — font classes are always present). Neither class means the page is following `prefers-color-scheme`.
 - **Flip.** Click the button. The accessible name flips (`Switch to dark theme` ↔ `Switch to light theme`). `html` has the matching class. `localStorage.theme` is `dark` or `light`.
 - **Persist.** Reload `/`. The same class and button name remain.
 - **Proof.** Save `theme-toggle-before.png` and `theme-toggle-after.png` plus a one-line dump of button name, `html` class, and `localStorage.theme` after the click. The name flip + class is the falsifier. Do not film the view transition.

@@ -32,7 +32,7 @@ Preconditions:
 
 ## Gotchas
 
-- The word after "I am an" is an animated `optimist` control (`optimist — press to animate` once hydrated). Identity proof is the heading and intro, not the rainbow animation.
+- The word after "I am an" is an animated `optimist.` control (`optimist. — press to animate` once hydrated). Identity proof is the heading and intro, not the rainbow animation.
 - Muse Spark version copy is not a constant. Assert the launched hrefs: Muse Spark `https://research.meta.ai/blog/introducing-muse-spark-1-3` (`museSpark13`); Muse Code `https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2` (`museCode`). Do not fail a proof if this file’s prose lags the page.
 - `curl` without `Accept: text/markdown` gets HTML. Use the helper flag.
 - Live/preview omit draft notes; that does not affect the intro.

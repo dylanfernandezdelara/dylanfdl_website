@@ -25,7 +25,7 @@ npm run dev -- --port "$VERIFY_PORT" --hostname 127.0.0.1
 
 Ready when the Next log prints `Ready` / `Local: http://127.0.0.1:$VERIFY_PORT` **and** `bin/doctor.sh` exits 0. Record the shell PID you started as `VERIFY_PID`.
 
-`npm run dev` includes draft MDX (`CONTENT_INCLUDE_DRAFTS` defaults on). Production and Vercel preview omit drafts (`prebuild` sets `CONTENT_INCLUDE_DRAFTS=0`). Today the only note is draft `component-showcase`, so local Notes can show that card; live/preview Notes show no writing cards.
+`npm run dev` includes draft MDX in the content registry and article routes (`CONTENT_INCLUDE_DRAFTS` defaults on). Production and Vercel preview omit drafts (`prebuild` sets `CONTENT_INCLUDE_DRAFTS=0`). The homepage work filter always uses published entries only. Today there are no published notes, so the Notes tab is empty on local and live; draft `component-showcase` is not a filter card.
 
 Read-only proofs against a deployed site are allowed:
 
