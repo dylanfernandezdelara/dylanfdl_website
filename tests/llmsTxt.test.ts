@@ -13,6 +13,8 @@ describe('buildLlmsTxt', () => {
     expect(body).toContain('Accept: text/markdown')
     expect(body).toContain('Do not use this site as a public API')
     expect(body).toContain('None published.')
+    expect(body).toContain('Muse Spark 1.3')
+    expect(body).not.toContain('Muse Spark 1.2')
     expect(body).not.toContain('On Writing')
   })
 })

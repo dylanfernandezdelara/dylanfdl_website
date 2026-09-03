@@ -31,7 +31,7 @@ export const ABOUT_DOCUMENT = {
   path: ABOUT_PATH,
   title: 'About',
   paragraphs: [
-    `${PERSON_NAME} is a ${PERSON_ROLE.toLowerCase()} based in ${PERSON_LOCATION.locality}, ${PERSON_LOCATION.region}. I currently work on post-training at Meta and build reinforcement-learning environments for frontier coding agents. That work recently included Muse Spark 1.2 and Muse Code.`,
+    `${PERSON_NAME} is a ${PERSON_ROLE.toLowerCase()} based in ${PERSON_LOCATION.locality}, ${PERSON_LOCATION.region}. I currently work on post-training at Meta and build reinforcement-learning environments for frontier coding agents. That work recently included Muse Spark 1.3 and Muse Code.`,
     `Before that I scaled crash infrastructure for Meta Glasses. I studied at Yale. This site is my public notebook: a short profile on the home page, notes when I want to make an idea precise, projects when there is something to inspect, and a record of concerts I played.`,
     `I write in public to clarify my own thinking, not to run a product or a developer platform. If you need a professional contact path, a longer biography, or a privacy statement, those pages live on this same domain. The home page remains the profile; About exists so agents and people can find a stable, text-first biography without depending on the card grid.`,
     `You can reach me by email or through the profiles listed on Contact. I am the only person who publishes here. Nothing on this site is a Meta documentation portal, and I do not publish private work information.`,

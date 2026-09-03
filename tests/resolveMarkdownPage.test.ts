@@ -10,6 +10,8 @@ describe('resolveMarkdownPage', () => {
     expect(page.status).toBe(200)
     expect(page.body).toContain('# Dylan Fernandez de Lara')
     expect(page.body).toContain('I am an optimist.')
+    expect(page.body).toContain('Muse Spark 1.3')
+    expect(page.body).not.toContain('Muse Spark 1.2')
     expect(page.body).toContain('## Notes')
     expect(page.body).toContain('No published notes yet.')
     expect(page.body).not.toContain('On Writing')
@@ -20,6 +22,8 @@ describe('resolveMarkdownPage', () => {
 
   it('serves about, contact, and privacy markdown from the document catalog', () => {
     expect(resolveMarkdownPage('/about').body).toContain('# About')
+    expect(resolveMarkdownPage('/about').body).toContain('Muse Spark 1.3')
+    expect(resolveMarkdownPage('/about').body).not.toContain('Muse Spark 1.2')
     expect(resolveMarkdownPage('/contact').body).toContain(CONTACT_DOCUMENT.paragraphs[0])
     expect(resolveMarkdownPage('/contact').body).toContain('## Profiles')
     expect(resolveMarkdownPage('/privacy').body).toContain('# Privacy')
