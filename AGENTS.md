@@ -27,3 +27,12 @@ This is a Next.js personal portfolio/blog site using npm as the package manager.
 - Writing lives in `content/notes/` and `content/projects/` as MDX folders (`index.mdx` + colocated components). See `docs/authoring.md`.
 - Homepage categories are Projects, Notes, and Music. Legacy `/essays/:slug` permanently redirects to `/notes/:slug`.
 - `npm run check` is the preferred pre-push gate (lint, typecheck, tests).
+
+## Ship (Cloud Agents)
+
+Copy/href/version-string PRs are Low risk on this repo.
+1. Use `.cursor/skills/verify-dylanfdl` (not walkthrough-artifacts). Stills + http.sh + tests. No video.
+2. `npm run check` is the pre-push gate.
+3. Open the PR ready (not draft) if you can; otherwise `gh pr ready` when CI is green.
+4. When CI `check` is green, Vercel preview is Ready, and verify evidence exists: `gh pr merge --squash --delete-branch`. Do not stop at ready. Do not ping a human for Low.
+5. Ping instead of merging only if Medium/High, auth/env/deploy/policy files moved, or Bugbot wants a human.
