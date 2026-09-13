@@ -2,6 +2,14 @@
   /* Matches rajan.sh's rendered body font: the system UI stack (SF Pro on macOS), not a webfont. */
   --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
+  /* One minor + one major rhythm (8px / 24px at the 16px root). Keep in sync with lib/layoutGrid.ts. */
+  --space-minor: 0.5rem;
+  --space-major: 1.5rem;
+  --layout-grid-line: 1px;
+  --layout-grid-minor-color: color-mix(in oklab, var(--red) 28%, transparent);
+  --layout-grid-major-color: color-mix(in oklab, var(--red) 52%, transparent);
+  --layout-grid-legend-color: color-mix(in oklab, var(--red) 72%, var(--fg1));
+
   --light-bg0-hard: #faf8f0;
   --light-bg0: #fffef8;
   --light-bg1: #faf8f0;

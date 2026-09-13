@@ -26,6 +26,7 @@ This is a Next.js personal portfolio/blog site using npm as the package manager.
 - Git hooks in `.githooks/` (pre-commit and pre-push) require `gitleaks`. These are not activated by default (the repo does not configure `core.hooksPath`), so they won't block cloud agent commits.
 - Writing lives in `content/notes/` and `content/projects/` as MDX folders (`index.mdx` + colocated components). See `docs/authoring.md`.
 - Homepage categories are Projects, Notes, and Music. Legacy `/essays/:slug` permanently redirects to `/notes/:slug`.
+- Layout grid overlay is a local testing tool (`npm run dev` only; it does not ship to production). Press `g` or use `?grid=1`. Rhythm is 8px minor / 24px major / 1px lines.
 - `npm run check` is the preferred pre-push gate (lint, typecheck, tests).
 
 ## Ship (Cloud Agents)

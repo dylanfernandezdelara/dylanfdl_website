@@ -13,6 +13,8 @@ import {
   TWITTER_CREATOR,
 } from '@/lib/site'
 
+import MaybeLayoutGridHost from '@/components/layout-grid/MaybeLayoutGridHost'
+
 import '../styles/theme.css'
 import '../styles/globals.css'
 import '../styles/effects.css'
@@ -70,7 +72,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
-        <main className="pb-safe min-[481px]:pb-safe-8 md:pb-safe-10 md:pt-8">{children}</main>
+        <MaybeLayoutGridHost>
+          <main className="pb-safe min-[481px]:pb-safe-8 md:pb-safe-10 md:pt-8">{children}</main>
+        </MaybeLayoutGridHost>
       </body>
     </html>
   )

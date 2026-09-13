@@ -89,6 +89,10 @@ const config: Config = {
       maxWidth: {
         reading: '65ch',
       },
+      spacing: {
+        minor: 'var(--space-minor)',
+        major: 'var(--space-major)',
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],
