@@ -40,8 +40,8 @@ export default function Card({
 
   const inner = (
     <>
-      <div className="flex items-baseline justify-between gap-3 px-4 py-3.5">
-        <span className="text-sm font-normal leading-snug text-fg0">{title}</span>
+      <div className="flex items-baseline justify-between gap-4 px-4 py-4">
+        <span className="text-sm font-normal leading-6 text-fg0">{title}</span>
         <span className="shrink-0 text-xs font-normal tabular-nums text-fg1">{dateLabel}</span>
       </div>
       {media ? (

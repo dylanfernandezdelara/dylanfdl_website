@@ -24,29 +24,29 @@ export default function SiteDocumentView({ document }: { document: SiteDocument 
           description,
         })}
       />
-      <div className="mx-auto max-w-reading px-4 pt-12 text-base leading-[1.6] min-[481px]:px-6 md:px-8 md:pt-16">
-        <header className="mb-10 flex items-center justify-between gap-4 text-sm">
+      <div className="mx-auto max-w-reading px-4 pt-12 text-base leading-6 min-[481px]:px-6 md:px-8 md:pt-16">
+        <header className="mb-10 flex min-h-6 items-center justify-between gap-4 text-sm leading-6">
           <Link
             href="/"
             className="font-serif font-normal text-fg0 transition-colors duration-150 hover:text-fg2"
           >
             {PERSON_NAME}
           </Link>
-          <nav aria-label="Site" className="flex items-center gap-5 text-fg3">
+          <nav aria-label="Site" className="flex items-center gap-4 text-fg3">
             <Link href="/" className="transition-colors duration-150 hover:text-fg0">
               Home
             </Link>
           </nav>
         </header>
-        <article className="text-pretty text-sm font-[450] leading-relaxed text-fg1">
-          <h1 className="mb-6 font-serif text-2xl font-normal text-fg0">{document.title}</h1>
+        <article className="text-pretty text-sm font-[450] leading-6 text-fg1">
+          <h1 className="mb-6 font-serif text-2xl font-normal leading-8 text-fg0">{document.title}</h1>
           {document.paragraphs.map((paragraph) => (
             <InfoParagraph key={paragraph}>{paragraph}</InfoParagraph>
           ))}
           {document.sections?.map((section) => (
             <section key={section.heading}>
-              <h2 className="mb-3 mt-8 font-serif text-lg font-normal text-fg0">{section.heading}</h2>
-              <ul className="mb-4 space-y-1">
+              <h2 className="mb-4 mt-8 font-serif text-lg font-normal leading-6 text-fg0">{section.heading}</h2>
+              <ul className="mb-4 space-y-2">
                 {section.links.map((link) => (
                   <li key={link.href}>
                     {link.href.startsWith('mailto:') ? (
