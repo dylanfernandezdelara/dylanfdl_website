@@ -24,14 +24,14 @@ export default function ArticleShell({ entry, children }: ArticleShellProps) {
         hasToc && 'article-page--with-toc'
       )}
     >
-      <header className="article-site-header flex items-baseline justify-between gap-4 text-sm">
+      <header className="article-site-header flex min-h-6 items-center justify-between gap-4 text-sm leading-6">
         <Link
           href="/"
           className="font-serif font-normal text-fg0 transition-colors duration-150 hover:text-fg2"
         >
           {PERSON_NAME}
         </Link>
-        <nav aria-label="Site" className="flex items-baseline gap-5 text-fg3">
+        <nav aria-label="Site" className="flex items-center gap-4 text-fg3">
           <Link href="/" className="transition-colors duration-150 hover:text-fg0">
             Home
           </Link>

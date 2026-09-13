@@ -87,7 +87,7 @@ const config: Config = {
         ],
       },
       maxWidth: {
-        reading: '65ch',
+        reading: '33rem',
       },
       spacing: {
         minor: 'var(--space-minor)',

@@ -94,6 +94,38 @@ describe('layoutGrid', () => {
     expect(isLayoutGridHotkey(typingEvent)).toBe(false)
   })
 
+  it('snaps page, document, and article measures to the 8 / 24 rhythm', () => {
+    const tw = readFileSync(resolve('tailwind.config.ts'), 'utf8')
+    const home = readFileSync(resolve('src/app/page.tsx'), 'utf8')
+    const documentView = readFileSync(resolve('components/SiteDocumentView.tsx'), 'utf8')
+    const tabs = readFileSync(resolve('components/card-grid/CardGridTabs.tsx'), 'utf8')
+    const card = readFileSync(resolve('components/Card.tsx'), 'utf8')
+    const columns = readFileSync(resolve('components/card-grid/CardGridColumns.tsx'), 'utf8')
+    const shell = readFileSync(resolve('src/styles/article/shell.css'), 'utf8')
+
+    expect(tw).toContain("reading: '33rem'")
+    expect(home).toContain('leading-6')
+    expect(home).toContain('max-w-[39rem]')
+    expect(home).toContain('leading-8')
+    expect(home).not.toContain('leading-[1.6]')
+    expect(documentView).toContain('min-h-6')
+    expect(documentView).toContain('leading-8')
+    expect(documentView).toContain('gap-4')
+    expect(tabs).toContain('p-2')
+    expect(tabs).toContain('leading-4')
+    expect(tabs).not.toContain('p-1')
+    expect(card).toContain('gap-4 px-4 py-4')
+    expect(card).toContain('leading-6')
+    expect(columns).toContain('gap-4')
+    expect(shell).toContain('--article-measure: 33rem;')
+    expect(shell).toContain('--article-paragraph-gap: 1.5rem;')
+    expect(shell).toContain('--article-subsection-space: 1.5rem;')
+    expect(shell).toContain('--article-heading-space-after: 0.5rem;')
+    expect(shell).toContain('--article-heading-line-height: 2rem;')
+    expect(shell).toContain('line-height: 2rem;')
+    expect(shell).toContain('line-height: 1.5rem;')
+  })
+
   it('keeps CSS rhythm tokens aligned with the overlay constants', () => {
     const theme = readFileSync(resolve('src/styles/theme.css'), 'utf8')
     const overlayCss = readFileSync(

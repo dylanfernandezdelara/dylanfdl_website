@@ -22,7 +22,7 @@ html {
   --article-page-pad-x: 1rem;
   --article-toc-width: 11rem;
   --article-toc-gap: 2rem;
-  --article-measure: 65ch;
+  --article-measure: 33rem;
   --article-title-block-offset: 3rem;
 
   /* Prose sits one step above the 14px site chrome, and the serif title stays
@@ -32,13 +32,13 @@ html {
   --article-h2-size: 1.25rem;
   --article-h3-size: 1.0625rem;
   --article-heading-weight: 600;
-  --article-heading-line-height: 1.35;
+  --article-heading-line-height: 2rem;
 
   /* Sections separate; headings bind to the text directly below them. */
-  --article-paragraph-gap: 1.25rem;
+  --article-paragraph-gap: 1.5rem;
   --article-section-space: 2.5rem;
-  --article-subsection-space: 1.75rem;
-  --article-heading-space-after: 0.75rem;
+  --article-subsection-space: 1.5rem;
+  --article-heading-space-after: 0.5rem;
 
   /* Figures breathe wider than the blocks that read as prose. */
   --article-figure-gap: 2rem;
@@ -113,8 +113,9 @@ html {
 }
 
 .article-shell__kind {
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.5rem;
   font-size: 0.75rem;
+  line-height: 1rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--fg3);
@@ -126,17 +127,17 @@ html {
   font-family: var(--font-lora), ui-serif, Georgia, serif;
   font-size: var(--article-title-size);
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 2rem;
   color: var(--fg0);
 }
 
 /* Dek, not prose: sits with the date on the chrome tier, not the body tier. */
 .article-shell__summary {
   margin: 1rem auto 0;
-  max-width: 55ch;
+  max-width: 33rem;
   font-size: 0.875rem;
   font-style: italic;
-  line-height: 1.6;
+  line-height: 1.5rem;
   color: var(--fg2);
   text-wrap: pretty;
 }
@@ -144,6 +145,7 @@ html {
 .article-shell__date {
   margin: 1rem 0 0;
   font-size: 0.875rem;
+  line-height: 1.5rem;
   color: var(--fg3);
 }
 
@@ -152,7 +154,7 @@ html {
 .article-shell__body {
   display: flow-root;
   font-size: var(--article-body-size);
-  line-height: 1.7;
+  line-height: 1.5rem;
   color: var(--fg1);
   animation: article-body-in var(--article-duration-enter) var(--article-ease-out) both;
   animation-delay: 80ms;

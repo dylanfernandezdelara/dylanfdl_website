@@ -56,9 +56,9 @@ export default function HomePage() {
           description: DEFAULT_DESCRIPTION,
         })}
       />
-      <div className="mx-auto max-w-4xl px-4 pt-20 text-base leading-[1.6] min-[481px]:px-6 md:px-8 md:pt-16">
-        <div className="text-pretty text-sm font-[450] leading-relaxed text-fg1 min-[640px]:max-w-[75%]">
-          <h1 className="mb-6 font-serif text-2xl font-normal text-fg0">Dylan Fernandez de Lara</h1>
+      <div className="mx-auto max-w-4xl px-4 pt-20 text-base leading-6 min-[481px]:px-6 md:px-8 md:pt-16">
+        <div className="text-pretty text-sm font-[450] leading-6 text-fg1 min-[640px]:max-w-[39rem]">
+          <h1 className="mb-6 font-serif text-2xl font-normal leading-8 text-fg0">Dylan Fernandez de Lara</h1>
           <p className="mb-4">
             I am an{'\u00A0'}<OptimistText />
           </p>
@@ -82,10 +82,10 @@ export default function HomePage() {
         </div>
 
         <CardGridClient items={cardGridItems}>
-          <hr className="mb-3 mt-8 w-full border-0 border-t border-bg3 min-[481px]:mb-4 md:mb-6" />
+          <hr className="mb-4 mt-8 w-full border-0 border-t border-bg3 md:mb-6" />
 
           <div className="flex w-full items-center justify-between gap-4">
-            <div className="flex max-w-reading flex-wrap items-baseline gap-2 text-sm">
+            <div className="flex max-w-reading flex-wrap items-center gap-2 text-sm leading-6">
               {CONTACT_LINKS.map((link, index) => (
                 <Fragment key={link.href}>
                   {index > 0 && (

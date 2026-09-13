@@ -62,7 +62,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       className={cn(
-        'relative -top-px -m-1 flex shrink-0 items-center justify-center p-1 text-fg2 transition-colors duration-150 hover:text-fg1 focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2',
+        'relative -m-1 flex shrink-0 items-center justify-center p-1 text-fg2 transition-colors duration-150 hover:text-fg1 focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2',
       )}
       aria-label={
         !hasReadDomTheme
