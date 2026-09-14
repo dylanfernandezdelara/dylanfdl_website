@@ -113,9 +113,13 @@ describe('layoutGrid', () => {
     expect(documentView).toContain('gap-4')
     expect(tabs).toContain('h-8')
     expect(tabs).toContain('leading-4')
+    expect(tabs).toContain('p-0.5')
+    expect(tabs).toContain('px-2')
     expect(tabs).toContain(
       'relative inline-flex h-8 items-stretch rounded-md bg-bg2 p-0.5 ring-1 ring-bg3',
     )
+    expect(tabs).not.toMatch(/(^|[\s"'`])p-2([\s"'`]|$)/)
+    expect(tabs).not.toMatch(/(^|[\s"'`])py-2([\s"'`]|$)/)
     expect(card).toContain('gap-4 px-4 py-4')
     expect(card).toContain('leading-6')
     expect(columns).toContain('gap-4')
