@@ -38,7 +38,7 @@ describe('site', () => {
   })
 
   it('builds absolute URLs from paths', () => {
-    expect(absoluteUrl('/about')).toBe('https://www.dylanfdl.com/about')
+    expect(absoluteUrl('/contact')).toBe('https://www.dylanfdl.com/contact')
     expect(PERSON_URL).toBe('https://www.dylanfdl.com/')
     expect(OG_IMAGE_URL).toBe('https://www.dylanfdl.com/og-image.png')
   })

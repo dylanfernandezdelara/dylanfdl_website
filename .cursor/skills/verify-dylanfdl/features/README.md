@@ -42,6 +42,6 @@ Keep implementation details out of the map. Name only user paths, stable handles
 
 - [Home profile](./home-profile.md) covers the homepage identity, intro links, contact row, and markdown twin.
 - [Work filter](./work-filter.md) covers All / Projects / Notes / Music tabs and the cards they show.
-- [Site documents](./site-documents.md) covers About, Contact, Privacy, and their markdown twins.
+- [Site documents](./site-documents.md) covers Contact, Privacy, their markdown twins, and the retired `/about` redirect.
 - [Page search](./page-search.md) covers Control/Meta+K on-page search, matches, empty state, and close.
 - [Theme toggle](./theme-toggle.md) covers light/dark persistence on the homepage.

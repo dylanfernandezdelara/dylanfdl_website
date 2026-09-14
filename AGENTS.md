@@ -22,7 +22,7 @@ This is a Next.js personal portfolio/blog site using npm as the package manager.
 
 ### Notes
 
-- The site root `/` serves the about/profile content. `/about`, `/contact`, and `/privacy` are standalone document pages.
+- The site root `/` serves the about/profile content. `/contact` and `/privacy` are standalone document pages. Legacy `/about` permanently redirects to `/`.
 - Git hooks in `.githooks/` (pre-commit and pre-push) require `gitleaks`. These are not activated by default (the repo does not configure `core.hooksPath`), so they won't block cloud agent commits.
 - Writing lives in `content/notes/` and `content/projects/` as MDX folders (`index.mdx` + colocated components). See `docs/authoring.md`.
 - Homepage categories are Projects, Notes, and Music. Legacy `/essays/:slug` permanently redirects to `/notes/:slug`.

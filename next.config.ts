@@ -38,6 +38,16 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: '/about',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/about.md',
+        destination: '/',
+        permanent: true,
+      },
+      {
         source: '/notes/purpose-of-writing',
         destination: '/',
         permanent: true,

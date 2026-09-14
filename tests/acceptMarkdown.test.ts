@@ -112,9 +112,9 @@ describe('negotiateDocument', () => {
       negotiateDocument({
         method: 'GET',
         headers: new Headers({ accept: 'text/html' }),
-        nextUrl: { pathname: '/about.md' },
+        nextUrl: { pathname: '/contact.md' },
       }),
-    ).toEqual({ kind: 'markdown', pathname: '/about' })
+    ).toEqual({ kind: 'markdown', pathname: '/contact' })
     expect(
       negotiateDocument({
         method: 'GET',

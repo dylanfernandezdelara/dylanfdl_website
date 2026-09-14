@@ -71,7 +71,7 @@ Stable handles (use these; do not click coordinates):
 | Page search | `Control+K` or `Meta+K` → dialog name `Search` |
 | Search empty | text `No matches found.` |
 | Site chrome | `navigation` name `Site`, link `Home`; header link `Dylan Fernandez de Lara` |
-| Documents | `/about`, `/contact`, `/privacy` — heading matches the title |
+| Documents | `/contact`, `/privacy` — heading matches the title |
 | Contact row | links `GitHub`, `Email`, `X`, `LinkedIn`, `Cursor` |
 | Music card | link name starts with `Stravinsky: Le Sacre du Printemps` |
 
@@ -80,7 +80,7 @@ Recipe shape: snapshot or screenshot → one structural action (click / type / k
 HTTP-only claims (markdown, redirects) use the helper:
 
 ```bash
-.cursor/skills/verify-dylanfdl/bin/http.sh GET /about --accept text/markdown --out "$VERIFY_EVIDENCE_DIR/about.md"
+.cursor/skills/verify-dylanfdl/bin/http.sh GET /contact --accept text/markdown --out "$VERIFY_EVIDENCE_DIR/contact.md"
 .cursor/skills/verify-dylanfdl/bin/http.sh GET /essays/purpose-of-writing --no-follow
 ```
 

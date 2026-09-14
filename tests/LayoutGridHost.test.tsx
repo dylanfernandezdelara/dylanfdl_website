@@ -109,7 +109,7 @@ describe('LayoutGridHost', () => {
 
   it('lets ?grid=0 override a stored on value', async () => {
     window.sessionStorage.setItem(LAYOUT_GRID_STORAGE_KEY, 'on')
-    window.history.replaceState({}, '', '/about?grid=0')
+    window.history.replaceState({}, '', '/contact?grid=0')
     renderGridChrome()
 
     await waitFor(() => {

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Fetch one user-facing path and print status + content-type.
-# Usage: http.sh GET /about [--accept text/markdown] [--out FILE] [--no-follow]
+# Usage: http.sh GET /contact [--accept text/markdown] [--out FILE] [--no-follow]
 set -euo pipefail
 
 BASE="${VERIFY_BASE_URL:?set VERIFY_BASE_URL}"

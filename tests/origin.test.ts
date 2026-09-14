@@ -25,7 +25,7 @@ describe('isSameOriginRequest', () => {
 
   it('accepts matching Referer when Origin is absent', () => {
     const headers = makeHeaders({
-      referer: 'https://www.dylanfdl.com/about',
+      referer: 'https://www.dylanfdl.com/contact',
       host: 'www.dylanfdl.com',
       'x-forwarded-proto': 'https',
     })

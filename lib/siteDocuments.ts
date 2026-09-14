@@ -1,14 +1,12 @@
 import type { Metadata } from 'next'
 
 import {
-  ABOUT_PATH,
   CONTACT_EMAIL,
   CONTACT_LINKS,
   CONTACT_PATH,
   OPEN_GRAPH_BASE,
   PERSON_LOCATION,
   PERSON_NAME,
-  PERSON_ROLE,
   PRIVACY_PATH,
   SITE_URL,
   absoluteUrl,
@@ -26,17 +24,6 @@ export type SiteDocument = {
   paragraphs: readonly [string, ...string[]]
   sections?: readonly SiteDocumentSection[]
 }
-
-export const ABOUT_DOCUMENT = {
-  path: ABOUT_PATH,
-  title: 'About',
-  paragraphs: [
-    `${PERSON_NAME} is a ${PERSON_ROLE.toLowerCase()} based in ${PERSON_LOCATION.locality}, ${PERSON_LOCATION.region}. I currently work on post-training at Meta and build reinforcement-learning environments for frontier coding agents. That work recently included Muse Spark 1.3 and Muse Code.`,
-    `Before that I scaled crash infrastructure for Meta Glasses. I studied at Yale. This site is my public notebook: a short profile on the home page, notes when I want to make an idea precise, projects when there is something to inspect, and a record of concerts I played.`,
-    `I write in public to clarify my own thinking, not to run a product or a developer platform. If you need a professional contact path, a longer biography, or a privacy statement, those pages live on this same domain. The home page remains the profile; About exists so agents and people can find a stable, text-first biography without depending on the card grid.`,
-    `You can reach me by email or through the profiles listed on Contact. I am the only person who publishes here. Nothing on this site is a Meta documentation portal, and I do not publish private work information.`,
-  ],
-} as const satisfies SiteDocument
 
 export const CONTACT_DOCUMENT = {
   path: CONTACT_PATH,
@@ -61,7 +48,7 @@ export const PRIVACY_DOCUMENT = {
   ],
 } as const satisfies SiteDocument
 
-export const SITE_DOCUMENTS = [ABOUT_DOCUMENT, CONTACT_DOCUMENT, PRIVACY_DOCUMENT] as const
+export const SITE_DOCUMENTS = [CONTACT_DOCUMENT, PRIVACY_DOCUMENT] as const
 
 export function siteDocumentByPath(pathname: string): SiteDocument | undefined {
   return SITE_DOCUMENTS.find((document) => document.path === pathname)
