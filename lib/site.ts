@@ -53,8 +53,6 @@ export const NOT_FOUND_DESCRIPTION = 'Page not found on dylanfdl.com.'
 
 export const HOME_PAGE_TITLE = PERSON_NAME
 
-export const ABOUT_PATH = '/about'
-
 export const CONTACT_PATH = '/contact'
 
 export const PRIVACY_PATH = '/privacy'

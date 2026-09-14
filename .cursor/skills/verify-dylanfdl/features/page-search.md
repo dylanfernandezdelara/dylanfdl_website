@@ -30,7 +30,7 @@ Preconditions:
 
 ## Gotchas
 
-- Search is scoped to the current page DOM. A query that only exists on `/about` will empty-state on `/`.
+- Search is scoped to the current page DOM. A query that only exists on `/privacy` will empty-state on `/`.
 - The palette is code-split. The host listens immediately, but the dialog mounts on idle (up to ~2s) or on the first hotkey. Retry the hotkey once if the first press only loaded the chunk.
 - There is no toolbar Search button. Do not look for one.
 - Results do not appear until the query length is greater than 0.

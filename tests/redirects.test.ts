@@ -15,10 +15,19 @@ describe('next.config redirects', () => {
     })
   })
 
-  it('does not redirect /about so the about page can be served', async () => {
+  it('permanently redirects the retired about page to home', async () => {
     const redirects = (await nextConfig.redirects?.()) ?? []
 
-    expect(redirects.some((redirect) => redirect.source === '/about')).toBe(false)
+    expect(redirects).toContainEqual({
+      source: '/about',
+      destination: '/',
+      permanent: true,
+    })
+    expect(redirects).toContainEqual({
+      source: '/about.md',
+      destination: '/',
+      permanent: true,
+    })
   })
 
   it('permanently redirects legacy Astro sitemap URLs', async () => {

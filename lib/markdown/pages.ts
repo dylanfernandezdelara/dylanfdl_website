@@ -139,7 +139,7 @@ export function buildLlmsTxt(): string {
     '',
     '## How to call this site',
     '',
-    `- HTML and Markdown share the same paths. Send \`Accept: text/markdown\` or append \`.md\` (for example ${absoluteUrl('/about.md')}).`,
+    `- HTML and Markdown share the same paths. Send \`Accept: text/markdown\` or append \`.md\` (for example ${absoluteUrl('/contact.md')}).`,
     `- Start with ${SITE_URL}, ${SITE_DOCUMENTS.map((document) => absoluteUrl(document.path)).join(', ')}.`,
     `- Discover URLs from ${SITEMAP_INDEX_URL} or this file.`,
     `- Missing paths return HTTP 404 with recovery links to the sitemap and ${absoluteUrl(LLMS_TXT_PATH)}.`,
