@@ -8,7 +8,7 @@ import type { CardGridFilter } from '@/lib/buildCardGridItems'
 import { cn } from '@/lib/utils'
 
 const tabButtonBase =
-  'relative z-10 rounded-sm px-2 py-2 text-sm font-medium leading-4 transition-colors duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue motion-reduce:transition-none'
+  'relative z-10 inline-flex items-center rounded-sm px-2 text-sm font-medium leading-4 transition-colors duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue motion-reduce:transition-none'
 
 type Props = {
   filter: CardGridFilter
@@ -55,7 +55,7 @@ export default function CardGridTabs({ filter, onSelect }: Props) {
         ref={tablistRef}
         role="tablist"
         aria-label="Filter work"
-        className="relative inline-flex rounded-md bg-bg2 p-2 ring-1 ring-bg3"
+        className="relative inline-flex h-8 items-stretch rounded-md bg-bg2 p-0.5 ring-1 ring-bg3"
       >
         {showPill ? (
           <span
