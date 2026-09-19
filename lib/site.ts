@@ -59,6 +59,31 @@ export const PRIVACY_PATH = '/privacy'
 
 export const LLMS_TXT_PATH = '/llms.txt'
 
+type IntroLink = {
+  label: string
+  href: string
+}
+
+export const HOME_INTRO_LINKS = {
+  meta: { label: 'Meta', href: 'https://ai.meta.com' },
+  muse: { label: 'Muse', href: 'https://muse.ai' },
+  museSpark13: {
+    label: 'Muse Spark 1.3',
+    href: 'https://research.meta.ai/blog/introducing-muse-spark-1-3',
+  },
+  museCode: {
+    label: 'Muse Code',
+    href: 'https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2',
+  },
+  aiGlasses: { label: 'Meta Glasses', href: 'https://www.meta.com/ai-glasses/' },
+} as const satisfies Record<string, IntroLink>
+
+export const HOME_LAUNCHES = [
+  HOME_INTRO_LINKS.muse,
+  HOME_INTRO_LINKS.museSpark13,
+  HOME_INTRO_LINKS.museCode,
+] as const
+
 type ContactLink = {
   label: string
   href: string

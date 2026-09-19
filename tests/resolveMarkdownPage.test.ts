@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { resolveMarkdownPage } from '@/lib/markdown/pages'
+import { HOME_INTRO_LINKS } from '@/lib/site'
 import { CONTACT_DOCUMENT, PRIVACY_DOCUMENT } from '@/lib/siteDocuments'
 
 describe('resolveMarkdownPage', () => {
@@ -10,7 +11,12 @@ describe('resolveMarkdownPage', () => {
     expect(page.status).toBe(200)
     expect(page.body).toContain('# Dylan Fernandez de Lara')
     expect(page.body).toContain('I am an optimist.')
-    expect(page.body).toContain('Muse Spark 1.3')
+    expect(page.body).toContain(
+      `We recently launched [${HOME_INTRO_LINKS.muse.label}](${HOME_INTRO_LINKS.muse.href}), [${HOME_INTRO_LINKS.museSpark13.label}](${HOME_INTRO_LINKS.museSpark13.href}), and [${HOME_INTRO_LINKS.museCode.label}](${HOME_INTRO_LINKS.museCode.href}).`,
+    )
+    expect(page.body.indexOf(HOME_INTRO_LINKS.muse.href)).toBeLessThan(
+      page.body.indexOf(HOME_INTRO_LINKS.museSpark13.href),
+    )
     expect(page.body).not.toContain('Muse Spark 1.2')
     expect(page.body).toContain('## Notes')
     expect(page.body).toContain('No published notes yet.')

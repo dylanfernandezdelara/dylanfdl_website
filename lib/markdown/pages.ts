@@ -18,6 +18,8 @@ import {
 } from '@/lib/siteDocuments'
 import {
   CONTACT_EMAIL,
+  HOME_INTRO_LINKS,
+  HOME_LAUNCHES,
   LLMS_TXT_PATH,
   PERSON_LOCATION,
   PERSON_NAME,
@@ -27,9 +29,13 @@ import {
   toIsoDateTime,
 } from '@/lib/site'
 
+function markdownLink(link: { label: string; href: string }): string {
+  return `[${link.label}](${link.href})`
+}
+
 const HOME_INTRO_PARAGRAPHS = [
-  'I currently work on post-training at Meta and build RL environments for frontier coding agents. We recently launched Muse Spark 1.3 and Muse Code.',
-  'Previously, I scaled crash infrastructure for Meta Glasses.',
+  `I currently work on post-training at ${HOME_INTRO_LINKS.meta.label} and build RL environments for frontier coding agents. We recently launched ${markdownLink(HOME_INTRO_LINKS.muse)}, ${markdownLink(HOME_INTRO_LINKS.museSpark13)}, and ${markdownLink(HOME_INTRO_LINKS.museCode)}.`,
+  `Previously, I scaled crash infrastructure for ${HOME_INTRO_LINKS.aiGlasses.label}.`,
   `I am a Yale graduate and am currently based in ${PERSON_LOCATION.locality}.`,
 ] as const
 
@@ -130,7 +136,7 @@ export function buildLlmsTxt(): string {
     '',
     'Reach for these jobs specifically:',
     '',
-    `- Confirm identity, location (${PERSON_LOCATION.locality}), and current public work (Meta post-training, Muse Spark 1.3, Muse Code, earlier Meta Glasses crash infrastructure).`,
+    `- Confirm identity, location (${PERSON_LOCATION.locality}), and current public work (Meta post-training, ${HOME_LAUNCHES.map((item) => item.label).join(', ')}, earlier Meta Glasses crash infrastructure).`,
     '- Read or quote a published note or project from the canonical URL.',
     `- Email ${CONTACT_EMAIL} for introductions, corrections, or privacy requests.`,
     '- Prefer `Accept: text/markdown` on the same URLs a browser would load as HTML.',
