@@ -23,6 +23,10 @@ const cardGridItems = buildCardGridItems()
 const INTRO_LINKS = {
   meta: 'https://ai.meta.com',
   muse: 'https://muse.ai',
+  museSpark13:
+    'https://research.meta.ai/blog/introducing-muse-spark-1-3',
+  museCode:
+    'https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2',
   aiGlasses: 'https://www.meta.com/ai-glasses/',
 } as const
 
@@ -63,7 +67,9 @@ export default function HomePage() {
             I currently work on post-training at{' '}
             <ExternalLink allowWrap href={INTRO_LINKS.meta}>Meta</ExternalLink> and build
             RL environments for frontier coding agents. We recently launched{' '}
-            <ExternalLink allowWrap href={INTRO_LINKS.muse}>Muse</ExternalLink>.
+            <ExternalLink allowWrap href={INTRO_LINKS.muse}>Muse</ExternalLink>,{' '}
+            <ExternalLink allowWrap href={INTRO_LINKS.museSpark13}>Muse Spark 1.3</ExternalLink>, and{' '}
+            <ExternalLink allowWrap href={INTRO_LINKS.museCode}>Muse Code</ExternalLink>.
           </p>
 
           <p className="mb-4">
