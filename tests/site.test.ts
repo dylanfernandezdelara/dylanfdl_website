@@ -3,6 +3,8 @@ import {
   CONTACT_EMAIL,
   CONTACT_LINKS,
   DEFAULT_DESCRIPTION,
+  HOME_INTRO_LINKS,
+  HOME_LAUNCHES,
   HOME_PAGE_TITLE,
   OG_IMAGE_ALT,
   OG_IMAGE_HEIGHT,
@@ -61,6 +63,21 @@ describe('site', () => {
 
   it('includes the full name on content page titles', () => {
     expect(buildPageTitle({ title: 'A Note' })).toBe('A Note — Dylan Fernandez de Lara')
+  })
+
+  it('lists Muse first among homepage launch links', () => {
+    expect(HOME_LAUNCHES.map((item) => item.label)).toEqual([
+      'Muse',
+      'Muse Spark 1.3',
+      'Muse Code',
+    ])
+    expect(HOME_INTRO_LINKS.muse.href).toBe('https://muse.ai')
+    expect(HOME_INTRO_LINKS.museSpark13.href).toBe(
+      'https://research.meta.ai/blog/introducing-muse-spark-1-3',
+    )
+    expect(HOME_INTRO_LINKS.museCode.href).toBe(
+      'https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2',
+    )
   })
 
   it('exposes a stable public email and document paths', () => {
