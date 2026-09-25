@@ -45,7 +45,7 @@
 
 }
 
-/* Article type roles: display title, weight-led headings in Lora, 16px body. Scoped like the shell's own vars. */
+/* Article type roles: 24px display title, weight-led headings in Lora, 14px body. Scoped like the shell's own vars. */
 .article-shell {
   --article-body-size: var(--type-body-size);
   --article-title-size: var(--type-display-size);
