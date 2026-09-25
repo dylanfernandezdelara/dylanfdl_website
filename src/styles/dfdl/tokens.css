@@ -24,7 +24,7 @@
   Color is GENERATED: run `node scripts/color/build-tokens.mts` after changing the config there.
   Lab 1 (2026-09-19): unified warm neutral (hue 80), ember accent (hue 48) at the previous indigo's
   relative vividness, ring-and-lift elevation. Status hues held >15 degrees from the accent.
-  Lab 2 (2026-09-24): weight-led type at 15px, Lora on every heading, round radius family.
+  Lab 2 (2026-09-24): weight-led type, Lora on every heading, round radius family. Body 16 since 2026-09-25.
   Lab 3 (2026-09-24): strong ease-out, exits at 75%, press 0.97.
   Rhythm, rounded, type and motion below are hand-authored. Nothing is interim.
 */
@@ -44,24 +44,24 @@
   --rounded-xl: 24px;
   --rounded-full: 9999px;
 
-  /* ---- Type roles (Lab 2, approved 2026-09-24: weight-led, serif on every heading).
-     Body, heading and title share 15px; hierarchy comes from weight 550, family and color.
-     Display 32 and all headings are Lora. UI 13px at 450 for dense surfaces. Controls 28px. ---- */
+  /* ---- Type roles (Lab 2, approved 2026-09-24; body raised to 16 on 2026-09-25 after the dylanfdl preview).
+     Body, heading and title share 16px; hierarchy comes from weight 550, family and color.
+     Display 32 and all headings are Lora. UI 13px at 450 for dense surfaces. ---- */
   --font-display-family: var(--font-lora), ui-serif, Georgia, serif;
   --font-heading-family: var(--font-lora), ui-serif, Georgia, serif;
   --type-display-size: 2rem;
   --type-display-leading: 2.5rem;
   --type-display-weight: 400;
   --type-display-tracking: -0.01em;
-  --type-title-size: 0.9375rem;
+  --type-title-size: 1rem;
   --type-title-leading: 1.5rem;
   --type-title-weight: 550;
   --type-title-tracking: 0;
-  --type-heading-size: 0.9375rem;
+  --type-heading-size: 1rem;
   --type-heading-leading: 1.5rem;
   --type-heading-weight: 550;
   --type-heading-tracking: 0;
-  --type-body-size: 0.9375rem;
+  --type-body-size: 1rem;
   --type-body-leading: 1.5rem;
   --type-body-weight: 400;
   --type-ui-size: 0.8125rem;
