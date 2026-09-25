@@ -38,7 +38,7 @@ export default function SiteDocumentView({ document }: { document: SiteDocument 
             </Link>
           </nav>
         </header>
-        <article className="text-pretty text-sm font-[450] leading-6 text-fg1">
+        <article className="text-pretty text-base font-[450] leading-6 text-fg1">
           <h1 className="mb-6 font-serif text-2xl font-normal leading-8 text-fg0">{document.title}</h1>
           {document.paragraphs.map((paragraph) => (
             <InfoParagraph key={paragraph}>{paragraph}</InfoParagraph>

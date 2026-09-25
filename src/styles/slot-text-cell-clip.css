@@ -1,5 +1,5 @@
 /*
- * Shared slot-text cell sizing for overflow-y clip roll masks.
+ * Shared slot-text cell sizing for the roll mask.
  * Consumers add `slot-text-cell-clip` on the slot root and set
  * --slot-text-cell-line-height (defaults to roman).
  */
@@ -16,8 +16,16 @@
 .slot-text-cell-clip.slot-text .char-slot {
   display: inline-block;
   height: var(--slot-text-cell-line-height, var(--slot-text-cell-line-height-roman));
-  vertical-align: text-bottom;
-  overflow: hidden;
-  overflow-y: clip;
-  overflow-x: visible;
+  /* An inline-block with overflow other than visible uses its bottom edge as
+     its baseline, so text-bottom sat the glyph a pixel or two above the
+     surrounding line. Keep overflow visible so the sizer's baseline is used.
+     clip-path still masks the roll, with horizontal room for side bearings. */
+  vertical-align: baseline;
+  overflow: visible;
+  clip-path: inset(0 -0.5em);
+}
+
+.slot-text-cell-clip.slot-text .char-slot.is-resizing {
+  overflow: clip;
+  clip-path: inset(0);
 }
