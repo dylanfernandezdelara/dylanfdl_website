@@ -16,7 +16,9 @@
 .slot-text-cell-clip.slot-text .char-slot {
   display: inline-block;
   height: var(--slot-text-cell-line-height, var(--slot-text-cell-line-height-roman));
-  vertical-align: text-bottom;
+  /* Baseline, not text-bottom: a 1.25em cell aligned to text-bottom sits above the sentence by an amount that grows
+     with font size (0.5px at 14px, 1px at 16px). overflow-y: clip is not a scroll container, so the baseline holds. */
+  vertical-align: baseline;
   overflow: hidden;
   overflow-y: clip;
   overflow-x: visible;
