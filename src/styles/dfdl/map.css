@@ -45,12 +45,12 @@
 
 }
 
-/* Article type roles: display title, weight-led headings in Lora, 16px body. Scoped like the shell's own vars. */
+/* Article type roles: display title, weight-led headings in Lora at the reading size, 15px reading body. */
 .article-shell {
-  --article-body-size: var(--type-body-size);
+  --article-body-size: var(--type-reading-size);
   --article-title-size: var(--type-display-size);
   --article-h2-size: var(--type-title-size);
-  --article-h3-size: var(--type-heading-size);
+  --article-h3-size: var(--type-title-size);
   --article-heading-weight: var(--type-heading-weight);
   --article-heading-line-height: var(--type-heading-leading);
   --article-ease-out: var(--motion-ease-out);
@@ -67,13 +67,9 @@
   letter-spacing: var(--type-heading-tracking);
 }
 
-/* Tailwind v3 size classes the site uses, moved onto the dfdl roles. Size only: Tailwind's default leadings for
-   these three already equal the dfdl ones (24/20/16), and leaving line-height alone lets an explicit leading-* win. */
-.text-base { font-size: var(--type-body-size); }
-.text-sm { font-size: var(--type-ui-size); }
-.text-xs { font-size: var(--type-caption-size); }
-.text-lg { font-size: var(--type-title-size); line-height: var(--type-title-leading); font-weight: var(--type-title-weight); font-family: var(--font-heading-family); }
-.text-2xl { font-size: var(--type-display-size); line-height: var(--type-display-leading); letter-spacing: var(--type-display-tracking); }
+/* Text sizes: the site's own Tailwind classes already render the dfdl roles (text-sm leading-6 = body 14/24,
+   text-xs = caption 12/16, text-2xl = display 24/32), so they are not remapped. Remapping them is what made the
+   homepage prose 16px in #107. */
 
 /* Press feedback on the site's pressables. */
 button,

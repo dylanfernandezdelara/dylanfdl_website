@@ -45,26 +45,30 @@
   --rounded-xl: 24px;
   --rounded-full: 9999px;
 
-  /* ---- Type roles (Lab 2, approved 2026-09-24; body raised to 16 on 2026-09-25 after the dylanfdl preview).
-     Body, heading and title share 16px; hierarchy comes from weight 550, family and color.
-     Display 32 and all headings are Lora. UI 13px at 450 for dense surfaces. ---- */
+  /* ---- Type roles. Structure from Lab 2 (weight-led, Lora headings); sizes measured from dylanfdl.com's rendered
+     text on 2026-09-25: page prose 14/24 at 450, article prose 15/24, page title Lora 24/32. Headings take the size of
+     the text they head (heading 14 over body, title 15 over reading); weight 550, family and color do the rest.
+     UI 13/20 at 450 for dense surfaces. ---- */
   --font-display-family: var(--font-lora), ui-serif, Georgia, serif;
   --font-heading-family: var(--font-lora), ui-serif, Georgia, serif;
-  --type-display-size: 2rem;
-  --type-display-leading: 2.5rem;
+  --type-display-size: 1.5rem;
+  --type-display-leading: 2rem;
   --type-display-weight: 400;
-  --type-display-tracking: -0.01em;
-  --type-title-size: 1rem;
+  --type-display-tracking: 0;
+  --type-title-size: 0.9375rem;
   --type-title-leading: 1.5rem;
   --type-title-weight: 550;
   --type-title-tracking: 0;
-  --type-heading-size: 1rem;
+  --type-heading-size: 0.875rem;
   --type-heading-leading: 1.5rem;
   --type-heading-weight: 550;
   --type-heading-tracking: 0;
-  --type-body-size: 1rem;
+  --type-body-size: 0.875rem;
   --type-body-leading: 1.5rem;
-  --type-body-weight: 400;
+  --type-body-weight: 450;
+  --type-reading-size: 0.9375rem;
+  --type-reading-leading: 1.5rem;
+  --type-reading-weight: 400;
   --type-ui-size: 0.8125rem;
   --type-ui-leading: 1.25rem;
   --type-ui-weight: 450;

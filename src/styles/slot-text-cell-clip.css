@@ -16,8 +16,15 @@
 .slot-text-cell-clip.slot-text .char-slot {
   display: inline-block;
   height: var(--slot-text-cell-line-height, var(--slot-text-cell-line-height-roman));
-  vertical-align: text-bottom;
-  overflow: hidden;
-  overflow-y: clip;
-  overflow-x: visible;
+  /*
+    Sit on the sentence baseline in every engine. Two traps:
+    - vertical-align: text-bottom leaves the glyph above the baseline by an amount that grows with font size
+      (0.5px at 14px, 1px at 16px).
+    - Any non-visible overflow (hidden or clip) makes Safari use the box's bottom edge as its baseline, which lifts
+      the glyph by its descender (3.5px at 14px). Chrome and Firefox keep the text baseline, so it only shows in Safari.
+    So the roll mask is a clip-path, not overflow: it clips vertically to the cell and leaves the baseline alone.
+  */
+  vertical-align: baseline;
+  overflow: visible;
+  clip-path: inset(0 -1em);
 }
