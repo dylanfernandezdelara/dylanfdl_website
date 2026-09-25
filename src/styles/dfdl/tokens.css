@@ -13,17 +13,18 @@
     fg        default (--fg), secondary, tertiary, strong, disabled, inverse, on-accent
     border    subtle, default, strong, separator, focus
     accent    bg, border, solid, solid-hover, text
-    status    danger, success, warning (solid only for now)
-    rounded   sm, md, lg, xl, full
-    motion    ease-out, ease-in-out, ease-drawer, instant, fast, normal, slow, press
+    status    danger, success, warning (bg, border, solid, text)
+    rounded   xs, sm, md, lg, xl, full
+    motion    ease-out, ease-in-out, ease-drawer, ease-spring, instant, fast, normal, slow, slower,
+              exit-factor, exit-scale, pop-scale, press, icon-blur
     elevation raised, floating
 
   Source token names never collide with Tailwind theme keys (--color-*, --radius-*, --ease-*, --shadow-*);
   globals.css maps them. A source name equal to a theme key produces a self-referential variable.
 
   Color is GENERATED: run `node scripts/color/build-tokens.mts` after changing the config there.
-  Lab 1 (2026-09-19): unified warm neutral (hue 80), ember accent (hue 48) at the previous indigo's
-  relative vividness, ring-and-lift elevation. Status hues held >15 degrees from the accent.
+  Lab 1 (2026-09-19): unified warm neutral (hue 80), ember accent (hue 48) at 60% of its
+  gamut ceiling in light and 55% in dark, ring-and-lift elevation. Status hues held 30 degrees or more from the accent.
   Lab 2 (2026-09-24): weight-led type, Lora on every heading, round radius family. Body 16 since 2026-09-25.
   Lab 3 (2026-09-24): strong ease-out, exits at 75%, press 0.97.
   Rhythm, rounded, type and motion below are hand-authored. Nothing is interim.
@@ -36,7 +37,7 @@
   --measure-reading: 33rem;
   --measure-content: 64rem;
 
-  /* ---- Rounded (Lab 2, approved 2026-09-24: "Round", Fork's 0.625rem family). Concentric: outer = inner + padding. ---- */
+  /* ---- Rounded (Lab 2, approved 2026-09-24: "Round"). Concentric: outer = inner + padding. ---- */
   --rounded-xs: 8px;
   --rounded-sm: 10px;
   --rounded-md: 12px;
@@ -70,7 +71,7 @@
   --type-caption-size: 0.75rem;
   --type-caption-leading: 1rem;
   --type-caption-weight: 450;
-  --type-control-height: 1.75rem;
+  --type-control-height: 2rem;
 
   /* ---- Motion (Lab 3, approved 2026-09-24) ----
      Curves: strong ease-out for enters and exits, strong ease-in-out for on-screen movement, the iOS curve for
@@ -256,7 +257,7 @@
 
   --fg: oklch(37.30% 0.0196 80.00);
   --fg-secondary: oklch(55.10% 0.0196 80.00);
-  --fg-tertiary: oklch(71.40% 0.0196 80.00);
+  --fg-tertiary: oklch(62.00% 0.0196 80.00);
   --fg-strong: oklch(12.00% 0.0196 80.00);
   --fg-disabled: var(--neutral-light-8);
   --fg-inverse: var(--neutral-light-1);
