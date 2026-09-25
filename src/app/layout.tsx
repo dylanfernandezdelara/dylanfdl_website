@@ -18,6 +18,7 @@ import MaybeLayoutGridHost from '@/components/layout-grid/MaybeLayoutGridHost'
 import '../styles/theme.css'
 import '../styles/globals.css'
 import '../styles/effects.css'
+import '../styles/dfdl/map.css'
 
 const lora = Lora({
   subsets: ['latin'],

@@ -1,0 +1,96 @@
+/*
+  dfdl token mapping for dylanfdl.com (Phase 5 before/after). Loaded after theme.css so it wins.
+  The site's own variables (bg0..bg4, fg0..fg4, gruvbox-ish accents, shadcn aliases, --article-*) are
+  repointed at dfdl semantics. No component changes. The site's tokens were the Lab 1 baseline, so this
+  is "everything Dylan chose since" applied to where it started.
+*/
+@import './tokens.css';
+
+:root,
+.dark {
+  /* Surfaces */
+  --bg0-hard: var(--bg-subtle);
+  --bg0: var(--bg-page);
+  --bg1: var(--bg-subtle);
+  --bg2: var(--bg-surface-hover);
+  --bg3: var(--bg-surface-active);
+  --bg4: var(--border-subtle);
+
+  /* Text */
+  --fg0: var(--fg-strong);
+  --fg1: var(--fg);
+  --fg2: var(--fg);
+  --fg3: var(--fg-secondary);
+  --fg4: var(--fg-tertiary);
+
+  /* Brand and status. Links and emphasis carry the accent; data hues stay data hues. */
+  --blue: var(--accent-text);
+  --aqua: var(--accent-solid);
+  --orange: var(--accent-solid);
+  --yellow: var(--status-warning);
+  --red: var(--status-danger);
+  --green: var(--status-success);
+
+  --border-color: var(--border-separator);
+  --card: var(--bg-surface);
+  --popover: var(--bg-raised);
+  --elevated-shadow: var(--elevation-floating);
+  --input: var(--border-default);
+  --primary: var(--accent-solid);
+  --ring: var(--border-focus);
+  --link-color: var(--accent-text);
+  --link-hover: var(--accent-solid);
+  --hover-color: var(--accent-solid);
+  --radius: var(--rounded-sm);
+
+}
+
+/* Article type roles: display title, weight-led headings in Lora, 16px body. Scoped like the shell's own vars. */
+.article-shell {
+  --article-body-size: var(--type-body-size);
+  --article-title-size: var(--type-display-size);
+  --article-h2-size: var(--type-title-size);
+  --article-h3-size: var(--type-heading-size);
+  --article-heading-weight: var(--type-heading-weight);
+  --article-heading-line-height: var(--type-heading-leading);
+  --article-ease-out: var(--motion-ease-out);
+  --article-duration-fast: var(--motion-fast);
+  --article-duration-ui: var(--motion-normal);
+  --article-duration-enter: var(--motion-slow);
+}
+
+/* Headings take the dfdl heading family (Lora). The site already sets Lora on h1 via font-serif. */
+.article-shell__body :is(h2, h3, h4, h5, h6),
+.article-heading--h2,
+.article-heading--h3 {
+  font-family: var(--font-heading-family);
+  letter-spacing: var(--type-heading-tracking);
+}
+
+/* Tailwind v3 size classes the site uses, moved onto the dfdl roles. Size only: Tailwind's default leadings for
+   these three already equal the dfdl ones (24/20/16), and leaving line-height alone lets an explicit leading-* win. */
+.text-base { font-size: var(--type-body-size); }
+.text-sm { font-size: var(--type-ui-size); }
+.text-xs { font-size: var(--type-caption-size); }
+.text-lg { font-size: var(--type-title-size); line-height: var(--type-title-leading); font-weight: var(--type-title-weight); font-family: var(--font-heading-family); }
+.text-2xl { font-size: var(--type-display-size); line-height: var(--type-display-leading); letter-spacing: var(--type-display-tracking); }
+
+/* Press feedback on the site's pressables. */
+button,
+[role='tab'],
+a.card,
+[role='button'] {
+  transition-property: transform, scale, background-color, color, border-color, opacity;
+  transition-duration: var(--motion-fast);
+  transition-timing-function: var(--motion-ease-out);
+}
+button:active:not(:disabled),
+[role='tab']:active {
+  scale: var(--motion-press);
+}
+@media (prefers-reduced-motion: reduce) {
+  button:active:not(:disabled),
+  [role='tab']:active {
+    scale: none;
+  }
+}
