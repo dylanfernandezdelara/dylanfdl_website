@@ -45,7 +45,7 @@
 
 }
 
-/* Article type roles: display title, weight-led headings in Lora, 15px body. Scoped like the shell's own vars. */
+/* Article type roles: display title, weight-led headings in Lora, 16px body. Scoped like the shell's own vars. */
 .article-shell {
   --article-body-size: var(--type-body-size);
   --article-title-size: var(--type-display-size);
@@ -67,10 +67,11 @@
   letter-spacing: var(--type-heading-tracking);
 }
 
-/* Tailwind v3 size classes the site uses, moved onto the dfdl roles. */
-.text-base { font-size: var(--type-body-size); line-height: var(--type-body-leading); }
-.text-sm { font-size: var(--type-ui-size); line-height: var(--type-ui-leading); }
-.text-xs { font-size: var(--type-caption-size); line-height: var(--type-caption-leading); }
+/* Tailwind v3 size classes the site uses, moved onto the dfdl roles. Size only: Tailwind's default leadings for
+   these three already equal the dfdl ones (24/20/16), and leaving line-height alone lets an explicit leading-* win. */
+.text-base { font-size: var(--type-body-size); }
+.text-sm { font-size: var(--type-ui-size); }
+.text-xs { font-size: var(--type-caption-size); }
 .text-lg { font-size: var(--type-title-size); line-height: var(--type-title-leading); font-weight: var(--type-title-weight); font-family: var(--font-heading-family); }
 .text-2xl { font-size: var(--type-display-size); line-height: var(--type-display-leading); letter-spacing: var(--type-display-tracking); }
 
