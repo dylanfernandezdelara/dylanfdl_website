@@ -18,6 +18,7 @@ import MaybeLayoutGridHost from '@/components/layout-grid/MaybeLayoutGridHost'
 import '../styles/theme.css'
 import '../styles/globals.css'
 import '../styles/effects.css'
+import '../styles/dfdl/map.css'
 
 const lora = Lora({
   subsets: ['latin'],
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <link key={profileUrl} rel="me" href={profileUrl} />
         ))}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {process.env.NODE_ENV !== 'production' ? <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async /> : null}
       </head>
       <body>
         <MaybeLayoutGridHost>
