@@ -45,21 +45,21 @@
 
 }
 
-/* Article type roles: display title, weight-led headings in Lora at the reading size, 15px reading body. */
+/* Article type roles: Lora headline title (28), sans headings at 600 (20, 17), 15px reading body. As before dfdl. */
 .article-shell {
   --article-body-size: var(--type-reading-size);
-  --article-title-size: var(--type-display-size);
+  --article-title-size: var(--type-headline-size);
   --article-h2-size: var(--type-title-size);
-  --article-h3-size: var(--type-title-size);
-  --article-heading-weight: var(--type-heading-weight);
-  --article-heading-line-height: var(--type-heading-leading);
+  --article-h3-size: var(--type-heading-size);
+  --article-heading-weight: var(--type-title-weight);
+  --article-heading-line-height: var(--type-title-leading);
   --article-ease-out: var(--motion-ease-out);
   --article-duration-fast: var(--motion-fast);
   --article-duration-ui: var(--motion-normal);
   --article-duration-enter: var(--motion-slow);
 }
 
-/* Headings take the dfdl heading family (Lora). The site already sets Lora on h1 via font-serif. */
+/* Article headings take the dfdl heading family (sans); the title keeps Lora via font-serif. */
 .article-shell__body :is(h2, h3, h4, h5, h6),
 .article-heading--h2,
 .article-heading--h3 {
