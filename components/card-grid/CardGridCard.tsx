@@ -11,7 +11,7 @@ function visibleDateLabel(item: CardGridSerializableItem): string | undefined {
     case 'artifact':
       return undefined
     default: {
-      const _exhaustive: never = item.kind
+      const _exhaustive: never = item
       return _exhaustive
     }
   }
