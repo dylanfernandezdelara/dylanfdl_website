@@ -8,7 +8,7 @@ const cardClassName =
 
 export type CardProps = {
   title: string
-  dateLabel: string
+  dateLabel?: string
   href: string
   external?: boolean
   videoSrc?: string
@@ -42,7 +42,9 @@ export default function Card({
     <>
       <div className="flex items-baseline justify-between gap-4 px-4 py-4">
         <span className="text-sm font-normal leading-6 text-fg0">{title}</span>
-        <span className="shrink-0 text-xs font-normal tabular-nums text-fg1">{dateLabel}</span>
+        {dateLabel ? (
+          <span className="shrink-0 text-xs font-normal tabular-nums text-fg1">{dateLabel}</span>
+        ) : null}
       </div>
       {media ? (
         <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-bg2">{media}</div>

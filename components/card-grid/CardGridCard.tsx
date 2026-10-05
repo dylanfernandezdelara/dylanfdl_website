@@ -1,7 +1,21 @@
 import Card from '@/components/Card'
 import { cardAnimMs, cardExitAnimMs, smoothEase } from '@/components/card-grid/constants'
 import { itemKey, type GridRow } from '@/components/card-grid/model'
+import type { CardGridSerializableItem } from '@/lib/buildCardGridItems'
 import { cn } from '@/lib/utils'
+
+function visibleDateLabel(item: CardGridSerializableItem): string | undefined {
+  switch (item.kind) {
+    case 'writing':
+      return item.dateLabel
+    case 'artifact':
+      return undefined
+    default: {
+      const _exhaustive: never = item
+      return _exhaustive
+    }
+  }
+}
 
 type Props = {
   row: GridRow
@@ -47,7 +61,7 @@ export default function CardGridCard({ row }: Props) {
       <div className={row.phase === 'exit' ? 'pointer-events-none' : undefined}>
         <Card
           title={row.item.title}
-          dateLabel={row.item.dateLabel}
+          dateLabel={visibleDateLabel(row.item)}
           href={row.item.href}
           external={row.item.kind === 'artifact'}
           videoSrc={row.item.videoSrc}
