@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   CONTACT_EMAIL,
   CONTACT_LINKS,
+  FOOTER_LINKS,
   DEFAULT_DESCRIPTION,
   HOME_INTRO_LINKS,
   HOME_LAUNCHES,
@@ -77,6 +78,14 @@ describe('site', () => {
     )
     expect(HOME_INTRO_LINKS.museCode.href).toBe(
       'https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2',
+    )
+  })
+
+  it('omits Cursor from the homepage footer', () => {
+    expect(FOOTER_LINKS.map((link) => link.label)).toEqual(['GitHub', 'Email', 'X', 'LinkedIn'])
+    expect(FOOTER_LINKS.map((link) => link.href)).not.toContain('https://cursor.com/@dylanf')
+    expect(CONTACT_LINKS.find((link) => link.label === 'Cursor')?.href).toBe(
+      'https://cursor.com/@dylanf',
     )
   })
 

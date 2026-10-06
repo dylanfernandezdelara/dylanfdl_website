@@ -72,7 +72,7 @@ Stable handles (use these; do not click coordinates):
 | Search empty | text `No matches found.` |
 | Site chrome | `navigation` name `Site`, link `Home`; header link `Dylan Fernandez de Lara` |
 | Documents | `/contact`, `/privacy` — heading matches the title |
-| Contact row | links `GitHub`, `Email`, `X`, `LinkedIn`, `Cursor` |
+| Contact row | links `GitHub`, `Email`, `X`, `LinkedIn` |
 | Music card | link name starts with `Stravinsky: Le Sacre du Printemps` |
 
 Recipe shape: snapshot or screenshot → one structural action (click / type / key / navigate) → fresh snapshot → assert the named result. Read `features/` for the feature you are proving. A proof that uses one convenient entry point is incomplete when that feature file lists others.

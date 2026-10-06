@@ -7,7 +7,7 @@ Home profile is the public identity on `/`: name, short bio, Muse / Muse Spark /
 - `home-heading` shows the profile name as the page heading.
 - `home-intro` states current work and names Muse first, then Muse Spark and Muse Code.
 - `home-links` exposes Meta, Muse, Muse Spark, Muse Code, and Meta Glasses as real hrefs.
-- `home-contact` lists GitHub, Email, X, LinkedIn, and Cursor.
+- `home-contact` lists GitHub, Email, X, and LinkedIn.
 - `home-markdown` returns the same identity under `Accept: text/markdown`.
 
 ## How to get to it (user POV)
@@ -26,7 +26,7 @@ Preconditions:
 - **Read intro.** The first work paragraph names Meta, then the launch list in order: Muse, Muse Spark, Muse Code. Screenshot that paragraph.
 - **Confirm Muse href.** Read the Muse link `href` or click it and screenshot the destination. Expected: `https://muse.ai` (key `muse`). That is enough for a href claim. Do not film the navigation.
 - **Confirm sibling hrefs.** Muse Spark `https://research.meta.ai/blog/introducing-muse-spark-1-3` (`museSpark13`); Muse Code `https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2` (`museCode`). Parse hrefs or screenshot HTML. Do not load those destinations.
-- **Contact row.** The links `GitHub`, `Email`, `X`, `LinkedIn`, and `Cursor` are present. `Email` href is `mailto:fernandezdelaradylan@gmail.com`.
+- **Contact row.** The links `GitHub`, `Email`, `X`, and `LinkedIn` are present. `Cursor` is absent. `Email` href is `mailto:fernandezdelaradylan@gmail.com`.
 - **Markdown twin.** Run `.cursor/skills/verify-dylanfdl/bin/http.sh GET / --accept text/markdown --out "$VERIFY_EVIDENCE_DIR/home-profile.md"`. Status `200`, `Content-Type` includes `text/markdown`, body starts with `# Dylan Fernandez de Lara` and contains `I am an optimist.`
 - **Proof.** Save `home-profile.png` of the heading + intro and `home-profile.aria.txt` showing the heading and contact link names. A copy/href claim does not need video.
 
