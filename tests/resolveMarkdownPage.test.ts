@@ -30,6 +30,8 @@ describe('resolveMarkdownPage', () => {
   it('serves contact and privacy markdown from the document catalog', () => {
     expect(resolveMarkdownPage('/contact').body).toContain(CONTACT_DOCUMENT.paragraphs[0])
     expect(resolveMarkdownPage('/contact').body).toContain('## Profiles')
+    expect(resolveMarkdownPage('/contact').body).not.toContain('cursor.com')
+    expect(resolveMarkdownPage('/contact').body).not.toContain('Cursor')
     expect(resolveMarkdownPage('/privacy').body).toContain('# Privacy')
   })
 

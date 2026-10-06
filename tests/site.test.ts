@@ -80,6 +80,11 @@ describe('site', () => {
     )
   })
 
+  it('does not list a Cursor profile', () => {
+    expect(CONTACT_LINKS.map((link) => link.label)).toEqual(['GitHub', 'Email', 'X', 'LinkedIn'])
+    expect([...SAME_AS, ...REL_ME_URLS].join('\n')).not.toContain('cursor.com')
+  })
+
   it('exposes a stable public email and document paths', () => {
     expect(CONTACT_EMAIL).toBe('fernandezdelaradylan@gmail.com')
     expect(CONTACT_LINKS.find((link) => link.label === 'Email')?.href).toBe(

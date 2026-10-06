@@ -112,12 +112,6 @@ export const CONTACT_LINKS = [
     href: 'https://www.linkedin.com/in/dylan-fernandez-de-lara-219b821a6',
     sameAs: true,
   },
-  {
-    label: 'Cursor',
-    href: 'https://cursor.com/@dylanf',
-    sameAs: true,
-    relMe: true,
-  },
 ] as const satisfies readonly ContactLink[]
 
 export const SAME_AS = CONTACT_LINKS.filter(
