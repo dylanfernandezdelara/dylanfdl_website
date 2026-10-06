@@ -90,7 +90,6 @@ type ContactLink = {
   sameAs?: true
   relMe?: true
   twitterHandle?: true
-  omitFromFooter?: true
 }
 
 export const CONTACT_LINKS = [
@@ -113,18 +112,7 @@ export const CONTACT_LINKS = [
     href: 'https://www.linkedin.com/in/dylan-fernandez-de-lara-219b821a6',
     sameAs: true,
   },
-  {
-    label: 'Cursor',
-    href: 'https://cursor.com/@dylanf',
-    sameAs: true,
-    relMe: true,
-    omitFromFooter: true,
-  },
 ] as const satisfies readonly ContactLink[]
-
-export const FOOTER_LINKS = CONTACT_LINKS.filter(
-  (link) => !('omitFromFooter' in link && link.omitFromFooter),
-)
 
 export const SAME_AS = CONTACT_LINKS.filter(
   (link): link is (typeof CONTACT_LINKS)[number] & { sameAs: true } => 'sameAs' in link && link.sameAs === true

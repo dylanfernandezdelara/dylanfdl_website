@@ -11,7 +11,7 @@ import { buildCardGridItems } from '@/lib/buildCardGridItems'
 import { buildHomePageJsonLd } from '@/lib/jsonLd'
 import { CONTACT_LINK_STYLES, SECONDARY_LINK_SEPARATOR } from '@/lib/linkStyles'
 import {
-  FOOTER_LINKS,
+  CONTACT_LINKS,
   DEFAULT_DESCRIPTION,
   HOME_INTRO_LINKS,
   HOME_PAGE_TITLE,
@@ -79,7 +79,7 @@ export default function HomePage() {
 
           <div className="flex w-full items-center justify-between gap-4">
             <div className="flex max-w-reading flex-wrap items-center gap-2 text-sm leading-6">
-              {FOOTER_LINKS.map((link, index) => (
+              {CONTACT_LINKS.map((link, index) => (
                 <Fragment key={link.href}>
                   {index > 0 && (
                     <span className={SECONDARY_LINK_SEPARATOR} aria-hidden="true">

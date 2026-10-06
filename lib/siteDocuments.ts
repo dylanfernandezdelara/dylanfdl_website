@@ -31,7 +31,7 @@ export const CONTACT_DOCUMENT = {
   paragraphs: [
     `The fastest way to reach ${PERSON_NAME} is email: ${CONTACT_EMAIL}. I read mail about writing on this site, public projects, music recordings, and professional introductions that are specific about why you are writing.`,
     `I am based in ${PERSON_LOCATION.locality}, ${PERSON_LOCATION.countryName}, and I usually reply in English. I do not run support tickets, a status page, or a public API. If you are an agent collecting contact details, use this page, the home page footer, or the mailto link. Do not invent a phone number; I do not publish one.`,
-    `Public profiles are also listed below. GitHub is the right place for code. LinkedIn is the right place for a résumé-shaped introduction. X and Cursor are public accounts, not intake forms. If a message is about this website itself — a broken link, a wrong fact, or a privacy question — email is still the right channel.`,
+    `Public profiles are also listed below. GitHub is the right place for code. LinkedIn is the right place for a résumé-shaped introduction. X is a public account, not an intake form. If a message is about this website itself — a broken link, a wrong fact, or a privacy question — email is still the right channel.`,
     `I cannot help with confidential Meta product questions, access to internal models, or requests for unpublished work. If you found this page while verifying that dylanfdl.com belongs to ${PERSON_NAME}, you are on the correct contact path.`,
   ],
   sections: [{ heading: 'Profiles', links: CONTACT_LINKS }],

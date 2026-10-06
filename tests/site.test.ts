@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import {
   CONTACT_EMAIL,
   CONTACT_LINKS,
-  FOOTER_LINKS,
   DEFAULT_DESCRIPTION,
   HOME_INTRO_LINKS,
   HOME_LAUNCHES,
@@ -81,12 +80,9 @@ describe('site', () => {
     )
   })
 
-  it('omits Cursor from the homepage footer', () => {
-    expect(FOOTER_LINKS.map((link) => link.label)).toEqual(['GitHub', 'Email', 'X', 'LinkedIn'])
-    expect(FOOTER_LINKS.map((link) => link.href)).not.toContain('https://cursor.com/@dylanf')
-    expect(CONTACT_LINKS.find((link) => link.label === 'Cursor')?.href).toBe(
-      'https://cursor.com/@dylanf',
-    )
+  it('does not list a Cursor profile', () => {
+    expect(CONTACT_LINKS.map((link) => link.label)).toEqual(['GitHub', 'Email', 'X', 'LinkedIn'])
+    expect([...SAME_AS, ...REL_ME_URLS].join('\n')).not.toContain('cursor.com')
   })
 
   it('exposes a stable public email and document paths', () => {

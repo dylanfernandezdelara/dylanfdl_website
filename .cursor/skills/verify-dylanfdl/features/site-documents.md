@@ -22,7 +22,7 @@ Preconditions:
 
 - Doctor reports ok for `$VERIFY_BASE_URL`.
 
-- **Contact.** Navigate to `/contact`. Heading is `Contact`. Body includes `fernandezdelaradylan@gmail.com`. A `Profiles` list includes GitHub, Email, X, LinkedIn, and Cursor. Confirm Email `href` is `mailto:fernandezdelaradylan@gmail.com`.
+- **Contact.** Navigate to `/contact`. Heading is `Contact`. Body includes `fernandezdelaradylan@gmail.com`. A `Profiles` list includes GitHub, Email, X, and LinkedIn. `Cursor` is absent. Confirm Email `href` is `mailto:fernandezdelaradylan@gmail.com`.
 - **Privacy.** Navigate to `/privacy`. Heading is `Privacy`. Body states the theme preference stays in localStorage and that visitors are not asked to log into Spotify.
 - **Home chrome.** On any document page, `navigation` `Site` has link `Home`. Click `Home` or the header name. The home heading `Dylan Fernandez de Lara` returns. Screenshot home after the click if the claim is "chrome returns you".
 - **About redirect.** Run `bin/http.sh GET /about --no-follow` (and `/about.md`). Expect a permanent redirect to `/`. Following the redirect should land on the home heading, not an About document.
