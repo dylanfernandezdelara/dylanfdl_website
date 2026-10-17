@@ -18,24 +18,22 @@ import {
 } from '@/lib/siteDocuments'
 import {
   CONTACT_EMAIL,
+  EMPLOYER_NAME,
   HOME_INTRO_LINKS,
   HOME_LAUNCHES,
   LLMS_TXT_PATH,
   PERSON_LOCATION,
   PERSON_NAME,
+  PERSON_ROLE,
   SITE_URL,
   SITEMAP_INDEX_URL,
   absoluteUrl,
   toIsoDateTime,
 } from '@/lib/site'
 
-function markdownLink(link: { label: string; href: string }): string {
-  return `[${link.label}](${link.href})`
-}
-
 const HOME_INTRO_PARAGRAPHS = [
-  `I currently work on post-training at ${HOME_INTRO_LINKS.meta.label} and build RL environments for frontier coding agents. We recently launched ${markdownLink(HOME_INTRO_LINKS.muse)}, ${markdownLink(HOME_INTRO_LINKS.museSpark13)}, and ${markdownLink(HOME_INTRO_LINKS.museCode)}.`,
-  `Previously, I scaled crash infrastructure for ${HOME_INTRO_LINKS.aiGlasses.label}.`,
+  `I am a ${PERSON_ROLE} at ${EMPLOYER_NAME}.`,
+  `Before ${EMPLOYER_NAME}, I did post-training at ${HOME_INTRO_LINKS.meta.label} and built RL environments for frontier coding agents. Before that, I scaled crash infrastructure for ${HOME_INTRO_LINKS.aiGlasses.label}.`,
   `I am a Yale graduate and am currently based in ${PERSON_LOCATION.locality}.`,
 ] as const
 
@@ -136,7 +134,7 @@ export function buildLlmsTxt(): string {
     '',
     'Reach for these jobs specifically:',
     '',
-    `- Confirm identity, location (${PERSON_LOCATION.locality}), and current public work (Meta post-training, ${HOME_LAUNCHES.map((item) => item.label).join(', ')}, earlier Meta Glasses crash infrastructure).`,
+    `- Confirm identity, location (${PERSON_LOCATION.locality}), and current public work (${PERSON_ROLE} at ${EMPLOYER_NAME}; earlier Meta post-training, ${HOME_LAUNCHES.map((item) => item.label).join(', ')}, and Meta Glasses crash infrastructure).`,
     '- Read or quote a published note or project from the canonical URL.',
     `- Email ${CONTACT_EMAIL} for introductions, corrections, or privacy requests.`,
     '- Prefer `Accept: text/markdown` on the same URLs a browser would load as HTML.',
