@@ -33,7 +33,7 @@ import {
 
 const HOME_INTRO_PARAGRAPHS = [
   `I am a ${PERSON_ROLE} at ${EMPLOYER_NAME}.`,
-  `Before ${EMPLOYER_NAME}, I did post-training at ${HOME_INTRO_LINKS.meta.label} and built RL environments for frontier coding agents. Before that, I scaled crash infrastructure for ${HOME_INTRO_LINKS.aiGlasses.label}.`,
+  `Previously, I did post-training at ${HOME_INTRO_LINKS.meta.label} and built RL environments for frontier coding agents. Before that, I scaled crash infrastructure for ${HOME_INTRO_LINKS.aiGlasses.label}.`,
   `I am a Yale graduate and am currently based in ${PERSON_LOCATION.locality}.`,
 ] as const
 

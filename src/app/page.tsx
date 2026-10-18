@@ -61,7 +61,7 @@ export default function HomePage() {
           </p>
 
           <p className="mb-4">
-            Before {EMPLOYER_NAME}, I did post-training at{' '}
+            Previously, I did post-training at{' '}
             <ExternalLink allowWrap href={HOME_INTRO_LINKS.meta.href}>{HOME_INTRO_LINKS.meta.label}</ExternalLink> and built
             RL environments for frontier coding agents. Before that, I scaled crash infrastructure for{' '}
             <ExternalLink allowWrap href={HOME_INTRO_LINKS.aiGlasses.href}>{HOME_INTRO_LINKS.aiGlasses.label}</ExternalLink>.
