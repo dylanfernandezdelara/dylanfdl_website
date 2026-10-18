@@ -13,9 +13,11 @@ import { CONTACT_LINK_STYLES, SECONDARY_LINK_SEPARATOR } from '@/lib/linkStyles'
 import {
   CONTACT_LINKS,
   DEFAULT_DESCRIPTION,
+  EMPLOYER_NAME,
   HOME_INTRO_LINKS,
   HOME_PAGE_TITLE,
   OPEN_GRAPH_BASE,
+  PERSON_ROLE,
   absoluteUrl,
 } from '@/lib/site'
 
@@ -55,16 +57,9 @@ export default function HomePage() {
             I am an{'\u00A0'}<OptimistText />
           </p>
           <p className="mb-4">
-            I currently work on post-training at{' '}
-            <ExternalLink allowWrap href={HOME_INTRO_LINKS.meta.href}>{HOME_INTRO_LINKS.meta.label}</ExternalLink> and build
-            RL environments for frontier coding agents. We recently launched{' '}
-            <ExternalLink allowWrap href={HOME_INTRO_LINKS.muse.href}>{HOME_INTRO_LINKS.muse.label}</ExternalLink>,{' '}
-            <ExternalLink allowWrap href={HOME_INTRO_LINKS.museSpark13.href}>{HOME_INTRO_LINKS.museSpark13.label}</ExternalLink>, and{' '}
-            <ExternalLink allowWrap href={HOME_INTRO_LINKS.museCode.href}>{HOME_INTRO_LINKS.museCode.label}</ExternalLink>.
-          </p>
-
-          <p className="mb-4">
-            Previously, I scaled crash infrastructure for {' '}
+            I am a {PERSON_ROLE} at {EMPLOYER_NAME}. Previously, I did post-training at{' '}
+            <ExternalLink allowWrap href={HOME_INTRO_LINKS.meta.href}>{HOME_INTRO_LINKS.meta.label}</ExternalLink> and built
+            RL environments for frontier coding agents. Before that, I scaled crash infrastructure for{' '}
             <ExternalLink allowWrap href={HOME_INTRO_LINKS.aiGlasses.href}>{HOME_INTRO_LINKS.aiGlasses.label}</ExternalLink>.
           </p>
 

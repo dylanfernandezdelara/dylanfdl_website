@@ -10,7 +10,7 @@ export const PERSON_GIVEN_NAME = 'Dylan'
 
 export const PERSON_FAMILY_NAME = 'Fernandez de Lara'
 
-export const PERSON_ROLE = 'Generalist Software Engineer'
+export const PERSON_ROLE = 'Senior Software Engineer'
 
 export const PERSON_PAGE_PATH = '/'
 
@@ -22,9 +22,9 @@ export const OG_IMAGE_HEIGHT = 630
 
 export const OG_IMAGE_ALT = PERSON_NAME
 
-export const EMPLOYER_NAME = 'Meta'
+export const EMPLOYER_NAME = 'Instagram'
 
-export const EMPLOYER_URL = 'https://www.meta.com'
+export const EMPLOYER_URL = 'https://www.instagram.com'
 
 export const PERSON_NAME_ALTERNATES = [
   'Dylan Fernandez',
