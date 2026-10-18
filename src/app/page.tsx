@@ -60,7 +60,7 @@ export default function HomePage() {
             I am a {PERSON_ROLE} at {EMPLOYER_NAME}.
           </p>
 
-          <p className="mb-4 text-fg3">
+          <p className="mb-4">
             Before {EMPLOYER_NAME}, I did post-training at{' '}
             <ExternalLink allowWrap href={HOME_INTRO_LINKS.meta.href}>{HOME_INTRO_LINKS.meta.label}</ExternalLink> and built
             RL environments for frontier coding agents. Before that, I scaled crash infrastructure for{' '}
