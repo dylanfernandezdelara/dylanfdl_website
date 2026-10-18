@@ -57,11 +57,7 @@ export default function HomePage() {
             I am an{'\u00A0'}<OptimistText />
           </p>
           <p className="mb-4">
-            I am a {PERSON_ROLE} at {EMPLOYER_NAME}.
-          </p>
-
-          <p className="mb-4">
-            Previously, I did post-training at{' '}
+            I am a {PERSON_ROLE} at {EMPLOYER_NAME}. Previously, I did post-training at{' '}
             <ExternalLink allowWrap href={HOME_INTRO_LINKS.meta.href}>{HOME_INTRO_LINKS.meta.label}</ExternalLink> and built
             RL environments for frontier coding agents. Before that, I scaled crash infrastructure for{' '}
             <ExternalLink allowWrap href={HOME_INTRO_LINKS.aiGlasses.href}>{HOME_INTRO_LINKS.aiGlasses.label}</ExternalLink>.
